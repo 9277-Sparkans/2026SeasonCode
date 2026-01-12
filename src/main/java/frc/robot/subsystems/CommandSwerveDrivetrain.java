@@ -11,10 +11,10 @@ import com.ctre.phoenix6.swerve.SwerveDrivetrainConstants;
 import com.ctre.phoenix6.swerve.SwerveModuleConstants;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
-// import com.pathplanner.lib.auto.AutoBuilder;
-// import com.pathplanner.lib.config.PIDConstants;
-// import com.pathplanner.lib.config.RobotConfig;
-// import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.config.PIDConstants;
+import com.pathplanner.lib.config.RobotConfig;
+import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -207,31 +207,30 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
     //autobuilder
     private void configureAutoBuilder(){
-        // TODO: uncomment once Pathplanner 2026 comes out
-        // try{
-        //     var config = RobotConfig.fromGUISettings();
-        //     AutoBuilder.configure(
-        //         ()-> getStateCopy().Pose, //supply position
-        //         this::resetPose, //consumer for seeding pose against auto
-        //         ()-> getStateCopy().Speeds, //supply speeds
-        //         //consumer of chassis speeds and feedforwards to drive
-        //         (speeds, feedforwards) -> setControl(
-        //             m_pathApplyRobotSpeeds.withSpeeds(ChassisSpeeds.discretize(speeds, 0.020))
-        //                 // .withWheelForceFeedforwardsX(feedforwards,robotRelativeForcesXNewtons())
-        //                 // .withWheelForceFeedforwardsY(feedforwards,robotRelativeForcesYNewtons())
-        //         ),
-        //         new PPHolonomicDriveController(
-        //             new PIDConstants(5,0,0), //translation
-        //             new PIDConstants(5,0,0) //rotation
-        //         ),
-        //         config,
-        //         //flip for red vs blue
-        //         () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
-        //         this
-        //     );
-        // } catch (Exception ex){
-        //     DriverStation.reportError("Failed to load Pathplanner config and configure autobuilder", ex.getStackTrace());
-        // }
+        try {
+            var config = RobotConfig.fromGUISettings();
+            AutoBuilder.configure(
+                ()-> getStateCopy().Pose, //supply position
+                this::resetPose, //consumer for seeding pose against auto
+                ()-> getStateCopy().Speeds, //supply speeds
+                //consumer of chassis speeds and feedforwards to drive
+                (speeds, feedforwards) -> setControl(
+                    m_pathApplyRobotSpeeds.withSpeeds(ChassisSpeeds.discretize(speeds, 0.020))
+                        // .withWheelForceFeedforwardsX(feedforwards,robotRelativeForcesXNewtons())
+                        // .withWheelForceFeedforwardsY(feedforwards,robotRelativeForcesYNewtons())
+                ),
+                new PPHolonomicDriveController(
+                    new PIDConstants(5,0,0), //translation
+                    new PIDConstants(5,0,0) //rotation
+                ),
+                config,
+                //flip for red vs blue
+                () -> DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red,
+                this
+            );
+        } catch (Exception ex){
+            DriverStation.reportError("Failed to load Pathplanner config and configure autobuilder", ex.getStackTrace());
+        }
     }
 
     /**

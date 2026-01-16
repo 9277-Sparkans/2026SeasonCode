@@ -100,6 +100,10 @@ public class RobotContainer {
         joystick.rightBumper()
             .whileTrue(
                 new InstantCommand(() -> intake.deployCommand()));
+
+        joystick.leftBumper()
+            .whileTrue(
+                new InstantCommand(() -> intake.retractCommand()));
     }
 
     public Command getAutonomousCommand() {

@@ -9,6 +9,8 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.util.struct.Struct;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -22,6 +24,8 @@ public class Turret extends SubsystemBase {
   private final TalonFX turretMotor;
   private final TalonFXConfiguration turretMotorConfig;
 
+  private boolean isBlue = false;
+
   public Command turretPos () {
       return Commands.runOnce(() -> spinPositive());
     }
@@ -34,6 +38,8 @@ public class Turret extends SubsystemBase {
 
   /** Creates a new Turret. */
   public Turret() {
+
+    isBlue = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue;
 
     turretMotor = new TalonFX(TurretConstants.turret_motorId);
     turretMotorConfig = new TalonFXConfiguration();
@@ -87,5 +93,18 @@ public class Turret extends SubsystemBase {
 
   public void stop() {
     turretMotor.set(0);
+  }
+
+  public double GetTx()
+  {
+    Long id = NetworkTableInstance.getDefault().getTable("limelight").getEntry("id").getInteger(0);
+    if (isBlue)
+    {
+      return (id == 26 || id == 25) ? NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0) : 0; 
+    }
+    else
+    {
+      return (id == 9 || id == 10) ? NetworkTableInstance.getDefault().getTable("limelight").getEntry("tx").getDouble(0) : 0; 
+    }
   }
 }

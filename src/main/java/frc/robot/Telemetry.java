@@ -1,5 +1,8 @@
 package frc.robot;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
 
@@ -29,6 +32,8 @@ public class Telemetry {
      * @param maxSpeed Maximum speed in meters per second
      */
     public Telemetry(double maxSpeed) {
+        customTelemetry = new HashMap<>();
+
         MaxSpeed = maxSpeed;
         SignalLogger.start();
 
@@ -55,6 +60,10 @@ public class Telemetry {
     private final NetworkTable table = inst.getTable("Pose");
     private final DoubleArrayPublisher fieldPub = table.getDoubleArrayTopic("robotPose").publish();
     private final StringPublisher fieldTypePub = table.getStringTopic(".type").publish();
+
+    /* Custom telemetry */
+    private final NetworkTable customTable = inst.getTable("Custom");
+    private Map<String, StringPublisher> customTelemetry;
 
     /* Mechanisms to represent the swerve module states */
     private final Mechanism2d[] m_moduleMechanisms = new Mechanism2d[] {
@@ -85,6 +94,16 @@ public class Telemetry {
     private final double[] m_poseArray = new double[3];
     private final double[] m_moduleStatesArray = new double[8];
     private final double[] m_moduleTargetsArray = new double[8];
+
+    public void publishValue(String key, String value) {
+        if (customTelemetry.containsKey(key)) {
+            customTelemetry.get(key).set(value);
+            return;
+        }
+        StringPublisher publisher = customTable.getStringTopic(key).publish();
+        customTelemetry.put(key, publisher);
+        publisher.set(value);
+    }
 
     /** Accept the swerve drive state and telemeterize it to SmartDashboard and SignalLogger. */
     public void telemeterize(SwerveDriveState state) {

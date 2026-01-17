@@ -114,6 +114,10 @@ public class Constants {
     public static class ShooterConstants {
         public static final int kHoodMotorId = 30;
         public static final int kShooterMotorId = 31;
+
+        // subject to change if we end up automating these
+        public static final double kHoodSpeed = 1;
+        public static final double kShooterSpeed = 1;
     }
 
     public static class IntakeConstants

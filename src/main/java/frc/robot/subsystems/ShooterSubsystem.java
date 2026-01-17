@@ -5,6 +5,8 @@
 package frc.robot.subsystems;
 
 
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -21,11 +23,18 @@ public class ShooterSubsystem extends SubsystemBase {
 
     /** Creates a new Shooter. */
     public ShooterSubsystem() {
-        // TODO: probably set current limits
         hoodMotor = new TalonFX(Constants.ShooterConstants.kHoodMotorId);
         shooterMotor = new TalonFX(Constants.ShooterConstants.kShooterMotorId);
 
-        // hoodMotor.setPosition(Angle.ofBaseUnits(120, Degrees));
+        CurrentLimitsConfigs hoodConfigs = new CurrentLimitsConfigs();
+        hoodConfigs.StatorCurrentLimit = Constants.ShooterConstants.kHoodCurrentLimit;
+        hoodConfigs.StatorCurrentLimitEnable = true;
+        hoodMotor.getConfigurator().apply(hoodConfigs);
+
+        CurrentLimitsConfigs shooterConfigs = new CurrentLimitsConfigs();
+        shooterConfigs.StatorCurrentLimit = Constants.ShooterConstants.kShooterCurrentLimit;
+        shooterConfigs.StatorCurrentLimitEnable = true;
+        shooterMotor.getConfigurator().apply(shooterConfigs);
     }
 
     public Command shootCmd() {

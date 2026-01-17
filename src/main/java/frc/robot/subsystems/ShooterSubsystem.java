@@ -6,9 +6,11 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.Degrees;
 
+import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -66,6 +68,28 @@ public class ShooterSubsystem extends SubsystemBase {
         } else {
             shooterMotor.set(0);
         }
+    }
+
+    public void fireAtRPM(int rpm)
+    {
+        MotionMagicVelocityVoltage velocityTgt = new MotionMagicVelocityVoltage(rpm).withSlot(0);
+        shooterMotor.setControl(velocityTgt);
+    }
+
+    public void autoFire()
+    {
+        int tgtRPM = getCorrectRPM();
+        fireAtRPM(tgtRPM);
+    }
+
+    public int getCorrectRPM()
+    {
+        return 1000; // replace with the actual math later
+    }
+
+    public double GetShooterVelocity()
+    {
+        return shooterMotor.getVelocity().getValueAsDouble();
     }
 
     @Override

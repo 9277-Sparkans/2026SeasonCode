@@ -114,6 +114,8 @@ public class Constants {
     public static class ShooterConstants {
         public static final int kHoodMotorId = 30;
         public static final int kShooterMotorId = 31;
+
+        public static final int rpmLenience = 50;
     }
 
     public static class IntakeConstants
@@ -146,5 +148,14 @@ public class Constants {
         public static final double rollerMaxVoltage = 4; // can change if not needed
         public static final double rollerMaxAcceleration = 40;
         public static final double rollerMaxVelocity = 100; // rps
+    }
+
+    public static class TransferConstants
+    {
+        public static final int transferID = 2; // change later
+
+        public static final double transferMaxVoltage = 4; // can change if not needed
+        public static final double transferMaxAcceleration = 40;
+        public static final double transferMaxVelocity = 100; // rps
     }
 }

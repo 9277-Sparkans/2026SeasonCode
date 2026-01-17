@@ -49,6 +49,9 @@ public class RobotContainer {
     private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
     public final Intake intake = new Intake();
     public final Turret turret = new Turret();
+    public final Transfer transfer = new Transfer();
+
+    public final AutoFire autoFireCommand = new AutoFire(turret, transfer, shooterSubsystem)
 
     public RobotContainer() {
         NamedCommands.registerCommand("testNamedCommand", Commands.runOnce(() -> System.out.println("this named command works")));
@@ -119,7 +122,17 @@ public class RobotContainer {
         joystick.leftBumper()
             .whileTrue(
                 new InstantCommand(() -> intake.retractCommand()));
-    }
+        
+        jotstick.rightTrigger()
+            .whileTrue(
+                new InstantCommand(() -> transfer.activateTransferCommand()))
+            .onFalse(
+                new InstantCommand(() -> transfer.stopTransferCommand()));
+
+        joystick.kController_rightStickButton()
+            .whileTrue(
+                new InstantCommand(() -> autoFire.execute()));
+    }   
 
     // debugging/sim
     private void publishHoodPosition() {

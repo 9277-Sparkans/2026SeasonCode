@@ -25,7 +25,7 @@ public class Climb extends SubsystemBase
 
         climbConfig.StatorCurrentLimit = Constants.IndexerConstants.kCURRENT_LIMIT;
         climbConfig.StatorCurrentLimitEnable = true;  
-        climbConfig.withNeutralMode(NeutralModeValue.Brake)
+        climbConfig.withNeutralMode(NeutralModeValue.Brake);
         climb.getConfigurator().apply(climbConfig);
         
 	}
@@ -45,6 +45,6 @@ public class Climb extends SubsystemBase
     public void setPercentOutput(double percent) {
         DutyCycleOut control = new DutyCycleOut(percent).withEnableFOC(false);//Could play with feild oriented control to ensure the indexer doesnt index unless in positions where robot can shoot.
         climb.setControl(control);
-	
+	}
 
 }

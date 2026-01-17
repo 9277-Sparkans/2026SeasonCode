@@ -49,6 +49,7 @@ public class RobotContainer {
     private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
     public final Intake intake = new Intake();
     public final Turret turret = new Turret();
+    public final Climb climb = new Climb();
 
     public RobotContainer() {
         NamedCommands.registerCommand("testNamedCommand", Commands.runOnce(() -> System.out.println("this named command works")));
@@ -81,10 +82,10 @@ public class RobotContainer {
         ));
 
         joystick.x().onTrue(shooterSubsystem.shootCmd());
-        joystick.povUp()startEnd(
+        joystick.povUp().startEnd(
             shooterSubsystem.runHoodCmd(),
             shooterSubsystem.stopHoodCmd()
-        )
+        );
         
         joystick.povDown().startEnd(
             shooterSubsystem.runHoodReverseCmd(),
@@ -93,13 +94,13 @@ public class RobotContainer {
         
 
         joystick.povRight().startEnd(
-            Climb.raise(),
-            Climb.hang()
-        )
+            climb.raise(),
+            climb.hang()
+        );
 
-        joystick.povLeft().startEnd
-        (   Climb.lower(),
-            Climb.hang()
+        joystick.povLeft().startEnd(
+            climb.lower(),
+            climb.hang()
         );
         
         // Run SysId routines when holding back/start and X/Y.

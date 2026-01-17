@@ -41,6 +41,9 @@ public class Telemetry {
         for (int i = 0; i < 4; ++i) {
             SmartDashboard.putData("Module " + i, m_moduleMechanisms[i]);
         }
+
+        // debugging
+        publishHoodPosition(0);
     }
 
     /* What to publish over networktables for telemetry */
@@ -55,6 +58,10 @@ public class Telemetry {
     private final StructArrayPublisher<SwerveModulePosition> driveModulePositions = driveStateTable.getStructArrayTopic("ModulePositions", SwerveModulePosition.struct).publish();
     private final DoublePublisher driveTimestamp = driveStateTable.getDoubleTopic("Timestamp").publish();
     private final DoublePublisher driveOdometryFrequency = driveStateTable.getDoubleTopic("OdometryFrequency").publish();
+
+    /* misc telemetry data */
+    private final NetworkTable miscTable = inst.getTable("Misc");
+    private final DoublePublisher hoodPosition = miscTable.getDoubleTopic("HoodPosition").publish();
 
     /* Robot pose for field positioning */
     private final NetworkTable table = inst.getTable("Pose");
@@ -142,5 +149,10 @@ public class Telemetry {
             m_moduleDirections[i].setAngle(state.ModuleStates[i].angle);
             m_moduleSpeeds[i].setLength(state.ModuleStates[i].speedMetersPerSecond / (2 * MaxSpeed));
         }
+    }
+
+    // TODO: figure out a better process for this, as one probably exists lol
+    public void publishHoodPosition(double position) {
+        hoodPosition.set(position);
     }
 }

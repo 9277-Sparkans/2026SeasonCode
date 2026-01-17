@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.Constants.OIConstants;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
@@ -84,10 +83,12 @@ public class RobotContainer {
         ));
 
         joystick.x().onTrue(shooterSubsystem.shootCmd());
-        joystick.povUp().onTrue(shooterSubsystem.runHoodCmd().beforeStarting(Commands.runOnce(() -> System.out.println("hiya"))));
-        joystick.povUp().onFalse(Commands.runOnce(() -> publishHoodPosition()));
-        joystick.povUp().onFalse(shooterSubsystem.stopHoodCmd());
+        joystick.povUp().onTrue(shooterSubsystem.runHoodCmd());
+        joystick.povDown().onTrue(shooterSubsystem.runHoodReverseCmd());
 
+        joystick.povUp().onFalse(shooterSubsystem.stopHoodCmd());
+        joystick.povDown().onFalse(shooterSubsystem.stopHoodCmd());
+        
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
         joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
@@ -133,13 +134,6 @@ public class RobotContainer {
             .whileTrue(
                 new InstantCommand(() -> autoFire.execute()));
     }   
-
-    // debugging/sim
-    private void publishHoodPosition() {
-        logger.publishHoodPosition(shooterSubsystem.getHoodPos());
-        System.out.println(shooterSubsystem.getHoodPos());
-        System.out.println("PUBLISHED!");
-    }
 
     public Command getAutonomousCommand() {
         return new PathPlannerAuto("testAuto");

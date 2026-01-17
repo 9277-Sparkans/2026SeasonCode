@@ -4,17 +4,16 @@
 
 package frc.robot.subsystems;
 
-import static edu.wpi.first.units.Units.Degrees;
 
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.units.measure.AngularVelocity;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.Constants.ShooterConstants;
 
 public class ShooterSubsystem extends SubsystemBase {
     private final TalonFX hoodMotor;
@@ -35,16 +34,12 @@ public class ShooterSubsystem extends SubsystemBase {
         return Commands.runOnce(() -> toggleShoot());
     }
 
-    public double getHoodPos() {
-        return hoodMotor.getMotorVoltage().getValueAsDouble();
-    }
-
-    public void adjustHood(double delta) {
-        hoodMotor.setPosition(Angle.ofBaseUnits(delta, Degrees));
-    }
-
     public void runHood() {
-        hoodMotor.set(1);
+        hoodMotor.set(ShooterConstants.kHoodSpeed);
+    }
+
+    public void runHoodReverse() {
+        hoodMotor.set(-ShooterConstants.kHoodSpeed);
     }
 
     public void stopHood() {
@@ -52,11 +47,15 @@ public class ShooterSubsystem extends SubsystemBase {
     }
     
     public Command runHoodCmd() {
-        return Commands.run(() -> runHood()).handleInterrupt(() -> stopHood());
+        return Commands.runOnce(() -> runHood());
+    }
+
+    public Command runHoodReverseCmd() {
+        return Commands.runOnce(() -> runHoodReverse());
     }
 
     public Command stopHoodCmd() {
-        return Commands.run(() -> stopHood());
+        return Commands.runOnce(() -> stopHood());
     }
 
     private void toggleShoot() {
@@ -64,7 +63,7 @@ public class ShooterSubsystem extends SubsystemBase {
 
         // TODO: adjust this based on distance to hub/alliance zone
         if (shooting) {
-            shooterMotor.set(1);
+            shooterMotor.set(ShooterConstants.kShooterSpeed);
         } else {
             shooterMotor.set(0);
         }

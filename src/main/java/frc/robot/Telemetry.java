@@ -1,5 +1,8 @@
 package frc.robot;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
 
@@ -29,6 +32,8 @@ public class Telemetry {
      * @param maxSpeed Maximum speed in meters per second
      */
     public Telemetry(double maxSpeed) {
+        customTelemetry = new HashMap<>();
+
         MaxSpeed = maxSpeed;
         SignalLogger.start();
 
@@ -36,9 +41,6 @@ public class Telemetry {
         for (int i = 0; i < 4; ++i) {
             SmartDashboard.putData("Module " + i, m_moduleMechanisms[i]);
         }
-
-        // debugging
-        publishHoodPosition(0);
     }
 
     /* What to publish over networktables for telemetry */
@@ -54,14 +56,14 @@ public class Telemetry {
     private final DoublePublisher driveTimestamp = driveStateTable.getDoubleTopic("Timestamp").publish();
     private final DoublePublisher driveOdometryFrequency = driveStateTable.getDoubleTopic("OdometryFrequency").publish();
 
-    /* misc telemetry data */
-    private final NetworkTable miscTable = inst.getTable("Misc");
-    private final DoublePublisher hoodPosition = miscTable.getDoubleTopic("HoodPosition").publish();
-
     /* Robot pose for field positioning */
     private final NetworkTable table = inst.getTable("Pose");
     private final DoubleArrayPublisher fieldPub = table.getDoubleArrayTopic("robotPose").publish();
     private final StringPublisher fieldTypePub = table.getStringTopic(".type").publish();
+
+    /* Custom telemetry */
+    private final NetworkTable customTable = inst.getTable("Custom");
+    private Map<String, StringPublisher> customTelemetry;
 
     /* Mechanisms to represent the swerve module states */
     private final Mechanism2d[] m_moduleMechanisms = new Mechanism2d[] {
@@ -92,6 +94,16 @@ public class Telemetry {
     private final double[] m_poseArray = new double[3];
     private final double[] m_moduleStatesArray = new double[8];
     private final double[] m_moduleTargetsArray = new double[8];
+
+    public void publishValue(String key, String value) {
+        if (customTelemetry.containsKey(key)) {
+            customTelemetry.get(key).set(value);
+            return;
+        }
+        StringPublisher publisher = customTable.getStringTopic(key).publish();
+        customTelemetry.put(key, publisher);
+        publisher.set(value);
+    }
 
     /** Accept the swerve drive state and telemeterize it to SmartDashboard and SignalLogger. */
     public void telemeterize(SwerveDriveState state) {
@@ -130,10 +142,5 @@ public class Telemetry {
             m_moduleDirections[i].setAngle(state.ModuleStates[i].angle);
             m_moduleSpeeds[i].setLength(state.ModuleStates[i].speedMetersPerSecond / (2 * MaxSpeed));
         }
-    }
-
-    // TODO: figure out a better process for this, as one probably exists lol
-    public void publishHoodPosition(double position) {
-        hoodPosition.set(position);
     }
 }

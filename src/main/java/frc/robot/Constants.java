@@ -151,4 +151,17 @@ public class Constants {
         public static final double rollerMaxAcceleration = 40;
         public static final double rollerMaxVelocity = 100; // rps
     }
+
+    public static class ClimbConstants
+    {
+        public static final int kClimbMotorID = 32;
+
+        public static final double kClimbMaxVelocity = 90; // rps
+        public static final int kClimbCURRENT_LIMIT = 45;   
+        public static final double kClimb_SPEED = .3; 
+
+
+        public static final int kClimbGearRatio = 9 / 1;
+
+    }
 }

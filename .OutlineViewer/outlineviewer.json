@@ -1,0 +1,17 @@
+{
+  "NetworkTables Settings": {
+    "mode": "Client (NT4)",
+    "serverTeam": "9277"
+  },
+  "transitory": {
+    "limelight-a": {
+      "double[]##v_/limelight-a/botpose": {
+        "open": true
+      },
+      "double[]##v_/limelight-a/rawfiducials": {
+        "open": true
+      },
+      "open": true
+    }
+  }
+}

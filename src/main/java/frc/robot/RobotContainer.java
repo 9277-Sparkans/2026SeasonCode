@@ -24,6 +24,7 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 import frc.robot.Constants.OIConstants;
+import frc.robot.commands.TurretTracking;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.Intake;
@@ -98,6 +99,8 @@ public class RobotContainer {
 
         joystick.leftTrigger().onTrue(drivetrain.runOnce(() -> turret.turretPos()));
         joystick.rightTrigger().onTrue(drivetrain.runOnce(() -> turret.turretNeg()));
+
+        joystick.a().onTrue(new TurretTracking((turret)));
 
         drivetrain.registerTelemetry(logger::telemeterize);
 

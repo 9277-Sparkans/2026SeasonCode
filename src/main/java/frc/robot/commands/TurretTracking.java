@@ -29,19 +29,19 @@ public class TurretTracking extends Command {
 
   boolean isBlue = false;
 
-  public double GetTx()
-  {
-    boolean isBlue = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue;
+  // public double GetTx()
+  // {
+  //   boolean isBlue = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue;
 
-    long tid = NetworkTableInstance.getDefault().getTable("limelight-a").getEntry("tid").getInteger(0);
-    if (isBlue)
-    {
-      return (tid == 26 || tid == 25) ? NetworkTableInstance.getDefault().getTable("limelight-a").getEntry("tx").getDouble(1111) : 222222; 
-    }
-    else
-    {
-      return (tid == 9 || tid == 10) ? NetworkTableInstance.getDefault().getTable("limelight-a").getEntry("tx").getDouble(0) : 0; 
-    }  }
+  //   long tid = NetworkTableInstance.getDefault().getTable("limelight-a").getEntry("tid").getInteger(0);
+  //   if (isBlue)
+  //   {
+  //     return (tid == 26 || tid == 25) ? NetworkTableInstance.getDefault().getTable("limelight-a").getEntry("tx").getDouble(1111) : 222222; 
+  //   }
+  //   else
+  //   {
+  //     return (tid == 9 || tid == 10) ? NetworkTableInstance.getDefault().getTable("limelight-a").getEntry("tx").getDouble(0) : 0; 
+  //   }  }
 
 
   
@@ -62,7 +62,7 @@ public class TurretTracking extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    System.out.println("Tx is " + GetTx());
+    //System.out.println("Tx is " + GetTx());
     
     //System.out.println("Tag ID is " + tid)
 
@@ -78,7 +78,7 @@ public class TurretTracking extends Command {
     else {
       hub = redHub;
     }
-
+    //var distanceToHub = hub.minus(pose.pose.getTranslation());
     var angleToHub = hub.minus(pose.pose.getTranslation()).getAngle().getDegrees();
     System.out.println("bot position is " + pose.pose);
     System.out.println(hub);

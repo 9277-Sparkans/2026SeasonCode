@@ -64,7 +64,7 @@ public class ShooterSubsystem extends SubsystemBase {
         double hoodSpace = currentHoodPosition / HoodConstants.kGearRatio;
         double hoodAngle = hoodSpace * (maximumAngle-minimumAngle);
 
-        return HoodConstants.maximumAngle - hoodAngle;
+        return Math.max(HoodConstants.maximumAngle - hoodAngle, HoodConstants.minimumAngle);
     }
 
     public void runHood() {

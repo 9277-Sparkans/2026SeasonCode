@@ -41,7 +41,8 @@ public class TurretTracking extends Command {
     else
     {
       return (tid == 9 || tid == 10) ? NetworkTableInstance.getDefault().getTable("limelight-a").getEntry("tx").getDouble(0) : 0; 
-    }  }
+    }  
+  }
 
 
   
@@ -83,8 +84,6 @@ public class TurretTracking extends Command {
     System.out.println("bot position is " + pose.pose);
     System.out.println(hub);
     System.out.println("angle is " + angleToHub);
-
-    
   }
 
   // Called once the command ends or is interrupted.

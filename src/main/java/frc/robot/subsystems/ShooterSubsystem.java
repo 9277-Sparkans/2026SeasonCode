@@ -141,13 +141,20 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public void autoFire()
     {
-        int tgtRPM = getCorrectRPM();
+        int tgtRPM = GetCorrectRPM();
+        tgtAngle = GetCorrectHoodAngle();
         fireAtRPM(tgtRPM);
+        moveHoodToAngle(tgtAngle);
     }
 
-    public int getCorrectRPM()
+    public int GetCorrectRPM()
     {
         return 1000; // replace with the actual math later
+    }
+
+    public double GetCorrectHoodAngle()
+    {
+        return 30; // replace with actual math later
     }
 
     public double GetShooterVelocity()

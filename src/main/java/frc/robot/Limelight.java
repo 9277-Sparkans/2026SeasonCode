@@ -23,9 +23,9 @@ public class Limelight
     // private static final Translation2d blueHub = new Translation2d(182.105, 158.84);
     private static final Translation2d blueHub = new Translation2d(4.625467, 4.034536);
 
-    boolean isBlue = false;
+    static boolean isBlue = false;
     
-    public double GetTx()
+    public static double GetTx()
     {
         boolean isBlue = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue;
 
@@ -40,17 +40,17 @@ public class Limelight
         }  
     }
 
-    public boolean getIsBlue()
+    public static boolean getIsBlue()
     {
         return isBlue = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue;
     }
 
-    public PoseEstimate getPose()
+    public static PoseEstimate getPose()
     {
         return LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-a");        
     }
 
-    public Translation2d getHub(boolean isBlue)
+    public static Translation2d getHub(boolean isBlue)
     {
         final Translation2d hub;
 
@@ -66,7 +66,7 @@ public class Limelight
         return hub;
     }
 
-    public Translation2d GetDistance()
+    public static Translation2d GetDistance()
     {
         boolean isBlue = getIsBlue();
         Translation2d hub = getHub(isBlue);
@@ -75,7 +75,7 @@ public class Limelight
         return hub.minus(pose.pose.getTranslation());
     }
 
-    public double GetAngle()
+    public static double GetAngle()
     {
         boolean isBlue = getIsBlue();
         Translation2d hub = getHub(isBlue);

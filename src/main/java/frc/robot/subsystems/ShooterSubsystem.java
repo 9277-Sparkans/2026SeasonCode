@@ -7,46 +7,72 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.Constants.HoodConstants;
 
 public class ShooterSubsystem extends SubsystemBase {
     private final TalonFX hoodMotor;
+    private final TalonFXConfiguration hoodMotorConfiguration;
+
     private final TalonFX shooterMotor;
 
     private boolean shooting;
 
     /** Creates a new Shooter. */
     public ShooterSubsystem() {
-        hoodMotor = new TalonFX(Constants.ShooterConstants.kHoodMotorId);
-        shooterMotor = new TalonFX(Constants.ShooterConstants.kShooterMotorId);
+        // TODO: probably set current limits
+        hoodMotor = new TalonFX(HoodConstants.kHoodMotorId);
+        hoodMotorConfiguration = new TalonFXConfiguration();
 
         CurrentLimitsConfigs hoodConfigs = new CurrentLimitsConfigs();
-        hoodConfigs.StatorCurrentLimit = Constants.ShooterConstants.kHoodCurrentLimit;
+        hoodConfigs.StatorCurrentLimit = HoodConstants.kHoodCurrentLimit;
         hoodConfigs.StatorCurrentLimitEnable = true;
         hoodMotor.getConfigurator().apply(hoodConfigs);
 
-        CurrentLimitsConfigs shooterConfigs = new CurrentLimitsConfigs();
-        shooterConfigs.StatorCurrentLimit = Constants.ShooterConstants.kShooterCurrentLimit;
-        shooterConfigs.StatorCurrentLimitEnable = true;
-        shooterMotor.getConfigurator().apply(shooterConfigs);
+        hoodMotorConfiguration.Slot0.kG = HoodConstants.hood_kG;
+		hoodMotorConfiguration.Slot0.kP = HoodConstants.hood_kP;
+		hoodMotorConfiguration.Slot0.kI = HoodConstants.hood_kI;
+		hoodMotorConfiguration.Slot0.kD = HoodConstants.hood_kD; 
+
+		hoodMotorConfiguration.Voltage.PeakForwardVoltage = HoodConstants.hood_maxVoltage;
+		hoodMotorConfiguration.Voltage.PeakReverseVoltage = -HoodConstants.hood_maxVoltage;
+		hoodMotorConfiguration.MotionMagic.MotionMagicAcceleration = HoodConstants.hood_maxAcceleration;
+		hoodMotorConfiguration.MotionMagic.MotionMagicCruiseVelocity = HoodConstants.hood_maxVelocity;
+
+        shooterMotor = new TalonFX(HoodConstants.kHoodMotorId);
     }
 
     public Command shootCmd() {
         return Commands.runOnce(() -> toggleShoot());
     }
 
+    public void moveHoodToAngle(double theta)
+    {
+
+    }
+
+    public double getHoodAngle()
+    {
+        double currentHoodPosition = hoodMotor.getPosition().getValueAsDouble(); // rotations
+        double hoodSpace = currentHoodPosition / HoodConstants.kGearRatio;
+        double hoodAngle = hoodSpace * (HoodConstants.maximumAngle-HoodConstants.minimumAngle);
+
+        return Math.max(HoodConstants.maximumAngle - hoodAngle, HoodConstants.minimumAngle);
+    }
+
     public void runHood() {
-        hoodMotor.set(ShooterConstants.kHoodSpeed);
+        hoodMotor.set(HoodConstants.kHoodSpeed);
     }
 
     public void runHoodReverse() {
-        hoodMotor.set(-ShooterConstants.kHoodSpeed);
+        hoodMotor.set(-HoodConstants.kHoodSpeed);
     }
 
     public void stopHood() {
@@ -74,6 +100,28 @@ public class ShooterSubsystem extends SubsystemBase {
         } else {
             shooterMotor.set(0);
         }
+    }
+
+    public void fireAtRPM(int rpm)
+    {
+        MotionMagicVelocityVoltage velocityTgt = new MotionMagicVelocityVoltage(rpm).withSlot(0);
+        shooterMotor.setControl(velocityTgt);
+    }
+
+    public void autoFire()
+    {
+        int tgtRPM = getCorrectRPM();
+        fireAtRPM(tgtRPM);
+    }
+
+    public int getCorrectRPM()
+    {
+        return 1000; // replace with the actual math later
+    }
+
+    public double GetShooterVelocity()
+    {
+        return shooterMotor.getVelocity().getValueAsDouble();
     }
 
     @Override

@@ -17,36 +17,15 @@ import edu.wpi.first.units.measure.Distance;
 import static edu.wpi.first.units.Units.Inch;
 import static edu.wpi.first.units.Units.Meter;
 
+import frc.robot.Limelight;
+
 import edu.wpi.first.math.geometry.Translation2d;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class TurretTracking extends Command {
-  private static final Translation2d redHub = new Translation2d(11.915521, 4.034536);
-  // private static final Translation2d blueHub = new Translation2d(182.105, 158.84);
-  private static final Translation2d blueHub = new Translation2d(4.625467, 4.034536);
-
   private Turret turret;
 
-  boolean isBlue = false;
-
-  public double GetTx()
-  {
-    boolean isBlue = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue;
-
-    long tid = NetworkTableInstance.getDefault().getTable("limelight-a").getEntry("tid").getInteger(0);
-    if (isBlue)
-    {
-      return (tid == 26 || tid == 25) ? NetworkTableInstance.getDefault().getTable("limelight-a").getEntry("tx").getDouble(1111) : 222222; 
-    }
-    else
-    {
-      return (tid == 9 || tid == 10) ? NetworkTableInstance.getDefault().getTable("limelight-a").getEntry("tx").getDouble(0) : 0; 
-    }  }
-
-
-  
   /** Creates a new TurretTracking. */
-  
 
   public TurretTracking(Turret turret) {
 
@@ -61,30 +40,18 @@ public class TurretTracking extends Command {
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-    System.out.println("Tx is " + GetTx());
-    
-    //System.out.println("Tag ID is " + tid)
-
+  public void execute() 
+  {
     var pose = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-a");
 
     boolean isBlue = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue;
 
-    final Translation2d hub;
+    Translation2d hub = Limelight.getHub(isBlue);
 
-    if (isBlue){
-      hub = blueHub;
-    }
-    else {
-      hub = redHub;
-    }
-
-    var angleToHub = hub.minus(pose.pose.getTranslation()).getAngle().getDegrees();
+    var angleToHub = Limelight.GetAngle();
     System.out.println("bot position is " + pose.pose);
     System.out.println(hub);
     System.out.println("angle is " + angleToHub);
-
-    
   }
 
   // Called once the command ends or is interrupted.

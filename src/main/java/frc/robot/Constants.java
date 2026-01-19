@@ -112,12 +112,34 @@ public class Constants {
     }
     
     public static class ShooterConstants {
-        public static final int kHoodMotorId = 30;
         public static final int kShooterMotorId = 31;
 
         // subject to change if we end up automating these
-        public static final double kHoodSpeed = 1;
         public static final double kShooterSpeed = 1;
+
+        public static final int rpmLenience = 50;
+    }
+
+    public static class HoodConstants
+    {
+        public static final int kHoodMotorId = 30;
+
+        public static final double hood_maxVelocity = 125; // rotations per second
+        public static final double hood_maxAcceleration = 80; // rotations per second^2
+        public static final double hood_maxVoltage = 5;// kraken x44 max voltage
+
+        public static final double hood_kG = 0.03;
+        public static final double hood_kS = 0.01;
+        public static final double hood_kP = 4.5;
+        public static final double hood_kI = 0.0;
+        public static final double hood_kD = 0.3;
+
+        public static final double kHoodSpeed = 1;
+
+        public static final double minimumAngle = 15;
+        public static final double maximumAngle = 45;
+
+        public static final double kGearRatio = 1 / (15 / 210);
 
         public static final double kHoodCurrentLimit = 35;
         public static final double kShooterCurrentLimit = 35;
@@ -153,5 +175,14 @@ public class Constants {
         public static final double rollerMaxVoltage = 4; // can change if not needed
         public static final double rollerMaxAcceleration = 40;
         public static final double rollerMaxVelocity = 100; // rps
+    }
+
+    public static class TransferConstants
+    {
+        public static final int transferID = 2; // change later
+
+        public static final double transferMaxVoltage = 4; // can change if not needed
+        public static final double transferMaxAcceleration = 40;
+        public static final double transferMaxVelocity = 100; // rps
     }
 }

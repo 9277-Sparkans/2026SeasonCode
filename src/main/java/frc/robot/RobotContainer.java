@@ -24,6 +24,7 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 import frc.robot.Constants.OIConstants;
+import frc.robot.commands.TurretTracking;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.Intake;
@@ -49,6 +50,7 @@ public class RobotContainer {
     private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
     public final Intake intake = new Intake();
     public final Turret turret = new Turret();
+
     public final Climb climb = new Climb();
 
     public RobotContainer() {
@@ -82,26 +84,26 @@ public class RobotContainer {
         ));
 
         joystick.x().onTrue(shooterSubsystem.shootCmd());
-        joystick.povUp().startEnd(
-            shooterSubsystem.runHoodCmd(),
-            shooterSubsystem.stopHoodCmd()
-        );
-        
-        joystick.povDown().startEnd(
-            shooterSubsystem.runHoodReverseCmd(),
-            shooterSubsystem.stopHoodCmd()
-        );
+
+        joystick.povUp().onTrue(shooterSubsystem.runHoodCmd());
+        joystick.povDown().onTrue(shooterSubsystem.runHoodReverseCmd());
+
+        joystick.povUp().onFalse(shooterSubsystem.stopHoodCmd());
+        joystick.povDown().onFalse(shooterSubsystem.stopHoodCmd());
         
 
-        joystick.povRight().startEnd(
-            climb.raise(),
-            climb.hang()
-        );
 
-        joystick.povLeft().startEnd(
-            climb.lower(),
-            climb.hang()
-        );
+        joystick.povRight()
+            .whileTrue(
+                new InstantCommand(() -> climb.raise()))
+            .onFalse(
+                new InstantCommand(() -> climb.hang()));
+
+        joystick.povLeft()
+            .whileTrue(
+                new InstantCommand(() -> climb.lower()))
+            .onFalse(
+                new InstantCommand(() -> climb.hang()));
         
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
@@ -116,19 +118,21 @@ public class RobotContainer {
         joystick.leftTrigger().onTrue(drivetrain.runOnce(() -> turret.turretPos()));
         joystick.rightTrigger().onTrue(drivetrain.runOnce(() -> turret.turretNeg()));
 
+        joystick.a().onTrue(new TurretTracking((turret)));
+
         drivetrain.registerTelemetry(logger::telemeterize);
 
-        joystick.rightTrigger().startEnd(
-                new InstantCommand(() -> intake.intakeCommand()),
-                new InstantCommand(() -> intake.stopRollerCommand())
-            );
-        
+        joystick.rightTrigger()
+            .whileTrue(
+                new InstantCommand(() -> intake.intakeCommand()))
+            .onFalse(
+                new InstantCommand(() -> intake.stopRollerCommand()));
 
-        joystick.leftTrigger().startEnd(
-                new InstantCommand(() -> intake.outtakeCommand()),
-                new InstantCommand(() -> intake.stopRollerCommand())
-            );
-        
+        joystick.leftTrigger()
+            .whileTrue(
+                new InstantCommand(() -> intake.outtakeCommand()))
+            .onFalse(
+                new InstantCommand(() -> intake.stopRollerCommand()));
 
         joystick.rightBumper()
             .whileTrue(

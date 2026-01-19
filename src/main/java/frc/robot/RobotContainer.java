@@ -45,6 +45,7 @@ public class RobotContainer {
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
     private final CommandXboxController joystick = new CommandXboxController(0);
+    private final CommandXboxController joystick2 = new CommandXboxController(1);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
@@ -138,6 +139,16 @@ public class RobotContainer {
         joystick.rightStick()
             .whileTrue(
                 new InstantCommand(() -> autoFireCommand.execute()));
+
+        joystick2.rightBumper()
+            .onTrue(
+                new InstantCommand(() -> shooterSubsystem.moveHoodUpCmd()));
+        joystick2.leftBumper()
+            .onTrue(
+                new InstantCommand(() -> shooterSubsystem.moveHoodDownCmd()));
+        joystick2.a()
+            .whileTrue(
+                new InstantCommand(() -> shooterSubsystem.moveHoodToAngle(shooterSubsystem.tgtAngle)));
     }   
 
     public Command getAutonomousCommand() {

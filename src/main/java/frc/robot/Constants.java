@@ -136,13 +136,15 @@ public class Constants {
 
         public static final double kHoodSpeed = 1;
 
-        public static final double minimumAngle = 15;
-        public static final double maximumAngle = 45;
+        public static final double kMinimumAngle = 15;
+        public static final double kMaximumAngle = 45;
 
         public static final double kGearRatio = 1 / (15 / 210);
 
         public static final double kHoodCurrentLimit = 35;
         public static final double kShooterCurrentLimit = 35;
+
+        public static final double kHoodIncrement = 5;
     }
 
     public static class IntakeConstants

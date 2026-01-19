@@ -4,13 +4,12 @@
 
 package frc.robot.subsystems;
 
-
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -24,6 +23,8 @@ public class ShooterSubsystem extends SubsystemBase {
     private final TalonFX shooterMotor;
 
     private boolean shooting;
+
+    public double tgtAngle = HoodConstants.kMaximumAngle;
 
     /** Creates a new Shooter. */
     public ShooterSubsystem() {
@@ -53,18 +54,22 @@ public class ShooterSubsystem extends SubsystemBase {
         return Commands.runOnce(() -> toggleShoot());
     }
 
+    
+
     public void moveHoodToAngle(double theta)
     {
-
+        MotionMagicVoltage hoodRequest = new MotionMagicVoltage(theta).withSlot(0);
+		hoodMotor.setControl(hoodRequest.withPosition(GetHoodAngle()));
     }
 
-    public double getHoodAngle()
+    public double GetHoodAngle()
     {
         double currentHoodPosition = hoodMotor.getPosition().getValueAsDouble(); // rotations
         double hoodSpace = currentHoodPosition / HoodConstants.kGearRatio;
-        double hoodAngle = hoodSpace * (HoodConstants.maximumAngle-HoodConstants.minimumAngle);
+        double hoodAngle = hoodSpace * 360;
 
-        return Math.max(HoodConstants.maximumAngle - hoodAngle, HoodConstants.minimumAngle);
+        return Math.max(HoodConstants.kMaximumAngle + 
+            HoodConstants.kMinimumAngle - hoodAngle, HoodConstants.kMinimumAngle);
     }
 
     public void runHood() {
@@ -89,6 +94,32 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public Command stopHoodCmd() {
         return Commands.runOnce(() -> stopHood());
+    }
+
+    public Command moveHoodUpCmd()
+    {
+        return Commands.runOnce(() -> moveHoodUp());
+    }
+
+    public Command moveHoodDownCmd()
+    {
+        return Commands.runOnce(() -> moveHoodDown());
+    }
+
+    public void moveHoodUp()
+    {
+        if (tgtAngle - HoodConstants.kHoodIncrement >= HoodConstants.kMinimumAngle)
+        {
+            tgtAngle -= HoodConstants.kHoodIncrement;
+        }
+    }
+
+    public void moveHoodDown()
+    {
+        if (tgtAngle + HoodConstants.kHoodIncrement <= HoodConstants.kMaximumAngle)
+        {
+            tgtAngle += HoodConstants.kHoodIncrement;
+        }
     }
 
     private void toggleShoot() {

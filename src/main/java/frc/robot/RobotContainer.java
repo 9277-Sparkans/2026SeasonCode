@@ -50,6 +50,8 @@ public class RobotContainer {
     public final Intake intake = new Intake();
     public final Turret turret = new Turret();
 
+    public final Climb climb = new Climb();
+
     public RobotContainer() {
         NamedCommands.registerCommand("testNamedCommand", Commands.runOnce(() -> System.out.println("this named command works")));
 
@@ -81,26 +83,26 @@ public class RobotContainer {
         ));
 
         joystick.x().onTrue(shooterSubsystem.shootCmd());
-        joystick.povUp()startEnd(
-            shooterSubsystem.runHoodCmd(),
-            shooterSubsystem.stopHoodCmd()
-        )
-        
-        joystick.povDown().startEnd(
-            shooterSubsystem.runHoodReverseCmd(),
-            shooterSubsystem.stopHoodCmd()
-        );
+
+        joystick.povUp().onTrue(shooterSubsystem.runHoodCmd());
+        joystick.povDown().onTrue(shooterSubsystem.runHoodReverseCmd());
+
+        joystick.povUp().onFalse(shooterSubsystem.stopHoodCmd());
+        joystick.povDown().onFalse(shooterSubsystem.stopHoodCmd());
         
 
-        joystick.povRight().startEnd(
-            Climb.raise(),
-            Climb.hang()
-        )
 
-        joystick.povLeft().startEnd
-        (   Climb.lower(),
-            Climb.hang()
-        );
+        joystick.povRight()
+            .whileTrue(
+                new InstantCommand(() -> climb.raise()))
+            .onFalse(
+                new InstantCommand(() -> climb.hang()));
+
+        joystick.povLeft()
+            .whileTrue(
+                new InstantCommand(() -> climb.lower()))
+            .onFalse(
+                new InstantCommand(() -> climb.hang()));
         
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
@@ -117,17 +119,17 @@ public class RobotContainer {
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
-        joystick.rightTrigger().startEnd(
-                new InstantCommand(() -> intake.intakeCommand()),
-                new InstantCommand(() -> intake.stopRollerCommand())
-            );
-        
+        joystick.rightTrigger()
+            .whileTrue(
+                new InstantCommand(() -> intake.intakeCommand()))
+            .onFalse(
+                new InstantCommand(() -> intake.stopRollerCommand()));
 
-        joystick.leftTrigger().startEnd(
-                new InstantCommand(() -> intake.outtakeCommand()),
-                new InstantCommand(() -> intake.stopRollerCommand())
-            );
-        
+        joystick.leftTrigger()
+            .whileTrue(
+                new InstantCommand(() -> intake.outtakeCommand()))
+            .onFalse(
+                new InstantCommand(() -> intake.stopRollerCommand()));
 
         joystick.rightBumper()
             .whileTrue(

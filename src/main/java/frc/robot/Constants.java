@@ -160,7 +160,7 @@ public class Constants {
         public static final int kClimbMotorID = 32;
 
         public static final double kClimbMaxVelocity = 90; // rps
-        public static final int kClimbCURRENT_LIMIT = 45;   
+        public static final int kClimbCURRENT_LIMIT = 30;   
         public static final double kClimb_SPEED = .3; 
 
 

@@ -27,6 +27,7 @@ public class AutoFire extends Command
     {
         shooter.autoFire();
 
+        // add in hood
         // add in turret
 
         if (Math.abs(shooter.getCorrectRPM() - shooter.GetShooterVelocity()) < ShooterConstants.rpmLenience)

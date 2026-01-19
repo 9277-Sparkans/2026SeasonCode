@@ -12,11 +12,13 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.Constants.HoodConstants;
 
 public class ShooterSubsystem extends SubsystemBase {
     private final TalonFX hoodMotor;
+    private final TalonFXConfiguration hoodMotorConfiguration;
+
     private final TalonFX shooterMotor;
 
     private boolean shooting;
@@ -24,22 +26,46 @@ public class ShooterSubsystem extends SubsystemBase {
     /** Creates a new Shooter. */
     public ShooterSubsystem() {
         // TODO: probably set current limits
-        hoodMotor = new TalonFX(Constants.ShooterConstants.kHoodMotorId);
-        shooterMotor = new TalonFX(Constants.ShooterConstants.kShooterMotorId);
+        hoodMotor = new TalonFX(HoodConstants.kHoodMotorId);
+        hoodMotorConfiguration = new TalonFXConfiguration();
 
-        // hoodMotor.setPosition(Angle.ofBaseUnits(120, Degrees));
+        hoodMotorConfiguration.Slot0.kG = HoodConstants.hood_kG;
+		hoodMotorConfiguration.Slot0.kP = HoodConstants.hood_kP;
+		hoodMotorConfiguration.Slot0.kI = HoodConstants.hood_kI;
+		hoodMotorConfiguration.Slot0.kD = HoodConstants.hood_kD; 
+
+		hoodMotorConfiguration.Voltage.PeakForwardVoltage = HoodConstants.hood_maxVoltage;
+		hoodMotorConfiguration.Voltage.PeakReverseVoltage = -HoodConstants.hood_maxVoltage;
+		hoodMotorConfiguration.MotionMagic.MotionMagicAcceleration = HoodConstants.hood_maxAcceleration;
+		hoodMotorConfiguration.MotionMagic.MotionMagicCruiseVelocity = HoodConstants.hood_maxVelocity;
+
+        shooterMotor = new TalonFX(HoodConstants.kShooterMotorId);
     }
 
     public Command shootCmd() {
         return Commands.runOnce(() -> toggleShoot());
     }
 
+    public void moveHoodToAngle(double theta)
+    {
+
+    }
+
+    public double getHoodAngle()
+    {
+        double currentHoodPosition = hoodMotor.getPosition(); // rotations
+        double hoodSpace = currentHoodPosition / HoodConstants.kGearRatio;
+        double hoodAngle = hoodSpace * (maximumAngle-minimumAngle);
+
+        return HoodConstants.maximumAngle - hoodAngle;
+    }
+
     public void runHood() {
-        hoodMotor.set(ShooterConstants.kHoodSpeed);
+        hoodMotor.set(HoodConstants.kHoodSpeed);
     }
 
     public void runHoodReverse() {
-        hoodMotor.set(-ShooterConstants.kHoodSpeed);
+        hoodMotor.set(-HoodConstants.kHoodSpeed);
     }
 
     public void stopHood() {

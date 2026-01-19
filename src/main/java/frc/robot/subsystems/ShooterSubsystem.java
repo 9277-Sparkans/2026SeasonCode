@@ -5,6 +5,8 @@
 package frc.robot.subsystems;
 
 
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
@@ -28,6 +30,11 @@ public class ShooterSubsystem extends SubsystemBase {
         // TODO: probably set current limits
         hoodMotor = new TalonFX(HoodConstants.kHoodMotorId);
         hoodMotorConfiguration = new TalonFXConfiguration();
+
+        CurrentLimitsConfigs hoodConfigs = new CurrentLimitsConfigs();
+        hoodConfigs.StatorCurrentLimit = Constants.ShooterConstants.kHoodCurrentLimit;
+        hoodConfigs.StatorCurrentLimitEnable = true;
+        hoodMotor.getConfigurator().apply(hoodConfigs);
 
         hoodMotorConfiguration.Slot0.kG = HoodConstants.hood_kG;
 		hoodMotorConfiguration.Slot0.kP = HoodConstants.hood_kP;

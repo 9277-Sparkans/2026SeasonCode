@@ -140,6 +140,9 @@ public class Constants {
         public static final double maximumAngle = 45;
 
         public static final double kGearRatio = 1 / (15 / 210)
+
+        public static final double kHoodCurrentLimit = 35;
+        public static final double kShooterCurrentLimit = 35;
     }
 
     public static class IntakeConstants

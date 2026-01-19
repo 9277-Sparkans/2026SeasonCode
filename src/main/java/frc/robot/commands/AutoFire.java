@@ -4,9 +4,12 @@ import frc.robot.subsystems.Transfer;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.ShooterSubsystem;
 
-import frc.robot.constants.TransferConstants;
-import frc.robot.constants.TurretConstants;
-import frc.robot.constants.ShooterConstants;
+import frc.robot.Constants.TransferConstants;
+import frc.robot.Constants.TurretConstants;
+import frc.robot.Constants.ShooterConstants;
+
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 
 public class AutoFire extends Command 
 {
@@ -18,7 +21,7 @@ public class AutoFire extends Command
     ShooterSubsystem shooter)
     {
         this.turret = turret;
-        this.transfer = trnasfer;
+        this.transfer = transfer;
         this.shooter = shooter;
     }
 

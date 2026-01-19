@@ -28,6 +28,8 @@ import frc.robot.commands.TurretTracking;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.Intake;
+import frc.robot.commands.AutoFire;
+import frc.robot.subsystems.Transfer;
 
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -51,7 +53,7 @@ public class RobotContainer {
     public final Turret turret = new Turret();
     public final Transfer transfer = new Transfer();
 
-    public final AutoFire autoFireCommand = new AutoFire(turret, transfer, shooterSubsystem)
+    public final AutoFire autoFireCommand = new AutoFire(turret, transfer, shooterSubsystem);
 
     public RobotContainer() {
         NamedCommands.registerCommand("testNamedCommand", Commands.runOnce(() -> System.out.println("this named command works")));
@@ -127,15 +129,15 @@ public class RobotContainer {
             .whileTrue(
                 new InstantCommand(() -> intake.retractCommand()));
         
-        jotstick.rightTrigger()
+        joystick.rightTrigger()
             .whileTrue(
                 new InstantCommand(() -> transfer.activateTransferCommand()))
             .onFalse(
                 new InstantCommand(() -> transfer.stopTransferCommand()));
 
-        joystick.kController_rightStickButton()
+        joystick.rightStick()
             .whileTrue(
-                new InstantCommand(() -> autoFire.execute()));
+                new InstantCommand(() -> autoFireCommand.execute()));
     }   
 
     public Command getAutonomousCommand() {

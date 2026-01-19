@@ -3,6 +3,8 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+
 import edu.wpi.first.math.geometry.Pose2d;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -11,6 +13,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import frc.robot.Constants.QuickAccessConstants;
 import frc.robot.Constants.TurretConstants;
+import frc.robot.Constants.TransferConstants;;
+
 
 public class Transfer extends SubsystemBase
 {
@@ -20,7 +24,7 @@ public class Transfer extends SubsystemBase
     /** Creates a new Turret. */
     public Transfer() {
         transferMotor = new TalonFX(TransferConstants.transferID);
-        transferMotor = new TalonFXConfiguration();
+        transferMotorConfig = new TalonFXConfiguration();
 
         transferMotorConfig.Voltage.PeakForwardVoltage = TransferConstants.transferMaxVoltage;
         transferMotorConfig.Voltage.PeakReverseVoltage = -TransferConstants.transferMaxVoltage;
@@ -42,11 +46,11 @@ public class Transfer extends SubsystemBase
 
     public void activateTransfer()
     {
-        transfer.set(1);
+        transferMotor.set(1);
     }
 
     public void stop()
     {
-        transfer.set(0);
+        transferMotor.set(0);
     }
 }

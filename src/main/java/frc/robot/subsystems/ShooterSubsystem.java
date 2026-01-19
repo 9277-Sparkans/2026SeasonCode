@@ -32,7 +32,7 @@ public class ShooterSubsystem extends SubsystemBase {
         hoodMotorConfiguration = new TalonFXConfiguration();
 
         CurrentLimitsConfigs hoodConfigs = new CurrentLimitsConfigs();
-        hoodConfigs.StatorCurrentLimit = Constants.ShooterConstants.kHoodCurrentLimit;
+        hoodConfigs.StatorCurrentLimit = HoodConstants.kHoodCurrentLimit;
         hoodConfigs.StatorCurrentLimitEnable = true;
         hoodMotor.getConfigurator().apply(hoodConfigs);
 
@@ -46,7 +46,7 @@ public class ShooterSubsystem extends SubsystemBase {
 		hoodMotorConfiguration.MotionMagic.MotionMagicAcceleration = HoodConstants.hood_maxAcceleration;
 		hoodMotorConfiguration.MotionMagic.MotionMagicCruiseVelocity = HoodConstants.hood_maxVelocity;
 
-        shooterMotor = new TalonFX(HoodConstants.kShooterMotorId);
+        shooterMotor = new TalonFX(HoodConstants.kHoodMotorId);
     }
 
     public Command shootCmd() {
@@ -60,9 +60,9 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public double getHoodAngle()
     {
-        double currentHoodPosition = hoodMotor.getPosition(); // rotations
+        double currentHoodPosition = hoodMotor.getPosition().getValueAsDouble(); // rotations
         double hoodSpace = currentHoodPosition / HoodConstants.kGearRatio;
-        double hoodAngle = hoodSpace * (maximumAngle-minimumAngle);
+        double hoodAngle = hoodSpace * (HoodConstants.maximumAngle-HoodConstants.minimumAngle);
 
         return Math.max(HoodConstants.maximumAngle - hoodAngle, HoodConstants.minimumAngle);
     }

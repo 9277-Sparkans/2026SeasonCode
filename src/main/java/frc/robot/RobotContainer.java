@@ -28,6 +28,7 @@ import frc.robot.commands.TurretTracking;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Climb;
 
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -49,6 +50,8 @@ public class RobotContainer {
     private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
     public final Intake intake = new Intake();
     public final Turret turret = new Turret();
+
+    public final Climb climb = new Climb();
 
     public RobotContainer() {
         NamedCommands.registerCommand("testNamedCommand", Commands.runOnce(() -> System.out.println("this named command works")));
@@ -81,11 +84,26 @@ public class RobotContainer {
         ));
 
         joystick.x().onTrue(shooterSubsystem.shootCmd());
+
         joystick.povUp().onTrue(shooterSubsystem.runHoodCmd());
         joystick.povDown().onTrue(shooterSubsystem.runHoodReverseCmd());
 
         joystick.povUp().onFalse(shooterSubsystem.stopHoodCmd());
         joystick.povDown().onFalse(shooterSubsystem.stopHoodCmd());
+        
+
+
+        joystick.povRight()
+            .whileTrue(
+                new InstantCommand(() -> climb.raise()))
+            .onFalse(
+                new InstantCommand(() -> climb.hang()));
+
+        joystick.povLeft()
+            .whileTrue(
+                new InstantCommand(() -> climb.lower()))
+            .onFalse(
+                new InstantCommand(() -> climb.hang()));
         
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.

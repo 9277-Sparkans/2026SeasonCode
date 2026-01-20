@@ -5,6 +5,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.util.struct.Struct;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -14,18 +15,23 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.QuickAccessConstants;
 import frc.robot.Constants.TurretConstants;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 
 public class Turret extends SubsystemBase {
 
   private final TalonFX turretMotor;
   private final TalonFXConfiguration turretMotorConfig;
+  //private GenericEntry sb_turretEncoder;
+  //public double turretOffset = 0.0;
 
   public Command turretPos () {
+      System.out.println("this works yippe");
       return Commands.runOnce(() -> spinPositive());
     }
 
     public Command turretNeg () {
+      System.out.println("this works yippe");
       return Commands.runOnce(() -> spinNegative());
     }
 
@@ -36,7 +42,7 @@ public class Turret extends SubsystemBase {
 
 
     turretMotor = new TalonFX(TurretConstants.turret_motorId);
-    turretMotorConfig = new TalonFXConfiguration();
+    turretMotorConfig = new TalonFXConfiguration(); 
     turretMotor.setPosition(0);
 
     turretMotorConfig.Slot0.kG = TurretConstants.turret_kG;
@@ -51,19 +57,24 @@ public class Turret extends SubsystemBase {
 
     turretMotor.getConfigurator().apply(turretMotorConfig);
 
+    //sb_turretEncoder.setDouble(turretMotor.getPosition().getValue().magnitude());
+
+
     timer = new Timer();
   }
 
   @Override
   public void periodic() {
+    //System.out.println("Turret Position: " + getPosition());
     // This method will be called once per scheduler run
+    System.out.println(turretMotor.getSupplyCurrent().getValueAsDouble());
   }
 
   public double getPosition() {
     return turretMotor.getPosition().getValueAsDouble();
   }
 
-  public double getElevatorCurrent() {
+  public double getTurretCurrent() {
     double turretCurrent = turretMotor.getSupplyCurrent().getValueAsDouble();
     return (turretCurrent);
   }
@@ -77,11 +88,11 @@ public class Turret extends SubsystemBase {
   
 
   public void spinPositive(){
-    turretMotor.set(0.5);
+    turretMotor.set(0.15);
   }
 
   public void spinNegative(){
-    turretMotor.set(-0.5);
+    turretMotor.set(-0.15);
   }
 
 

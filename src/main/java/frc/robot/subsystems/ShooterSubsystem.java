@@ -4,17 +4,18 @@
 
 package frc.robot.subsystems;
 
-
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
-import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.Limelight;
 import frc.robot.Constants.HoodConstants;
 
 public class ShooterSubsystem extends SubsystemBase {
@@ -24,6 +25,8 @@ public class ShooterSubsystem extends SubsystemBase {
     private final TalonFX shooterMotor;
 
     private boolean shooting;
+
+    public double tgtAngle = HoodConstants.kMaximumAngle;
 
     /** Creates a new Shooter. */
     public ShooterSubsystem() {
@@ -52,32 +55,6 @@ public class ShooterSubsystem extends SubsystemBase {
     public Command shootCmd() {
         return Commands.runOnce(() -> toggleShoot());
     }
-
-    public void moveHoodToAngle(double theta)
-    {
-
-    }
-
-    public double getHoodAngle()
-    {
-        double currentHoodPosition = hoodMotor.getPosition().getValueAsDouble(); // rotations
-        double hoodSpace = currentHoodPosition / HoodConstants.kGearRatio;
-        double hoodAngle = hoodSpace * (HoodConstants.maximumAngle-HoodConstants.minimumAngle);
-
-        return Math.max(HoodConstants.maximumAngle - hoodAngle, HoodConstants.minimumAngle);
-    }
-
-    public void runHood() {
-        hoodMotor.set(HoodConstants.kHoodSpeed);
-    }
-
-    public void runHoodReverse() {
-        hoodMotor.set(-HoodConstants.kHoodSpeed);
-    }
-
-    public void stopHood() {
-        hoodMotor.set(0);
-    }
     
     public Command runHoodCmd() {
         return Commands.runOnce(() -> runHood());
@@ -91,6 +68,52 @@ public class ShooterSubsystem extends SubsystemBase {
         return Commands.runOnce(() -> stopHood());
     }
 
+    public Command moveHoodUpCmd()
+    {
+        return Commands.runOnce(() -> moveHoodUp());
+    }
+
+    public Command moveHoodDownCmd()
+    {
+        return Commands.runOnce(() -> moveHoodDown());
+    }
+
+    // hood
+    public void moveHoodToAngle(double theta)
+    {
+        MotionMagicVoltage hoodRequest = new MotionMagicVoltage(theta).withSlot(0);
+		hoodMotor.setControl(hoodRequest.withPosition(GetHoodAngle()));
+    }
+
+    public void runHood() {
+        hoodMotor.set(HoodConstants.kHoodSpeed);
+    }
+
+    public void runHoodReverse() {
+        hoodMotor.set(-HoodConstants.kHoodSpeed);
+    }
+
+    public void stopHood() {
+        hoodMotor.set(0);
+    }
+
+    public void moveHoodUp()
+    {
+        if (tgtAngle - HoodConstants.kHoodIncrement >= HoodConstants.kMinimumAngle)
+        {
+            tgtAngle -= HoodConstants.kHoodIncrement;
+        }
+    }
+
+    public void moveHoodDown()
+    {
+        if (tgtAngle + HoodConstants.kHoodIncrement <= HoodConstants.kMaximumAngle)
+        {
+            tgtAngle += HoodConstants.kHoodIncrement;
+        }
+    }
+
+    // shoot
     private void toggleShoot() {
         shooting = !shooting;
 
@@ -110,18 +133,41 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public void autoFire()
     {
-        int tgtRPM = getCorrectRPM();
+        int tgtRPM = GetCorrectRPM();
+        tgtAngle = GetCorrectHoodAngle();
         fireAtRPM(tgtRPM);
+        moveHoodToAngle(tgtAngle);
     }
 
-    public int getCorrectRPM()
+    // getters
+    public int GetCorrectRPM()
     {
         return 1000; // replace with the actual math later
+    }
+
+    public double GetCorrectHoodAngle()
+    {
+        Translation2d position = Limelight.GetDistance();
+        double distance = Math.sqrt(position.getX() * position.getX() + position.getY() * position.getY());
+
+        // field length 158.6  inches or 4.02844 meters
+        double angle = (distance / 4.02844) * (HoodConstants.kMaximumAngle - HoodConstants.kMinimumAngle);
+
+        return HoodConstants.kMinimumAngle + angle; // replace with actual math later
     }
 
     public double GetShooterVelocity()
     {
         return shooterMotor.getVelocity().getValueAsDouble();
+    }
+
+    public double GetHoodAngle()
+    {
+        double currentHoodPosition = hoodMotor.getPosition().getValueAsDouble(); // rotations
+        double hoodSpace = currentHoodPosition / HoodConstants.kGearRatio;
+        double hoodAngle = hoodSpace * 360;
+
+        return Math.max(HoodConstants.kMaximumAngle - hoodAngle, HoodConstants.kMinimumAngle);
     }
 
     @Override

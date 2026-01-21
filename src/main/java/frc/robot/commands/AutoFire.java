@@ -28,12 +28,11 @@ public class AutoFire extends Command
     @Override
     public void execute()
     {
-        shooter.autoFire();
+        shooter.autoFire(); // includes shooter + hood recalculation
 
-        // add in hood
         // add in turret
 
-        if (Math.abs(shooter.getCorrectRPM() - shooter.GetShooterVelocity()) < ShooterConstants.rpmLenience)
+        if (Math.abs(shooter.GetCorrectRPM() - shooter.GetShooterVelocity()) < ShooterConstants.rpmLenience)
         {
             transfer.activateTransfer();
         }
@@ -46,7 +45,9 @@ public class AutoFire extends Command
     @Override
     public void end(boolean interrupted)
     {
-
+        shooter.stopHood();
+        shooter.fireAtRPM(0);
+        transfer.stop();
     }
 
     @Override

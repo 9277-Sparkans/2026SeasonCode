@@ -42,10 +42,8 @@ public class TurretTracking extends Command {
   @Override
   public void execute() 
   {
-    var pose = LimelightHelpers.getBotPoseEstimate_wpiBlue("limelight-a");
-
-    boolean isBlue = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Blue;
-
+    var pose = Limelight.getPose();
+    boolean isBlue = Limelight.getIsBlue();
     Translation2d hub = Limelight.getHub(isBlue);
 
     var angleToHub = Limelight.GetAngle();

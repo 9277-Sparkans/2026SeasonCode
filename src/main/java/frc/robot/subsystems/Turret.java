@@ -99,5 +99,4 @@ public class Turret extends SubsystemBase {
   public void stop() {
     turretMotor.set(0);
   }
-
 }

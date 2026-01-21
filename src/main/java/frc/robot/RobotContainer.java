@@ -86,7 +86,7 @@ public class RobotContainer {
         //     point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
         // ));
 
-        joystick.x().onTrue(shooterSubsystem.shootCmd());
+        // joystick.x().onTrue(shooterSubsystem.shootCmd());
         joystick.povUp().onTrue(shooterSubsystem.runHoodCmd());
         joystick.povDown().onTrue(shooterSubsystem.runHoodReverseCmd());
 
@@ -103,14 +103,14 @@ public class RobotContainer {
         // reset the field-centric heading on left bumper press
         //joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-        joystick.rightTrigger().onTrue(Commands.runOnce(() -> turret.turretPos()));
-        joystick.leftTrigger().onTrue(Commands.runOnce(() -> turret.turretNeg()));
-        joystick.leftTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
-        joystick.rightTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
+        // joystick.rightTrigger().onTrue(Commands.runOnce(() -> turret.turretPos()));
+        // joystick.leftTrigger().onTrue(Commands.runOnce(() -> turret.turretNeg()));
+        // joystick.leftTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
+        // joystick.rightTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
 
         joystick.y().onTrue(new TurretTracking((turret)));
 
-        joystick.a().whileTrue(Commands.runOnce(() -> shooterSubsystem.fireAtRPM
+        joystick.a().onTrue(Commands.runOnce(() -> shooterSubsystem.fireAtRPM
         (shooterSubsystem.GetCorrectRPM()))).onFalse(Commands.runOnce(() -> 
         shooterSubsystem.fireAtRPM(0)));
         

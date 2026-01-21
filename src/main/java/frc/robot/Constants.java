@@ -113,20 +113,29 @@ public class Constants {
         public static int kMaximumAngle = 70;
         public static int kMinimumAngle = -70;
 
-        public static double kGearRatio = 1 / (18 / 105);
+        public static double kGearRatio = 1.0 / (18.0 / 105.0);
     }
     
     public static class ShooterConstants {
-        public static final int kShooterMotorId = 31;
+        public static final int kShooterMotorId = 33;
+
+        public static final int kShooterCurrentLimit = 30;
 
         // subject to change if we end up automating these
-        public static final double kShooterSpeed = 1;
+        public static final double kShooterSpeed = 0.2;
 
         public static final int kRpmLenience = 200;
 
         public static final int kRpmIncrement = 100;
 
         public static final int kMaxRPM = 5000;
+
+        public static final double shooter_kG = 0.03;
+        public static final double shooter_kS = 0.01;
+        public static final double shooter_kP = 4.5;
+        public static final double shooter_kI = 0.0;
+        public static final double shooter_kD = 0.3;
+
     }
 
     public static class HoodConstants
@@ -148,7 +157,7 @@ public class Constants {
         public static final double kMinimumAngle = 15;
         public static final double kMaximumAngle = 45;
 
-        public static final double kGearRatio = 1 / (15 / 210);
+        public static final double kGearRatio = 1.0 / (15.0 / 210.0);
 
         public static final double kHoodCurrentLimit = 35;
         public static final double kShooterCurrentLimit = 35;
@@ -190,7 +199,7 @@ public class Constants {
 
     public static class TransferConstants
     {
-        public static final int transferID = 2; // change later
+        public static final int transferID = 31; // change later
 
         public static final double transferMaxVoltage = 4; // can change if not needed
         public static final double transferMaxAcceleration = 40;

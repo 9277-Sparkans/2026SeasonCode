@@ -100,44 +100,51 @@ public class RobotContainer {
         joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // reset the field-centric heading on left bumper press
-        joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        //joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-        joystick.leftTrigger().onTrue(drivetrain.runOnce(() -> turret.turretPos()));
-        joystick.rightTrigger().onTrue(drivetrain.runOnce(() -> turret.turretNeg()));
+        joystick.rightTrigger().onTrue(Commands.runOnce(() -> turret.spinPositive()));
+        joystick.leftTrigger().onTrue(Commands.runOnce(() -> turret.spinNegative()));
+        joystick.leftTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
+        joystick.rightTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
 
-        joystick.a().onTrue(new TurretTracking((turret)));
+
+
+
+        joystick.y().onTrue(new TurretTracking((turret)));
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
-        joystick.rightTrigger()
-            .whileTrue(
-                new InstantCommand(() -> intake.intakeCommand()))
-            .onFalse(
-                new InstantCommand(() -> intake.stopRollerCommand()));
+        // fix butten stuff *cough coguh* tyler change your button bindings
 
-        joystick.leftTrigger()
-            .whileTrue(
-                new InstantCommand(() -> intake.outtakeCommand()))
-            .onFalse(
-                new InstantCommand(() -> intake.stopRollerCommand()));
+        // joystick.rightTrigger()
+        //     .whileTrue(
+        //         new InstantCommand(() -> intake.intakeCommand()))
+        //     .onFalse(
+        //         new InstantCommand(() -> intake.stopRollerCommand()));
 
-        joystick.rightBumper()
-            .whileTrue(
-                new InstantCommand(() -> intake.deployCommand()));
+        // joystick.leftTrigger()
+        //     .whileTrue(
+        //         new InstantCommand(() -> intake.outtakeCommand()))
+        //     .onFalse(
+        //         new InstantCommand(() -> intake.stopRollerCommand()));
 
-        joystick.leftBumper()
-            .whileTrue(
-                new InstantCommand(() -> intake.retractCommand()));
+        // joystick.rightBumper()
+        //     .whileTrue(
+        //         new InstantCommand(() -> intake.deployCommand()));
+
+        // joystick.leftBumper()
+        //     .whileTrue(
+        //         new InstantCommand(() -> intake.retractCommand()));
         
-        joystick.rightTrigger()
-            .whileTrue(
-                new InstantCommand(() -> transfer.activateTransferCommand()))
-            .onFalse(
-                new InstantCommand(() -> transfer.stopTransferCommand()));
+        // joystick.rightTrigger()
+        //     .whileTrue(
+        //         new InstantCommand(() -> transfer.activateTransferCommand()))
+        //     .onFalse(
+        //         new InstantCommand(() -> transfer.stopTransferCommand()));
 
-        joystick.rightStick()
-            .whileTrue(
-                new InstantCommand(() -> autoFireCommand.execute()));
+        // joystick.rightStick()
+        //     .whileTrue(
+        //         new InstantCommand(() -> autoFireCommand.execute()));
     }   
 
     public Command getAutonomousCommand() {

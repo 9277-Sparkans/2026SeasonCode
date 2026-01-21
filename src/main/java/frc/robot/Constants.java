@@ -102,22 +102,29 @@ public class Constants {
         public static final double turret_maxVelocity = 125; // rotations per second
         public static final double turret_maxAcceleration = 80; // rotations per second^2
         public static final double turret_maxVoltage = 5;// kraken x44 max voltage
-        public static final int turret_motorId = 34; // change this value
+        public static final int turret_motorId = 32; // change this value
 
         public static final double turret_kG = 0.03;
         public static final double turret_kS = 0.01;
         public static final double turret_kP = 4.5;
         public static final double turret_kI = 0.0;
         public static final double turret_kD = 0.3;
+
+        public static final double turret_speed = 0.15;
+
+        //public static final double kTurretGearRatio = 1 / (15 / 108);
     }
     
     public static class ShooterConstants {
-        public static final int kShooterMotorId = 31;
+        public static final int kShooterMotorId = 33;
 
         // subject to change if we end up automating these
-        public static final double kShooterSpeed = 1;
+        public static final double kShooterSpeed = 0.15;
 
         public static final int rpmLenience = 50;
+        
+
+
     }
 
     public static class HoodConstants

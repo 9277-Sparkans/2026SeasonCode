@@ -81,10 +81,10 @@ public class RobotContainer {
             drivetrain.applyRequest(() -> idle).ignoringDisable(true)
         );
 
-        joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-        joystick.b().whileTrue(drivetrain.applyRequest(() ->
-            point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
-        ));
+        // joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
+        // joystick.b().whileTrue(drivetrain.applyRequest(() ->
+        //     point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
+        // ));
 
         joystick.x().onTrue(shooterSubsystem.shootCmd());
         joystick.povUp().onTrue(shooterSubsystem.runHoodCmd());
@@ -95,25 +95,34 @@ public class RobotContainer {
         
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
-        joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        // joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+        // joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+        // joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+        // joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // reset the field-centric heading on left bumper press
         //joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-        joystick.rightTrigger().onTrue(Commands.runOnce(() -> turret.spinPositive()));
-        joystick.leftTrigger().onTrue(Commands.runOnce(() -> turret.spinNegative()));
+        joystick.rightTrigger().onTrue(Commands.runOnce(() -> turret.turretPos()));
+        joystick.leftTrigger().onTrue(Commands.runOnce(() -> turret.turretNeg()));
         joystick.leftTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
         joystick.rightTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
 
-
-
-
         joystick.y().onTrue(new TurretTracking((turret)));
 
+        joystick.a().whileTrue(Commands.runOnce(() -> shooterSubsystem.fireAtRPM
+        (shooterSubsystem.GetCorrectRPM()))).onFalse(Commands.runOnce(() -> 
+        shooterSubsystem.fireAtRPM(0)));
+        
+        joystick.b().onTrue(Commands.runOnce(() -> 
+        transfer.activateTransfer())).onFalse(Commands.runOnce(() -> transfer.stop()));
+
+        joystick.leftBumper().onTrue(Commands.runOnce(() -> shooterSubsystem.decreaseSpeed()));
+        joystick.rightBumper().onTrue(Commands.runOnce(() -> shooterSubsystem.increaseSpeed()));
+
         drivetrain.registerTelemetry(logger::telemeterize);
+        
+        System.out.println("turret angle is: " + turret.getTurrentAngle());
 
         // fix butten stuff *cough coguh* tyler change your button bindings
 

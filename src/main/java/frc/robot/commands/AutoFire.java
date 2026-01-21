@@ -32,7 +32,7 @@ public class AutoFire extends Command
 
         // add in turret
 
-        if (Math.abs(shooter.GetCorrectRPM() - shooter.GetShooterVelocity()) < ShooterConstants.rpmLenience)
+        if (Math.abs(shooter.GetCorrectRPM() - shooter.GetShooterVelocity()) < ShooterConstants.kRpmLenience)
         {
             transfer.activateTransfer();
         }

@@ -50,6 +50,8 @@ public class TurretTracking extends Command {
     System.out.println("bot position is " + pose.pose);
     System.out.println(hub);
     System.out.println("angle is " + angleToHub);
+
+    // turret.setTurretToAngle(angleToHub); // hopefully this doesnt explode !
   }
 
   // Called once the command ends or is interrupted.

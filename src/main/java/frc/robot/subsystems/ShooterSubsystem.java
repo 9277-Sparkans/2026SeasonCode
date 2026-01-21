@@ -28,6 +28,8 @@ public class ShooterSubsystem extends SubsystemBase {
 
     public double tgtAngle = HoodConstants.kMaximumAngle;
 
+    public int shooterRPM = 0; // rpm
+
     /** Creates a new Shooter. */
     public ShooterSubsystem() {
         // TODO: probably set current limits
@@ -142,7 +144,23 @@ public class ShooterSubsystem extends SubsystemBase {
     // getters
     public int GetCorrectRPM()
     {
-        return 1000; // replace with the actual math later
+        return shooterRPM; // replace with the actual math later
+    }
+
+    public void increaseSpeed()
+    {
+        if (shooterRPM + ShooterConstants.kRpmIncrement < ShooterConstants.kMaxRPM)
+        {
+            shooterRPM += ShooterConstants.kRpmIncrement;
+        }
+    }
+
+    public void decreaseSpeed()
+    {
+        if (shooterRPM - ShooterConstants.kRpmIncrement > 0)
+        {
+            shooterRPM -= ShooterConstants.kRpmIncrement;
+        }
     }
 
     public double GetCorrectHoodAngle()

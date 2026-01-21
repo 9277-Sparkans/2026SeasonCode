@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -26,21 +27,19 @@ public class Turret extends SubsystemBase {
   //public double turretOffset = 0.0;
 
   public Command turretPos () {
-      System.out.println("this works yippe");
-      return Commands.runOnce(() -> spinPositive());
+      spinPositive(); // okay so this works, Commands.runOnce throws a tantrum
+      return Commands.runOnce(() -> {});
     }
 
     public Command turretNeg () {
-      System.out.println("this works yippe");
-      return Commands.runOnce(() -> spinNegative());
+      spinNegative(); // okay so this works, Commands.runOnce throws a tantrum
+      return Commands.runOnce(() -> {});
     }
 
   public Timer timer;
 
   /** Creates a new Turret. */
   public Turret() {
-
-
     turretMotor = new TalonFX(TurretConstants.turret_motorId);
     turretMotorConfig = new TalonFXConfiguration(); 
     turretMotor.setPosition(0);
@@ -75,17 +74,20 @@ public class Turret extends SubsystemBase {
   }
 
   public double getTurretCurrent() {
-    double turretCurrent = turretMotor.getSupplyCurrent().getValueAsDouble();
+    double turretCurrent = turretMotor.getSupplyCurrent().getValueAsDouble() / TurretConstants.kGearRatio;
     return (turretCurrent);
   }
 
+  public double getTurrentAngle()
+  {
+    double position = getTurretCurrent(); // turns
+    return position * 360;
+  }
 
   public double getVelocity() {
     double turretVelocity = turretMotor.getVelocity().getValueAsDouble();
     return (turretVelocity);
   }
-
-  
 
   public void spinPositive(){
     turretMotor.set(0.15);
@@ -93,6 +95,21 @@ public class Turret extends SubsystemBase {
 
   public void spinNegative(){
     turretMotor.set(-0.15);
+  }
+
+  public void setTurretToAngle(double angle)
+  {
+    if (angle > TurretConstants.kMaximumAngle)
+    {
+      angle = TurretConstants.kMaximumAngle;
+    }
+    if (angle < TurretConstants.kMinimumAngle)
+    {
+      angle = TurretConstants.kMinimumAngle;
+    }
+
+    MotionMagicVoltage angleTgt = new MotionMagicVoltage(angle).withSlot(0);
+    turretMotor.setControl(angleTgt.withPosition(getTurrentAngle()));
   }
 
 

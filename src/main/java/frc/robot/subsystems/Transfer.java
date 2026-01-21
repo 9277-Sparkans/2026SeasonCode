@@ -36,7 +36,8 @@ public class Transfer extends SubsystemBase
 
     public Command activateTransferCommand()
     {
-        return Commands.run(() -> activateTransfer());
+        activateTransfer();
+        return Commands.run(() -> {});
     }
 
     public Command stopTransferCommand()
@@ -46,7 +47,7 @@ public class Transfer extends SubsystemBase
 
     public void activateTransfer()
     {
-        transferMotor.set(1);
+        transferMotor.set(-0.5);
     }
 
     public void stop()

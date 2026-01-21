@@ -15,24 +15,40 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.Constants.TurretConstants;
 import frc.robot.Limelight;
 import frc.robot.Constants.HoodConstants;
 
 public class ShooterSubsystem extends SubsystemBase {
     private final TalonFX hoodMotor;
-    private final TalonFXConfiguration hoodMotorConfiguration;
-
     private final TalonFX shooterMotor;
+    private final TalonFXConfiguration hoodMotorConfiguration;
+    private final TalonFXConfiguration ShooterMotorConfiguration;
 
-    private boolean shooting;
+    private boolean shooting = true;
 
     public double tgtAngle = HoodConstants.kMaximumAngle;
+
+    public int shooterRPM = 1000; // rpm
 
     /** Creates a new Shooter. */
     public ShooterSubsystem() {
         // TODO: probably set current limits
         hoodMotor = new TalonFX(HoodConstants.kHoodMotorId);
         hoodMotorConfiguration = new TalonFXConfiguration();
+
+        shooterMotor = new TalonFX(ShooterConstants.kShooterMotorId);
+        ShooterMotorConfiguration = new TalonFXConfiguration();
+
+        CurrentLimitsConfigs shooterConfigs = new CurrentLimitsConfigs();
+        shooterConfigs.StatorCurrentLimit = ShooterConstants.kShooterCurrentLimit;
+        shooterConfigs.StatorCurrentLimitEnable = true;
+        shooterMotor.getConfigurator().apply(shooterConfigs);
+
+        ShooterMotorConfiguration.Slot0.kG = ShooterConstants.shooter_kG;
+        ShooterMotorConfiguration.Slot0.kP = ShooterConstants.shooter_kP;
+        ShooterMotorConfiguration.Slot0.kI = ShooterConstants.shooter_kI;
+        ShooterMotorConfiguration.Slot0.kD = ShooterConstants.shooter_kD;
 
         CurrentLimitsConfigs hoodConfigs = new CurrentLimitsConfigs();
         hoodConfigs.StatorCurrentLimit = HoodConstants.kHoodCurrentLimit;
@@ -49,11 +65,11 @@ public class ShooterSubsystem extends SubsystemBase {
 		hoodMotorConfiguration.MotionMagic.MotionMagicAcceleration = HoodConstants.hood_maxAcceleration;
 		hoodMotorConfiguration.MotionMagic.MotionMagicCruiseVelocity = HoodConstants.hood_maxVelocity;
 
-        shooterMotor = new TalonFX(HoodConstants.kHoodMotorId);
     }
 
     public Command shootCmd() {
-        return Commands.runOnce(() -> toggleShoot());
+        toggleShoot();
+        return Commands.runOnce(() -> {});
     }
     
     public Command runHoodCmd() {
@@ -142,7 +158,23 @@ public class ShooterSubsystem extends SubsystemBase {
     // getters
     public int GetCorrectRPM()
     {
-        return 1000; // replace with the actual math later
+        return shooterRPM; // replace with the actual math later
+    }
+
+    public void increaseSpeed()
+    {
+        if (shooterRPM + ShooterConstants.kRpmIncrement < ShooterConstants.kMaxRPM)
+        {
+            shooterRPM += ShooterConstants.kRpmIncrement;
+        }
+    }
+
+    public void decreaseSpeed()
+    {
+        if (shooterRPM - ShooterConstants.kRpmIncrement > 0)
+        {
+            shooterRPM -= ShooterConstants.kRpmIncrement;
+        }
     }
 
     public double GetCorrectHoodAngle()

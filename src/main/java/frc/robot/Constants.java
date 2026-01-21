@@ -122,19 +122,21 @@ public class Constants {
         public static final int kShooterCurrentLimit = 30;
 
         // subject to change if we end up automating these
-        public static final double kShooterSpeed = 0.2;
+        public static final double kShooterSpeed = 0.7;
 
         public static final int kRpmLenience = 200;
 
-        public static final int kRpmIncrement = 100;
+        public static final int kRpmIncrement = 10;
 
         public static final int kMaxRPM = 5000;
 
-        public static final double shooter_kG = 0.03;
-        public static final double shooter_kS = 0.01;
-        public static final double shooter_kP = 4.5;
+        public static final double shooter_kG = 0.0;
+        public static final double shooter_kS = 0.0;
+        public static final double shooter_kP = 0.1;
         public static final double shooter_kI = 0.0;
-        public static final double shooter_kD = 0.3;
+        public static final double shooter_kD = 0.0;
+        public static final double shooter_kV = 0.0;
+        public static final double shooter_kA = 0.0;
 
     }
 

@@ -14,8 +14,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 public class AutoFire extends Command 
 {
     Turret turret;
-    Transfer transfer = new Transfer();
-    ShooterSubsystem shooter = new ShooterSubsystem();
+    Transfer transfer;
+    ShooterSubsystem shooter;
 
     public AutoFire(Turret turret, Transfer transfer, 
     ShooterSubsystem shooter)

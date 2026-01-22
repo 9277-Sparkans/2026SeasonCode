@@ -28,7 +28,8 @@ import frc.robot.commands.TurretTracking;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Climb;
+import frc.robot.commands.AutoFire;
+import frc.robot.subsystems.Transfer;
 
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -50,8 +51,9 @@ public class RobotContainer {
     private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
     public final Intake intake = new Intake();
     public final Turret turret = new Turret();
+    public final Transfer transfer = new Transfer();
 
-    public final Climb climb = new Climb();
+    public final AutoFire autoFireCommand = new AutoFire(turret, transfer, shooterSubsystem);
 
     public RobotContainer() {
         NamedCommands.registerCommand("testNamedCommand", Commands.runOnce(() -> System.out.println("this named command works")));
@@ -83,27 +85,12 @@ public class RobotContainer {
             point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
         ));
 
-        joystick.x().onTrue(shooterSubsystem.shootCmd());
-
+        // joystick.x().onTrue(shooterSubsystem.shootCmd());
         joystick.povUp().onTrue(shooterSubsystem.runHoodCmd());
         joystick.povDown().onTrue(shooterSubsystem.runHoodReverseCmd());
 
         joystick.povUp().onFalse(shooterSubsystem.stopHoodCmd());
         joystick.povDown().onFalse(shooterSubsystem.stopHoodCmd());
-        
-
-
-        joystick.povRight()
-            .whileTrue(
-                new InstantCommand(() -> climb.raise()))
-            .onFalse(
-                new InstantCommand(() -> climb.hang()));
-
-        joystick.povLeft()
-            .whileTrue(
-                new InstantCommand(() -> climb.lower()))
-            .onFalse(
-                new InstantCommand(() -> climb.hang()));
         
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
@@ -113,35 +100,54 @@ public class RobotContainer {
         joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // reset the field-centric heading on left bumper press
-        joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        //joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-        joystick.leftTrigger().onTrue(drivetrain.runOnce(() -> turret.turretPos()));
-        joystick.rightTrigger().onTrue(drivetrain.runOnce(() -> turret.turretNeg()));
+        joystick.rightTrigger().onTrue(Commands.runOnce(() -> turret.spinPositive()));
+        joystick.leftTrigger().onTrue(Commands.runOnce(() -> turret.spinNegative()));
+        joystick.leftTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
+        joystick.rightTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
 
-        joystick.a().onTrue(new TurretTracking((turret)));
+        joystick.leftBumper().onTrue(Commands.runOnce(() -> shooterSubsystem.decreaseSpeed()));
+        joystick.rightBumper().onTrue(Commands.runOnce(() -> shooterSubsystem.increaseSpeed()));
+
+        joystick.y().onTrue(new TurretTracking((turret)));
+
+        joystick.b().onTrue(Commands.runOnce(() -> transfer.activateTransfer()));
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
-        joystick.rightTrigger()
-            .whileTrue(
-                new InstantCommand(() -> intake.intakeCommand()))
-            .onFalse(
-                new InstantCommand(() -> intake.stopRollerCommand()));
+        // fix butten stuff *cough coguh* tyler change your button bindings
 
-        joystick.leftTrigger()
-            .whileTrue(
-                new InstantCommand(() -> intake.outtakeCommand()))
-            .onFalse(
-                new InstantCommand(() -> intake.stopRollerCommand()));
+        // joystick.rightTrigger()
+        //     .whileTrue(
+        //         new InstantCommand(() -> intake.intakeCommand()))
+        //     .onFalse(
+        //         new InstantCommand(() -> intake.stopRollerCommand()));
 
-        joystick.rightBumper()
-            .whileTrue(
-                new InstantCommand(() -> intake.deployCommand()));
+        // joystick.leftTrigger()
+        //     .whileTrue(
+        //         new InstantCommand(() -> intake.outtakeCommand()))
+        //     .onFalse(
+        //         new InstantCommand(() -> intake.stopRollerCommand()));
 
-        joystick.leftBumper()
-            .whileTrue(
-                new InstantCommand(() -> intake.retractCommand()));
-    }
+        // joystick.rightBumper()
+        //     .whileTrue(
+        //         new InstantCommand(() -> intake.deployCommand()));
+
+        // joystick.leftBumper()
+        //     .whileTrue(
+        //         new InstantCommand(() -> intake.retractCommand()));
+        
+        // joystick.rightTrigger()
+        //     .whileTrue(
+        //         new InstantCommand(() -> transfer.activateTransferCommand()))
+        //     .onFalse(
+        //         new InstantCommand(() -> transfer.stopTransferCommand()));
+
+        // joystick.rightStick()
+        //     .whileTrue(
+        //         new InstantCommand(() -> autoFireCommand.execute()));
+    }   
 
     public Command getAutonomousCommand() {
         return new PathPlannerAuto("testAuto");

@@ -199,6 +199,18 @@ public class Constants {
         public static final double rollerMaxVelocity = 100; // rps
     }
 
+    public static class ClimbConstants
+    {
+        public static final int kClimbMotorID = 37;
+
+        public static final double kClimbMaxVelocity = 90; // rps
+        public static final int kClimbCURRENT_LIMIT = 30;   
+        public static final double kClimb_SPEED = .3; 
+
+
+        public static final int kClimbGearRatio = 9 / 1;
+    }
+
     public static class TransferConstants
     {
         public static final int transferID = 31; // change later
@@ -207,4 +219,5 @@ public class Constants {
         public static final double transferMaxAcceleration = 40;
         public static final double transferMaxVelocity = 100; // rps
     }
+    
 }

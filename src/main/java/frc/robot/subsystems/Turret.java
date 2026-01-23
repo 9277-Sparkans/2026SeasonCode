@@ -24,7 +24,7 @@ public class Turret extends SubsystemBase {
   private final TalonFX turretMotor;
   private final TalonFXConfiguration turretMotorConfig;
   //private GenericEntry sb_turretEncoder;
-  //public double turretOffset = 0.0;
+  public double turretOffset = 0.0;
 
   public Command turretPos () {
       spinPositive(); // okay so this works, Commands.runOnce throws a tantrum
@@ -78,7 +78,7 @@ public class Turret extends SubsystemBase {
     return (turretCurrent);
   }
 
-  public double getTurrentAngle()
+  public double getTurretAngle()
   {
     double position = getTurretCurrent(); // turns
     return position * 360;
@@ -109,7 +109,7 @@ public class Turret extends SubsystemBase {
     }
 
     MotionMagicVoltage angleTgt = new MotionMagicVoltage(angle).withSlot(0);
-    turretMotor.setControl(angleTgt.withPosition(getTurrentAngle()));
+    turretMotor.setControl(angleTgt.withPosition(getTurretAngle()));
   }
 
 

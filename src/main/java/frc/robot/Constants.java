@@ -142,7 +142,7 @@ public class Constants {
 
     public static class HoodConstants
     {
-        public static final int kHoodMotorId = 30;
+        public static final int kHoodMotorId = 34;
 
         public static final double hood_maxVelocity = 125; // rotations per second
         public static final double hood_maxAcceleration = 80; // rotations per second^2
@@ -154,12 +154,12 @@ public class Constants {
         public static final double hood_kI = 0.0;
         public static final double hood_kD = 0.3;
 
-        public static final double kHoodSpeed = 1;
+        public static final double kHoodSpeed = 0.05;
 
-        public static final double kMinimumAngle = 15;
-        public static final double kMaximumAngle = 45;
+        public static final double kMinimumAngle = 32;
+        public static final double kMaximumAngle = 49;
 
-        public static final double kGearRatio = 1.0 / (15.0 / 210.0);
+        public static final double kGearRatio = 1.0 / (15.0 / 392.7);
 
         public static final double kHoodCurrentLimit = 35;
         public static final double kShooterCurrentLimit = 35;

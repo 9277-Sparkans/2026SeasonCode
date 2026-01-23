@@ -102,7 +102,8 @@ public class Constants {
         public static final double turret_maxVelocity = 40; // rotations per second
         public static final double turret_maxAcceleration = 20; // rotations per second^2
         public static final double turret_maxVoltage = 5;// kraken x44 max voltage
-        public static final int turret_motorId = 34; // change this value
+        public static final int turret_motorId = 32; // change this value
+        public static final double turret_speed = 0.15;
 
         public static final double turret_kG = 0.03;
         public static final double turret_kS = 0.01;

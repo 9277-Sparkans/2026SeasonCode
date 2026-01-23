@@ -18,7 +18,6 @@ import frc.robot.Constants.QuickAccessConstants;
 import frc.robot.Constants.TurretConstants;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-
 public class Turret extends SubsystemBase {
 
   private final TalonFX turretMotor;
@@ -66,11 +65,13 @@ public class Turret extends SubsystemBase {
   public void periodic() {
     //System.out.println("Turret Position: " + getPosition());
     // This method will be called once per scheduler run
-    System.out.println(turretMotor.getSupplyCurrent().getValueAsDouble());
+    //System.out.println(turretMotor.getSupplyCurrent().getValueAsDouble());
+    System.out.println("turret position is: " + getPosition());
   }
 
   public double getPosition() {
-    return turretMotor.getPosition().getValueAsDouble();
+    double position = turretMotor.getPosition().getValueAsDouble() / (1.0 / (15.0 / 108.0));
+    return position * 360;
   }
 
   public double getTurretCurrent() {
@@ -90,11 +91,11 @@ public class Turret extends SubsystemBase {
   }
 
   public void spinPositive(){
-    turretMotor.set(0.15);
+    turretMotor.set(TurretConstants.turret_speed);
   }
 
   public void spinNegative(){
-    turretMotor.set(-0.15);
+    turretMotor.set(-TurretConstants.turret_speed);
   }
 
   public void setTurretToAngle(double angle)

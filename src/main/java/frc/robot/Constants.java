@@ -162,6 +162,8 @@ public class Constants {
         public static final double kMinimumAngle = 32;
         public static final double kMaximumAngle = 49;
 
+        public static final double maxEncoderValue = -100; // test for this
+
         public static final double kGearRatio = 1.0 / (15.0 / 392.7);
 
         public static final double kHoodCurrentLimit = 35;
@@ -199,6 +201,8 @@ public class Constants {
         public static final double rollerMaxVoltage = 4; // can change if not needed
         public static final double rollerMaxAcceleration = 40;
         public static final double rollerMaxVelocity = 100; // rps
+
+        public static final double intakeSpeed = 0.3;
     }
 
     public static class ClimbConstants

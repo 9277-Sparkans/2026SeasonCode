@@ -24,7 +24,7 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.controller.PIDController;
 
 public class Hood extends SubsystemBase {
-  public double tgtAngle = HoodConstants.kMaximumAngle;
+  public double tgtAngle = 0;
   private final TalonFX hoodMotor;
   private final TalonFXConfiguration hoodMotorConfiguration;
 // -33
@@ -55,6 +55,7 @@ public class Hood extends SubsystemBase {
     // This method will be called once per scheduler run
     System.out.println("Hood Angle: " + GetCurrentHoodAngle());
     System.out.println("Target angle: " + tgtAngle);
+    System.out.println("Encoder position: " + hoodMotor.getPosition());
     //System.out.println("Target hood angle: " + GetTargetHoodAngle());
   }
 
@@ -97,13 +98,14 @@ public class Hood extends SubsystemBase {
     // hood
     public void moveHoodToAngle(double theta){
       theta = tgtAngle;
-      // MotionMagicVoltage hoodRequest = new MotionMagicVoltage(-theta).withSlot(0);
-      // hoodMotor.setControl(hoodRequest.withPosition(GetCurrentHoodAngle()));
 
       PIDController pidController = new PIDController(HoodConstants.hood_kP, HoodConstants.hood_kI, HoodConstants.hood_kD);
 
-      double feedbackVoltage = pidController.calculate(GetCurrentHoodAngle(), tgtAngle);
-      hoodMotor.setVoltage(feedbackVoltage);
+      double normalizedAngle = (HoodConstants.kMaximumAngle - HoodConstants.kMinimumAngle) / theta;
+      double targetPosition = normalizedAngle * HoodConstants.maxEncoderValue;
+
+      double feedbackVoltage = pidController.calculate(hoodMotor.getPosition().getValueAsDouble(), targetPosition);
+      hoodMotor.setVoltage(feedbackVoltage/500);
     }
     
     public void runHood() {
@@ -120,7 +122,7 @@ public class Hood extends SubsystemBase {
 
     public void moveHoodDown()
     {
-        if (tgtAngle - HoodConstants.kHoodIncrement >= HoodConstants.kMinimumAngle + 0.5)
+        if (tgtAngle - HoodConstants.kHoodIncrement >= 0.5)
         {
             tgtAngle -= HoodConstants.kHoodIncrement;
         }
@@ -128,7 +130,7 @@ public class Hood extends SubsystemBase {
 
     public void moveHoodUp()
     {
-        if (tgtAngle + HoodConstants.kHoodIncrement <= HoodConstants.kMaximumAngle - 0.5)
+        if (tgtAngle + HoodConstants.kHoodIncrement <= HoodConstants.kMaximumAngle - HoodConstants.kMinimumAngle - 0.5)
         {
             tgtAngle += HoodConstants.kHoodIncrement;
         }

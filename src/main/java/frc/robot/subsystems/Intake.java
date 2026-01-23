@@ -19,9 +19,14 @@ public class Intake extends SubsystemBase
 
 	private final TalonFX roller;
 	private final TalonFXConfiguration rollerConfig;
+	//added for test
+	private double degToRotations(double degrees){
+			return (degrees / 360.0) * IntakeConstants.deploymentGearRatio;
+		}
 
 	public Intake() 
 	{	
+		
 		deployment = new TalonFX(Constants.IntakeConstants.deploymentID, kCANBus);
 		deploymentConfig = new TalonFXConfiguration();
 
@@ -29,10 +34,10 @@ public class Intake extends SubsystemBase
 		deploymentConfig.Slot0.kI = Constants.IntakeConstants.deploymentKI;
 		deploymentConfig.Slot0.kD = Constants.IntakeConstants.deploymentKD; 
 
-		deploymentConfig.Voltage.PeakForwardVoltage = IntakeConstants.deploymentMaxVoltage;
-		deploymentConfig.Voltage.PeakReverseVoltage = -IntakeConstants.deploymentMaxVoltage;
-		deploymentConfig.MotionMagic.MotionMagicAcceleration = IntakeConstants.deploymentMaxAcceleration;
-		deploymentConfig.MotionMagic.MotionMagicCruiseVelocity = IntakeConstants.deploymentMaxVelocity;
+		// deploymentConfig.Voltage.PeakForwardVoltage = IntakeConstants.deploymentMaxVoltage;
+		// deploymentConfig.Voltage.PeakReverseVoltage = -IntakeConstants.deploymentMaxVoltage;
+		// deploymentConfig.MotionMagic.MotionMagicAcceleration = IntakeConstants.deploymentMaxAcceleration;
+		// deploymentConfig.MotionMagic.MotionMagicCruiseVelocity = IntakeConstants.deploymentMaxVelocity;
 
 		roller = new TalonFX(Constants.IntakeConstants.rollerID, kCANBus);
 		rollerConfig = new TalonFXConfiguration();
@@ -41,10 +46,10 @@ public class Intake extends SubsystemBase
 		rollerConfig.Slot0.kI = Constants.IntakeConstants.rollerKI;
 		rollerConfig.Slot0.kD = Constants.IntakeConstants.rollerKD;
 
-		rollerConfig.Voltage.PeakForwardVoltage = IntakeConstants.rollerMaxVoltage;
-		rollerConfig.Voltage.PeakReverseVoltage = -IntakeConstants.rollerMaxVoltage;
-		rollerConfig.MotionMagic.MotionMagicAcceleration = IntakeConstants.rollerMaxAcceleration;
-		rollerConfig.MotionMagic.MotionMagicCruiseVelocity = IntakeConstants.rollerMaxVelocity;
+		// rollerConfig.Voltage.PeakForwardVoltage = IntakeConstants.rollerMaxVoltage;
+		// rollerConfig.Voltage.PeakReverseVoltage = -IntakeConstants.rollerMaxVoltage;
+		// rollerConfig.MotionMagic.MotionMagicAcceleration = IntakeConstants.rollerMaxAcceleration;
+		// rollerConfig.MotionMagic.MotionMagicCruiseVelocity = IntakeConstants.rollerMaxVelocity;
 
 		deployment.getConfigurator().apply(deploymentConfig);
     	roller.getConfigurator().apply(rollerConfig);
@@ -70,26 +75,39 @@ public class Intake extends SubsystemBase
 		return Commands.runOnce(() -> stopRoller());
 	}
 
-	public void deployIntake()
-	{
-		MotionMagicVoltage deploymentRequest = new MotionMagicVoltage(IntakeConstants.deploymentMaxDeg).withSlot(0);
-		deployment.setControl(deploymentRequest.withPosition(GetDeploymentPosition()));
+	// public void deployIntake()
+	// {
+	// 	MotionMagicVoltage deploymentRequest = new MotionMagicVoltage(IntakeConstants.deploymentMaxDeg).withSlot(0);
+	// 	deployment.setControl(deploymentRequest.withPosition(GetDeploymentPosition()));
+	// }
+//
+	public void deployIntake(){
+		MotionMagicVoltage request = 
+		new MotionMagicVoltage(0).withSlot(0)
+		.withPosition(degToRotations(IntakeConstants.deploymentMaxDeg));
+	
+		// MotionMagicVoltage deploymentRequest = new MotionMagicVoltage(0).withSlot(0);
+		deployment.setControl(request.withPosition(GetDeploymentPosition()));
 	}
 
 	public void retractIntake()
 	{
-		MotionMagicVoltage deploymentRequest = new MotionMagicVoltage(0).withSlot(0);
-		deployment.setControl(deploymentRequest.withPosition(GetDeploymentPosition()));
+		MotionMagicVoltage request = 
+		new MotionMagicVoltage(0).withSlot(0)
+		.withPosition(degToRotations(0));
+	
+		// MotionMagicVoltage deploymentRequest = new MotionMagicVoltage(0).withSlot(0);
+		deployment.setControl(request.withPosition(GetDeploymentPosition()));
 	}
 
 	public void intake()
 	{
-		roller.set(1);
+		roller.set(IntakeConstants.intakeSpeed);
 	}
 
 	public void outtake()
 	{
-		roller.set(-1);
+		roller.set(-IntakeConstants.intakeSpeed);
 	}
 
 	public void stopRoller()

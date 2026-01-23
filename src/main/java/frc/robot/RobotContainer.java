@@ -26,7 +26,8 @@ import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.TurretTracking;
 import frc.robot.subsystems.Turret;
-import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
 import frc.robot.commands.AutoFire;
 import frc.robot.subsystems.Transfer;
@@ -48,12 +49,14 @@ public class RobotContainer {
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
-    private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
+    private final Shooter shooter = new Shooter();
     public final Intake intake = new Intake();
     public final Turret turret = new Turret();
     public final Transfer transfer = new Transfer();
+    public final Hood hood = new Hood();
+    
 
-    public final AutoFire autoFireCommand = new AutoFire(turret, transfer, shooterSubsystem);
+    public final AutoFire autoFireCommand = new AutoFire(turret, transfer, shooter, hood);
 
     public RobotContainer() {
         NamedCommands.registerCommand("testNamedCommand", Commands.runOnce(() -> System.out.println("this named command works")));
@@ -80,18 +83,18 @@ public class RobotContainer {
             drivetrain.applyRequest(() -> idle).ignoringDisable(true)
         );
 
-        joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
+        //joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
         joystick.b().whileTrue(drivetrain.applyRequest(() ->
             point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
         ));
 
-        // joystick.x().onTrue(shooterSubsystem.shootCmd());
-        joystick.povUp().onTrue(shooterSubsystem.runHoodCmd());
-        joystick.povDown().onTrue(shooterSubsystem.runHoodReverseCmd());
+        joystick.x().onTrue(shooter.shootCmd());
+        joystick.povUp().onTrue(Commands.runOnce(() -> hood.moveHoodUpCmd()));
+        joystick.povDown().onTrue(Commands.runOnce(() -> hood.moveHoodDownCmd()));
 
-        joystick.povUp().onFalse(shooterSubsystem.stopHoodCmd());
-        joystick.povDown().onFalse(shooterSubsystem.stopHoodCmd());
-        
+        joystick.povUp().onFalse(Commands.runOnce(() -> hood.stopHood()));
+        joystick.povDown().onFalse(Commands.runOnce(() -> hood.stopHood()));
+
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
         joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
@@ -102,49 +105,45 @@ public class RobotContainer {
         // reset the field-centric heading on left bumper press
         //joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-        joystick.rightTrigger().onTrue(Commands.runOnce(() -> turret.spinPositive()));
-        joystick.leftTrigger().onTrue(Commands.runOnce(() -> turret.spinNegative()));
+        joystick.rightTrigger().onTrue(Commands.runOnce(() -> turret.turretPos()));
+        joystick.leftTrigger().onTrue(Commands.runOnce(() -> turret.turretNeg()));
         joystick.leftTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
         joystick.rightTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
 
-        joystick.leftBumper().onTrue(Commands.runOnce(() -> shooterSubsystem.decreaseSpeed()));
-        joystick.rightBumper().onTrue(Commands.runOnce(() -> shooterSubsystem.increaseSpeed()));
+        joystick.leftBumper().onTrue(Commands.runOnce(() -> shooter.decreaseSpeed()));
+        joystick.rightBumper().onTrue(Commands.runOnce(() -> shooter.increaseSpeed()));
 
-        joystick.y().onTrue(new TurretTracking((turret)));
+        //joystick.y().onTrue(new TurretTracking((turret)));
 
         joystick.b().onTrue(Commands.runOnce(() -> transfer.activateTransfer()));
+        joystick.b().onFalse(Commands.runOnce(() -> transfer.stop()));
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
         // fix butten stuff *cough coguh* tyler change your button bindings
 
-        // joystick.rightTrigger()
-        //     .whileTrue(
-        //         new InstantCommand(() -> intake.intakeCommand()))
-        //     .onFalse(
-        //         new InstantCommand(() -> intake.stopRollerCommand()));
+        joystick.povRight()
+            .whileTrue(
+                new InstantCommand(() -> intake.intakeCommand()))
+            .onFalse(
+                new InstantCommand(() -> intake.stopRollerCommand()));
 
-        // joystick.leftTrigger()
-        //     .whileTrue(
-        //         new InstantCommand(() -> intake.outtakeCommand()))
-        //     .onFalse(
-        //         new InstantCommand(() -> intake.stopRollerCommand()));
+        joystick.povLeft()
+            .whileTrue(
+                new InstantCommand(() -> intake.outtakeCommand()))
+            .onFalse(
+                new InstantCommand(() -> intake.stopRollerCommand()));
 
-        // joystick.rightBumper()
-        //     .whileTrue(
-        //         new InstantCommand(() -> intake.deployCommand()));
+        joystick.y()
+            .whileTrue(
+                new InstantCommand(() -> intake.deployCommand()));
 
-        // joystick.leftBumper()
-        //     .whileTrue(
-        //         new InstantCommand(() -> intake.retractCommand()));
+        joystick.a()
+            .whileTrue(
+                new InstantCommand(() -> intake.retractCommand()));
         
-        // joystick.rightTrigger()
-        //     .whileTrue(
-        //         new InstantCommand(() -> transfer.activateTransferCommand()))
-        //     .onFalse(
-        //         new InstantCommand(() -> transfer.stopTransferCommand()));
 
-        // joystick.rightStick()
+        // joystick.x()
         //     .whileTrue(
         //         new InstantCommand(() -> autoFireCommand.execute()));
     }   

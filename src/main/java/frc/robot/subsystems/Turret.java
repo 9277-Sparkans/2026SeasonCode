@@ -18,13 +18,12 @@ import frc.robot.Constants.QuickAccessConstants;
 import frc.robot.Constants.TurretConstants;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
-
 public class Turret extends SubsystemBase {
 
   private final TalonFX turretMotor;
   private final TalonFXConfiguration turretMotorConfig;
   //private GenericEntry sb_turretEncoder;
-  //public double turretOffset = 0.0;
+  public double turretOffset = 0.0;
 
   public Command turretPos () {
       spinPositive(); // okay so this works, Commands.runOnce throws a tantrum
@@ -66,11 +65,13 @@ public class Turret extends SubsystemBase {
   public void periodic() {
     //System.out.println("Turret Position: " + getPosition());
     // This method will be called once per scheduler run
-    System.out.println(turretMotor.getSupplyCurrent().getValueAsDouble());
+    //System.out.println(turretMotor.getSupplyCurrent().getValueAsDouble());
+    System.out.println("turret position is: " + getPosition());
   }
 
   public double getPosition() {
-    return turretMotor.getPosition().getValueAsDouble();
+    double position = turretMotor.getPosition().getValueAsDouble() / (1.0 / (15.0 / 108.0));
+    return position * 360;
   }
 
   public double getTurretCurrent() {
@@ -78,7 +79,7 @@ public class Turret extends SubsystemBase {
     return (turretCurrent);
   }
 
-  public double getTurrentAngle()
+  public double getTurretAngle()
   {
     double position = getTurretCurrent(); // turns
     return position * 360;
@@ -90,11 +91,11 @@ public class Turret extends SubsystemBase {
   }
 
   public void spinPositive(){
-    turretMotor.set(0.15);
+    turretMotor.set(TurretConstants.turret_speed);
   }
 
   public void spinNegative(){
-    turretMotor.set(-0.15);
+    turretMotor.set(-TurretConstants.turret_speed);
   }
 
   public void setTurretToAngle(double angle)
@@ -109,7 +110,7 @@ public class Turret extends SubsystemBase {
     }
 
     MotionMagicVoltage angleTgt = new MotionMagicVoltage(angle).withSlot(0);
-    turretMotor.setControl(angleTgt.withPosition(getTurrentAngle()));
+    turretMotor.setControl(angleTgt.withPosition(getTurretAngle()));
   }
 
 

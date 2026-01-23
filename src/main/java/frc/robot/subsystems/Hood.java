@@ -104,6 +104,8 @@ public class Hood extends SubsystemBase {
       double normalizedAngle = (HoodConstants.kMaximumAngle - HoodConstants.kMinimumAngle) / theta;
       double targetPosition = normalizedAngle * HoodConstants.maxEncoderValue;
 
+      System.out.println("target position: " + targetPosition);
+
       double feedbackVoltage = pidController.calculate(hoodMotor.getPosition().getValueAsDouble(), targetPosition);
       hoodMotor.setVoltage(feedbackVoltage/500);
     }

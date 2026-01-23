@@ -21,38 +21,40 @@ import frc.robot.Limelight;
 import frc.robot.Constants.HoodConstants;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.controller.PIDController;
 
 public class Hood extends SubsystemBase {
-  public double tgtAngle;
+  public double tgtAngle = HoodConstants.kMaximumAngle;
   private final TalonFX hoodMotor;
   private final TalonFXConfiguration hoodMotorConfiguration;
 // -33
-public Hood() {
-  hoodMotor = new TalonFX(HoodConstants.kHoodMotorId);
-  hoodMotorConfiguration = new TalonFXConfiguration();
-  hoodMotor.setPosition(0);
+  public Hood() {
+    hoodMotor = new TalonFX(HoodConstants.kHoodMotorId);
+    hoodMotorConfiguration = new TalonFXConfiguration();
+    hoodMotor.setPosition(0);
 
-  CurrentLimitsConfigs hoodConfigs = new CurrentLimitsConfigs();
-  hoodConfigs.StatorCurrentLimit = HoodConstants.kHoodCurrentLimit;
-  hoodConfigs.StatorCurrentLimitEnable = true;
-  hoodMotor.getConfigurator().apply(hoodConfigs);
+    CurrentLimitsConfigs hoodConfigs = new CurrentLimitsConfigs();
+    hoodConfigs.StatorCurrentLimit = HoodConstants.kHoodCurrentLimit;
+    hoodConfigs.StatorCurrentLimitEnable = true;
+    hoodMotor.getConfigurator().apply(hoodConfigs);
 
-  hoodMotorConfiguration.Slot0.kG = HoodConstants.hood_kG;
-	hoodMotorConfiguration.Slot0.kP = HoodConstants.hood_kP;
-	hoodMotorConfiguration.Slot0.kI = HoodConstants.hood_kI;
-	hoodMotorConfiguration.Slot0.kD = HoodConstants.hood_kD; 
+    hoodMotorConfiguration.Slot0.kG = HoodConstants.hood_kG;
+    hoodMotorConfiguration.Slot0.kP = HoodConstants.hood_kP;
+    hoodMotorConfiguration.Slot0.kI = HoodConstants.hood_kI;
+    hoodMotorConfiguration.Slot0.kD = HoodConstants.hood_kD; 
 
-	hoodMotorConfiguration.Voltage.PeakForwardVoltage = HoodConstants.hood_maxVoltage;
-	hoodMotorConfiguration.Voltage.PeakReverseVoltage = -HoodConstants.hood_maxVoltage;
-	hoodMotorConfiguration.MotionMagic.MotionMagicAcceleration = HoodConstants.hood_maxAcceleration;
-	hoodMotorConfiguration.MotionMagic.MotionMagicCruiseVelocity = HoodConstants.hood_maxVelocity;
+    hoodMotorConfiguration.Voltage.PeakForwardVoltage = HoodConstants.hood_maxVoltage;
+    hoodMotorConfiguration.Voltage.PeakReverseVoltage = -HoodConstants.hood_maxVoltage;
+    hoodMotorConfiguration.MotionMagic.MotionMagicAcceleration = HoodConstants.hood_maxAcceleration;
+    hoodMotorConfiguration.MotionMagic.MotionMagicCruiseVelocity = HoodConstants.hood_maxVelocity;
 
-}
+  }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
     System.out.println("Hood Angle: " + GetCurrentHoodAngle());
+    System.out.println("Target angle: " + tgtAngle);
     //System.out.println("Target hood angle: " + GetTargetHoodAngle());
   }
 
@@ -94,8 +96,14 @@ public Hood() {
 
     // hood
     public void moveHoodToAngle(double theta){
-        MotionMagicVoltage hoodRequest = new MotionMagicVoltage(theta).withSlot(0);
-		  hoodMotor.setControl(hoodRequest.withPosition(GetCurrentHoodAngle()));
+      theta = tgtAngle;
+      // MotionMagicVoltage hoodRequest = new MotionMagicVoltage(-theta).withSlot(0);
+      // hoodMotor.setControl(hoodRequest.withPosition(GetCurrentHoodAngle()));
+
+      PIDController pidController = new PIDController(HoodConstants.hood_kP, HoodConstants.hood_kI, HoodConstants.hood_kD);
+
+      double feedbackVoltage = pidController.calculate(GetCurrentHoodAngle(), tgtAngle);
+      hoodMotor.setVoltage(feedbackVoltage);
     }
     
     public void runHood() {
@@ -110,17 +118,17 @@ public Hood() {
         hoodMotor.set(0);
     }
 
-    public void moveHoodUp()
+    public void moveHoodDown()
     {
-        if (tgtAngle - HoodConstants.kHoodIncrement >= HoodConstants.kMinimumAngle)
+        if (tgtAngle - HoodConstants.kHoodIncrement >= HoodConstants.kMinimumAngle + 0.5)
         {
             tgtAngle -= HoodConstants.kHoodIncrement;
         }
     }
 
-    public void moveHoodDown()
+    public void moveHoodUp()
     {
-        if (tgtAngle + HoodConstants.kHoodIncrement <= HoodConstants.kMaximumAngle)
+        if (tgtAngle + HoodConstants.kHoodIncrement <= HoodConstants.kMaximumAngle - 0.5)
         {
             tgtAngle += HoodConstants.kHoodIncrement;
         }

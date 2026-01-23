@@ -88,7 +88,7 @@ public class RobotContainer {
             point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
         ));
 
-        joystick.x().onTrue(shooter.shootCmd());
+        // joystick.x().onTrue(shooter.shootCmd());
         joystick.povUp().onTrue(Commands.runOnce(() -> hood.moveHoodUpCmd()));
         joystick.povDown().onTrue(Commands.runOnce(() -> hood.moveHoodDownCmd()));
 
@@ -110,13 +110,18 @@ public class RobotContainer {
         joystick.leftTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
         joystick.rightTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
 
-        joystick.leftBumper().onTrue(Commands.runOnce(() -> shooter.decreaseSpeed()));
-        joystick.rightBumper().onTrue(Commands.runOnce(() -> shooter.increaseSpeed()));
+        // joystick.leftBumper().onTrue(Commands.runOnce(() -> shooter.decreaseSpeed()));
+        // joystick.rightBumper().onTrue(Commands.runOnce(() -> shooter.increaseSpeed()));
 
         //joystick.y().onTrue(new TurretTracking((turret)));
 
         joystick.b().onTrue(Commands.runOnce(() -> transfer.activateTransfer()));
         joystick.b().onFalse(Commands.runOnce(() -> transfer.stop()));
+
+        joystick.leftBumper().onTrue(Commands.runOnce(() -> hood.moveHoodDown()));
+        joystick.rightBumper().onTrue(Commands.runOnce(() -> hood.moveHoodUp()));
+
+        joystick.x().onTrue(Commands.runOnce(() -> hood.moveHoodToAngle(0)));
 
         drivetrain.registerTelemetry(logger::telemeterize);
 

@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.HoodConstants;
 import frc.robot.Constants.QuickAccessConstants;
 import frc.robot.Constants.TurretConstants;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -24,6 +25,8 @@ public class Turret extends SubsystemBase {
   private final TalonFXConfiguration turretMotorConfig;
   //private GenericEntry sb_turretEncoder;
   public double turretOffset = 0.0;
+
+  public double targetHoodAngle = HoodConstants.kMaximumAngle;
 
   public Command turretPos () {
       spinPositive(); // okay so this works, Commands.runOnce throws a tantrum
@@ -98,8 +101,10 @@ public class Turret extends SubsystemBase {
     turretMotor.set(-TurretConstants.turret_speed);
   }
 
+  
   public void setTurretToAngle(double angle)
   {
+    angle = targetHoodAngle;
     if (angle > TurretConstants.kMaximumAngle)
     {
       angle = TurretConstants.kMaximumAngle;

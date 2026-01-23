@@ -139,13 +139,15 @@ public class Constants {
         public static final double shooter_kV = 0.0;
         public static final double shooter_kA = 0.0;
 
+
+
     }
 
     public static class HoodConstants
     {
         public static final int kHoodMotorId = 34;
 
-        public static final double hood_maxVelocity = 125; // rotations per second
+        public static final double hood_maxVelocity = 1; // rotations per second
         public static final double hood_maxAcceleration = 80; // rotations per second^2
         public static final double hood_maxVoltage = 5;// kraken x44 max voltage
 
@@ -163,9 +165,8 @@ public class Constants {
         public static final double kGearRatio = 1.0 / (15.0 / 392.7);
 
         public static final double kHoodCurrentLimit = 35;
-        public static final double kShooterCurrentLimit = 35;
 
-        public static final double kHoodIncrement = 5;
+        public static final double kHoodIncrement = 2;
     }
 
     public static class IntakeConstants

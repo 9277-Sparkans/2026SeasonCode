@@ -90,19 +90,10 @@ public class RobotContainer {
             point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
         ));
 
-        // joystick.x().onTrue(shooter.shootCmd());
-        // joystick.povUp().onTrue(Commands.runOnce(() -> hood.moveHoodUpCmd()));
-        // joystick.povDown().onTrue(Commands.runOnce(() -> hood.moveHoodDownCmd()));
+        
+        
 
-        // joystick.povUp().onFalse(Commands.runOnce(() -> hood.stopHood()));
-        // joystick.povDown().onFalse(Commands.runOnce(() -> hood.stopHood()));
-
-        joystick.povRight().onTrue(Commands.runOnce(() -> climb.raise()));
-        joystick.povLeft().onTrue(Commands.runOnce(() -> climb.lower()));
-
-        joystick.povRight().onFalse(Commands.runOnce(() -> climb.hang()));
-        joystick.povLeft().onFalse(Commands.runOnce(() -> climb.hang()));
-
+        
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
         joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
@@ -113,7 +104,13 @@ public class RobotContainer {
         // reset the field-centric heading on left bumper press
         //joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-        
+        // CLIMB button controls
+        joystick.povRight().onTrue(Commands.runOnce(() -> climb.raise()));
+        joystick.povLeft().onTrue(Commands.runOnce(() -> climb.lower()));
+
+        joystick.povRight().onFalse(Commands.runOnce(() -> climb.hang()));
+        joystick.povLeft().onFalse(Commands.runOnce(() -> climb.hang()));
+
 
         // HOOD button controls
         joystick.povUp().onTrue(Commands.runOnce(() -> hood.runHood()));
@@ -130,6 +127,12 @@ public class RobotContainer {
 
         // joystick.leftBumper().onTrue(Commands.runOnce(() -> hood.moveHoodDown()));
         // joystick.rightBumper().onTrue(Commands.runOnce(() -> hood.moveHoodUp()));
+
+        // joystick.povUp().onTrue(Commands.runOnce(() -> hood.moveHoodUpCmd()));
+        // joystick.povDown().onTrue(Commands.runOnce(() -> hood.moveHoodDownCmd()));
+
+        // joystick.povUp().onFalse(Commands.runOnce(() -> hood.stopHood()));
+        // joystick.povDown().onFalse(Commands.runOnce(() -> hood.stopHood()));
 
 
         // TURRET button controls

@@ -28,15 +28,6 @@ public class Turret extends SubsystemBase {
 
   public double targetHoodAngle = HoodConstants.kMaximumAngle;
 
-  public Command turretPos () {
-      spinPositive(); // okay so this works, Commands.runOnce throws a tantrum
-      return Commands.runOnce(() -> {});
-    }
-
-    public Command turretNeg () {
-      spinNegative(); // okay so this works, Commands.runOnce throws a tantrum
-      return Commands.runOnce(() -> {});
-    }
 
   public Timer timer;
 
@@ -74,13 +65,23 @@ public class Turret extends SubsystemBase {
 
   public double getPosition() {
     double position = turretMotor.getPosition().getValueAsDouble() / (1.0 / (15.0 / 108.0));
-    return position * 360;
+    return position * 360; 
   }
 
   public double getTurretCurrent() {
     double turretCurrent = turretMotor.getSupplyCurrent().getValueAsDouble() / TurretConstants.kGearRatio;
     return (turretCurrent);
   }
+
+  public Command turretPos () {
+      spinPositive();
+      return Commands.runOnce(() -> spinPositive());
+    }
+
+  public Command turretNeg () {
+      spinNegative();
+      return Commands.runOnce(() -> spinNegative());
+    }
 
   public double getTurretAngle()
   {

@@ -74,13 +74,13 @@ public class Turret extends SubsystemBase {
   }
 
   public Command turretPos () {
-      spinPositive();
       return Commands.runOnce(() -> spinPositive());
+      
     }
 
   public Command turretNeg () {
-      spinNegative();
       return Commands.runOnce(() -> spinNegative());
+      
     }
 
   public double getTurretAngle()
@@ -95,11 +95,26 @@ public class Turret extends SubsystemBase {
   }
 
   public void spinPositive(){
-    turretMotor.set(TurretConstants.turret_speed);
+    if (getPosition() < TurretConstants.kMaximumAngle - 2.0)
+      {
+        turretMotor.set(TurretConstants.turret_speed);
+      }
+      else
+      {
+        stop();
+      }
+    
   }
 
   public void spinNegative(){
-    turretMotor.set(-TurretConstants.turret_speed);
+    if (getPosition() > TurretConstants.kMinimumAngle + 2.0)
+      {
+        turretMotor.set(-TurretConstants.turret_speed);
+      }
+      else
+      {
+        stop();
+      }
   }
 
   

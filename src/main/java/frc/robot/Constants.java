@@ -103,7 +103,7 @@ public class Constants {
         public static final double turret_maxAcceleration = 20; // rotations per second^2
         public static final double turret_maxVoltage = 5;// kraken x44 max voltage
         public static final int turret_motorId = 32; // change this value
-        public static final double turret_speed = 0.15;
+        public static final double turret_speed = 0.1;
 
         public static final double turret_kG = 0.03;
         public static final double turret_kS = 0.01;
@@ -111,8 +111,8 @@ public class Constants {
         public static final double turret_kI = 0.0;
         public static final double turret_kD = 0.3;
 
-        public static int kMaximumAngle = 70;
-        public static int kMinimumAngle = -70;
+        public static int kMaximumAngle = 50;
+        public static int kMinimumAngle = -50;
 
         public static double kGearRatio = 1.0 / (18.0 / 105.0);
     }

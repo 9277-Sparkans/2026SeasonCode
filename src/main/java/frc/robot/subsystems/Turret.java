@@ -66,7 +66,7 @@ public class Turret extends SubsystemBase {
     //System.out.println("Turret Position: " + getPosition());
     // This method will be called once per scheduler run
     //System.out.println(turretMotor.getSupplyCurrent().getValueAsDouble());
-    System.out.println("turret position is: " + getPosition());
+    // System.out.println("turret position is: " + getPosition());
   }
 
   public double getPosition() {

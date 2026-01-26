@@ -52,7 +52,7 @@ public Hood() {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    System.out.println("Hood Angle: " + GetCurrentHoodAngle());
+    // System.out.println("Hood Angle: " + GetCurrentHoodAngle());
     //System.out.println("Target hood angle: " + GetTargetHoodAngle());
   }
 

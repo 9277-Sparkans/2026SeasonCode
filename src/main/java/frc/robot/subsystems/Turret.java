@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.HoodConstants;
 import frc.robot.Constants.QuickAccessConstants;
 import frc.robot.Constants.TurretConstants;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -25,15 +26,8 @@ public class Turret extends SubsystemBase {
   //private GenericEntry sb_turretEncoder;
   public double turretOffset = 0.0;
 
-  public Command turretPos () {
-      spinPositive(); // okay so this works, Commands.runOnce throws a tantrum
-      return Commands.runOnce(() -> {});
-    }
+  public double targetHoodAngle = HoodConstants.kMaximumAngle;
 
-    public Command turretNeg () {
-      spinNegative(); // okay so this works, Commands.runOnce throws a tantrum
-      return Commands.runOnce(() -> {});
-    }
 
   public Timer timer;
 
@@ -71,13 +65,23 @@ public class Turret extends SubsystemBase {
 
   public double getPosition() {
     double position = turretMotor.getPosition().getValueAsDouble() / (1.0 / (15.0 / 108.0));
-    return position * 360;
+    return position * 360; 
   }
 
   public double getTurretCurrent() {
     double turretCurrent = turretMotor.getSupplyCurrent().getValueAsDouble() / TurretConstants.kGearRatio;
     return (turretCurrent);
   }
+
+  public Command turretPos () {
+      spinPositive();
+      return Commands.runOnce(() -> spinPositive());
+    }
+
+  public Command turretNeg () {
+      spinNegative();
+      return Commands.runOnce(() -> spinNegative());
+    }
 
   public double getTurretAngle()
   {
@@ -98,8 +102,10 @@ public class Turret extends SubsystemBase {
     turretMotor.set(-TurretConstants.turret_speed);
   }
 
+  
   public void setTurretToAngle(double angle)
   {
+    angle = targetHoodAngle;
     if (angle > TurretConstants.kMaximumAngle)
     {
       angle = TurretConstants.kMaximumAngle;

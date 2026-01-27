@@ -82,6 +82,8 @@ public class AutoFire extends Command
         // do not need to calculate for < 1000 bc useless
         int shooterRange = (int)((ShooterConstants.kMaxRPM - 1000) / ShooterConstants.kRpmStagingAuto); 
 
+        boolean hasFoundValidShot = true;
+        
         // generate a list of all hood angles
         for (int i = 0; i < angleRange; i++)
         {
@@ -103,8 +105,14 @@ public class AutoFire extends Command
                     if ((y - AutoShooterConstants.kHubHeight) < AutoShooterConstants.kExtrapolationLenience)
                     {
                         possibleShots.add(new Shot(shooterRPM, hoodValue));
+                        hasFoundValidShot = true;
                     }
                 }
+            }
+            
+            if (hasFoundValidShot)
+            {
+                return possibleShots;
             }
         }
         
@@ -119,23 +127,36 @@ public class AutoFire extends Command
         (2 * u * u * Math.cos(theta) * Math.cos(theta)));
     }
 
-    // get lowest angle shot from the list
+    // // get lowest angle shot from the list
+    // public Shot GetBestShot(ArrayList<Shot> shots)
+    // {  
+    //     double midRPM = 100000;
+    //     int lowestAngleIndex = 0;
+    //     for (int i = 0; i < shots.size(); i++)
+    //     {
+    //         Shot temp = shots.get(i);
+            
+    //         if (temp.GetTheta() < lowestAngle)
+    //         {
+    //             lowestAngle = temp.GetTheta();
+    //             lowestAngleIndex = i;
+    //         }
+    //     }
+    //     shots.get(0).GetRPM();
+    //     return shots.get(lowestAngleIndex);
+    // }
+    
+    // fix find center logic
     public Shot GetBestShot(ArrayList<Shot> shots)
     {  
-        double lowestAngle = 100000;
-        int lowestAngleIndex = 0;
-        for (int i = 0; i < shots.size(); i++)
+        int length = shots.size();
+        int index = (int)(length/2);
+        if (length % 2 == 0)
         {
-            Shot temp = shots.get(i);
-            
-            if (temp.GetTheta() < lowestAngle)
-            {
-                lowestAngle = temp.GetTheta();
-                lowestAngleIndex = i;
-            }
+            index -= 1;
         }
-        shots.get(0).GetRPM();
-        return shots.get(lowestAngleIndex);
+        
+        return shots.get(index - 1);
     }
 
     @Override

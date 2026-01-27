@@ -231,11 +231,13 @@ public class Hood extends SubsystemBase {
 
   // POV UP move hood to -0.75
   public Command moveHoodToTgtCmd() {
-    return Commands.runOnce(() -> moveHoodMotionMagic(-0.75));
+    return Commands.runOnce(() -> moveHoodMotionMagic(-0.75)); 
   }
 
   public Command stopHoodCmd() {
-    return Commands.runOnce(() -> hoodMotor.set(0));
+    //return Commands.runOnce(() -> hoodMotor.set(0));
+    hoodMotor.set(0);
+    return Commands.runOnce(() -> {});
   }
 
   

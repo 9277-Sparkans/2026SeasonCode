@@ -157,7 +157,7 @@ public class Constants {
         public static final double hood_kI = 0.0;
         public static final double hood_kD = 0.3;
 
-        public static final double kHoodSpeed = 0.05;
+        public static final double kHoodSpeed = 0.1;
 
         public static final double kMinimumAngle = 32;
         public static final double kMaximumAngle = 49;
@@ -224,6 +224,23 @@ public class Constants {
         public static final double transferMaxVoltage = 4; // can change if not needed
         public static final double transferMaxAcceleration = 40;
         public static final double transferMaxVelocity = 100; // rps
+    }
+
+    public static final class RollerConstants {
+
+        public static final double roller_maxVelocity = 40; // rotations per second
+        public static final double roller_maxAcceleration = 20; // rotations per second^2
+        public static final double roller_maxVoltage = 5;// kraken x44 max voltage
+        public static final int roller_motorId = 0; // change this value
+        public static final double roller_speed = 0.1;
+
+        public static final double roller_kG = 0.03;
+        public static final double roller_kS = 0.01;
+        public static final double roller_kP = 4.5;
+        public static final double roller_kI = 0.0;
+        public static final double roller_kD = 0.3;
+
+        public static double kGearRatio = 1.0 / 1.0;
     }
     
 }

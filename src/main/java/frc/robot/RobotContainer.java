@@ -29,9 +29,12 @@ import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Roller;
 import frc.robot.commands.AutoFire;
 import frc.robot.subsystems.Transfer;
 import frc.robot.subsystems.Climb;
+import frc.robot.subsystems.Roller;
+
 
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -56,7 +59,7 @@ public class RobotContainer {
     public final Transfer transfer = new Transfer();
     public final Hood hood = new Hood();
     public final Climb climb = new Climb();
-    
+    public final Roller roller = new Roller();
 
     public final AutoFire autoFireCommand = new AutoFire(turret, transfer, shooter, hood);
 
@@ -86,9 +89,9 @@ public class RobotContainer {
         );
 
         //joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-        joystick.b().whileTrue(drivetrain.applyRequest(() ->
-            point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
-        ));
+        // joystick.b().whileTrue(drivetrain.applyRequest(() ->
+        //     point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
+        // ));
 
         
         
@@ -163,11 +166,11 @@ public class RobotContainer {
         //         new InstantCommand(() -> intake.stopRollerCommand()));
 
         // INTAKE button controls
-        joystick.povRight()
-            .whileTrue(
-                new InstantCommand(() -> intake.intakeCommand()))
-            .onFalse(
-                new InstantCommand(() -> intake.stopRollerCommand()));
+        // joystick.povRight()
+        //     .whileTrue(
+        //         new InstantCommand(() -> intake.intakeCommand()))
+        //     .onFalse(
+        //         new InstantCommand(() -> intake.stopRollerCommand()));
 
         // joystick.povLeft()
         //     .whileTrue(
@@ -175,15 +178,19 @@ public class RobotContainer {
         //     .onFalse(
         //         new InstantCommand(() -> intake.stopRollerCommand()));
 
-        joystick.y()
-            .whileTrue(
-                new InstantCommand(() -> intake.deployCommand()));
+        // joystick.y()
+        //     .whileTrue(
+        //         new InstantCommand(() -> intake.deployCommand()));
 
-        joystick.a()
-            .whileTrue(
-                new InstantCommand(() -> intake.retractCommand()));
+        // joystick.a()
+        //     .whileTrue(
+        //         new InstantCommand(() -> intake.retractCommand()));
         
         
+        // ROLLER button controls
+        joystick.y().onTrue(roller.rollerSpin());
+
+
 
         drivetrain.registerTelemetry(logger::telemeterize);
 

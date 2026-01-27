@@ -36,12 +36,14 @@ public class Transfer extends SubsystemBase
 
     public Command activateTransferCommand()
     {
-        return Commands.run(() -> activateTransfer());
+        activateTransfer();
+        return Commands.runOnce(() -> {});
     }
 
     public Command stopTransferCommand()
     {
-        return Commands.run(() -> stop());
+        stop();
+        return Commands.run(() -> {});
     }
 
     public void activateTransfer()

@@ -66,13 +66,25 @@ public class Limelight
         return hub;
     }
 
-    public static Translation2d GetDistance()
+    // meters
+    public static Translation2d GetOffset()
     {
         boolean isBlue = getIsBlue();
         Translation2d hub = getHub(isBlue);
         PoseEstimate pose = getPose();
 
         return hub.minus(pose.pose.getTranslation());
+    }
+
+    // meters
+    public static double GetDistance()
+    {
+        Translation2d offset = GetOffset();
+
+        double x = offset.getX();
+        double y = offset.getY();
+
+        return Math.sqrt(x * x + y * y);
     }
 
     public static double GetAngle()

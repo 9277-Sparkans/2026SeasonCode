@@ -130,6 +130,7 @@ public class Constants {
         public static final int kRpmIncrement = 10;
 
         public static final int kMaxRPM = 5000;
+        public static final int kRpmStagingAuto = 100;
 
         public static final double shooter_kG = 0.0;
         public static final double shooter_kS = 0.0;
@@ -137,10 +138,17 @@ public class Constants {
         public static final double shooter_kI = 0.0;
         public static final double shooter_kD = 0.0;
         public static final double shooter_kV = 0.0;
-        public static final double shooter_kA = 0.0;
+        public static final double shooter_kA = 0.0;        
+    }
 
-
-
+    public static class AutoShooterConstants
+    {
+        public static final double kUpdateRate = (1 / 50); // hz of rio for dt
+        public static final double kHubSize = (47 / 39.37); // inches -> meters
+        public static final double kHubStepSize = (kHubSize / 5); // increase value for more accuracy
+        public static final double kExtrapolationLenience = (5 / 39.37); // inches -> meter
+        public static final double kHubHeight = (72 / 39.37); // inches -> meters
+        public static final double kFlywheelRadius = (50 / 1000); // mm -> meters
     }
 
     public static class HoodConstants

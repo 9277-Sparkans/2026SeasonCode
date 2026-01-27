@@ -29,7 +29,7 @@ public class Shooter extends SubsystemBase {
     private boolean shooting = false;
 
 
-    public int shooterRPS; // rpm
+    public double shooterRPS = 0; // rpm
 
     /** Creates a new Shooter. */
     public Shooter() {
@@ -94,10 +94,9 @@ public class Shooter extends SubsystemBase {
 
         shooterMotor.setVoltage(feedforwardVoltage + feedbackVoltage);
     }
-
     
     // getters
-    public int GetCorrectRPS()
+    public double GetCorrectRPS()
     {
         return shooterRPS; // replace with the actual math later
     }
@@ -118,14 +117,15 @@ public class Shooter extends SubsystemBase {
         }
     }
 
-    
-
     public double GetShooterVelocity()
     {
         return shooterMotor.getVelocity().getValueAsDouble();
     }
 
-    
+    public void SetShooterVelocity(double rpm)
+    {
+        shooterRPS = rpm / 60.0;
+    }
 
     @Override
     public void periodic() 

@@ -148,10 +148,15 @@ public class Telemetry {
     }
 
     public static void telemeterizeMotor(String motorName, TalonFX motor) {
+        telemeterizeMotor(motorName, motor, 1.0);
+    }
+
+    public static void telemeterizeMotor(String motorName, TalonFX motor, double gearRatio) {
         SmartDashboard.putData(motorName, new Sendable() {
             @Override
             public void initSendable(SendableBuilder builder) {
                 builder.addDoubleProperty("Velocity", () -> motor.getVelocity().getValueAsDouble(), null);
+                builder.addDoubleProperty("Position", () -> (motor.getPosition().getValueAsDouble() / gearRatio) * 360, null);
             }
         });
     }

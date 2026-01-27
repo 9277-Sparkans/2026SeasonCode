@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Telemetry;
 import frc.robot.Constants.HoodConstants;
 import frc.robot.Constants.QuickAccessConstants;
 import frc.robot.Constants.TurretConstants;
@@ -51,6 +52,7 @@ public class Turret extends SubsystemBase {
 
     //sb_turretEncoder.setDouble(turretMotor.getPosition().getValue().magnitude());
 
+    Telemetry.telemeterizeMotor("Turret", turretMotor, (1.0 / (15.0 / 108.0)));
 
     timer = new Timer();
   }

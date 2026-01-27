@@ -5,6 +5,8 @@
 # Prerequisites
 *.d
 
+build.gradle
+
 # Compiled Object files
 *.slo
 *.lo

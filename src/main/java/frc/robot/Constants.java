@@ -1,17 +1,26 @@
 package frc.robot;
 
+import java.util.List;
 import java.util.function.BooleanSupplier;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.util.struct.Struct;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.math.Matrix;
+import frc.utils.*;
+
+
 
 public class Constants {
     public static final class QuickAccessConstants {
@@ -207,4 +216,18 @@ public class Constants {
         public static final double transferMaxAcceleration = 40;
         public static final double transferMaxVelocity = 100; // rps
     }
+    private static final ConstantsLoader LOADER = ConstantsLoader.getInstance();
+    public static class Vision {
+        public static final List<CamConstants> CAMERAS = LOADER.getCameras("vision");
+
+        // The layout of the AprilTags on the field
+        public static final AprilTagFieldLayout TAG_LAYOUT =
+        TagLayouts.getTagLayoutFromPath("apriltagLayouts/onlyReef.json");
+
+        // The standard deviations of our vision estimated poses, which affect
+        // correction rate
+        // (Fake values. Experiment and determine estimation noise on an actual robot.)
+        public static final Matrix<N3, N1> SINGLE_TAG_STD_DEVS = VecBuilder.fill(2.0, 2.0, 4);
+        public static final Matrix<N3, N1> MULTI_TAG_STD_DEVS = VecBuilder.fill(0.5, 0.5, 1);
+  }
 }

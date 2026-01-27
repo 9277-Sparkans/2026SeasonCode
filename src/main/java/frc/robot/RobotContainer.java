@@ -108,11 +108,12 @@ public class RobotContainer {
         //joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         // CLIMB button controls
-        joystick.povRight().onTrue(Commands.runOnce(() -> climb.raise()));
-        joystick.povLeft().onTrue(Commands.runOnce(() -> climb.lower()));
+        joystick.povRight().whileTrue(climb.climbUp()).onFalse(climb.climbDown());
+        joystick.povLeft().whileTrue(climb.climbDown()); 
+       // joystick.povLeft().onTrue(Commands.runOnce(() -> climb.climbDown()));
 
-        joystick.povRight().onFalse(Commands.runOnce(() -> climb.hang()));
-        joystick.povLeft().onFalse(Commands.runOnce(() -> climb.hang()));
+        // joystick.povRight().onFalse(Commands.runOnce(() -> climb.hang()));
+        // joystick.povLeft().onFalse(Commands.runOnce(() -> climb.hang()));
 
 
         // HOOD button controls

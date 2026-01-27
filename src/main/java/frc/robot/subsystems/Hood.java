@@ -205,7 +205,7 @@ public class Hood extends SubsystemBase {
 
   @Override
   public void periodic() {
-    System.out.println("Hood motor rotations: " + hoodMotor.getPosition().getValueAsDouble());
+    // System.out.println("Hood motor rotations: " + hoodMotor.getPosition().getValueAsDouble());
   }
 
   

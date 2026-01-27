@@ -39,19 +39,19 @@ public class AutoFire extends Command
     
     @Override
     public void initialize(){
-        tgtRPM = shooter.GetCorrectRPM();
+        tgtRPM = shooter.GetCorrectRPS();
         //tgtAngle = hood.GetTargetHoodAngle();
     }
 
     @Override
     public void execute()
     {
-        shooter.fireAtRPM(tgtRPM);
+        shooter.fireAtRPM();
         // hood.moveHoodToAngle(tgtAngle);
 
         // add in turret
 
-        if (Math.abs(shooter.GetCorrectRPM() - shooter.GetShooterVelocity()) < ShooterConstants.kRpmLenience)
+        if (Math.abs(shooter.GetCorrectRPS() - shooter.GetShooterVelocity()) < ShooterConstants.kRpmLenience)
         {
             transfer.activateTransfer();
         }
@@ -65,7 +65,8 @@ public class AutoFire extends Command
     public void end(boolean interrupted)
     {
         // hood.stopHood();
-        shooter.fireAtRPM(0);
+        shooter.targetRPM = 0;
+        shooter.fireAtRPM();
         transfer.stop();
     }
 

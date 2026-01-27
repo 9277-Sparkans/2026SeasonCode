@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Limelight;
+import frc.robot.Telemetry;
 import frc.robot.Constants.HoodConstants;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -28,7 +29,7 @@ public class Shooter extends SubsystemBase {
     private boolean shooting = false;
 
 
-    public int shooterRPM; // rpm
+    public int shooterRPS; // rpm
 
     /** Creates a new Shooter. */
     public Shooter() {
@@ -54,8 +55,9 @@ public class Shooter extends SubsystemBase {
 
         shooterMotor.getConfigurator().apply(ShooterMotorConfiguration);
 
-        shooterRPM = 0;
+        shooterRPS = 0;
 
+        Telemetry.telemeterizeMotor("Shooter", shooterMotor);
 
     }
 
@@ -77,41 +79,42 @@ public class Shooter extends SubsystemBase {
         }
     }
 
-    public void fireAtRPM(double rpm)
+    public void fireAtRPM()
     {
         // MotionMagicVelocityVoltage velocityTgt = new MotionMagicVelocityVoltage(rpm).withSlot(0);
         // shooterMotor.setControl(velocityTgt.withVelocity(GetShooterVelocity()));
 
-        SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward (ShooterConstants.shooter_kS, ShooterConstants.shooter_kV, ShooterConstants.shooter_kA);
+        SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(ShooterConstants.shooter_kS, ShooterConstants.shooter_kV, ShooterConstants.shooter_kA);
 
         PIDController pidController = new PIDController(ShooterConstants.shooter_kP, ShooterConstants.shooter_kI, ShooterConstants.shooter_kD);
 
-        double setpointVelocity = shooterRPM;
+        double setpointVelocity = shooterRPS;
         double feedforwardVoltage = feedforward.calculate(setpointVelocity);
         double feedbackVoltage = pidController.calculate(shooterMotor.getVelocity().getValueAsDouble(), setpointVelocity);
 
         shooterMotor.setVoltage(feedforwardVoltage + feedbackVoltage);
     }
 
+    
     // getters
-    public int GetCorrectRPM()
+    public int GetCorrectRPS()
     {
-        return shooterRPM; // replace with the actual math later
+        return shooterRPS; // replace with the actual math later
     }
 
     public void increaseSpeed()
     {
-        if (shooterRPM + ShooterConstants.kRpmIncrement < ShooterConstants.kMaxRPM)
+        if (shooterRPS + ShooterConstants.kRpmIncrement < ShooterConstants.kMaxRPM)
         {
-            shooterRPM += ShooterConstants.kRpmIncrement;
+            shooterRPS += ShooterConstants.kRpmIncrement;
         }
     }
 
     public void decreaseSpeed()
     {
-        if (shooterRPM - ShooterConstants.kRpmIncrement > 0)
+        if (shooterRPS - ShooterConstants.kRpmIncrement > -10)
         {
-            shooterRPM -= ShooterConstants.kRpmIncrement;
+            shooterRPS -= ShooterConstants.kRpmIncrement;
         }
     }
 
@@ -127,8 +130,8 @@ public class Shooter extends SubsystemBase {
     @Override
     public void periodic() 
     {
-        fireAtRPM(GetShooterVelocity());
-        // System.out.println("Shooter velocity: " + GetShooterVelocity());
-        // System.out.println("Shooter tgt velocity: " + shooterRPM);
+        fireAtRPM();
+        System.out.println("Shooter velocity: " + GetShooterVelocity());
+        System.out.println("Shooter tgt velocity: " + shooterRPS);
     }
 }

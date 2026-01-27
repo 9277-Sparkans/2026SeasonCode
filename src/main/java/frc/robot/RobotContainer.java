@@ -49,7 +49,7 @@ public class RobotContainer {
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
-    private final CommandXboxController joystick = new CommandXboxController(0);
+    public final CommandXboxController joystick = new CommandXboxController(0);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
@@ -145,7 +145,7 @@ public class RobotContainer {
         joystick.leftTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
         joystick.rightTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
 
-        //joystick.y().onTrue(new TurretTracking((turret)));
+        joystick.y().onTrue(new TurretTracking((turret)));
 
 
         // SHOOTER button controls
@@ -189,7 +189,7 @@ public class RobotContainer {
         
         
         // ROLLER button controls
-        joystick.y().onTrue(roller.rollerSpin());
+        // joystick.y().onTrue(roller.rollerSpin());
 
 
 

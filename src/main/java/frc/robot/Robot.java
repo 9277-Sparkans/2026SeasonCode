@@ -64,10 +64,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-    System.out.println("teleop: " + (int)Math.round(timer.get()));
-    if ((int)Math.round(timer.get()) == 10) {
-      System.out.println("RUMBLE");
-    }
+    
   }
 
   @Override

@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Limelight;
+import frc.robot.Telemetry;
 import frc.robot.Constants.HoodConstants;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
@@ -56,6 +57,7 @@ public class Shooter extends SubsystemBase {
 
         shooterRPM = 0;
 
+        Telemetry.telemeterizeMotor("Shooter", shooterMotor);
 
     }
 
@@ -128,7 +130,7 @@ public class Shooter extends SubsystemBase {
     public void periodic() 
     {
         fireAtRPM(GetShooterVelocity());
-        // System.out.println("Shooter velocity: " + GetShooterVelocity());
-        // System.out.println("Shooter tgt velocity: " + shooterRPM);
+        System.out.println("Shooter velocity: " + GetShooterVelocity());
+        System.out.println("Shooter tgt velocity: " + shooterRPM);
     }
 }

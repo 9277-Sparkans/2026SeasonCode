@@ -8,17 +8,22 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
+import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.util.struct.Struct;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.math.Matrix;
-import frc.utils.*;
+
 
 
 
@@ -216,18 +221,35 @@ public class Constants {
         public static final double transferMaxAcceleration = 40;
         public static final double transferMaxVelocity = 100; // rps
     }
-    private static final ConstantsLoader LOADER = ConstantsLoader.getInstance();
+
     public static class Vision {
-        public static final List<CamConstants> CAMERAS = LOADER.getCameras("vision");
+        public static final String kCameraName = "YOUR CAMERA NAME";
+        // Cam mounted facing forward, half a meter forward of center, half a meter up from center.
+        public static final Transform3d kRobotToCam =
+                new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0, 0, 0));
 
         // The layout of the AprilTags on the field
-        public static final AprilTagFieldLayout TAG_LAYOUT =
-        TagLayouts.getTagLayoutFromPath("apriltagLayouts/onlyReef.json");
+        public static final AprilTagFieldLayout kTagLayout =
+                AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
 
-        // The standard deviations of our vision estimated poses, which affect
-        // correction rate
+        // The standard deviations of our vision estimated poses, which affect correction rate
         // (Fake values. Experiment and determine estimation noise on an actual robot.)
-        public static final Matrix<N3, N1> SINGLE_TAG_STD_DEVS = VecBuilder.fill(2.0, 2.0, 4);
-        public static final Matrix<N3, N1> MULTI_TAG_STD_DEVS = VecBuilder.fill(0.5, 0.5, 1);
-  }
+        public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
+        public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
+    }
+    	public static final class VisionConstants {
+
+		public static final AprilTagFieldLayout TAG_LAYOUT;
+
+		static {
+			AprilTagFieldLayout hi;
+			try {
+				hi = new AprilTagFieldLayout(Filesystem.getDeployDirectory().toPath().resolve("2026-rebuilt-welded.json"));
+			} catch (Exception e) {
+				System.out.println("aaaa");
+				hi = AprilTagFieldLayout.loadField(AprilTagFields.k2022RapidReact);
+			}
+			TAG_LAYOUT = hi;
+		}
+}
 }

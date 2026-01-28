@@ -60,7 +60,9 @@ public class Robot extends TimedRobot {
     }
 
     timer.start();
+    m_robotContainer.joystick.setRumble(RumbleType.kBothRumble, kDefaultPeriod);
   }
+  
 
   @Override
   public void teleopPeriodic() {

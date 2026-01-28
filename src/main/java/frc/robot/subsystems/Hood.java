@@ -160,26 +160,37 @@
 // }
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Rotations;
+
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.PositionDutyCycle;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Telemetry;
 import frc.robot.Constants.HoodConstants;
 
 public class Hood extends SubsystemBase {
 
   private final TalonFX hoodMotor;
+  private final CANcoder hoodEncoder;
   private final TalonFXConfiguration hoodMotorConfiguration;
 
   public Hood() {
     hoodMotor = new TalonFX(HoodConstants.kHoodMotorId);
+    hoodEncoder = new CANcoder(HoodConstants.kHoodEncoderId);
     hoodMotorConfiguration = new TalonFXConfiguration();
 
-    hoodMotor.setPosition(0);
+    // hoodEncoder.setPosition(0);
 
     // Current limiting
     CurrentLimitsConfigs hoodCurrent = new CurrentLimitsConfigs();
@@ -193,14 +204,21 @@ public class Hood extends SubsystemBase {
     hoodMotorConfiguration.Slot0.kI = HoodConstants.hood_kI;
     hoodMotorConfiguration.Slot0.kD = HoodConstants.hood_kD;
 
+    hoodMotorConfiguration.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0;
+
     // Motion Magic
     hoodMotorConfiguration.Voltage.PeakForwardVoltage = HoodConstants.hood_maxVoltage;
     hoodMotorConfiguration.Voltage.PeakReverseVoltage = -HoodConstants.hood_maxVoltage;
     hoodMotorConfiguration.MotionMagic.MotionMagicAcceleration = HoodConstants.hood_maxAcceleration;
     hoodMotorConfiguration.MotionMagic.MotionMagicCruiseVelocity = HoodConstants.hood_maxVelocity;
 
+    // hoodMotorConfiguration.Feedback.FeedbackRemoteSensorID = HoodConstants.kHoodEncoderId;
+    // hoodMotorConfiguration.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+    // hoodMotorConfiguration.Feedback.RotorToSensorRatio = 1; // 1 motor rotation per 1 encoder rotation
    
     hoodMotor.getConfigurator().apply(hoodMotorConfiguration);
+
+    Telemetry.telemeterizeMotor("Hood", hoodMotor);
   }
 
   @Override
@@ -227,7 +245,13 @@ public class Hood extends SubsystemBase {
     hoodMotor.setControl(request);
   }
 
-  
+
+  // public void moveHoodWithEncoder(double rotation) {
+  //   hoodMotor.setControl(
+  //     new PositionDutyCycle(rotation)
+  //       .withPosition(rotation)
+  //   );
+  // }
 
   // POV UP move hood to -0.75
   public Command moveHoodToTgtCmd() {

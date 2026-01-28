@@ -29,6 +29,7 @@ public class VisionConstants {
     // AprilTag layout
     public static AprilTagFieldLayout aprilTagLayout;
     private static boolean usedCustomField = false;
+    private static String loadedLayoutDescription = "Unknown";
     static {
         try {
             aprilTagLayout =
@@ -36,9 +37,12 @@ public class VisionConstants {
                     .of(Filesystem.getDeployDirectory().getAbsolutePath()
                         + "/vision/welded.json"));
             usedCustomField = true;
+            loadedLayoutDescription = "Custom: vision/welded.json";
         } catch (Exception e) {
             aprilTagLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
+            loadedLayoutDescription = "Bundled: k2026RebuiltWelded";
         }
+        Logger.recordOutput("Vision/LayoutLoaded", loadedLayoutDescription);
         Logger.recordOutput("Used Custom Field?", usedCustomField);
     }
 

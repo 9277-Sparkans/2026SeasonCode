@@ -249,19 +249,17 @@ public class Constants {
         public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
         public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
     }
+    	/**
+    	 * DEPRECATED: Use frc.robot.Vision.VisionConstants.aprilTagLayout instead.
+    	 * This ensures all code uses the same AprilTag field layout as PhotonVision.
+    	 */
+    	@Deprecated(since = "2026")
     	public static final class VisionConstants {
 
-		public static final AprilTagFieldLayout TAG_LAYOUT;
-
-		static {
-			AprilTagFieldLayout hi;
-			try {
-				hi = new AprilTagFieldLayout(Filesystem.getDeployDirectory().toPath().resolve("2026-rebuilt-welded.json"));
-			} catch (Exception e) {
-				System.out.println("aaaa");
-				hi = AprilTagFieldLayout.loadField(AprilTagFields.k2022RapidReact);
-			}
-			TAG_LAYOUT = hi;
-		}
-}
+		/**
+		 * DEPRECATED: Use frc.robot.Vision.VisionConstants.aprilTagLayout instead.
+		 */
+		@Deprecated(since = "2026")
+		public static final AprilTagFieldLayout TAG_LAYOUT = frc.robot.Vision.VisionConstants.aprilTagLayout;
+	}
 }

@@ -22,6 +22,9 @@ import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.Vision.Vision;
+import frc.robot.Vision.VisionIOPhotonVision;
+import frc.robot.Vision.VisionConstants;
 
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.TurretTracking;
@@ -33,7 +36,8 @@ import frc.robot.subsystems.Transfer;
 
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
-    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
+    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second
+                                                                                      // max angular velocity
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -48,6 +52,10 @@ public class RobotContainer {
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
+    public final Vision vision = new Vision(drivetrain::addVisionMeasurement,
+            new VisionIOPhotonVision(VisionConstants.camera0Name, VisionConstants.robotToCamera0),
+            new VisionIOPhotonVision(VisionConstants.camera1Name, VisionConstants.robotToCamera1));
+
     private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
     public final Intake intake = new Intake();
     public final Turret turret = new Turret();
@@ -56,7 +64,8 @@ public class RobotContainer {
     public final AutoFire autoFireCommand = new AutoFire(turret, transfer, shooterSubsystem);
 
     public RobotContainer() {
-        NamedCommands.registerCommand("testNamedCommand", Commands.runOnce(() -> System.out.println("this named command works")));
+        NamedCommands.registerCommand("testNamedCommand",
+                Commands.runOnce(() -> System.out.println("this named command works")));
 
         configureBindings();
     }
@@ -65,25 +74,25 @@ public class RobotContainer {
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
-            // Drivetrain will execute this command periodically
-            drivetrain.applyRequest(() ->
-                drive.withVelocityX(-joystick.getLeftY() * MaxSpeed * 0.3) // Drive forward with negative Y (forward)
-                    .withVelocityY(-joystick.getLeftX() * MaxSpeed * 0.3) // Drive left with negative X (left)
-                    .withRotationalRate(-joystick.getRightX() * MaxAngularRate * 0.3) // Drive counterclockwise with negative X (left)
-            )
-        );
+                // Drivetrain will execute this command periodically
+                drivetrain.applyRequest(() -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed * 0.3) // Drive
+                                                                                                         // forward with
+                                                                                                         // negative Y
+                                                                                                         // (forward)
+                        .withVelocityY(-joystick.getLeftX() * MaxSpeed * 0.3) // Drive left with negative X (left)
+                        .withRotationalRate(-joystick.getRightX() * MaxAngularRate * 0.3) // Drive counterclockwise with
+                                                                                          // negative X (left)
+                ));
 
         // Idle while the robot is disabled. This ensures the configured
         // neutral mode is applied to the drive motors while disabled.
         final var idle = new SwerveRequest.Idle();
         RobotModeTriggers.disabled().whileTrue(
-            drivetrain.applyRequest(() -> idle).ignoringDisable(true)
-        );
+                drivetrain.applyRequest(() -> idle).ignoringDisable(true));
 
         joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-        joystick.b().whileTrue(drivetrain.applyRequest(() ->
-            point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
-        ));
+        joystick.b().whileTrue(drivetrain.applyRequest(
+                () -> point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))));
 
         // joystick.x().onTrue(shooterSubsystem.shootCmd());
         joystick.povUp().onTrue(shooterSubsystem.runHoodCmd());
@@ -91,7 +100,7 @@ public class RobotContainer {
 
         joystick.povUp().onFalse(shooterSubsystem.stopHoodCmd());
         joystick.povDown().onFalse(shooterSubsystem.stopHoodCmd());
-        
+
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
         joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
@@ -100,7 +109,8 @@ public class RobotContainer {
         joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // reset the field-centric heading on left bumper press
-        //joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        // joystick.leftBumper().onTrue(drivetrain.runOnce(() ->
+        // drivetrain.seedFieldCentric()));
 
         joystick.rightTrigger().onTrue(Commands.runOnce(() -> turret.spinPositive()));
         joystick.leftTrigger().onTrue(Commands.runOnce(() -> turret.spinNegative()));
@@ -119,35 +129,35 @@ public class RobotContainer {
         // fix butten stuff *cough coguh* tyler change your button bindings
 
         // joystick.rightTrigger()
-        //     .whileTrue(
-        //         new InstantCommand(() -> intake.intakeCommand()))
-        //     .onFalse(
-        //         new InstantCommand(() -> intake.stopRollerCommand()));
+        // .whileTrue(
+        // new InstantCommand(() -> intake.intakeCommand()))
+        // .onFalse(
+        // new InstantCommand(() -> intake.stopRollerCommand()));
 
         // joystick.leftTrigger()
-        //     .whileTrue(
-        //         new InstantCommand(() -> intake.outtakeCommand()))
-        //     .onFalse(
-        //         new InstantCommand(() -> intake.stopRollerCommand()));
+        // .whileTrue(
+        // new InstantCommand(() -> intake.outtakeCommand()))
+        // .onFalse(
+        // new InstantCommand(() -> intake.stopRollerCommand()));
 
         // joystick.rightBumper()
-        //     .whileTrue(
-        //         new InstantCommand(() -> intake.deployCommand()));
+        // .whileTrue(
+        // new InstantCommand(() -> intake.deployCommand()));
 
         // joystick.leftBumper()
-        //     .whileTrue(
-        //         new InstantCommand(() -> intake.retractCommand()));
-        
+        // .whileTrue(
+        // new InstantCommand(() -> intake.retractCommand()));
+
         // joystick.rightTrigger()
-        //     .whileTrue(
-        //         new InstantCommand(() -> transfer.activateTransferCommand()))
-        //     .onFalse(
-        //         new InstantCommand(() -> transfer.stopTransferCommand()));
+        // .whileTrue(
+        // new InstantCommand(() -> transfer.activateTransferCommand()))
+        // .onFalse(
+        // new InstantCommand(() -> transfer.stopTransferCommand()));
 
         // joystick.rightStick()
-        //     .whileTrue(
-        //         new InstantCommand(() -> autoFireCommand.execute()));
-    }   
+        // .whileTrue(
+        // new InstantCommand(() -> autoFireCommand.execute()));
+    }
 
     public Command getAutonomousCommand() {
         return new PathPlannerAuto("testAuto");

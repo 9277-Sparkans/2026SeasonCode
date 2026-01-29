@@ -168,6 +168,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Telemetry;
 import frc.robot.Constants.HoodConstants;
 
 public class Hood extends SubsystemBase {
@@ -201,6 +202,8 @@ public class Hood extends SubsystemBase {
 
    
     hoodMotor.getConfigurator().apply(hoodMotorConfiguration);
+
+    Telemetry.telemeterizeMotor("Hood", hoodMotor, HoodConstants.kGearRatio);
   }
 
   @Override
@@ -231,7 +234,7 @@ public class Hood extends SubsystemBase {
 
   // POV UP move hood to -0.75
   public Command moveHoodToTgtCmd() {
-    return Commands.runOnce(() -> moveHoodMotionMagic(-0.75)); 
+    return Commands.runOnce(() -> moveHoodMotionMagic(5.0)); 
   }
 
   public Command stopHoodCmd() {

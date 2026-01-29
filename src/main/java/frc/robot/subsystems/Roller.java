@@ -47,6 +47,10 @@ public class Roller extends SubsystemBase {
       
     }
 
+  public Command rollerStop () {
+    return Commands.runOnce(() -> stop());
+  }
+
 
   public void spin(){
       rollerMotor.set(RollerConstants.roller_speed);

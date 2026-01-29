@@ -126,8 +126,8 @@ public class RobotContainer {
         // joystick.x().onTrue(Commands.runOnce(() -> hood.moveHoodToAngle(0)));
 
         //test move hood to -0.75
-        joystick.x().onTrue(hood.moveHoodToTgtCmd());
-        joystick.x().onFalse(hood.stopHoodCmd());
+        // joystick.x().onTrue(hood.moveHoodToTgtCmd());
+        // joystick.x().onFalse(hood.stopHoodCmd());
 
         // joystick.leftBumper().onTrue(Commands.runOnce(() -> hood.moveHoodDown()));
         // joystick.rightBumper().onTrue(Commands.runOnce(() -> hood.moveHoodUp()));

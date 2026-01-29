@@ -170,14 +170,20 @@ import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Telemetry;
 import frc.robot.Constants.HoodConstants;
+import frc.robot.Constants.ShooterConstants;
 
 public class Hood extends SubsystemBase {
 
@@ -212,17 +218,28 @@ public class Hood extends SubsystemBase {
     hoodMotorConfiguration.MotionMagic.MotionMagicAcceleration = HoodConstants.hood_maxAcceleration;
     hoodMotorConfiguration.MotionMagic.MotionMagicCruiseVelocity = HoodConstants.hood_maxVelocity;
 
-    // hoodMotorConfiguration.Feedback.FeedbackRemoteSensorID = HoodConstants.kHoodEncoderId;
-    // hoodMotorConfiguration.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
-    // hoodMotorConfiguration.Feedback.RotorToSensorRatio = 1; // 1 motor rotation per 1 encoder rotation
+    // set to brake mode to stop the motor within the deadband
+    hoodMotorConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
+    hoodMotorConfiguration.Feedback.FeedbackRemoteSensorID = HoodConstants.kHoodEncoderId;
+    hoodMotorConfiguration.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+    hoodMotorConfiguration.Feedback.RotorToSensorRatio = 1; // 1 motor rotation per 1 encoder rotation
    
     hoodMotor.getConfigurator().apply(hoodMotorConfiguration);
 
-    Telemetry.telemeterizeMotor("Hood", hoodMotor);
+    // Telemetry.telemeterizeMotor("Hood", hoodMotor);
+    SmartDashboard.putData("Hood", new Sendable() {
+        @Override
+        public void initSendable(SendableBuilder builder) {
+            builder.addDoubleProperty("Velocity", () -> hoodMotor.getVelocity().getValueAsDouble(), null);
+            builder.addDoubleProperty("Position", () -> (hoodEncoder.getPosition().getValueAsDouble()), (double val) -> hoodEncoder.setPosition(val));
+        }
+    });
   }
 
   @Override
   public void periodic() {
+    moveHoodWithEncoder(0);
     // System.out.println("Hood motor rotations: " + hoodMotor.getPosition().getValueAsDouble());
   }
 
@@ -235,27 +252,42 @@ public class Hood extends SubsystemBase {
   }
 
   public void moveHoodMotionMagic(double hoodRotations) {
-    double motorTarget = hoodRotationsToMotor(hoodRotations);
+    // double motorTarget = hoodRotationsToMotor(hoodRotations);
 
     MotionMagicVoltage request =
         new MotionMagicVoltage(0)
             .withSlot(0)
-            .withPosition(motorTarget);
+            .withPosition(hoodRotations);
 
     hoodMotor.setControl(request);
   }
 
 
-  // public void moveHoodWithEncoder(double rotation) {
-  //   hoodMotor.setControl(
-  //     new PositionDutyCycle(rotation)
-  //       .withPosition(rotation)
-  //   );
-  // }
+  public void moveHoodWithEncoder(double rotation) {
+    rotation = 0.25;
+    PIDController pidController = new PIDController(HoodConstants.hood_kP, HoodConstants.hood_kI, HoodConstants.hood_kD);
+
+    double feedback = pidController.calculate(hoodEncoder.getPosition().getValueAsDouble(), rotation);
+
+    double error = rotation - (hoodEncoder.getPosition().getValueAsDouble());
+
+    System.out.println("error: " + error);
+    System.out.println("encoder position: " + hoodEncoder.getPosition().getValueAsDouble());
+    System.out.println("feedback: " + feedback);
+
+    if (Math.abs(error) < 0.05)
+    {
+      hoodMotor.set(0);
+    }
+    else
+    {
+      hoodMotor.set(feedback);
+    }
+  }
 
   // POV UP move hood to -0.75
   public Command moveHoodToTgtCmd() {
-    return Commands.runOnce(() -> moveHoodMotionMagic(-0.75)); 
+    return Commands.runOnce(() -> moveHoodMotionMagic(-27)); 
   }
 
   public Command stopHoodCmd() {

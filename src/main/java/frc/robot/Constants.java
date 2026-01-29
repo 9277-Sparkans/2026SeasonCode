@@ -149,14 +149,14 @@ public class Constants {
         public static final int kHoodEncoderId = 35;
 
         public static final double hood_maxVelocity = 1.0; // rotations per second; was 1.0, setting it to this to avoid grinding the gear again!
-        public static final double hood_maxAcceleration = 20; // rotations per second^2
+        public static final double hood_maxAcceleration = 80; // rotations per second^2
         public static final double hood_maxVoltage = 5;// kraken x44 max voltage
 
         public static final double hood_kG = 0.03;
         public static final double hood_kS = 0.01;
-        public static final double hood_kP = 4.5;
+        public static final double hood_kP = 0.5;
         public static final double hood_kI = 0.0;
-        public static final double hood_kD = 0.3;
+        public static final double hood_kD = 0;
 
         public static final double kHoodSpeed = 0.1;
 

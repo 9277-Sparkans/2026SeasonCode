@@ -145,7 +145,7 @@ public class RobotContainer {
         joystick.leftTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
         joystick.rightTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
 
-        joystick.y().onTrue(new TurretTracking((turret)));
+        //joystick.y().onTrue(new TurretTracking((turret)));
 
 
         // SHOOTER button controls
@@ -189,7 +189,9 @@ public class RobotContainer {
         
         
         // ROLLER button controls
-        // joystick.y().onTrue(roller.rollerSpin());
+        joystick.y().onTrue(roller.rollerSpin()); 
+        joystick.y().onFalse(roller.rollerStop()); 
+
 
 
 

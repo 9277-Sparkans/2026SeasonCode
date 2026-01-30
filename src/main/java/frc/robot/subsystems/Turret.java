@@ -29,6 +29,10 @@ public class Turret extends SubsystemBase {
 
   public double targetHoodAngle = HoodConstants.kMaximumAngle;
 
+  public double currentTargetTurret = 0;
+
+  public boolean positivePressed = false;
+  public boolean negativePressed = false;
 
   /** Creates a new Turret. */
   public Turret() {
@@ -62,7 +66,50 @@ public class Turret extends SubsystemBase {
 
   @Override
   public void periodic() {
+    System.out.println("Is positive: " + positivePressed);
+    System.out.println("Is negative: " + negativePressed);
+    System.out.println("is position: " + getTurretAngle());
 
+    if (positivePressed)
+    {
+      // 30 degrees per second
+      currentTargetTurret += 0.02 * 30; 
+
+      if (currentTargetTurret >= TurretConstants.kMaximumAngle - 2.0)
+      {
+        currentTargetTurret = TurretConstants.kMaximumAngle - 2.0;
+      }
+
+      // if (getTurretAngle() <= TurretConstants.kMaximumAngle - 2.0) 
+      // {
+      //   stop();
+      // }
+      // else
+      // {
+      //   spinPositive();
+      // }
+    }
+    else if (negativePressed)
+    {
+      // 30 degrees per second
+      currentTargetTurret -= 0.02 * 30; 
+
+      if (currentTargetTurret <= TurretConstants.kMinimumAngle + 2.0)
+      {
+        currentTargetTurret = TurretConstants.kMinimumAngle + 2.0;
+      }
+
+      // if (getTurretAngle() >= TurretConstants.kMinimumAngle + 2.0) 
+      // {
+      //   stop();
+      // }
+      // else
+      // {
+      //   spinNegative();
+      // } 
+    }
+
+    setTurretToAngle(currentTargetTurret);
   }
 
   public double getPosition() {
@@ -75,23 +122,25 @@ public class Turret extends SubsystemBase {
     return (turretCurrent);
   }
 
-  public Command turretPos () {
-    // if (getTurretAngle() >= TurretConstants.kMaximumAngle - 2.0) {
-    //   return Commands.runOnce(() -> stop());
-    // }
-    // else {
-      return Commands.runOnce(() -> spinPositive());
-    // }
-    }
+  // public Command turretPos () {
+  //   posi
+  //   return Commands.runOnce(() -> {});
+  //   // if (currentTurretAngle >= TurretConstants.kMaximumAngle - 2.0) {
+  //   //   return Commands.runOnce(() -> stop());
+  //   // }
+  //   // else {
+  //   //   return Commands.runOnce(() -> spinPositive());
+  //   // }
+  // }
 
-  public Command turretNeg () {
-    if (getTurretAngle() <= TurretConstants.kMinimumAngle + 2.0) {
-      return Commands.runOnce(() -> stop());
-    }
-    else {
-      return Commands.runOnce(() -> spinNegative());
-    }
-    }
+  // public Command turretNeg () {
+  //   if (currentTurretAngle <= TurretConstants.kMinimumAngle + 2.0) {
+  //     return Commands.runOnce(() -> stop());
+  //   }
+  //   else {
+  //     return Commands.runOnce(() -> spinNegative());
+  //   }
+  //   }
 
   public double getTurretAngle()
   {
@@ -115,20 +164,39 @@ public class Turret extends SubsystemBase {
   
   public void setTurretToAngle(double angle)
   {
-    angle = targetHoodAngle;
-    if (angle > TurretConstants.kMaximumAngle)
-    {
-      angle = TurretConstants.kMaximumAngle;
-    }
-    if (angle < TurretConstants.kMinimumAngle)
-    {
-      angle = TurretConstants.kMinimumAngle;
-    }
+    // angle = targetHoodAngle;
+    // if (angle > TurretConstants.kMaximumAngle)
+    // {
+    //   angle = TurretConstants.kMaximumAngle;
+    // }
+    // if (angle < TurretConstants.kMinimumAngle)
+    // {
+    //   angle = TurretConstants.kMinimumAngle;
+    // }
 
     MotionMagicVoltage angleTgt = new MotionMagicVoltage(angle).withSlot(0);
     turretMotor.setControl(angleTgt.withPosition(getTurretAngle()));
   }
 
+  public void PositiveTrue()
+  {
+    positivePressed = true;
+  }
+
+  public void PositiveFalse()
+  {
+    positivePressed = false;
+  }
+
+  public void NegativeTrue()
+  {
+    negativePressed = true;
+  }
+
+  public void NegativeFalse()
+  {
+    negativePressed = false;
+  } 
 
   public void stop() {
     turretMotor.set(0);

@@ -227,8 +227,8 @@ public class ShooterSubsystem extends SubsystemBase {
     @Override
     public void periodic() 
     {
-        fireAtRPM(GetShooterVelocity());
-        System.out.println("Shooter velocity: " + GetShooterVelocity());
-        System.out.println("Shooter tgt velocity: " + shooterRPM);
+        // fireAtRPM(GetShooterVelocity());
+        // System.out.println("Shooter velocity: " + GetShooterVelocity());
+        // System.out.println("Shooter tgt velocity: " + shooterRPM);
     }
 }

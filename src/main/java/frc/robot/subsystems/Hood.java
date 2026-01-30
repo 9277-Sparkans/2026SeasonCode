@@ -160,4 +160,8 @@ public class Hood extends SubsystemBase {
     targetHoodPosition -= HoodConstants.kHoodSpeed;
   }
 
+  public double GetHoodAngle()
+  {
+    return 0; // TEMP VALUE
+  }
 }

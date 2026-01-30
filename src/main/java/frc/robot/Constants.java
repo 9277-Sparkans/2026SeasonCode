@@ -149,6 +149,9 @@ public class Constants {
         public static final double shooter_kD = 0.0;
         public static final double shooter_kV = 0.0;
         public static final double shooter_kA = 0.0;
+
+        public static final double autoshootDistanceRange = 0.01;
+        public static final double autoshootAngleWeight = 1.0;
     }
 
     public static class HoodConstants

@@ -18,6 +18,7 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
@@ -310,7 +311,25 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      */
     @Override
     public void addVisionMeasurement(Pose2d visionRobotPoseMeters, double timestampSeconds) {
-        super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds));
+        // PhotonVision provides timestamps in seconds since the epoch (Unix time),
+        // so forward them directly to the drivetrain pose estimator which expects
+        // a seconds timestamp. Converting again with Utils.fpgaToCurrentTime can
+        // produce timestamps far in the future/ past and cause measurements to be
+        // ignored.
+        super.addVisionMeasurement(visionRobotPoseMeters, timestampSeconds);
+    }
+
+    /**
+     * Accepts a full 3D pose from vision, converts it to Pose2d (x, y, yaw) for the
+     * WPILib pose estimator, and forwards it to the base implementation.
+     */
+    public void addVisionMeasurement(Pose3d visionRobotPoseMeters, double timestampSeconds) {
+        var pose2d = new Pose2d(
+            visionRobotPoseMeters.getTranslation().getX(),
+            visionRobotPoseMeters.getTranslation().getY(),
+            new Rotation2d(visionRobotPoseMeters.getRotation().getZ())
+        );
+        super.addVisionMeasurement(pose2d, timestampSeconds);
     }
 
     /**
@@ -332,6 +351,22 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         double timestampSeconds,
         Matrix<N3, N1> visionMeasurementStdDevs
     ) {
-        super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds), visionMeasurementStdDevs);
+        super.addVisionMeasurement(visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
+    }
+
+    /**
+     * Overload that accepts a Pose3d and forwards the converted Pose2d to the base implementation.
+     */
+    public void addVisionMeasurement(
+        Pose3d visionRobotPoseMeters,
+        double timestampSeconds,
+        Matrix<N3, N1> visionMeasurementStdDevs
+    ) {
+        var pose2d = new Pose2d(
+            visionRobotPoseMeters.getTranslation().getX(),
+            visionRobotPoseMeters.getTranslation().getY(),
+            new Rotation2d(visionRobotPoseMeters.getRotation().getZ())
+        );
+        super.addVisionMeasurement(pose2d, timestampSeconds, visionMeasurementStdDevs);
     }
 }

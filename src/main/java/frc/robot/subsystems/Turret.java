@@ -33,28 +33,32 @@ public class Turret extends SubsystemBase {
   /** Creates a new Turret. */
   public Turret() {
     turretMotor = new TalonFX(TurretConstants.turret_motorId);
-    turretMotorConfig = new TalonFXConfiguration(); 
-    SoftwareLimitSwitchConfigs softwareLimitConfigs = new SoftwareLimitSwitchConfigs();
+    turretMotorConfig = new TalonFXConfiguration();
+    // SoftwareLimitSwitchConfigs softwareLimitConfigs = new SoftwareLimitSwitchConfigs();
     turretMotor.setPosition(0);
 
-    softwareLimitConfigs.ForwardSoftLimitThreshold = TurretConstants.kMaximumAngle;
-    softwareLimitConfigs.ReverseSoftLimitThreshold = TurretConstants.kMinimumAngle;
-    softwareLimitConfigs.ForwardSoftLimitEnable = true;
-    softwareLimitConfigs.ReverseSoftLimitEnable = true;
-    turretMotor.getConfigurator().apply(softwareLimitConfigs);
+    // softwareLimitConfigs.ForwardSoftLimitThreshold = TurretConstants.kMaximumAngle;
+    // softwareLimitConfigs.ReverseSoftLimitThreshold = TurretConstants.kMinimumAngle;
+    // softwareLimitConfigs.ForwardSoftLimitEnable = true;
+    // softwareLimitConfigs.ReverseSoftLimitEnable = true;
+    // turretMotor.getConfigurator().apply(softwareLimitConfigs);
 
-    turretMotorConfig.Slot0.kG = TurretConstants.turret_kG;
+    turretMotorConfig.Slot0.kS = TurretConstants.turret_kS;
+    turretMotorConfig.Slot0.kV = TurretConstants.turret_kV;
+    turretMotorConfig.Slot0.kA = TurretConstants.turret_kA;
     turretMotorConfig.Slot0.kP = TurretConstants.turret_kP;
     turretMotorConfig.Slot0.kI = TurretConstants.turret_kI;
     turretMotorConfig.Slot0.kD = TurretConstants.turret_kD;
+    turretMotorConfig.Slot0.kG = TurretConstants.turret_kG;
+
 
     turretMotorConfig.Voltage.PeakForwardVoltage = TurretConstants.turret_maxVoltage;
     turretMotorConfig.Voltage.PeakReverseVoltage = -TurretConstants.turret_maxVoltage;
     turretMotorConfig.MotionMagic.MotionMagicAcceleration = TurretConstants.turret_maxAcceleration;
     turretMotorConfig.MotionMagic.MotionMagicCruiseVelocity = TurretConstants.turret_maxVelocity;
+    turretMotorConfig.MotionMagic.MotionMagicJerk = TurretConstants.turret_maxJerk;
 
     turretMotor.getConfigurator().apply(turretMotorConfig);
-
 
     Telemetry.telemeterizeMotor("Turret", turretMotor, (1.0 / (15.0 / 108.0)));
 
@@ -94,6 +98,10 @@ public class Turret extends SubsystemBase {
       
     }
 
+  public Command turretTgtCommand () {
+    return Commands.runOnce(() -> turretMoveTgt());
+  }
+
   public double getTurretAngle()
   {
     double position = getTurretCurrent(); // turns
@@ -128,6 +136,13 @@ public class Turret extends SubsystemBase {
 
     MotionMagicVoltage angleTgt = new MotionMagicVoltage(angle).withSlot(0);
     turretMotor.setControl(angleTgt.withPosition(getTurretAngle()));
+  }
+
+  public void turretMoveTgt(){
+    double tgt = (TurretConstants.tgtAngle * TurretConstants.kGearRatio) / 360;
+    final MotionMagicVoltage m_request = new MotionMagicVoltage(0);
+
+    turretMotor.setControl(m_request.withPosition(tgt)); //motor rotations
   }
 
 

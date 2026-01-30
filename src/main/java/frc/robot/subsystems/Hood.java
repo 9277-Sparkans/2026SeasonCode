@@ -182,6 +182,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Telemetry;
+import frc.robot.Utils;
 import frc.robot.Constants.HoodConstants;
 import frc.robot.Constants.ShooterConstants;
 
@@ -190,6 +191,8 @@ public class Hood extends SubsystemBase {
   private final TalonFX hoodMotor;
   private final CANcoder hoodEncoder;
   private final TalonFXConfiguration hoodMotorConfiguration;
+
+  public double targetHoodPosition = HoodConstants.kMinimumEncoderPos;
 
   public Hood() {
     hoodMotor = new TalonFX(HoodConstants.kHoodMotorId);
@@ -233,13 +236,14 @@ public class Hood extends SubsystemBase {
         public void initSendable(SendableBuilder builder) {
             builder.addDoubleProperty("Velocity", () -> hoodMotor.getVelocity().getValueAsDouble(), null);
             builder.addDoubleProperty("Position", () -> (hoodEncoder.getPosition().getValueAsDouble()), (double val) -> hoodEncoder.setPosition(val));
+            builder.addDoubleProperty("Target Hood Position", () -> targetHoodPosition, (double val) -> targetHoodPosition = val);
         }
     });
   }
 
   @Override
   public void periodic() {
-    moveHoodWithEncoder(0);
+    moveHoodWithEncoder(targetHoodPosition);
     // System.out.println("Hood motor rotations: " + hoodMotor.getPosition().getValueAsDouble());
   }
 
@@ -251,29 +255,30 @@ public class Hood extends SubsystemBase {
     return hoodRotations * HoodConstants.kGearRatio;
   }
 
-  public void moveHoodMotionMagic(double hoodRotations) {
-    // double motorTarget = hoodRotationsToMotor(hoodRotations);
+  // public void moveHoodMotionMagic(double hoodRotations) {
+  //   // double motorTarget = hoodRotationsToMotor(hoodRotations);
 
-    MotionMagicVoltage request =
-        new MotionMagicVoltage(0)
-            .withSlot(0)
-            .withPosition(hoodRotations);
+  //   MotionMagicVoltage request =
+  //       new MotionMagicVoltage(0)
+  //           .withSlot(0)
+  //           .withPosition(hoodRotations);
 
-    hoodMotor.setControl(request);
-  }
+  //   hoodMotor.setControl(request);
+  // }
 
 
   public void moveHoodWithEncoder(double rotation) {
-    rotation = 0.25;
+    rotation = Utils.clamp(rotation, HoodConstants.kMinimumEncoderPos, HoodConstants.kMaximumEncoderPos);
+    System.out.println("clamped rotation: " + rotation);
     PIDController pidController = new PIDController(HoodConstants.hood_kP, HoodConstants.hood_kI, HoodConstants.hood_kD);
 
     double feedback = pidController.calculate(hoodEncoder.getPosition().getValueAsDouble(), rotation);
 
     double error = rotation - (hoodEncoder.getPosition().getValueAsDouble());
 
-    System.out.println("error: " + error);
-    System.out.println("encoder position: " + hoodEncoder.getPosition().getValueAsDouble());
-    System.out.println("feedback: " + feedback);
+    // System.out.println("error: " + error);
+    // System.out.println("encoder position: " + hoodEncoder.getPosition().getValueAsDouble());
+    // System.out.println("feedback: " + feedback);
 
     if (Math.abs(error) < 0.05)
     {
@@ -287,7 +292,8 @@ public class Hood extends SubsystemBase {
 
   // POV UP move hood to -0.75
   public Command moveHoodToTgtCmd() {
-    return Commands.runOnce(() -> moveHoodMotionMagic(-27)); 
+    // return Commands.runOnce(() -> moveHoodMotionMagic(-27)); 
+    return Commands.runOnce(() -> {});
   }
 
   public Command stopHoodCmd() {
@@ -299,11 +305,13 @@ public class Hood extends SubsystemBase {
   
 
   public void runHood() {
-    hoodMotor.set(HoodConstants.kHoodSpeed);
+    // hoodMotor.set(HoodConstants.kHoodSpeed);
+    targetHoodPosition += HoodConstants.kHoodSpeed;
   }
 
   public void runHoodReverse() {
-    hoodMotor.set(-HoodConstants.kHoodSpeed);
+    // hoodMotor.set(-HoodConstants.kHoodSpeed);
+    targetHoodPosition -= HoodConstants.kHoodSpeed;
   }
 
 }

@@ -140,10 +140,10 @@ public class RobotContainer {
 
 
         // TURRET button controls
-        joystick.rightTrigger().onTrue(turret.turretPos());
-        joystick.leftTrigger().onTrue(turret.turretNeg());
-        joystick.leftTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
-        joystick.rightTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
+        joystick.rightTrigger().whileTrue(turret.turretPos());
+        joystick.leftTrigger().whileTrue(turret.turretNeg());
+        joystick.leftTrigger().whileFalse(Commands.runOnce(() -> turret.stop()));
+        joystick.rightTrigger().whileFalse(Commands.runOnce(() -> turret.stop()));
 
         //joystick.y().onTrue(new TurretTracking((turret)));
 

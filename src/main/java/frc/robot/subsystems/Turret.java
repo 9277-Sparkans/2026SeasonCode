@@ -129,6 +129,12 @@ public class Turret extends SubsystemBase {
     turretMotor.setControl(angleTgt.withPosition(getTurretAngle()));
   }
 
+  public void turretMoveTgt(){
+    double tgt = (TurretConstants.tgtAngle * TurretConstants.kGearRatio) / 360;
+    final MotionMagicVoltage m_request = new MotionMagicVoltage(0);
+
+    turretMotor.setControl(m_request.withPosition(tgt)); //motor rotations
+  }
 
   public void stop() {
     turretMotor.set(0);

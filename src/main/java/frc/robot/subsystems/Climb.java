@@ -25,99 +25,99 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Climb extends SubsystemBase {
-        // public enum ClimbState { RAISE, LOWER, ASCEND, DESCEND, HANG }
+    // public enum ClimbState { RAISE, LOWER, ASCEND, DESCEND, HANG }
 
-        CANBus kCANBus = CANBus.roboRIO();
-        private final TalonFX climbMotor;
-        private final TalonFXConfiguration climbConfig;
+    CANBus kCANBus = CANBus.roboRIO();
+    private final TalonFX climbMotor;
+    private final TalonFXConfiguration climbConfig;
 
-        private ClimbState climbState;
+    private ClimbState climbState;
 
-        public enum ClimbState {
-                DOWN,
-                UP
+    public enum ClimbState {
+        DOWN,
+        UP
+    }
+
+    public Climb() {
+
+        climbMotor = new TalonFX(Constants.ClimbConstants.kClimbMotorID, kCANBus);
+        climbConfig = new TalonFXConfiguration();
+
+        /* PID */
+        climbConfig.Slot0.kP = 1.5;
+        climbConfig.Slot0.kI = 0.0;
+        climbConfig.Slot0.kD = 0.1;
+
+        /* Default Motion Magic (UP profile) */
+        climbConfig.MotionMagic.MotionMagicCruiseVelocity = 30;
+        climbConfig.MotionMagic.MotionMagicAcceleration = 15;
+
+        climbMotor.getConfigurator().apply(climbConfig);
+
+        //var climbmotorConfigurator = climbMotor.getConfigurator();
+        //CurrentLimitsConfigs currentLimits = new CurrentLimitsConfigs();
+
+        //currentLimits.SupplyCurrentLimit = 20; // Amps
+        //currentLimits.SupplyCurrentLimitEnable = true;
+        //climbmotorConfigurator.apply(currentLimits);
+
+        // Brake mode
+
+    }
+
+    public void setState(ClimbState state) {
+        climbState = state;
+    }
+
+    public ClimbState getState() {
+        return climbState;
+    }
+
+    // state for climb up
+    public void states(ClimbState state) {
+
+        switch (state) {
+            case UP:
+                MotionMagicVoltage climbUP = new MotionMagicVoltage(5).withSlot(0);
+                climbMotor.setControl(climbUP.withPosition(-228));
+                break;
+            case DOWN:
+                MotionMagicVoltage DOWN = new MotionMagicVoltage(5).withSlot(0);
+                climbMotor.setControl(DOWN.withPosition(0.0));
+                break;
+
         }
+    }
 
-        public Climb() {
+    // public double goingdown(ClimbState state) {
 
-                climbMotor = new TalonFX(Constants.ClimbConstants.kClimbMotorID, kCANBus);
-                climbConfig = new TalonFXConfiguration();
+    // switch (state) {
+    // case DOWN:
+    // MotionMagicVoltage DOWN = new MotionMagicVoltage(5).withSlot(0);
+    // climbMotor.setControl(DOWN.withPosition(0.0));
+    // default:
+    // return 0.0;
+    // }
 
-                /* PID */
-                climbConfig.Slot0.kP = 1.5;
-                climbConfig.Slot0.kI = 0.0;
-                climbConfig.Slot0.kD = 0.1;
+    // }
+    // state for climb down
 
-                /* Default Motion Magic (UP profile) */
-                climbConfig.MotionMagic.MotionMagicCruiseVelocity = 30;
-                climbConfig.MotionMagic.MotionMagicAcceleration = 15;
 
-                climbMotor.getConfigurator().apply(climbConfig);
 
-                //var climbmotorConfigurator = climbMotor.getConfigurator();
-                //CurrentLimitsConfigs currentLimits = new CurrentLimitsConfigs();
+    /* ================= COMMANDS ================= */
 
-                //currentLimits.SupplyCurrentLimit = 20; // Amps
-                //currentLimits.SupplyCurrentLimitEnable = true;
-                //climbmotorConfigurator.apply(currentLimits);
+    public Command climbUp() {
+        return Commands.runOnce(() -> {
+            System.out.println("climb UP command running");
+            states(ClimbState.UP);
+        });
+    }
 
-                // Brake mode
-
-        }
-
-        public void setState(ClimbState state) {
-                climbState = state;
-        }
-
-        public ClimbState getState() {
-                return climbState;
-        }
-
-        // state for climb up
-        public void states(ClimbState state) {
-
-                switch (state) {
-                        case UP:
-                                MotionMagicVoltage climbUP = new MotionMagicVoltage(5).withSlot(0);
-                                climbMotor.setControl(climbUP.withPosition(-228));
-                                break;
-                        case DOWN:
-                                MotionMagicVoltage DOWN = new MotionMagicVoltage(5).withSlot(0);
-                                climbMotor.setControl(DOWN.withPosition(0.0));
-                                break;
-
-                }
-        }
-
-        // public double goingdown(ClimbState state) {
-
-        // switch (state) {
-        // case DOWN:
-        // MotionMagicVoltage DOWN = new MotionMagicVoltage(5).withSlot(0);
-        // climbMotor.setControl(DOWN.withPosition(0.0));
-        // default:
-        // return 0.0;
-        // }
-
-        // }
-        // state for climb down
-
-  
-
-        /* ================= COMMANDS ================= */
-
-        public Command climbUp() {
-                return Commands.runOnce(() -> {
-                        System.out.println("climb UP command running");
-                        states(ClimbState.UP);
-                });
-        }
-
-        public Command climbDown() {
-                return Commands.runOnce(() -> {
-                        System.out.println("climb DOWN command running");
-                        states(ClimbState.DOWN);
-                });
-        }
+    public Command climbDown() {
+        return Commands.runOnce(() -> {
+            System.out.println("climb DOWN command running");
+            states(ClimbState.DOWN);
+        });
+    }
 
 }

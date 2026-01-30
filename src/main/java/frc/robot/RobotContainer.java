@@ -126,8 +126,8 @@ public class RobotContainer {
         // joystick.x().onTrue(Commands.runOnce(() -> hood.moveHoodToAngle(0)));
 
         //test move hood to -0.75
-        joystick.x().onTrue(hood.moveHoodToTgtCmd());
-        joystick.x().onFalse(hood.stopHoodCmd());
+        // joystick.x().onTrue(hood.moveHoodToTgtCmd());
+        // joystick.x().onFalse(hood.stopHoodCmd());
 
         // joystick.leftBumper().onTrue(Commands.runOnce(() -> hood.moveHoodDown()));
         // joystick.rightBumper().onTrue(Commands.runOnce(() -> hood.moveHoodUp()));
@@ -144,6 +144,9 @@ public class RobotContainer {
         joystick.leftTrigger().whileTrue(turret.turretNeg());
         joystick.leftTrigger().whileFalse(Commands.runOnce(() -> turret.stop()));
         joystick.rightTrigger().whileFalse(Commands.runOnce(() -> turret.stop()));
+
+        joystick.x().onTrue(turret.turretTgtCommand());
+        joystick.x().onFalse(Commands.runOnce(() -> turret.stop()));
 
         //joystick.y().onTrue(new TurretTracking((turret)));
 

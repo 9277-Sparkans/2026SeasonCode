@@ -135,6 +135,7 @@ public class Constants {
 
         public static final int kRpmIncrement = 10;
 
+        public static final int kMinRPM = 2000;
         public static final int kMaxRPM = 5000;
 
         public static final double shooter_kG = 0.0;

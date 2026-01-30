@@ -21,6 +21,8 @@ public class Transfer extends SubsystemBase
     private final TalonFX transferMotor;
     private final TalonFXConfiguration transferMotorConfig;
 
+    public boolean transferOn = false;
+
     /** Creates a new Turret. */
     public Transfer() {
         transferMotor = new TalonFX(TransferConstants.transferID);
@@ -44,6 +46,21 @@ public class Transfer extends SubsystemBase
     {
         stop();
         return Commands.run(() -> {});
+    }
+
+    public Command toggleTransferCommand() {
+        toggleTransfer();
+        return Commands.runOnce(() -> {});
+    }
+
+    public void toggleTransfer() {
+        transferOn = !transferOn;
+
+        if (transferOn) {
+            activateTransfer();
+        } else {
+            stop();
+        }
     }
 
     public void activateTransfer()

@@ -30,12 +30,13 @@ public class Lookup {
         size = keys.size();
     }
 
-    public int GetBestRow(Double distance) {
+    public int GetBestRow(Double distance) { // Runs a binary search to find the row with the closest distance to the specified
         int left_bound = 0;
         int right_bound = size - 1;
         int i = (right_bound - left_bound) / 2;
 
-        while (true) {
+        int last_i = -1;
+        while (last_i != i) {
             Double currentVal = keys.get(i);
             if (currentVal < distance) {
                 left_bound = i;
@@ -45,6 +46,7 @@ public class Lookup {
                 break;
             }
 
+            last_i = i;
             i = (int)((right_bound - left_bound) / 2);
         }
 

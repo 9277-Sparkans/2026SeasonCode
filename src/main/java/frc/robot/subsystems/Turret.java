@@ -85,13 +85,12 @@ public class Turret extends SubsystemBase {
     }
 
   public Command turretNeg () {
-    // if (getTurretAngle() <= TurretConstants.kMinimumAngle + 2.0) {
-    //   return Commands.runOnce(() -> stop());
-    // }
-    // else {
+    if (getTurretAngle() <= TurretConstants.kMinimumAngle + 2.0) {
+      return Commands.runOnce(() -> stop());
+    }
+    else {
       return Commands.runOnce(() -> spinNegative());
-    // }
-      
+    }
     }
 
   public double getTurretAngle()

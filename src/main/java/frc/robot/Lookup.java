@@ -59,6 +59,6 @@ public class Lookup {
         Double normalized_rpm = (row[0] - Constants.ShooterConstants.kMinRPM) / (Constants.ShooterConstants.kMaxRPM - Constants.ShooterConstants.kMinRPM);
         Double normalized_angle = (row[1] - Constants.HoodConstants.kMinimumAngle) / (Constants.HoodConstants.kMaximumAngle - Constants.HoodConstants.kMinimumAngle);
 
-        
+        return 0;
     }
 }

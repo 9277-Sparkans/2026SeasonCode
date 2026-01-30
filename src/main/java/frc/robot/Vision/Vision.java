@@ -17,7 +17,6 @@ import static frc.robot.Vision.VisionConstants.*;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.numbers.N1;
@@ -152,9 +151,9 @@ public class Vision extends SubsystemBase {
                     angularStdDev *= cameraStdDevFactors[cameraIndex];
                 }
 
-                // Send vision observation
+                // Send vision observation (pass full 3D pose)
                 consumer.accept(
-                    observation.pose().toPose2d(),
+                    observation.pose(),
                     observation.timestamp(),
                     VecBuilder.fill(linearStdDev, linearStdDev, angularStdDev));
             }
@@ -194,7 +193,7 @@ public class Vision extends SubsystemBase {
     @FunctionalInterface
     public static interface VisionConsumer {
         public void accept(
-            Pose2d visionRobotPoseMeters,
+            Pose3d visionRobotPoseMeters,
             double timestampSeconds,
             Matrix<N3, N1> visionMeasurementStdDevs);
     }

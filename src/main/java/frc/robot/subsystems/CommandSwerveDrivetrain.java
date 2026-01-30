@@ -18,6 +18,7 @@ import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
@@ -314,6 +315,19 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     }
 
     /**
+     * Accepts a full 3D pose from vision, converts it to Pose2d (x, y, yaw) for the
+     * WPILib pose estimator, and forwards it to the base implementation.
+     */
+    public void addVisionMeasurement(Pose3d visionRobotPoseMeters, double timestampSeconds) {
+        var pose2d = new Pose2d(
+            visionRobotPoseMeters.getTranslation().getX(),
+            visionRobotPoseMeters.getTranslation().getY(),
+            new Rotation2d(visionRobotPoseMeters.getRotation().getZ())
+        );
+        super.addVisionMeasurement(pose2d, Utils.fpgaToCurrentTime(timestampSeconds));
+    }
+
+    /**
      * Adds a vision measurement to the Kalman Filter. This will correct the odometry pose estimate
      * while still accounting for measurement noise.
      * <p>
@@ -333,5 +347,21 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         Matrix<N3, N1> visionMeasurementStdDevs
     ) {
         super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds), visionMeasurementStdDevs);
+    }
+
+    /**
+     * Overload that accepts a Pose3d and forwards the converted Pose2d to the base implementation.
+     */
+    public void addVisionMeasurement(
+        Pose3d visionRobotPoseMeters,
+        double timestampSeconds,
+        Matrix<N3, N1> visionMeasurementStdDevs
+    ) {
+        var pose2d = new Pose2d(
+            visionRobotPoseMeters.getTranslation().getX(),
+            visionRobotPoseMeters.getTranslation().getY(),
+            new Rotation2d(visionRobotPoseMeters.getRotation().getZ())
+        );
+        super.addVisionMeasurement(pose2d, Utils.fpgaToCurrentTime(timestampSeconds), visionMeasurementStdDevs);
     }
 }

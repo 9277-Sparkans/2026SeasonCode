@@ -7,6 +7,7 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
@@ -102,19 +103,24 @@ public class Constants {
         public static final double turret_maxVelocity = 40; // rotations per second
         public static final double turret_maxAcceleration = 20; // rotations per second^2
         public static final double turret_maxVoltage = 5;// kraken x44 max voltage
+        public static final double turret_maxJerk = 100; // rotations per second^3
         public static final int turret_motorId = 32; // change this value
-        public static final double turret_speed = 0.1;
+        public static final double turret_speed = 0.08;
 
-        public static final double turret_kG = 0.03;
         public static final double turret_kS = 0.01;
+        public static final double turret_kV = 0.0;
+        public static final double turret_kA = 0.0;
         public static final double turret_kP = 4.5;
         public static final double turret_kI = 0.0;
         public static final double turret_kD = 0.3;
+        public static final double turret_kG = 0.03;
 
-        public static int kMaximumAngle = 50;
-        public static int kMinimumAngle = -50;
 
-        public static double kGearRatio = 1.0 / (18.0 / 105.0);
+        public static double kMaximumAngle = 20.0;
+        public static double kMinimumAngle = -20.0;
+        
+        public static double kGearRatio = 105.0 / 18.0;
+        public static double tgtAngle = -50.0;
     }
     
     public static class ShooterConstants {
@@ -232,8 +238,8 @@ public class Constants {
         public static final double roller_maxVelocity = 40; // rotations per second
         public static final double roller_maxAcceleration = 20; // rotations per second^2
         public static final double roller_maxVoltage = 5;// kraken x44 max voltage
-        public static final int roller_motorId = 0; // change this value
-        public static final double roller_speed = 0.1;
+        public static final int roller_motorId = 35; // change this value
+        public static final double roller_speed = -0.4;
 
         public static final double roller_kG = 0.03;
         public static final double roller_kS = 0.01;

@@ -108,7 +108,7 @@ public class Hood extends SubsystemBase {
 
 
   public void moveHoodWithEncoder(double rotation) {
-    rotation = 0.25;
+    // rotation = 0.25;
     PIDController pidController = new PIDController(HoodConstants.hood_kP, HoodConstants.hood_kI, HoodConstants.hood_kD);
 
     double feedback = pidController.calculate(hoodEncoder.getPosition().getValueAsDouble(), rotation);
@@ -140,7 +140,10 @@ public class Hood extends SubsystemBase {
     return Commands.runOnce(() -> {});
   }
 
-  
+  public void setHoodToAngle(double angle)
+  {
+    // do cool things :)
+  }
 
   public void runHood() {
     hoodMotor.set(HoodConstants.kHoodSpeed);

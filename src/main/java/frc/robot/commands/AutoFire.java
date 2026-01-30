@@ -4,10 +4,11 @@ import frc.robot.subsystems.Transfer;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Hood;
-
+import frc.robot.subsystems.Intake;
 import frc.robot.Constants.TransferConstants;
 import frc.robot.Constants.TurretConstants;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.Limelight;
 import frc.robot.Constants.HoodConstants;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -17,12 +18,13 @@ public class AutoFire extends Command
 {
     Turret turret;
     Transfer transfer;
+    Intake intake;
     Shooter shooter;
     Hood hood;
     int tgtRPM;
     double tgtAngle;
 
-    public AutoFire(Turret turret, Transfer transfer, Shooter shooter, Hood hood)
+    public AutoFire(Turret turret, Transfer transfer, Shooter shooter, Hood hood, Intake intake)
     {
         this.turret = turret;
         this.transfer = transfer;
@@ -38,34 +40,29 @@ public class AutoFire extends Command
     
     @Override
     public void initialize(){
-        tgtRPM = shooter.GetCorrectRPM();
-        //tgtAngle = hood.GetTargetHoodAngle();
+        tgtRPM = 0;
     }
 
     @Override
     public void execute()
     {
-        shooter.setShooterRPM(tgtRPM);
-        hood.moveHoodMotionMagic();
-        // add in turret
+        double distance = Limelight.GetDistance();
 
-        if (Math.abs((shooter.GetCorrectRPM() / 60) - shooter.GetShooterVelocity()) < ShooterConstants.kRpmLenience)
-        {
-            transfer.activateTransfer();
-        }
-        else
-        {
-            transfer.stop();
-        }
+        // set rpm from lookup 
+        // set angle from lookup
+
+        shooter.setShooterRPM(tgtRPM);
+        hood.setHoodToAngle(tgtAngle);
+        transfer.activateTransfer();
+        intake.intake();
     }
 
     @Override
     public void end(boolean interrupted)
     {
-        // hood.stopHood();
-        shooter.targetRPM = 0;
         shooter.fireAtRPM();
         transfer.stop();
+        intake.stop();
     }
 
     @Override

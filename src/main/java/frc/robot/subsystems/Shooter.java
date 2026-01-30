@@ -94,12 +94,6 @@ public class Shooter extends SubsystemBase {
 
         shooterMotor.setVoltage(feedforwardVoltage + feedbackVoltage);
     }
-    
-    // getters
-    public int GetCorrectRPM()
-    {
-        return shooterRPM; // replace with the actual math later
-    }
 
     // rps
     public double GetShooterVelocity()

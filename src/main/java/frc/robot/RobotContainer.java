@@ -144,10 +144,6 @@ public class RobotContainer {
         joystick.leftTrigger().whileTrue(turret.turretNeg());
         joystick.leftTrigger().whileFalse(Commands.runOnce(() -> turret.stop()));
         joystick.rightTrigger().whileFalse(Commands.runOnce(() -> turret.stop()));
-
-        joystick.x().onTrue(turret.turretTgtCommand());
-        joystick.x().onFalse(Commands.runOnce(() -> turret.stop()));
-
         //joystick.y().onTrue(new TurretTracking((turret)));
 
 

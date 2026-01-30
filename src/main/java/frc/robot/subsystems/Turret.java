@@ -66,7 +66,6 @@ public class Turret extends SubsystemBase {
 
   @Override
   public void periodic() {
-
   }
 
   public double getPosition() {
@@ -75,21 +74,21 @@ public class Turret extends SubsystemBase {
   }
 
   public double getTurretCurrent() {
-    double turretCurrent = turretMotor.getSupplyCurrent().getValueAsDouble() / TurretConstants.kGearRatio;
-    return (turretCurrent);
+    double turretCurrent = turretMotor.getSupplyCurrent().getValueAsDouble();
+    return turretCurrent;
   }
 
   public Command turretPos () {
-    // if (getTurretAngle() >= TurretConstants.kMaximumAngle - 2.0) {
-    //   return Commands.runOnce(() -> stop());
-    // }
-    // else {
+    if (getTurretAngle() >= (TurretConstants.kMaximumAngle - 2.0)) {
+      return Commands.runOnce(() -> stop());
+    }
+    else {
       return Commands.runOnce(() -> spinPositive());
-    // }
+    }
     }
 
   public Command turretNeg () {
-    if (getTurretAngle() <= TurretConstants.kMinimumAngle + 2.0) {
+    if (getTurretAngle() <= (TurretConstants.kMinimumAngle + 2.0)) {
       return Commands.runOnce(() -> stop());
     }
     else {
@@ -103,7 +102,7 @@ public class Turret extends SubsystemBase {
 
   public double getTurretAngle()
   {
-    double position = getTurretCurrent(); // turns
+    double position = getTurretCurrent(); // turns 
     return position * 360;
   }
 
@@ -117,7 +116,7 @@ public class Turret extends SubsystemBase {
   }
 
   public void spinNegative(){
-      turretMotor.set(-TurretConstants.turret_speed);
+      turretMotor.set(-(TurretConstants.turret_speed));
   }
 
   

@@ -13,11 +13,8 @@
 
 package frc.robot.Vision;
 
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
-
-import static frc.robot.Constants.VisionConstants.TAG_LAYOUT;
 
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -43,6 +40,23 @@ public class VisionIOPhotonVision implements VisionIO {
 		camera = new PhotonCamera(name);
 		estimator = new PhotonPoseEstimator(VisionConstants.aprilTagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
 				roboToCamera);
+	}
+
+	/**
+	 * Compute the average distance from camera to all detected targets in meters.
+	 *
+	 * @param targets List of detected targets
+	 * @return Average distance in meters, or 0.0 if no targets
+	 */
+	private double computeAverageTagDistance(java.util.List<org.photonvision.targeting.PhotonTrackedTarget> targets) {
+		if (targets.isEmpty()) {
+			return 0.0;
+		}
+		double totalDistance = 0.0;
+		for (var target : targets) {
+			totalDistance += target.getBestCameraToTarget().getTranslation().getNorm();
+		}
+		return totalDistance / targets.size();
 	}
 
 	@Override
@@ -79,11 +93,21 @@ public class VisionIOPhotonVision implements VisionIO {
 					tagIds.add((short) target.getFiducialId());
 				}
 
-				// Calculate ambiguity
+				// Calculate ambiguity: for single-tag use target ambiguity,
+				// for multi-tag use average target ambiguity
 				double ambiguity = 0.0;
 				if (pose.targetsUsed.size() == 1) {
 					ambiguity = pose.targetsUsed.get(0).getPoseAmbiguity();
+				} else if (pose.targetsUsed.size() > 1) {
+					double totalAmbiguity = 0.0;
+					for (var target : pose.targetsUsed) {
+						totalAmbiguity += target.getPoseAmbiguity();
+					}
+					ambiguity = totalAmbiguity / pose.targetsUsed.size();
 				}
+
+				// Compute average distance to all targets for std dev scaling
+				double avgDistance = computeAverageTagDistance(pose.targetsUsed);
 
 				// Add pose observation
 				poseObservations.add(
@@ -92,7 +116,7 @@ public class VisionIOPhotonVision implements VisionIO {
 								pose.estimatedPose,
 								ambiguity,
 								pose.targetsUsed.size(),
-								0.0, // Average tag distance not provided directly
+								avgDistance,
 								PoseObservationType.PHOTONVISION));
 			}
 		}

@@ -234,19 +234,17 @@ public class Constants {
         public static final double transferMaxVelocity = 100; // rps
     }
 
+    	/**
+    	 * DEPRECATED: Use frc.robot.Vision.VisionConstants.aprilTagLayout instead.
+    	 * This ensures all code uses the same AprilTag field layout as PhotonVision.
+    	 */
+    	@Deprecated(since = "2026")
     	public static final class VisionConstants {
 
-		public static final AprilTagFieldLayout TAG_LAYOUT;
-
-		static {
-			AprilTagFieldLayout hi;
-			try {
-				hi = new AprilTagFieldLayout(Filesystem.getDeployDirectory().toPath().resolve("2026-rebuilt-welded.json"));
-			} catch (Exception e) {
-				System.out.println("aaaa");
-				hi = AprilTagFieldLayout.loadField(AprilTagFields.k2022RapidReact);
-			}
-			TAG_LAYOUT = hi;
-		}
-}
+		/**
+		 * DEPRECATED: Use frc.robot.Vision.VisionConstants.aprilTagLayout instead.
+		 */
+		@Deprecated(since = "2026")
+		public static final AprilTagFieldLayout TAG_LAYOUT = frc.robot.Vision.VisionConstants.aprilTagLayout;
+	}
 }

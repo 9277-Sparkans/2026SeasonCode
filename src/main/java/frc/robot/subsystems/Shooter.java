@@ -29,7 +29,7 @@ public class Shooter extends SubsystemBase {
     private boolean shooting = false;
 
 
-    public int shooterRPS; // rpm
+    public int shooterRPM; // rpm
 
     /** Creates a new Shooter. */
     public Shooter() {
@@ -55,7 +55,7 @@ public class Shooter extends SubsystemBase {
 
         shooterMotor.getConfigurator().apply(ShooterMotorConfiguration);
 
-        shooterRPS = 0;
+        shooterRPM = 0;
 
         Telemetry.telemeterizeMotor("Shooter", shooterMotor);
 
@@ -88,50 +88,49 @@ public class Shooter extends SubsystemBase {
 
         PIDController pidController = new PIDController(ShooterConstants.shooter_kP, ShooterConstants.shooter_kI, ShooterConstants.shooter_kD);
 
-        double setpointVelocity = shooterRPS;
+        double setpointVelocity = shooterRPM / 60;
         double feedforwardVoltage = feedforward.calculate(setpointVelocity);
         double feedbackVoltage = pidController.calculate(shooterMotor.getVelocity().getValueAsDouble(), setpointVelocity);
 
         shooterMotor.setVoltage(feedforwardVoltage + feedbackVoltage);
     }
-
     
     // getters
-    public int GetCorrectRPS()
+    public int GetCorrectRPM()
     {
-        return shooterRPS; // replace with the actual math later
+        return shooterRPM; // replace with the actual math later
     }
 
-    public void increaseSpeed()
-    {
-        if (shooterRPS + ShooterConstants.kRpmIncrement < ShooterConstants.kMaxRPM)
-        {
-            shooterRPS += ShooterConstants.kRpmIncrement;
-        }
-    }
-
-    public void decreaseSpeed()
-    {
-        if (shooterRPS - ShooterConstants.kRpmIncrement > -10)
-        {
-            shooterRPS -= ShooterConstants.kRpmIncrement;
-        }
-    }
-
-    
-
+    // rps
     public double GetShooterVelocity()
     {
         return shooterMotor.getVelocity().getValueAsDouble();
     }
 
-    
+    public void increaseSpeed()
+    {
+        if (shooterRPM + ShooterConstants.kRpmIncrement < ShooterConstants.kMaxRPM)
+        {
+            shooterRPM += ShooterConstants.kRpmIncrement;
+        }
+    }
+
+    public void decreaseSpeed()
+    {
+        if (shooterRPM - ShooterConstants.kRpmIncrement > -10)
+        {
+            shooterRPM -= ShooterConstants.kRpmIncrement;
+        }
+    }
+
+    public void setShooterRPM(int input)
+    {
+        shooterRPM = input;
+    }  
 
     @Override
     public void periodic() 
     {
         fireAtRPM();
-        // System.out.println("Shooter velocity: " + GetShooterVelocity());
-        // System.out.println("Shooter tgt velocity: " + shooterRPS);
     }
 }

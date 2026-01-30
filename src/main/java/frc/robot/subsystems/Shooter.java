@@ -131,7 +131,7 @@ public class Shooter extends SubsystemBase {
     public void periodic() 
     {
         fireAtRPM();
-        System.out.println("Shooter velocity: " + GetShooterVelocity());
-        System.out.println("Shooter tgt velocity: " + shooterRPS);
+        // System.out.println("Shooter velocity: " + GetShooterVelocity());
+        // System.out.println("Shooter tgt velocity: " + shooterRPS);
     }
 }

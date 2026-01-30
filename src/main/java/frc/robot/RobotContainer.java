@@ -160,8 +160,9 @@ public class RobotContainer {
 
 
         // TRANSFER button controls
-        joystick.b().whileTrue(Commands.runOnce(() -> transfer.activateTransferCommand()));
-        joystick.b().whileFalse(Commands.runOnce(() -> transfer.stopTransferCommand()));
+        // joystick.b().whileTrue(Commands.runOnce(() -> transfer.activateTransferCommand()));
+        // joystick.b().whileFalse(Commands.runOnce(() -> transfer.stopTransferCommand()));
+        joystick.b().onTrue(Commands.runOnce(() -> transfer.toggleTransfer()));
 
         // joystick.povRight()
         //     .whileTrue(

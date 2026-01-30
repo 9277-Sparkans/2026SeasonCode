@@ -171,6 +171,9 @@ public class Constants {
         public static final double kMinimumAngle = 32;
         public static final double kMaximumAngle = 49;
 
+        public static final double kMinimumEncoderPos = 0.25;
+        public static final double kMaximumEncoderPos = 0.7;
+
         public static final double maxEncoderValue = -1.258789; // test for this
 
         public static final double kGearRatio = 1.0 / (33.7 / 18.23);

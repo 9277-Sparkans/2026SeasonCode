@@ -246,7 +246,7 @@ public class Constants {
         public static final double kIndexerSpeed = -0.4;
 
         public static final double kIndexer_kG = 0.03;
-        public static final double roller_kS = 0.01;
+        public static final double kIndexer_kS = 0.01;
         public static final double kIndexer_kP = 4.5;
         public static final double kIndexer_kI = 0.0;
         public static final double kIndexer_kD = 0.3;

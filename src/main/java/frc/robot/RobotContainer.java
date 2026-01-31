@@ -140,10 +140,10 @@ public class RobotContainer {
 
 
         // TURRET button controls
-        joystick.rightTrigger().onTrue(turret.turretPos());
-        joystick.leftTrigger().onTrue(turret.turretNeg());
-        joystick.leftTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
-        joystick.rightTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
+        joystick.rightTrigger().whileTrue(turret.turretPos());
+        joystick.leftTrigger().whileTrue(turret.turretNeg());
+        joystick.leftTrigger().whileFalse(Commands.runOnce(() -> turret.stop()));
+        joystick.rightTrigger().whileFalse(Commands.runOnce(() -> turret.stop()));
 
         joystick.x().onTrue(turret.turretTgtCommand());
         joystick.x().onFalse(Commands.runOnce(() -> turret.stop()));
@@ -160,8 +160,9 @@ public class RobotContainer {
 
 
         // TRANSFER button controls
-        joystick.b().whileTrue(Commands.runOnce(() -> transfer.activateTransferCommand()));
-        joystick.b().whileFalse(Commands.runOnce(() -> transfer.stopTransferCommand()));
+        // joystick.b().whileTrue(Commands.runOnce(() -> transfer.activateTransferCommand()));
+        // joystick.b().whileFalse(Commands.runOnce(() -> transfer.stopTransferCommand()));
+        joystick.b().onTrue(Commands.runOnce(() -> transfer.toggleTransfer()));
 
         // joystick.povRight()
         //     .whileTrue(

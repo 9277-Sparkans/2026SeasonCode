@@ -10,7 +10,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-
+import frc.robot.Telemetry;
 import frc.robot.Constants.QuickAccessConstants;
 import frc.robot.Constants.TurretConstants;
 import frc.robot.Constants.TransferConstants;;
@@ -20,6 +20,8 @@ public class Transfer extends SubsystemBase
 {
     private final TalonFX transferMotor;
     private final TalonFXConfiguration transferMotorConfig;
+
+    public boolean transferOn = false;
 
     /** Creates a new Turret. */
     public Transfer() {
@@ -32,6 +34,8 @@ public class Transfer extends SubsystemBase
         transferMotorConfig.MotionMagic.MotionMagicCruiseVelocity = TransferConstants.transferMaxVelocity;
 
         transferMotor.getConfigurator().apply(transferMotorConfig);
+
+        Telemetry.telemeterizeMotor("Transfer", transferMotor);
     }
 
     public Command activateTransferCommand()
@@ -44,6 +48,21 @@ public class Transfer extends SubsystemBase
     {
         stop();
         return Commands.run(() -> {});
+    }
+
+    public Command toggleTransferCommand() {
+        toggleTransfer();
+        return Commands.runOnce(() -> {});
+    }
+
+    public void toggleTransfer() {
+        transferOn = !transferOn;
+
+        if (transferOn) {
+            activateTransfer();
+        } else {
+            stop();
+        }
     }
 
     public void activateTransfer()

@@ -29,11 +29,11 @@ import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Roller;
+import frc.robot.subsystems.Indexer;
 import frc.robot.commands.AutoFire;
 import frc.robot.subsystems.Transfer;
 import frc.robot.subsystems.Climb;
-import frc.robot.subsystems.Roller;
+import frc.robot.subsystems.Indexer;
 
 
 public class RobotContainer {
@@ -59,7 +59,7 @@ public class RobotContainer {
     public final Transfer transfer = new Transfer();
     public final Hood hood = new Hood();
     public final Climb climb = new Climb();
-    public final Roller roller = new Roller();
+    public final Indexer roller = new Indexer();
 
     public final AutoFire autoFireCommand = new AutoFire(turret, transfer, shooter, hood);
 
@@ -193,8 +193,8 @@ public class RobotContainer {
         
         
         // ROLLER button controls
-        joystick.y().onTrue(roller.rollerSpin()); 
-        joystick.y().onFalse(roller.rollerStop()); 
+        joystick.y().onTrue(roller.indexerSpin()); 
+        joystick.y().onFalse(roller.indexerStop()); 
 
 
 

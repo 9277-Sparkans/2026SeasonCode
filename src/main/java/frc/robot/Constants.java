@@ -13,6 +13,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.util.struct.Struct;
 import edu.wpi.first.wpilibj.Timer;
+import frc.robot.Limelight;
 
 public class Constants {
     public static final class QuickAccessConstants {
@@ -120,7 +121,7 @@ public class Constants {
         public static double kMinimumAngle = -20.0;
         
         public static double kGearRatio = 105.0 / 18.0;
-        public static double tgtAngle = -50.0;
+        public static double tgtAngle = -(Limelight.GetAngle());
     }
     
     public static class ShooterConstants {

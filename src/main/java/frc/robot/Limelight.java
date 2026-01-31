@@ -81,8 +81,8 @@ public class Limelight
         Translation2d hub = getHub(isBlue);
         PoseEstimate pose = getPose();
 
-        System.out.println("bot position is " + pose.pose);
-        System.out.println(hub);
+        // System.out.println("bot position is " + pose.pose);
+        // System.out.println(hub);
 
         return hub.minus(pose.pose.getTranslation()).getAngle().getDegrees();
     }

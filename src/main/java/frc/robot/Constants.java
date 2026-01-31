@@ -177,7 +177,7 @@ public class Constants {
 
         public static final double kGearRatio = 1.0 / (33.7 / 18.23);
 
-        public static final double kHoodCurrentLimit = 35; // was 35, setting it to this to avoid grinding the gear again!
+        public static final double kHoodCurrentLimit = 5;
 
         public static final double kHoodIncremqent = 2;
     }
@@ -237,19 +237,19 @@ public class Constants {
         public static final double transferMaxVelocity = 100; // rps
     }
 
-    public static final class RollerConstants {
+    public static final class IndexerConstants {
 
-        public static final double roller_maxVelocity = 40; // rotations per second
-        public static final double roller_maxAcceleration = 20; // rotations per second^2
-        public static final double roller_maxVoltage = 5;// kraken x44 max voltage
-        public static final int roller_motorId = 35; // change this value
-        public static final double roller_speed = 0.1;
+        public static final double kIndexerMaxVelocity = 40; // rotations per second
+        public static final double kIndexerMaxAcceleration = 20; // rotations per second^2
+        public static final double kIndexerMaxVoltage = 5;// kraken x44 max voltage
+        public static final int kIndexerMotorID = 35; // change this value
+        public static final double kIndexerSpeed = -0.4;
 
-        public static final double roller_kG = 0.03;
-        public static final double roller_kS = 0.01;
-        public static final double roller_kP = 4.5;
-        public static final double roller_kI = 0.0;
-        public static final double roller_kD = 0.3;
+        public static final double kIndexer_kG = 0.03;
+        public static final double kIndexer_kS = 0.01;
+        public static final double kIndexer_kP = 4.5;
+        public static final double kIndexer_kI = 0.0;
+        public static final double kIndexer_kD = 0.3;
 
         public static double kGearRatio = 1.0 / 1.0;
     }

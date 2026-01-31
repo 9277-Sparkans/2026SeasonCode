@@ -38,6 +38,9 @@ public class Turret extends SubsystemBase {
     // SoftwareLimitSwitchConfigs softwareLimitConfigs = new SoftwareLimitSwitchConfigs();
     turretMotor.setPosition(0);
 
+
+
+
     // softwareLimitConfigs.ForwardSoftLimitThreshold = TurretConstants.kMaximumAngle;
     // softwareLimitConfigs.ReverseSoftLimitThreshold = TurretConstants.kMinimumAngle;
     // softwareLimitConfigs.ForwardSoftLimitEnable = true;
@@ -61,7 +64,7 @@ public class Turret extends SubsystemBase {
 
     turretMotor.getConfigurator().apply(turretMotorConfig);
 
-    Telemetry.telemeterizeMotor("Turret", turretMotor, (1.0 / (15.0 / 108.0)));
+    Telemetry.telemeterizeMotor("Turret", turretMotor, (108.0 / 15.0));
 
   }
 
@@ -81,26 +84,13 @@ public class Turret extends SubsystemBase {
   }
 
   public Command turretPos () {
-    // if (getTurretAngle() >= TurretConstants.kMaximumAngle - 2.0) {
-    //   return Commands.runOnce(() -> stop());
-    // }
-    // else {
       return Commands.runOnce(() -> spinPositive());
-    // }
     }
 
   public Command turretNeg () {
-    if (getTurretAngle() <= TurretConstants.kMinimumAngle + 2.0) {
-      return Commands.runOnce(() -> stop());
-    }
-    else {
       return Commands.runOnce(() -> spinNegative());
     }
-    }
 
-  public Command turretTgtCommand () {
-    return Commands.runOnce(() -> turretMoveTgt());
-  }
 
   public double getTurretAngle()
   {
@@ -121,17 +111,18 @@ public class Turret extends SubsystemBase {
       turretMotor.set(-TurretConstants.turret_speed);
   }
 
+  public void turretMoveTgt(double llAngle){
+    double tgt = (-llAngle * TurretConstants.kGearRatio) / 360;
 
-  public void turretMoveTgt(){
-    double tgt = (TurretConstants.tgtAngle * TurretConstants.kGearRatio) / 360;
-    final MotionMagicVoltage m_request = new MotionMagicVoltage(0);
+    final MotionMagicVoltage m_request = new MotionMagicVoltage(tgt);
 
-    turretMotor.setControl(m_request.withPosition(tgt)); //motor rotations
-    System.out.println(tgt);
+    turretMotor.setControl(m_request); //motor rotations
+    //System.out.println(tgt);
   }
 
 
   public void stop() {
     turretMotor.set(0);
   }
+
 }

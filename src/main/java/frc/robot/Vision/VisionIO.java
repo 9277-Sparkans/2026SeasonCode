@@ -140,8 +140,10 @@ public interface VisionIO {
 	/**
 	 * Updates the inputs for the vision system.
 	 * 
-	 * @param inputs The inputs to update.
+	 * @param inputs      The inputs to update.
+	 * @param currentPose The current pose of the robot, used for seeding the pose
+	 *                    estimator.
 	 */
-	default void updateInputs(VisionIOInputs inputs) {
+	default void updateInputs(VisionIOInputs inputs, edu.wpi.first.math.geometry.Pose2d currentPose) {
 	}
 }

@@ -60,8 +60,11 @@ public class VisionIOPhotonVision implements VisionIO {
 	}
 
 	@Override
-	public void updateInputs(VisionIOInputs inputs) {
+	public void updateInputs(VisionIOInputs inputs, edu.wpi.first.math.geometry.Pose2d currentPose) {
 		inputs.setConnected(camera.isConnected());
+
+		// Seed the estimator with the current pose
+		estimator.setReferencePose(currentPose);
 
 		// Read new camera observations
 		Set<Short> tagIds = new HashSet<>();

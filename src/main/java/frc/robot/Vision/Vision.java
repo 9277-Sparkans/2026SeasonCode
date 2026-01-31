@@ -30,16 +30,20 @@ import java.util.List;
 // Use fully-qualified name for generated inputs to avoid any package/import resolution issues
 import org.littletonrobotics.junction.Logger;
 
+import java.util.function.Supplier;
+
 public class Vision extends SubsystemBase {
     private final VisionConsumer consumer;
+    private final Supplier<Pose2d> poseSupplier;
     private final VisionIO[] io;
     private final frc.robot.generated.VisionIOInputsAutoLogged[] inputs;
     private final Alert[] disconnectedAlerts;
     public boolean visionHasTarget = false;
     private boolean seesThisTarget = false;
 
-    public Vision(VisionConsumer consumer, VisionIO... io) {
+    public Vision(VisionConsumer consumer, Supplier<Pose2d> poseSupplier, VisionIO... io) {
         this.consumer = consumer;
+        this.poseSupplier = poseSupplier;
         this.io = io;
 
         // Initialize inputs
@@ -70,7 +74,7 @@ public class Vision extends SubsystemBase {
     @Override
     public void periodic() {
         for (int i = 0; i < io.length; i++) {
-            io[i].updateInputs(inputs[i]);
+            io[i].updateInputs(inputs[i], poseSupplier.get());
             Logger.processInputs("Vision/Camera" + Integer.toString(i), inputs[i]);
         }
 

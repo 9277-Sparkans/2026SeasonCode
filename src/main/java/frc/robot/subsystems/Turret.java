@@ -20,6 +20,7 @@ import frc.robot.Constants.QuickAccessConstants;
 import frc.robot.Constants.TurretConstants;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import com.ctre.phoenix6.configs.SoftwareLimitSwitchConfigs;
+import frc.robot.Limelight;
 
 public class Turret extends SubsystemBase {
 
@@ -66,7 +67,7 @@ public class Turret extends SubsystemBase {
 
   @Override
   public void periodic() {
-
+    
   }
 
   public double getPosition() {
@@ -120,28 +121,13 @@ public class Turret extends SubsystemBase {
       turretMotor.set(-TurretConstants.turret_speed);
   }
 
-  
-  public void setTurretToAngle(double angle)
-  {
-    angle = targetHoodAngle;
-    if (angle > TurretConstants.kMaximumAngle)
-    {
-      angle = TurretConstants.kMaximumAngle;
-    }
-    if (angle < TurretConstants.kMinimumAngle)
-    {
-      angle = TurretConstants.kMinimumAngle;
-    }
-
-    MotionMagicVoltage angleTgt = new MotionMagicVoltage(angle).withSlot(0);
-    turretMotor.setControl(angleTgt.withPosition(getTurretAngle()));
-  }
 
   public void turretMoveTgt(){
     double tgt = (TurretConstants.tgtAngle * TurretConstants.kGearRatio) / 360;
     final MotionMagicVoltage m_request = new MotionMagicVoltage(0);
 
     turretMotor.setControl(m_request.withPosition(tgt)); //motor rotations
+    System.out.println(tgt);
   }
 
 

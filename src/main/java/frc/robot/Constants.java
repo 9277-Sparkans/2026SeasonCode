@@ -177,7 +177,7 @@ public class Constants {
 
         public static final double kGearRatio = 1.0 / (33.7 / 18.23);
 
-        public static final double kHoodCurrentLimit = 35; // was 35, setting it to this to avoid grinding the gear again!
+        public static final double kHoodCurrentLimit = 5;
 
         public static final double kHoodIncremqent = 2;
     }

@@ -243,6 +243,7 @@ public class Hood extends SubsystemBase {
 
   @Override
   public void periodic() {
+    clampTarget();
     moveHoodWithEncoder(targetHoodPosition);
     // System.out.println("Hood motor rotations: " + hoodMotor.getPosition().getValueAsDouble());
   }
@@ -303,15 +304,21 @@ public class Hood extends SubsystemBase {
   }
 
   
+  public void clampTarget() {
+    targetHoodPosition = Utils.clamp(targetHoodPosition, HoodConstants.kMinimumEncoderPos, HoodConstants.kMaximumEncoderPos);
+  }
 
   public void runHood() {
     // hoodMotor.set(HoodConstants.kHoodSpeed);
     targetHoodPosition += HoodConstants.kHoodSpeed;
+    clampTarget();
   }
+
 
   public void runHoodReverse() {
     // hoodMotor.set(-HoodConstants.kHoodSpeed);
     targetHoodPosition -= HoodConstants.kHoodSpeed;
+    clampTarget();
   }
 
 }

@@ -32,10 +32,9 @@ public class VisionConstants {
     private static String loadedLayoutDescription = "Unknown";
     static {
         try {
-            aprilTagLayout =
-                new AprilTagFieldLayout(Path
+            aprilTagLayout = new AprilTagFieldLayout(Path
                     .of(Filesystem.getDeployDirectory().getAbsolutePath()
-                        + "/vision/welded.json"));
+                            + "/vision/welded.json"));
             usedCustomField = true;
             loadedLayoutDescription = "Custom: vision/welded.json";
         } catch (Exception e) {
@@ -47,17 +46,17 @@ public class VisionConstants {
     }
 
     // Camera names, must match names configured on coprocessor
-    public static String camera0Name = "cheap_camera";
+    public static String camera0Name = "front_left";
     public static String camera1Name = "front_right";
 
     // Robot to camera transforms
     // (Not used by Limelight, configure in web UI instead)
-    public static Transform3d robotToCamera0 =
-        new Transform3d(Units.inchesToMeters(10.5), Units.inchesToMeters(11.5),
-            Units.inchesToMeters(6.5),
+    public static Transform3d robotToCamera0 = new Transform3d(Units.inchesToMeters(9.287),
+            Units.inchesToMeters(10.9704),
+            Units.inchesToMeters(7.9167),
             new Rotation3d(0.0, Units.degreesToRadians(-15), Units.degreesToRadians(-30)));
-    public static Transform3d robotToCamera1 =
-        new Transform3d(Units.inchesToMeters(9.287), Units.inchesToMeters(-10.9704),
+    public static Transform3d robotToCamera1 = new Transform3d(Units.inchesToMeters(9.287),
+            Units.inchesToMeters(-10.9704),
             Units.inchesToMeters(7.9167),
             new Rotation3d(0.0, Units.degreesToRadians(-15), Units.degreesToRadians(30)));
 
@@ -72,11 +71,10 @@ public class VisionConstants {
 
     // Standard deviation multipliers for each camera
     // (Adjust to trust some cameras more than others)
-    public static double[] cameraStdDevFactors =
-        new double[] {
-                1.0, // Camera 0
-                1.0 // Camera 1
-        };
+    public static double[] cameraStdDevFactors = new double[] {
+            1.0, // Camera 0
+            1.0 // Camera 1
+    };
 
     public static List<Integer> rejectedTags = Arrays.asList(2, 3, 4, 5, 14, 15, 16);
 }

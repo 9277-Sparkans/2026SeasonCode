@@ -74,6 +74,10 @@ public class Limelight
         // System.out.println("bot position is " + pose.pose);
         // System.out.println(hub);
 
+        if (pose == null) {
+            return 0;
+        }
+
         return hub.minus(pose.pose.getTranslation()).getAngle().getDegrees();
     }
 }

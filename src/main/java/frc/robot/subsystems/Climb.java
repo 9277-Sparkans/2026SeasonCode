@@ -8,35 +8,20 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 
-import frc.robot.Constants.ClimbConstants;
-import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
-import com.ctre.phoenix6.configs.MotorOutputConfigs;
-import com.ctre.phoenix6.controls.DutyCycleOut;
-import com.ctre.phoenix6.controls.NeutralOut;
-
-import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
-import com.ctre.phoenix6.hardware.TalonFX;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Climb extends SubsystemBase {
-    // public enum ClimbState { RAISE, LOWER, ASCEND, DESCEND, HANG }
-
     CANBus kCANBus = CANBus.roboRIO();
     private final TalonFX climbMotor;
     private final TalonFXConfiguration climbConfig;
-
-    private ClimbState climbState;
 
     public enum ClimbState {
         DOWN,
         UP
     }
+
+    private ClimbState climbState;
 
     public Climb() {
 
@@ -53,16 +38,6 @@ public class Climb extends SubsystemBase {
         climbConfig.MotionMagic.MotionMagicAcceleration = 15;
 
         climbMotor.getConfigurator().apply(climbConfig);
-
-        //var climbmotorConfigurator = climbMotor.getConfigurator();
-        //CurrentLimitsConfigs currentLimits = new CurrentLimitsConfigs();
-
-        //currentLimits.SupplyCurrentLimit = 20; // Amps
-        //currentLimits.SupplyCurrentLimitEnable = true;
-        //climbmotorConfigurator.apply(currentLimits);
-
-        // Brake mode
-
     }
 
     public void setState(ClimbState state) {
@@ -89,21 +64,6 @@ public class Climb extends SubsystemBase {
         }
     }
 
-    // public double goingdown(ClimbState state) {
-
-    // switch (state) {
-    // case DOWN:
-    // MotionMagicVoltage DOWN = new MotionMagicVoltage(5).withSlot(0);
-    // climbMotor.setControl(DOWN.withPosition(0.0));
-    // default:
-    // return 0.0;
-    // }
-
-    // }
-    // state for climb down
-
-
-
     /* ================= COMMANDS ================= */
 
     public Command climbUp() {
@@ -119,5 +79,4 @@ public class Climb extends SubsystemBase {
             states(ClimbState.DOWN);
         });
     }
-
 }

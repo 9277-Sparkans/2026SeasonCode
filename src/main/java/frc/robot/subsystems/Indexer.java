@@ -5,7 +5,6 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -41,7 +40,6 @@ public class Indexer extends SubsystemBase {
     // This method will be called once per scheduler run
   }
 
-
   public Command indexerSpin() {
     return Commands.runOnce(() -> spin());
   }
@@ -50,8 +48,7 @@ public class Indexer extends SubsystemBase {
     return Commands.runOnce(() -> stop());
   }
 
-
-  public void spin(){
+  public void spin() {
     indexerMotor.set(IndexerConstants.kIndexerSpeed);
   }
 
@@ -59,7 +56,6 @@ public class Indexer extends SubsystemBase {
   public void stop() {
     indexerMotor.set(0);
   }
-
 }
 
 

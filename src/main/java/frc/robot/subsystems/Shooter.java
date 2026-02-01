@@ -6,18 +6,13 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
-import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.Limelight;
 import frc.robot.Telemetry;
-import frc.robot.Constants.HoodConstants;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 
@@ -29,7 +24,7 @@ public class Shooter extends SubsystemBase {
     private boolean shooting = false;
 
 
-    public int shooterRPS; // rpm
+    public int shooterRPS; // rps
 
     /** Creates a new Shooter. */
     public Shooter() {
@@ -47,11 +42,9 @@ public class Shooter extends SubsystemBase {
         ShooterMotorConfiguration.Slot0.kI = ShooterConstants.shooter_kI;
         ShooterMotorConfiguration.Slot0.kD = ShooterConstants.shooter_kD;
 
-        
         ShooterMotorConfiguration.Slot0.kS = ShooterConstants.shooter_kS;
         ShooterMotorConfiguration.Slot0.kV = ShooterConstants.shooter_kV;
         ShooterMotorConfiguration.Slot0.kA = ShooterConstants.shooter_kA;
-
 
         shooterMotor.getConfigurator().apply(ShooterMotorConfiguration);
 
@@ -71,7 +64,6 @@ public class Shooter extends SubsystemBase {
     private void toggleShoot() {
         shooting = !shooting;
 
-        // TODO: adjust this based on distance to hub/alliance zone
         if (shooting) {
             shooterMotor.set(ShooterConstants.kShooterSpeed);
         } else {
@@ -79,39 +71,33 @@ public class Shooter extends SubsystemBase {
         }
     }
 
-    public void fireAtRPM()
-    {
-        // MotionMagicVelocityVoltage velocityTgt = new MotionMagicVelocityVoltage(rpm).withSlot(0);
-        // shooterMotor.setControl(velocityTgt.withVelocity(GetShooterVelocity()));
-
+    public void fireAtRPM() {
         SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(ShooterConstants.shooter_kS, ShooterConstants.shooter_kV, ShooterConstants.shooter_kA);
 
-        PIDController pidController = new PIDController(ShooterConstants.shooter_kP, ShooterConstants.shooter_kI, ShooterConstants.shooter_kD);
+        // this is so that pidController gets destroyed eventually
+        try (PIDController pidController = new PIDController(ShooterConstants.shooter_kP, ShooterConstants.shooter_kI, ShooterConstants.shooter_kD)) {
+            double setpointVelocity = shooterRPS;
+            double feedforwardVoltage = feedforward.calculate(setpointVelocity);
+            double feedbackVoltage = pidController.calculate(shooterMotor.getVelocity().getValueAsDouble(), setpointVelocity);
 
-        double setpointVelocity = shooterRPS;
-        double feedforwardVoltage = feedforward.calculate(setpointVelocity);
-        double feedbackVoltage = pidController.calculate(shooterMotor.getVelocity().getValueAsDouble(), setpointVelocity);
-
-        shooterMotor.setVoltage(feedforwardVoltage + feedbackVoltage);
+            shooterMotor.setVoltage(feedforwardVoltage + feedbackVoltage);
+        }
     }
 
     
     // getters
-    public int GetCorrectRPS()
-    {
+    public int GetCorrectRPS() {
         return shooterRPS; // replace with the actual math later
     }
 
-    public void increaseSpeed()
-    {
+    public void increaseSpeed() {
         if (shooterRPS + ShooterConstants.kRpmIncrement < ShooterConstants.kMaxRPM)
         {
             shooterRPS += ShooterConstants.kRpmIncrement;
         }
     }
 
-    public void decreaseSpeed()
-    {
+    public void decreaseSpeed() {
         if (shooterRPS - ShooterConstants.kRpmIncrement > -10)
         {
             shooterRPS -= ShooterConstants.kRpmIncrement;
@@ -120,18 +106,14 @@ public class Shooter extends SubsystemBase {
 
     
 
-    public double GetShooterVelocity()
-    {
+    public double GetShooterVelocity() {
         return shooterMotor.getVelocity().getValueAsDouble();
     }
 
     
 
     @Override
-    public void periodic() 
-    {
+    public void periodic() {
         fireAtRPM();
-        // System.out.println("Shooter velocity: " + GetShooterVelocity());
-        // System.out.println("Shooter tgt velocity: " + shooterRPS);
     }
 }

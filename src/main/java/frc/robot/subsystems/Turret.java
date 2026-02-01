@@ -38,9 +38,6 @@ public class Turret extends SubsystemBase {
     // SoftwareLimitSwitchConfigs softwareLimitConfigs = new SoftwareLimitSwitchConfigs();
     turretMotor.setPosition(0);
 
-
-
-
     // softwareLimitConfigs.ForwardSoftLimitThreshold = TurretConstants.kMaximumAngle;
     // softwareLimitConfigs.ReverseSoftLimitThreshold = TurretConstants.kMinimumAngle;
     // softwareLimitConfigs.ForwardSoftLimitEnable = true;

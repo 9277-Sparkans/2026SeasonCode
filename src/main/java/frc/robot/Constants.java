@@ -243,7 +243,7 @@ public class Constants {
         public static final double kIndexerMaxAcceleration = 20; // rotations per second^2
         public static final double kIndexerMaxVoltage = 5;// kraken x44 max voltage
         public static final int kIndexerMotorID = 35; // change this value
-        public static final double kIndexerSpeed = -0.4;
+        public static final double kIndexerSpeed = 0.35;
 
         public static final double kIndexer_kG = 0.03;
         public static final double kIndexer_kS = 0.01;

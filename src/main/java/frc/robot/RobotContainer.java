@@ -12,28 +12,22 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
-import frc.robot.Constants.OIConstants;
-import frc.robot.commands.TurretTracking;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Roller;
+import frc.robot.subsystems.Indexer;
 import frc.robot.commands.AutoFire;
 import frc.robot.subsystems.Transfer;
 import frc.robot.subsystems.Climb;
-import frc.robot.subsystems.Roller;
 
 
 public class RobotContainer {
@@ -44,8 +38,8 @@ public class RobotContainer {
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
             .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
-    private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-    private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
+    // private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
+    // private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
@@ -59,7 +53,7 @@ public class RobotContainer {
     public final Transfer transfer = new Transfer();
     public final Hood hood = new Hood();
     public final Climb climb = new Climb();
-    public final Roller roller = new Roller();
+    public final Indexer roller = new Indexer();
 
     public final AutoFire autoFireCommand = new AutoFire(turret, transfer, shooter, hood);
 
@@ -144,7 +138,11 @@ public class RobotContainer {
         joystick.leftTrigger().whileTrue(turret.turretNeg());
         joystick.leftTrigger().whileFalse(Commands.runOnce(() -> turret.stop()));
         joystick.rightTrigger().whileFalse(Commands.runOnce(() -> turret.stop()));
-        //joystick.y().onTrue(new TurretTracking((turret)));
+
+        joystick.x().onTrue(turret.turretTgtCommand());
+        joystick.x().onFalse(Commands.runOnce(() -> turret.stop()));
+
+        // joystick.y().onTrue(new TurretTracking((turret)));
 
 
         // SHOOTER button controls
@@ -189,8 +187,8 @@ public class RobotContainer {
         
         
         // ROLLER button controls
-        joystick.y().onTrue(roller.rollerSpin()); 
-        joystick.y().onFalse(roller.rollerStop()); 
+        joystick.y().onTrue(roller.indexerSpin()); 
+        joystick.y().onFalse(roller.indexerStop()); 
 
 
 

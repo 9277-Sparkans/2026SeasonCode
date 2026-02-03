@@ -45,6 +45,7 @@ public class FuelChaseCommand extends Command {
     private final int idToChase;
     private final PhotonCamera camera;
     private final CommandSwerveDrivetrain drivetrain;
+    private final Transform3d robotToCamera;
 
     // How far away from the tag we want to be (meters) and facing it
     private static final Transform3d TAG_TO_GOAL = new Transform3d(
@@ -68,20 +69,23 @@ public class FuelChaseCommand extends Command {
     /**
      * Creates a new FuelChaseCommand.
      *
-     * @param idToChase    The AprilTag ID to chase
-     * @param camera       The PhotonCamera to use for target detection
-     * @param drivetrain   The swerve drivetrain subsystem
-     * @param poseProvider A supplier for the current robot pose
+     * @param idToChase     The AprilTag ID to chase
+     * @param camera        The PhotonCamera to use for target detection
+     * @param drivetrain    The swerve drivetrain subsystem
+     * @param poseProvider  A supplier for the current robot pose (fallback/initial)
+     * @param robotToCamera The transform from the robot center to the camera
      */
     public FuelChaseCommand(
             int idToChase,
             PhotonCamera camera,
             CommandSwerveDrivetrain drivetrain,
-            Supplier<Pose2d> poseProvider) {
+            Supplier<Pose2d> poseProvider,
+            Transform3d robotToCamera) {
         this.idToChase = idToChase;
         this.camera = camera;
         this.drivetrain = drivetrain;
         this.poseProvider = poseProvider;
+        this.robotToCamera = robotToCamera;
 
         xController = new ProfiledPIDController(X_KP, X_KI, X_KD, X_CONSTRAINTS);
         yController = new ProfiledPIDController(Y_KP, Y_KI, Y_KD, Y_CONSTRAINTS);
@@ -102,7 +106,8 @@ public class FuelChaseCommand extends Command {
      * @param drivetrain The swerve drivetrain
      */
     public FuelChaseCommand(CommandSwerveDrivetrain drivetrain) {
-        this(1, new PhotonCamera(VisionConstants.camera0Name), drivetrain, () -> drivetrain.getStateCopy().Pose);
+        this(1, new PhotonCamera(VisionConstants.camera0Name), drivetrain,
+                () -> drivetrain.getStateCopy().Pose, VisionConstants.robotToCamera0);
     }
 
     @Override
@@ -117,6 +122,7 @@ public class FuelChaseCommand extends Command {
     @Override
     public void execute() {
         var robotPose2d = poseProvider.get();
+        boolean specificTargetFound = false;
 
         // Get all unread results from the camera and use the most recent one
         var results = camera.getAllUnreadResults();
@@ -131,11 +137,20 @@ public class FuelChaseCommand extends Command {
                         .findFirst();
 
                 if (targetOpt.isPresent()) {
+                    PhotonTrackedTarget target = targetOpt.get();
                     // Get the tag's field-relative pose from the layout
                     Optional<Pose3d> tagPoseOpt = VisionConstants.aprilTagLayout.getTagPose(idToChase);
 
                     if (tagPoseOpt.isPresent()) {
                         Pose3d tagPose = tagPoseOpt.get();
+                        specificTargetFound = true;
+
+                        // Calculate robot pose from vision
+                        Pose3d robotPose3d = org.photonvision.PhotonUtils.estimateFieldToRobotAprilTag(
+                                target.getBestCameraToTarget(),
+                                tagPose,
+                                robotToCamera);
+                        robotPose2d = robotPose3d.toPose2d();
 
                         // Calculate the goal pose: where we want the robot to be relative to the tag
                         // TAG_TO_GOAL defines the offset from the tag
@@ -152,9 +167,7 @@ public class FuelChaseCommand extends Command {
         }
 
         // Calculate the drive outputs using the PID controllers
-        if (goalPose != null)
-
-        {
+        if (specificTargetFound && goalPose != null) {
             double xSpeed = xController.calculate(robotPose2d.getX());
             double ySpeed = yController.calculate(robotPose2d.getY());
             double omegaSpeed = omegaController.calculate(robotPose2d.getRotation().getRadians());
@@ -171,7 +184,7 @@ public class FuelChaseCommand extends Command {
                             .withVelocityY(ySpeed)
                             .withRotationalRate(omegaSpeed));
         } else {
-            // No valid goal, stop the robot
+            // No valid goal or target lost, stop the robot
             drivetrain.setControl(
                     driveRequest
                             .withVelocityX(0)

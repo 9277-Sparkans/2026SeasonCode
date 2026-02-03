@@ -147,10 +147,7 @@ public class RobotContainer {
 
                 // Chase fuel ball with X button
                 joystick.x().whileTrue(new FuelChaseCommand(25, cameraIO.getCamera(), drivetrain,
-                                () -> drivetrain.getStateCopy().Pose));
-
-                // Follow a PathPlanner path with POV Left
-                // Replace "examplePath" with your actual path file name
+                                () -> drivetrain.getStateCopy().Pose, VisionConstants.robotToCamera0));
 
                 // fix butten stuff *cough coguh* tyler change your button bindings
 

@@ -1,104 +1,211 @@
 package frc.robot.commands;
 
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.networktables.NetworkTable;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
-
+import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.geometry.*;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj2.command.Command;
+import org.photonvision.PhotonCamera;
+import org.photonvision.targeting.PhotonTrackedTarget;
+import frc.robot.Vision.VisionConstants;
+import frc.robot.subsystems.CommandSwerveDrivetrain;
+
+import java.util.Optional;
+import java.util.function.Supplier;
+
 /**
- * Command to chase and drive toward the nearest fuel ball detected by the
- * Jetson.
- * 
- * Expected NetworkTables structure (adjust keys in constants if needed):
- * - SmartDashboard/Fuel/hasTarget (boolean) - whether a ball is detected
- * - SmartDashboard/Fuel/tx (double) - horizontal angle to target in degrees
- * (positive = right)
- * - SmartDashboard/Fuel/ty (double) - vertical angle to target in degrees
- * (positive = up)
- * - SmartDashboard/Fuel/area (double) - optional, area of detection (larger =
- * closer)
+ * A command that uses PhotonVision to chase and approach an AprilTag.
+ * Uses the target's 3D pose from PhotonVision to calculate the goal position
+ * and drive towards it using profiled PID controllers.
  */
 public class FuelChaseCommand extends Command {
-  // NetworkTables keys - ADJUST THESE to match your Jetson output
-  private static final String NT_TABLE = "SmartDashboard";
-  private static final String NT_SUBTABLE = "Fuel";
-  private static final String NT_HAS_TARGET = "hasTarget";
-  private static final String NT_TX = "tx";
-  private static final String NT_TY = "ty";
-  private static final String NT_AREA = "area";
 
-  // Tuning constants
-  private static final double FORWARD_SPEED = 1.5; // m/s base forward speed
-  private static final double ROTATION_KP = 0.03; // P gain for rotation toward target
-  private static final double AREA_THRESHOLD = 15.0; // Stop when ball is this close (area)
-  private static final double TX_TOLERANCE = 2.0; // Degrees, considered "centered"
+    private static final double X_KP = 3;
+    private static final double X_KI = 0;
+    private static final double X_KD = 0;
+    private static final double X_TOLERANCE = 0.2;
 
-  private final CommandSwerveDrivetrain drivetrain;
-  private final NetworkTable fuelTable;
-  private final SwerveRequest.RobotCentric driveRequest;
-  private final PIDController rotationController;
+    private static final double Y_KP = 3;
+    private static final double Y_KI = 0;
+    private static final double Y_KD = 0;
+    private static final double Y_TOLERANCE = 0.2;
 
-  public FuelChaseCommand(CommandSwerveDrivetrain drivetrain) {
-    this.drivetrain = drivetrain;
-    this.fuelTable = NetworkTableInstance.getDefault()
-        .getTable(NT_TABLE)
-        .getSubTable(NT_SUBTABLE);
-    this.driveRequest = new SwerveRequest.RobotCentric();
-    this.rotationController = new PIDController(ROTATION_KP, 0, 0);
-    this.rotationController.setTolerance(TX_TOLERANCE);
+    private static final double OMEGA_KP = 2;
+    private static final double OMEGA_KI = 0;
+    private static final double OMEGA_KD = 0;
+    private static final double OMEGA_TOLERANCE = Units.degreesToRadians(3);
 
-    addRequirements(drivetrain);
-  }
+    private static final TrapezoidProfile.Constraints X_CONSTRAINTS = new TrapezoidProfile.Constraints(3, 2);
+    private static final TrapezoidProfile.Constraints Y_CONSTRAINTS = new TrapezoidProfile.Constraints(3, 2);
+    private static final TrapezoidProfile.Constraints OMEGA_CONSTRAINTS = new TrapezoidProfile.Constraints(8, 8);
 
-  @Override
-  public void initialize() {
-    rotationController.reset();
-  }
+    private final int idToChase;
+    private final PhotonCamera camera;
+    private final CommandSwerveDrivetrain drivetrain;
 
-  @Override
-  public void execute() {
-    boolean hasTarget = fuelTable.getEntry(NT_HAS_TARGET).getBoolean(false);
+    // How far away from the tag we want to be (meters) and facing it
+    private static final Transform3d TAG_TO_GOAL = new Transform3d(
+            new Translation3d(1.5, 0.0, 0.0), // Stay 1.5 meters in front of the tag
+            new Rotation3d(0.0, 0.0, Math.PI)); // Face the tag (180 degrees)
 
-    if (!hasTarget) {
-      // No target - stop or spin to search
-      drivetrain.setControl(driveRequest.withVelocityX(0).withVelocityY(0).withRotationalRate(0));
-      return;
+    private final Supplier<Pose2d> poseProvider;
+
+    private final ProfiledPIDController xController;
+    private final ProfiledPIDController yController;
+    private final ProfiledPIDController omegaController;
+
+    // Swerve request for field-centric driving
+    private final SwerveRequest.FieldCentric driveRequest = new SwerveRequest.FieldCentric()
+            .withDeadband(0.1)
+            .withRotationalDeadband(0.1)
+            .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+
+    private Pose2d goalPose;
+
+    /**
+     * Creates a new FuelChaseCommand.
+     *
+     * @param idToChase    The AprilTag ID to chase
+     * @param camera       The PhotonCamera to use for target detection
+     * @param drivetrain   The swerve drivetrain subsystem
+     * @param poseProvider A supplier for the current robot pose
+     */
+    public FuelChaseCommand(
+            int idToChase,
+            PhotonCamera camera,
+            CommandSwerveDrivetrain drivetrain,
+            Supplier<Pose2d> poseProvider) {
+        this.idToChase = idToChase;
+        this.camera = camera;
+        this.drivetrain = drivetrain;
+        this.poseProvider = poseProvider;
+
+        xController = new ProfiledPIDController(X_KP, X_KI, X_KD, X_CONSTRAINTS);
+        yController = new ProfiledPIDController(Y_KP, Y_KI, Y_KD, Y_CONSTRAINTS);
+        omegaController = new ProfiledPIDController(OMEGA_KP, OMEGA_KI, OMEGA_KD, OMEGA_CONSTRAINTS);
+
+        xController.setTolerance(X_TOLERANCE);
+        yController.setTolerance(Y_TOLERANCE);
+        omegaController.setTolerance(OMEGA_TOLERANCE);
+        omegaController.enableContinuousInput(-Math.PI, Math.PI);
+
+        addRequirements(drivetrain);
     }
 
-    double tx = fuelTable.getEntry(NT_TX).getDouble(0);
-    // ty and area are available via fuelTable.getEntry(NT_TY) and NT_AREA if needed
-
-    // Calculate rotation to center on target
-    double rotationRate = -rotationController.calculate(tx, 0); // Negative because positive tx = turn right
-
-    // Drive forward toward the ball
-    // Optionally scale speed based on how centered we are
-    double forwardSpeed = FORWARD_SPEED;
-    if (Math.abs(tx) > 15) {
-      // If far off-center, slow down to let rotation catch up
-      forwardSpeed *= 0.5;
+    /**
+     * Convenience constructor that uses the default camera name and a default
+     * tag id (1) and the drivetrain state as the pose supplier.
+     *
+     * @param drivetrain The swerve drivetrain
+     */
+    public FuelChaseCommand(CommandSwerveDrivetrain drivetrain) {
+        this(1, new PhotonCamera(VisionConstants.camera0Name), drivetrain, () -> drivetrain.getStateCopy().Pose);
     }
 
-    drivetrain.setControl(driveRequest
-        .withVelocityX(forwardSpeed)
-        .withVelocityY(0)
-        .withRotationalRate(rotationRate));
-  }
+    @Override
+    public void initialize() {
+        goalPose = null;
+        var robotPose = poseProvider.get();
+        omegaController.reset(robotPose.getRotation().getRadians());
+        xController.reset(robotPose.getX());
+        yController.reset(robotPose.getY());
+    }
 
-  @Override
-  public void end(boolean interrupted) {
-    drivetrain.setControl(driveRequest.withVelocityX(0).withVelocityY(0).withRotationalRate(0));
-  }
+    @Override
+    public void execute() {
+        var robotPose2d = poseProvider.get();
 
-  @Override
-  public boolean isFinished() {
-    // End when ball is close enough (large area) or target is lost
-    double area = fuelTable.getEntry(NT_AREA).getDouble(0);
-    boolean hasTarget = fuelTable.getEntry(NT_HAS_TARGET).getBoolean(false);
+        // Get all unread results from the camera and use the most recent one
+        var results = camera.getAllUnreadResults();
 
-    return !hasTarget || area >= AREA_THRESHOLD;
-  }
+        if (!results.isEmpty()) {
+            var result = results.get(results.size() - 1); // Get the most recent result
+
+            if (result.hasTargets()) {
+                // Find the target with the ID we want to chase
+                Optional<PhotonTrackedTarget> targetOpt = result.getTargets().stream()
+                        .filter(t -> t.getFiducialId() == idToChase)
+                        .findFirst();
+
+                if (targetOpt.isPresent()) {
+                    // Get the tag's field-relative pose from the layout
+                    Optional<Pose3d> tagPoseOpt = VisionConstants.aprilTagLayout.getTagPose(idToChase);
+
+                    if (tagPoseOpt.isPresent()) {
+                        Pose3d tagPose = tagPoseOpt.get();
+
+                        // Calculate the goal pose: where we want the robot to be relative to the tag
+                        // TAG_TO_GOAL defines the offset from the tag
+                        Pose3d goalPose3d = tagPose.transformBy(TAG_TO_GOAL);
+                        goalPose = goalPose3d.toPose2d();
+
+                        // Set the PID goals
+                        xController.setGoal(goalPose.getX());
+                        yController.setGoal(goalPose.getY());
+                        omegaController.setGoal(goalPose.getRotation().getRadians());
+                    }
+                }
+            }
+        }
+
+        // Calculate the drive outputs using the PID controllers
+        if (goalPose != null)
+
+        {
+            double xSpeed = xController.calculate(robotPose2d.getX());
+            double ySpeed = yController.calculate(robotPose2d.getY());
+            double omegaSpeed = omegaController.calculate(robotPose2d.getRotation().getRadians());
+
+            // Clamp speeds to reasonable values
+            xSpeed = clamp(xSpeed, -3.0, 3.0);
+            ySpeed = clamp(ySpeed, -3.0, 3.0);
+            omegaSpeed = clamp(omegaSpeed, -4.0, 4.0);
+
+            // Drive the robot (field-relative)
+            drivetrain.setControl(
+                    driveRequest
+                            .withVelocityX(xSpeed)
+                            .withVelocityY(ySpeed)
+                            .withRotationalRate(omegaSpeed));
+        } else {
+            // No valid goal, stop the robot
+            drivetrain.setControl(
+                    driveRequest
+                            .withVelocityX(0)
+                            .withVelocityY(0)
+                            .withRotationalRate(0));
+        }
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        // Stop the robot when the command ends
+        drivetrain.setControl(
+                driveRequest
+                        .withVelocityX(0)
+                        .withVelocityY(0)
+                        .withRotationalRate(0));
+    }
+
+    @Override
+    public boolean isFinished() {
+        // Never finishes on its own - meant to be used with whileTrue()
+        return false;
+    }
+
+    /**
+     * Checks if the robot has reached the goal within tolerance.
+     *
+     * @return true if all controllers are at their goals
+     */
+    public boolean atGoal() {
+        return xController.atGoal() && yController.atGoal() && omegaController.atGoal();
+    }
+
+    private static double clamp(double value, double min, double max) {
+        return Math.max(min, Math.min(max, value));
+    }
 }

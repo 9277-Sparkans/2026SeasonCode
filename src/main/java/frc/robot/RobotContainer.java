@@ -24,12 +24,13 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.Vision.Vision;
 import frc.robot.Vision.VisionIOPhotonVision;
+import edu.wpi.first.math.geometry.Pose2d;
+import java.util.function.Supplier;
 import frc.robot.Vision.VisionConstants;
 
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.TurretTracking;
 import frc.robot.commands.FuelChaseCommand;
-import frc.robot.commands.PathCommands;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.Intake;
@@ -57,9 +58,13 @@ public class RobotContainer {
 
         public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
-        public final Vision vision = new Vision(drivetrain::addVisionMeasurement,
-                        () -> drivetrain.getState().Pose,
-                        new VisionIOPhotonVision(VisionConstants.camera0Name, VisionConstants.robotToCamera0));
+        private final VisionIOPhotonVision cameraIO = new VisionIOPhotonVision(VisionConstants.camera0Name,
+                        VisionConstants.robotToCamera0);
+
+        public final Vision vision = new Vision(
+                        (Vision.VisionConsumer) drivetrain::addVisionMeasurement,
+                        (Supplier<Pose2d>) (() -> drivetrain.getStateCopy().Pose),
+                        cameraIO);
 
         private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
         public final Intake intake = new Intake();
@@ -141,11 +146,11 @@ public class RobotContainer {
                 drivetrain.registerTelemetry(logger::telemeterize);
 
                 // Chase fuel ball with X button
-                joystick.x().whileTrue(new FuelChaseCommand(drivetrain));
+                joystick.x().whileTrue(new FuelChaseCommand(25, cameraIO.getCamera(), drivetrain,
+                                () -> drivetrain.getStateCopy().Pose));
 
                 // Follow a PathPlanner path with POV Left
                 // Replace "examplePath" with your actual path file name
-                joystick.povLeft().onTrue(PathCommands.followPath("examplePath"));
 
                 // fix butten stuff *cough coguh* tyler change your button bindings
 

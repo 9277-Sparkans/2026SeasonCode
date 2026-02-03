@@ -116,18 +116,21 @@ public class Vision extends SubsystemBase {
             // Loop over pose observations
             for (var observation : inputs[cameraIndex].getPoseObservations()) {
                 // Check whether to reject pose
-                boolean rejectPose = observation.tagCount() == 0 // Must have at least one tag
-                        || (observation.tagCount() == 1
-                                && observation.ambiguity() > maxAmbiguity) // Cannot be high ambiguity
-                        || Math.abs(observation.pose().getZ()) > maxZError // Must have realistic Z
-                        // coordinate
-
-                        // Must be within the field boundaries
-                        || observation.pose().getX() < 0.0
-                        || observation.pose().getX() > aprilTagLayout.getFieldLength()
-                        || observation.pose().getY() < 0.0
-                        || observation.pose().getY() > aprilTagLayout.getFieldWidth();
-                // || observation.averageTagDistance() > Units.feetToMeters(12); // TESTTTTT
+                boolean rejectPose = false;
+                if (observation.tagCount() == 0) {
+                    rejectPose = true;
+                    Logger.recordOutput("Vision/Camera" + Integer.toString(cameraIndex) + "/Debug/RejectReason", "TagCount0");
+                } else if (observation.tagCount() == 1 && observation.ambiguity() > maxAmbiguity) {
+                    rejectPose = true;
+                    Logger.recordOutput("Vision/Camera" + Integer.toString(cameraIndex) + "/Debug/RejectReason", "HighAmbiguity");
+                } else if (Math.abs(observation.pose().getZ()) > maxZError) {
+                    rejectPose = true;
+                    Logger.recordOutput("Vision/Camera" + Integer.toString(cameraIndex) + "/Debug/RejectReason", "LargeZError");
+                } else if (observation.pose().getX() < 0.0 || observation.pose().getX() > aprilTagLayout.getFieldLength()
+                        || observation.pose().getY() < 0.0 || observation.pose().getY() > aprilTagLayout.getFieldWidth()) {
+                    rejectPose = true;
+                    Logger.recordOutput("Vision/Camera" + Integer.toString(cameraIndex) + "/Debug/RejectReason", "OutOfBounds");
+                }
 
                 // Add pose to log
                 robotPoses.add(observation.pose());
@@ -135,6 +138,7 @@ public class Vision extends SubsystemBase {
                     robotPosesRejected.add(observation.pose());
                 } else {
                     robotPosesAccepted.add(observation.pose());
+                    Logger.recordOutput("Vision/Camera" + Integer.toString(cameraIndex) + "/Debug/RejectReason", "Accepted");
                 }
 
                 // Skip if rejected
@@ -150,6 +154,11 @@ public class Vision extends SubsystemBase {
                     linearStdDev *= cameraStdDevFactors[cameraIndex];
                     angularStdDev *= cameraStdDevFactors[cameraIndex];
                 }
+                
+                Logger.recordOutput("Vision/Camera" + Integer.toString(cameraIndex) + "/Debug/LinearStdDev", linearStdDev);
+                Logger.recordOutput("Vision/Camera" + Integer.toString(cameraIndex) + "/Debug/AngularStdDev", angularStdDev);
+                Logger.recordOutput("Vision/Camera" + Integer.toString(cameraIndex) + "/Debug/AvgTagDist", observation.averageTagDistance());
+                Logger.recordOutput("Vision/Camera" + Integer.toString(cameraIndex) + "/Debug/TagCount", observation.tagCount());
 
                 // Send vision observation
                 consumer.accept(

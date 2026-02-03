@@ -183,6 +183,9 @@ public class RobotContainer {
         }
 
         public Command getAutonomousCommand() {
-                return new PathPlannerAuto("boi");
+                // Previously: return new PathPlannerAuto("boi");
+                // Now:
+                return new FuelChaseCommand(25, cameraIO.getCamera(), drivetrain,
+                                () -> drivetrain.getStateCopy().Pose, VisionConstants.robotToCamera0);
         }
 }

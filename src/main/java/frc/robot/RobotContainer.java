@@ -28,6 +28,8 @@ import frc.robot.Vision.VisionConstants;
 
 import frc.robot.Constants.OIConstants;
 import frc.robot.commands.TurretTracking;
+import frc.robot.commands.FuelChaseCommand;
+import frc.robot.commands.PathCommands;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.Intake;
@@ -137,6 +139,13 @@ public class RobotContainer {
                 joystick.b().onTrue(Commands.runOnce(() -> transfer.activateTransfer()));
 
                 drivetrain.registerTelemetry(logger::telemeterize);
+
+                // Chase fuel ball with X button
+                joystick.x().whileTrue(new FuelChaseCommand(drivetrain));
+
+                // Follow a PathPlanner path with POV Left
+                // Replace "examplePath" with your actual path file name
+                joystick.povLeft().onTrue(PathCommands.followPath("examplePath"));
 
                 // fix butten stuff *cough coguh* tyler change your button bindings
 

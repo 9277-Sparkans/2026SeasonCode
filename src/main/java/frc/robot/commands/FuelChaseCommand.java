@@ -19,29 +19,29 @@ import java.util.function.Supplier;
 
 /**
  * A command that uses PhotonVision to chase and approach an AprilTag.
- * Uses the target's 3D pose from PhotonVision to calculate the goal position
- * and drive towards it using profiled PID controllers.
+ * Uses odometry for smooth PID feedback and calculates goal from vision.
  */
 public class FuelChaseCommand extends Command {
 
-    private static final double X_KP = 3;
+    private static final double X_KP = 2;
     private static final double X_KI = 0;
     private static final double X_KD = 0;
-    private static final double X_TOLERANCE = 0.2;
+    private static final double X_TOLERANCE = 0.1;
 
-    private static final double Y_KP = 3;
+    private static final double Y_KP = 2;
     private static final double Y_KI = 0;
     private static final double Y_KD = 0;
-    private static final double Y_TOLERANCE = 0.2;
+    private static final double Y_TOLERANCE = 0.1;
 
     private static final double OMEGA_KP = 2;
     private static final double OMEGA_KI = 0;
     private static final double OMEGA_KD = 0;
-    private static final double OMEGA_TOLERANCE = Units.degreesToRadians(3);
+    private static final double OMEGA_TOLERANCE = Units.degreesToRadians(5);
 
-    private static final TrapezoidProfile.Constraints X_CONSTRAINTS = new TrapezoidProfile.Constraints(3, 2);
-    private static final TrapezoidProfile.Constraints Y_CONSTRAINTS = new TrapezoidProfile.Constraints(3, 2);
-    private static final TrapezoidProfile.Constraints OMEGA_CONSTRAINTS = new TrapezoidProfile.Constraints(8, 8);
+    private static final TrapezoidProfile.Constraints X_CONSTRAINTS = new TrapezoidProfile.Constraints(0.5, 0.5);
+    private static final TrapezoidProfile.Constraints Y_CONSTRAINTS = new TrapezoidProfile.Constraints(0.5, 0.5);
+    private static final TrapezoidProfile.Constraints OMEGA_CONSTRAINTS = new TrapezoidProfile.Constraints(Math.PI,
+            Math.PI);
 
     private final int idToChase;
     private final PhotonCamera camera;
@@ -50,7 +50,7 @@ public class FuelChaseCommand extends Command {
 
     // How far away from the tag we want to be (meters) and facing it
     private static final Transform3d TAG_TO_GOAL = new Transform3d(
-            new Translation3d(1.5, 0.0, 0.0), // Stay 1.5 meters in front of the tag
+            new Translation3d(1.0, 0.0, 0.0), // Stay 1m in front of the tag
             new Rotation3d(0.0, 0.0, Math.PI)); // Face the tag (180 degrees)
 
     private final Supplier<Pose2d> poseProvider;
@@ -66,15 +66,10 @@ public class FuelChaseCommand extends Command {
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
 
     private Pose2d goalPose;
+    private PhotonTrackedTarget lastTarget;
 
     /**
      * Creates a new FuelChaseCommand.
-     *
-     * @param idToChase     The AprilTag ID to chase
-     * @param camera        The PhotonCamera to use for target detection
-     * @param drivetrain    The swerve drivetrain subsystem
-     * @param poseProvider  A supplier for the current robot pose (fallback/initial)
-     * @param robotToCamera The transform from the robot center to the camera
      */
     public FuelChaseCommand(
             int idToChase,
@@ -101,10 +96,7 @@ public class FuelChaseCommand extends Command {
     }
 
     /**
-     * Convenience constructor that uses the default camera name and a default
-     * tag id (1) and the drivetrain state as the pose supplier.
-     *
-     * @param drivetrain The swerve drivetrain
+     * Convenience constructor with default camera and tag ID 1.
      */
     public FuelChaseCommand(CommandSwerveDrivetrain drivetrain) {
         this(1, new PhotonCamera(VisionConstants.camera0Name), drivetrain,
@@ -114,6 +106,7 @@ public class FuelChaseCommand extends Command {
     @Override
     public void initialize() {
         goalPose = null;
+        lastTarget = null;
         var robotPose = poseProvider.get();
         omegaController.reset(robotPose.getRotation().getRadians());
         xController.reset(robotPose.getX());
@@ -122,54 +115,50 @@ public class FuelChaseCommand extends Command {
 
     @Override
     public void execute() {
+        // Use odometry for stable PID feedback
         var robotPose2d = poseProvider.get();
-        boolean specificTargetFound = false;
+        var robotPose3d = new Pose3d(
+                robotPose2d.getX(),
+                robotPose2d.getY(),
+                0,
+                new Rotation3d(0, 0, robotPose2d.getRotation().getRadians()));
 
-        // Get all unread results from the camera and use the most recent one
+        Logger.recordOutput("FuelChase/RobotPose", robotPose2d);
+
+        // Get camera results
         var results = camera.getAllUnreadResults();
-
-        Logger.recordOutput("FuelChase/HasTargets", !results.isEmpty() && results.get(results.size() - 1).hasTargets());
+        boolean hasTargets = !results.isEmpty() && results.get(results.size() - 1).hasTargets();
+        Logger.recordOutput("FuelChase/HasTargets", hasTargets);
 
         if (!results.isEmpty()) {
-            var result = results.get(results.size() - 1); // Get the most recent result
+            var result = results.get(results.size() - 1);
 
             if (result.hasTargets()) {
                 // Find the target with the ID we want to chase
                 Optional<PhotonTrackedTarget> targetOpt = result.getTargets().stream()
                         .filter(t -> t.getFiducialId() == idToChase)
+                        .filter(t -> t.getPoseAmbiguity() <= 0.2 && t.getPoseAmbiguity() != -1)
                         .findFirst();
 
                 Logger.recordOutput("FuelChase/SpecificTargetFound", targetOpt.isPresent());
 
                 if (targetOpt.isPresent()) {
-                    PhotonTrackedTarget target = targetOpt.get();
-                    // Get the tag's field-relative pose from the layout
-                    Optional<Pose3d> tagPoseOpt = VisionConstants.aprilTagLayout.getTagPose(idToChase);
+                    var target = targetOpt.get();
 
-                    if (tagPoseOpt.isPresent()) {
-                        Pose3d tagPose = tagPoseOpt.get();
-                        specificTargetFound = true;
+                    // Only recalculate goal when we see a NEW target
+                    if (!target.equals(lastTarget)) {
+                        lastTarget = target;
 
-                        Logger.recordOutput("FuelChase/TargetPose", target.getBestCameraToTarget());
-                        Logger.recordOutput("FuelChase/TagPose", tagPose);
+                        // Transform: robot → camera → target → goal
+                        var cameraPose = robotPose3d.transformBy(robotToCamera);
+                        var camToTarget = target.getBestCameraToTarget();
+                        var targetPose = cameraPose.transformBy(camToTarget);
+                        goalPose = targetPose.transformBy(TAG_TO_GOAL).toPose2d();
 
-                        // Calculate robot pose from vision
-                        Pose3d robotPose3d = org.photonvision.PhotonUtils.estimateFieldToRobotAprilTag(
-                                target.getBestCameraToTarget(),
-                                tagPose,
-                                robotToCamera);
-                        robotPose2d = robotPose3d.toPose2d();
-
-                        Logger.recordOutput("FuelChase/VisionRobotPose", robotPose3d);
-
-                        // Calculate the goal pose: where we want the robot to be relative to the tag
-                        // TAG_TO_GOAL defines the offset from the tag
-                        Pose3d goalPose3d = tagPose.transformBy(TAG_TO_GOAL);
-                        goalPose = goalPose3d.toPose2d();
-
+                        Logger.recordOutput("FuelChase/TargetPose", targetPose.toPose2d());
                         Logger.recordOutput("FuelChase/GoalPose", goalPose);
 
-                        // Set the PID goals
+                        // Update PID goals
                         xController.setGoal(goalPose.getX());
                         yController.setGoal(goalPose.getY());
                         omegaController.setGoal(goalPose.getRotation().getRadians());
@@ -178,67 +167,51 @@ public class FuelChaseCommand extends Command {
             }
         }
 
-        // Calculate the drive outputs using the PID controllers
-        if (specificTargetFound && goalPose != null) {
-            double xSpeed = xController.calculate(robotPose2d.getX());
-            double ySpeed = yController.calculate(robotPose2d.getY());
-            double omegaSpeed = omegaController.calculate(robotPose2d.getRotation().getRadians());
-
-            // Clamp speeds to reasonable values
-            xSpeed = clamp(xSpeed, -3.0, 3.0);
-            ySpeed = clamp(ySpeed, -3.0, 3.0);
-            omegaSpeed = clamp(omegaSpeed, -4.0, 4.0);
-
-            Logger.recordOutput("FuelChase/OutputX", xSpeed);
-            Logger.recordOutput("FuelChase/OutputY", ySpeed);
-            Logger.recordOutput("FuelChase/OutputOmega", omegaSpeed);
-
-            // Drive the robot (field-relative)
-            drivetrain.setControl(
-                    driveRequest
-                            .withVelocityX(xSpeed)
-                            .withVelocityY(ySpeed)
-                            .withRotationalRate(omegaSpeed));
-        } else {
+        // Drive toward goal if we have one
+        if (lastTarget == null) {
             Logger.recordOutput("FuelChase/OutputX", 0.0);
             Logger.recordOutput("FuelChase/OutputY", 0.0);
             Logger.recordOutput("FuelChase/OutputOmega", 0.0);
-
-            // No valid goal or target lost, stop the robot
-            drivetrain.setControl(
-                    driveRequest
-                            .withVelocityX(0)
-                            .withVelocityY(0)
-                            .withRotationalRate(0));
+            drivetrain.setControl(driveRequest.withVelocityX(0).withVelocityY(0).withRotationalRate(0));
+            return;
         }
+
+        // Calculate PID outputs
+        double xSpeed = xController.calculate(robotPose2d.getX());
+        if (xController.atGoal())
+            xSpeed = 0;
+
+        double ySpeed = yController.calculate(robotPose2d.getY());
+        if (yController.atGoal())
+            ySpeed = 0;
+
+        double omegaSpeed = omegaController.calculate(robotPose2d.getRotation().getRadians());
+        if (omegaController.atGoal())
+            omegaSpeed = 0;
+
+        Logger.recordOutput("FuelChase/OutputX", xSpeed);
+        Logger.recordOutput("FuelChase/OutputY", ySpeed);
+        Logger.recordOutput("FuelChase/OutputOmega", omegaSpeed);
+
+        // Drive field-relative
+        drivetrain.setControl(
+                driveRequest
+                        .withVelocityX(xSpeed)
+                        .withVelocityY(ySpeed)
+                        .withRotationalRate(omegaSpeed));
     }
 
     @Override
     public void end(boolean interrupted) {
-        // Stop the robot when the command ends
-        drivetrain.setControl(
-                driveRequest
-                        .withVelocityX(0)
-                        .withVelocityY(0)
-                        .withRotationalRate(0));
+        drivetrain.setControl(driveRequest.withVelocityX(0).withVelocityY(0).withRotationalRate(0));
     }
 
     @Override
     public boolean isFinished() {
-        // Never finishes on its own - meant to be used with whileTrue()
         return false;
     }
 
-    /**
-     * Checks if the robot has reached the goal within tolerance.
-     *
-     * @return true if all controllers are at their goals
-     */
     public boolean atGoal() {
         return xController.atGoal() && yController.atGoal() && omegaController.atGoal();
-    }
-
-    private static double clamp(double value, double min, double max) {
-        return Math.max(min, Math.min(max, value));
     }
 }

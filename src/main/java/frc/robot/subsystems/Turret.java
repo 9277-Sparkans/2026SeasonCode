@@ -6,6 +6,7 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.Limelight;
 import frc.robot.Telemetry;
 import frc.robot.Constants.HoodConstants;
 import frc.robot.Constants.TurretConstants;
@@ -41,12 +42,14 @@ public class Turret extends SubsystemBase {
 
     turretMotor.getConfigurator().apply(turretMotorConfig);
 
-    Telemetry.telemeterizeMotor("Turret", turretMotor, (1.0 / (15.0 / 108.0)));
+    Telemetry.telemeterizeMotor("Turret", turretMotor, (108.0 / 15.0));
 
   }
 
   @Override
-  public void periodic() {}
+  public void periodic() {
+    System.out.println(Limelight.GetAngle());
+  }
 
   public double getPosition() {
     double position = turretMotor.getPosition().getValueAsDouble() / TurretConstants.kGearRatio;
@@ -58,27 +61,14 @@ public class Turret extends SubsystemBase {
     return turretCurrent;
   }
 
-  public Command turretPos() {
-    // if (getTurretAngle() >= TurretConstants.kMaximumAngle - 2.0) {
-      // return Commands.runOnce(() -> stop());
-    // }
-    // else {
+  public Command turretPos () {
       return Commands.runOnce(() -> spinPositive());
-    // }
-  }
-
-  public Command turretNeg() {
-    if (getTurretAngle() <= TurretConstants.kMinimumAngle + 2.0) {
-      return Commands.runOnce(() -> stop());
     }
-    else {
+
+  public Command turretNeg () {
       return Commands.runOnce(() -> spinNegative());
     }
-  }
 
-  public Command turretTgtCommand() {
-    return Commands.runOnce(() -> turretMoveTgt());
-  }
 
   public double getTurretAngle() {
     double position = getTurretCurrent(); // turns
@@ -98,17 +88,24 @@ public class Turret extends SubsystemBase {
     turretMotor.set(-TurretConstants.turret_speed);
   }
 
+  public void turretMoveTgt(double llAngle){
 
-  public void turretMoveTgt() {
-    double tgt = (TurretConstants.tgtAngle * TurretConstants.kGearRatio) / 360;
-    final MotionMagicVoltage m_request = new MotionMagicVoltage(0);
+    boolean isAtTarget = Math.abs(turretMotor.getClosedLoopError().getValue()) < 1.5;
+    double tgt = (-llAngle * TurretConstants.kGearRatio) / 360;
+ 
+    // if (isAtTarget) {
+    //   return;
+    // }
 
-    turretMotor.setControl(m_request.withPosition(tgt)); //motor rotations
-    System.out.println(tgt);
+    // else {
+      final MotionMagicVoltage m_request = new MotionMagicVoltage(tgt);
+      turretMotor.setControl(m_request); //motor rotations
+    // }
   }
 
 
   public void stop() {
     turretMotor.set(0);
   }
+
 }

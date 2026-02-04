@@ -26,6 +26,7 @@ import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Indexer;
 import frc.robot.commands.AutoFire;
+import frc.robot.commands.TurretTracking;
 import frc.robot.subsystems.Transfer;
 import frc.robot.subsystems.Climb;
 
@@ -136,13 +137,11 @@ public class RobotContainer {
         // TURRET button controls
         joystick.rightTrigger().whileTrue(turret.turretPos());
         joystick.leftTrigger().whileTrue(turret.turretNeg());
-        joystick.leftTrigger().whileFalse(Commands.runOnce(() -> turret.stop()));
-        joystick.rightTrigger().whileFalse(Commands.runOnce(() -> turret.stop()));
+        joystick.leftTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
+        joystick.rightTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
 
-        joystick.x().onTrue(turret.turretTgtCommand());
-        joystick.x().onFalse(Commands.runOnce(() -> turret.stop()));
-
-        // joystick.y().onTrue(new TurretTracking((turret)));
+        joystick.x().onTrue(new TurretTracking((turret)));
+        joystick.x().onFalse(Commands.runOnce(() -> turret.stop(), turret));
 
 
         // SHOOTER button controls

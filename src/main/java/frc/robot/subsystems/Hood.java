@@ -74,8 +74,9 @@ public class Hood extends SubsystemBase {
 
   @Override
   public void periodic() {
-    clampTarget();
-    moveHoodWithEncoder(targetHoodPosition);
+    // clampTarget();
+    // moveHoodWithEncoder(targetHoodPosition);
+    // System.out.println("Hood motor rotations: " + hoodMotor.getPosition().getValueAsDouble());
   }
 
   //motion magic

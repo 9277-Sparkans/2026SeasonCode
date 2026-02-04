@@ -10,7 +10,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 public class Limelight  
 {
     private static final Translation2d redHub = new Translation2d(11.915521, 4.034536);
-    // private static final Translation2d blueHub = new Translation2d(182.105, 158.84);
     private static final Translation2d blueHub = new Translation2d(4.625467, 4.034536);
 
     static boolean isBlue = false;

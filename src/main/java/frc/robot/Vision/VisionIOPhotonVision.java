@@ -13,13 +13,16 @@
 
 package frc.robot.Vision;
 
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
 
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
+import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
 import org.photonvision.PhotonPoseEstimator.PoseStrategy;
@@ -82,7 +85,23 @@ public class VisionIOPhotonVision implements VisionIO {
 			}
 
 			// Update pose estimator
-			var estimatedPose = estimator.estimateCoprocMultiTagPose(result);
+			Optional<EstimatedRobotPose> estimatedPose = Optional.empty();
+
+			// Use multi-tag result if available (User requested logic)
+			var multiTagResult = result.getMultiTagResult();
+			if (multiTagResult.isPresent()) {
+				var fieldToCamera = multiTagResult.get().estimatedPose.best;
+				var fieldToRobotTransform = fieldToCamera.plus(estimator.getRobotToCameraTransform().inverse());
+				var fieldToRobotPose = new Pose3d(fieldToRobotTransform.getTranslation(),
+						fieldToRobotTransform.getRotation());
+
+				estimatedPose = Optional.of(new EstimatedRobotPose(
+						fieldToRobotPose,
+						result.getTimestampSeconds(),
+						result.getTargets(),
+						PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR));
+			}
+
 			if (estimatedPose.isEmpty()) {
 				estimatedPose = estimator.estimateLowestAmbiguityPose(result);
 			}

@@ -49,6 +49,8 @@ public class TurretTracking extends Command {
     Translation2d hub = Limelight.getHub(isBlue);
 
     angleToHub = Limelight.GetAngle();
+
+    System.out.println("angle is " + angleToHub);
     
     turret.turretMoveTgt(angleToHub);
 

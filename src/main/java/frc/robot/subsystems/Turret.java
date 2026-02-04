@@ -6,6 +6,7 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import frc.robot.Limelight;
 import frc.robot.Telemetry;
 import frc.robot.Constants.HoodConstants;
 import frc.robot.Constants.TurretConstants;
@@ -46,7 +47,9 @@ public class Turret extends SubsystemBase {
   }
 
   @Override
-  public void periodic() {}
+  public void periodic() {
+    System.out.println(Limelight.GetAngle());
+  }
 
   public double getPosition() {
     double position = turretMotor.getPosition().getValueAsDouble() / TurretConstants.kGearRatio;
@@ -86,12 +89,18 @@ public class Turret extends SubsystemBase {
   }
 
   public void turretMoveTgt(double llAngle){
+
+    boolean isAtTarget = Math.abs(turretMotor.getClosedLoopError().getValue()) < 1.5;
     double tgt = (-llAngle * TurretConstants.kGearRatio) / 360;
+ 
+    // if (isAtTarget) {
+    //   return;
+    // }
 
-    final MotionMagicVoltage m_request = new MotionMagicVoltage(tgt);
-
-    turretMotor.setControl(m_request); //motor rotations
-    //System.out.println(tgt);
+    // else {
+      final MotionMagicVoltage m_request = new MotionMagicVoltage(tgt);
+      turretMotor.setControl(m_request); //motor rotations
+    // }
   }
 
 

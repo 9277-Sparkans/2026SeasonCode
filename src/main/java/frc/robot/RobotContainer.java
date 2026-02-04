@@ -26,6 +26,7 @@ import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Indexer;
 import frc.robot.commands.AutoFire;
+import frc.robot.commands.TurretTracking;
 import frc.robot.subsystems.Transfer;
 import frc.robot.subsystems.Climb;
 

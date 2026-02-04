@@ -16,6 +16,8 @@ public class Indexer extends SubsystemBase {
   private final TalonFX indexerMotor;
   private final TalonFXConfiguration indexerMotorConfig;
 
+  public boolean indexerOn = false;
+
   /** Creates a new Indexer. */
   public Indexer() {
     indexerMotor = new TalonFX(IndexerConstants.kIndexerMotorID);
@@ -29,8 +31,6 @@ public class Indexer extends SubsystemBase {
 
     indexerMotorConfig.Voltage.PeakForwardVoltage = IndexerConstants.kIndexerMaxVoltage;
     indexerMotorConfig.Voltage.PeakReverseVoltage = -IndexerConstants.kIndexerMaxVoltage;
-    indexerMotorConfig.MotionMagic.MotionMagicAcceleration = IndexerConstants.kIndexerMaxAcceleration;
-    indexerMotorConfig.MotionMagic.MotionMagicCruiseVelocity = IndexerConstants.kIndexerMaxVelocity;
 
     indexerMotor.getConfigurator().apply(indexerMotorConfig);
   }
@@ -46,6 +46,19 @@ public class Indexer extends SubsystemBase {
 
   public Command indexerStop() {
     return Commands.runOnce(() -> stop());
+  }
+
+  public Command toggleIndexer() {
+    return Commands.runOnce(() -> toggle());
+  }
+  
+  public void toggle() {
+    indexerOn = !indexerOn;
+    if (indexerOn) {
+      spin();
+    } else {
+      stop();
+    }
   }
 
   public void spin() {

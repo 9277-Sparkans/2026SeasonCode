@@ -55,7 +55,7 @@ public class VisionConstants {
     public static Transform3d robotToCamera0 = new Transform3d(Units.inchesToMeters(12.5),
             Units.inchesToMeters(-12.5),
             Units.inchesToMeters(6.2992),
-            new Rotation3d(0.0, Units.degreesToRadians(15), Units.degreesToRadians(0)));
+            new Rotation3d(0.0, Units.degreesToRadians(45), Units.degreesToRadians(0)));
 
     // Basic filtering thresholds
     public static double maxAmbiguity = 0.3;

@@ -17,14 +17,14 @@ public class Utils {
         return value;
     }
 
-    public class Lookup
+    public static class Lookup
     {
         ArrayList<Double> keys = new ArrayList<>(); // Distance
         ArrayList<Double[]> vals = new ArrayList<>(); // [RPM, Angle]
         int size = 0;
 
         public Lookup(String path) { // Load lookup table into variables
-            try (BufferedReader br = new BufferedReader(new FileReader("book.csv"))) {
+            try (BufferedReader br = new BufferedReader(new FileReader(path + "/book.csv"))) {
                 br.readLine(); // Skip header line
 
                 String line;

@@ -137,7 +137,7 @@ public class Constants {
 
         public static final int kMinRPM = 2000;
         public static final int kMaxRPM = 6000;
-        
+
         public static final int kMinFlywheelRPM = 2400;
         public static final int kMaxFlywheelRPM = 7200;
         // public static final double kGearRatio = 1 / (1 / 1);
@@ -149,6 +149,8 @@ public class Constants {
         public static final double shooter_kD = 0.0;
         public static final double shooter_kV = 0.0;
         public static final double shooter_kA = 0.0;
+
+        public static final String kLookupFilePath = System.getProperty("user.dir") + "../deploy/ShooterLookupTable/shooterlookup.csv";
     }
 
     public static class HoodConstants
@@ -224,7 +226,6 @@ public class Constants {
         public static final double kClimbMaxVelocity = 90; // rps
         public static final int kClimbCURRENT_LIMIT = 30;   
         public static final double kClimb_SPEED = .3; 
-
 
         public static final int kClimbGearRatio = 9 / 1;
     }

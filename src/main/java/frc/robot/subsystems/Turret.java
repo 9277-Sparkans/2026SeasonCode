@@ -42,7 +42,7 @@ public class Turret extends SubsystemBase {
 
     turretMotor.getConfigurator().apply(turretMotorConfig);
 
-    Telemetry.telemeterizeMotor("Turret", turretMotor, (108.0 / 15.0));
+    Telemetry.telemeterizeMotorWithPID("Turret", turretMotor, (1.0 / (15.0 / 108.0)), turretMotorConfig);
 
 
   }

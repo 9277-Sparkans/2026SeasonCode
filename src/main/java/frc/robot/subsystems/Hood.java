@@ -5,6 +5,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
@@ -21,10 +22,11 @@ import frc.robot.Utils;
 import frc.robot.Constants.HoodConstants;
 
 public class Hood extends SubsystemBase {
-
   private final TalonFX hoodMotor;
   private final CANcoder hoodEncoder;
   private final TalonFXConfiguration hoodMotorConfiguration;
+  private final MotionMagicVoltage request = new MotionMagicVoltage(0)
+    .withSlot(0);
 
   public double targetHoodPosition = HoodConstants.kMinimumEncoderPos;
 
@@ -56,9 +58,9 @@ public class Hood extends SubsystemBase {
     // set to brake mode to stop the motor within the deadband
     hoodMotorConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-    hoodMotorConfiguration.Feedback.FeedbackRemoteSensorID = HoodConstants.kHoodEncoderId;
-    hoodMotorConfiguration.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
-    hoodMotorConfiguration.Feedback.RotorToSensorRatio = 1; // 1 motor rotation per 1 encoder rotation
+    // hoodMotorConfiguration.Feedback.FeedbackRemoteSensorID = HoodConstants.kHoodEncoderId;
+    // hoodMotorConfiguration.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+    // hoodMotorConfiguration.Feedback.RotorToSensorRatio = 1; // 1 motor rotation per 1 encoder rotation
    
     hoodMotor.getConfigurator().apply(hoodMotorConfiguration);
 
@@ -66,7 +68,8 @@ public class Hood extends SubsystemBase {
         @Override
         public void initSendable(SendableBuilder builder) {
             builder.addDoubleProperty("Velocity", () -> hoodMotor.getVelocity().getValueAsDouble(), null);
-            builder.addDoubleProperty("Position", () -> (hoodEncoder.getPosition().getValueAsDouble()), (double val) -> hoodEncoder.setPosition(val));
+            builder.addDoubleProperty("Absolute Encoder Position", () -> (hoodEncoder.getAbsolutePosition().getValueAsDouble()), (double val) -> hoodEncoder.setPosition(val));
+            builder.addDoubleProperty("Motor Encoder Position", () -> (hoodMotor.getPosition().getValueAsDouble()), (double val) -> hoodEncoder.setPosition(val));
             builder.addDoubleProperty("Target Hood Position", () -> targetHoodPosition, (double val) -> targetHoodPosition = val);
         }
     });
@@ -74,9 +77,16 @@ public class Hood extends SubsystemBase {
 
   @Override
   public void periodic() {
+<<<<<<< HEAD
+    // keep the hood motor in sync with the hood encoder absolute position;
+    // MotionMagic will NOT work if you tell the motor that it has
+    // a remote CANcoder on it (in my testing)
+    // hoodMotor.setPosition(hoodEncoder.getAbsolutePosition().getValueAsDouble());
+=======
     // clampTarget();
     // moveHoodWithEncoder(targetHoodPosition);
     // System.out.println("Hood motor rotations: " + hoodMotor.getPosition().getValueAsDouble());
+>>>>>>> 8169323a2c69d14c39f3292a2c293f0431139af6
   }
 
   //motion magic
@@ -85,16 +95,13 @@ public class Hood extends SubsystemBase {
     return hoodRotations * HoodConstants.kGearRatio;
   }
 
-  // public void moveHoodMotionMagic(double hoodRotations) {
-  //   // double motorTarget = hoodRotationsToMotor(hoodRotations);
+  public void moveHoodMotionMagic() {
+    // double motorTarget = hoodRotationsToMotor(hoodRotations);
+    clampTarget();
 
-  //   MotionMagicVoltage request =
-  //       new MotionMagicVoltage(0)
-  //           .withSlot(0)
-  //           .withPosition(hoodRotations);
-
-  //   hoodMotor.setControl(request);
-  // }
+    System.out.println("moving to target! " + targetHoodPosition);
+    hoodMotor.setControl(request.withPosition(targetHoodPosition));
+  }
 
 
   public void moveHoodWithEncoder(double rotation) {
@@ -130,14 +137,16 @@ public class Hood extends SubsystemBase {
   }
 
   public void runHood() {
-    targetHoodPosition += HoodConstants.kHoodSpeed;
-    clampTarget();
+    // targetHoodPosition += HoodConstants.kHoodSpeed;
+    targetHoodPosition = 0.4;
+    moveHoodMotionMagic();
   }
 
 
   public void runHoodReverse() {
     targetHoodPosition -= HoodConstants.kHoodSpeed;
-    clampTarget();
+    hoodMotor.set(-HoodConstants.kHoodSpeed);
+    moveHoodMotionMagic();
   }
 
 }

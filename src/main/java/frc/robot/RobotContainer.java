@@ -54,7 +54,7 @@ public class RobotContainer {
     public final Transfer transfer = new Transfer();
     public final Hood hood = new Hood();
     public final Climb climb = new Climb();
-    public final Indexer roller = new Indexer();
+    public final Indexer indexer = new Indexer();
 
     public final AutoFire autoFireCommand = new AutoFire(turret, transfer, shooter, hood);
 
@@ -82,15 +82,6 @@ public class RobotContainer {
         RobotModeTriggers.disabled().whileTrue(
             drivetrain.applyRequest(() -> idle).ignoringDisable(true)
         );
-
-        //joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-        // joystick.b().whileTrue(drivetrain.applyRequest(() ->
-        //     point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
-        // ));
-
-        
-        
-
         
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
@@ -105,33 +96,14 @@ public class RobotContainer {
         // CLIMB button controls
         joystick.povRight().whileTrue(climb.climbUp());
         joystick.povLeft().whileTrue(climb.climbDown()); 
-       // joystick.povLeft().onTrue(Commands.runOnce(() -> climb.climbDown()));
-
-        // joystick.povRight().onFalse(Commands.runOnce(() -> climb.hang()));
-        // joystick.povLeft().onFalse(Commands.runOnce(() -> climb.hang()));
 
 
         // HOOD button controls
         joystick.povUp().onTrue(Commands.runOnce(() -> hood.runHood()));
         joystick.povDown().onTrue(Commands.runOnce(() -> hood.runHoodReverse()));
 
-        joystick.povUp().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
+        // joystick.povUp().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
         joystick.povDown().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
-
-        // joystick.x().onTrue(Commands.runOnce(() -> hood.moveHoodToAngle(0)));
-
-        //test move hood to -0.75
-        // joystick.x().onTrue(hood.moveHoodToTgtCmd());
-        // joystick.x().onFalse(hood.stopHoodCmd());
-
-        // joystick.leftBumper().onTrue(Commands.runOnce(() -> hood.moveHoodDown()));
-        // joystick.rightBumper().onTrue(Commands.runOnce(() -> hood.moveHoodUp()));
-
-        // joystick.povUp().onTrue(Commands.runOnce(() -> hood.moveHoodUpCmd()));
-        // joystick.povDown().onTrue(Commands.runOnce(() -> hood.moveHoodDownCmd()));
-
-        // joystick.povUp().onFalse(Commands.runOnce(() -> hood.stopHood()));
-        // joystick.povDown().onFalse(Commands.runOnce(() -> hood.stopHood()));
 
 
         // TURRET button controls
@@ -143,7 +115,6 @@ public class RobotContainer {
         joystick.x().whileTrue(new TurretTracking((turret)));
         joystick.x().onFalse(Commands.runOnce(() -> turret.stop(), turret));
 
-
         // SHOOTER button controls
         joystick.leftBumper().onTrue(Commands.runOnce(() -> shooter.decreaseSpeed()));
         joystick.rightBumper().onTrue(Commands.runOnce(() -> shooter.increaseSpeed()));
@@ -153,8 +124,6 @@ public class RobotContainer {
 
 
         // TRANSFER button controls
-        // joystick.b().whileTrue(Commands.runOnce(() -> transfer.activateTransferCommand()));
-        // joystick.b().whileFalse(Commands.runOnce(() -> transfer.stopTransferCommand()));
         joystick.b().onTrue(Commands.runOnce(() -> transfer.toggleTransfer()));
 
         // joystick.povRight()
@@ -186,17 +155,9 @@ public class RobotContainer {
         
         
         // ROLLER button controls
-        joystick.y().onTrue(roller.indexerSpin()); 
-        joystick.y().onFalse(roller.indexerStop()); 
-
-
-
+        joystick.y().onTrue(indexer.toggleIndexer()); 
 
         drivetrain.registerTelemetry(logger::telemeterize);
-
-
-        
-
     }   
 
     public Command getAutonomousCommand() {

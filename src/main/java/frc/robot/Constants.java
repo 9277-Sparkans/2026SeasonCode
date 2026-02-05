@@ -93,13 +93,12 @@ public class Constants {
         public static final int turret_motorId = 32; // change this value
         public static final double turret_speed = 0.2;
 
-        public static final double turret_kS = 0.01;
-        public static final double turret_kV = 0.0;
-        public static final double turret_kA = 0.0;
-        public static final double turret_kP = 4.5;
-        public static final double turret_kI = 0.0;
-        public static final double turret_kD = 0.3;
-        public static final double turret_kG = 0.03;
+        public static double turret_kV = 0.095;
+        public static double turret_kA = 0.0;
+        public static double turret_kS = 0.01;
+        public static double turret_kP = 4.5;
+        public static double turret_kI = 0.15;
+        public static double turret_kD = 0.3;
 
 
         public static double kMaximumAngle = 20.0;
@@ -138,7 +137,7 @@ public class Constants {
     public static class HoodConstants
     {
         public static final int kHoodMotorId = 34;
-        public static final int kHoodEncoderId = 35;
+        public static final int kHoodEncoderId = 41;
 
         public static final double hood_maxVelocity = 1.0; // rotations per second; was 1.0, setting it to this to avoid grinding the gear again!
         public static final double hood_maxAcceleration = 80; // rotations per second^2
@@ -170,7 +169,7 @@ public class Constants {
     public static class IntakeConstants
     {
         // deployment
-        public static final int deploymentID = 0;
+        public static final int deploymentID = 50;
 
         public static final double deploymentKS = 0.01;
         public static final double deploymentKP = 10;
@@ -187,7 +186,7 @@ public class Constants {
         public static final int deploymentMaxDeg = 115;
     
         // rollers
-        public static final int rollerID = 1;
+        public static final int rollerID = 38;
 
         public static final double rollerKS = 0.01;
         public static final double rollerKP = 10;
@@ -198,7 +197,7 @@ public class Constants {
         public static final double rollerMaxAcceleration = 40;
         public static final double rollerMaxVelocity = 100; // rps
 
-        public static final double intakeSpeed = 0.3;
+        public static final double intakeSpeed = 0.1;
     }
 
     public static class ClimbConstants
@@ -237,6 +236,10 @@ public class Constants {
         public static final double kIndexer_kD = 0.3;
 
         public static final double kGearRatio = 1.0 / 1.0;
+    }
+
+    public static final class LimelightConstants {
+        public static final String limelightName = "limelight-a";
     }
     
 }

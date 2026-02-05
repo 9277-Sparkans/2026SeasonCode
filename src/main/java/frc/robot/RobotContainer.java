@@ -100,7 +100,7 @@ public class RobotContainer {
         joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // reset the field-centric heading on left bumper press
-        //joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        joystick.a().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         // CLIMB button controls
         joystick.povRight().whileTrue(climb.climbUp()).onFalse(climb.climbDown());
@@ -140,7 +140,7 @@ public class RobotContainer {
         joystick.leftTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
         joystick.rightTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
 
-        joystick.x().onTrue(new TurretTracking((turret)));
+        joystick.x().whileTrue(new TurretTracking((turret)));
         joystick.x().onFalse(Commands.runOnce(() -> turret.stop(), turret));
 
 
@@ -164,17 +164,17 @@ public class RobotContainer {
         //         new InstantCommand(() -> intake.stopRollerCommand()));
 
         // INTAKE button controls
-        // joystick.povRight()
-        //     .whileTrue(
-        //         new InstantCommand(() -> intake.intakeCommand()))
-        //     .onFalse(
-        //         new InstantCommand(() -> intake.stopRollerCommand()));
+        joystick.povRight()
+            .whileTrue(
+                intake.intakeCommand())
+            .onFalse(
+                intake.stopRollerCommand());
 
-        // joystick.povLeft()
-        //     .whileTrue(
-        //         new InstantCommand(() -> intake.outtakeCommand()))
-        //     .onFalse(
-        //         new InstantCommand(() -> intake.stopRollerCommand()));
+        joystick.povLeft()
+            .whileTrue(
+                intake.outtakeCommand())
+            .onFalse(
+                intake.stopRollerCommand());
 
         // joystick.y()
         //     .whileTrue(

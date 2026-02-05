@@ -44,13 +44,12 @@ public class TurretTracking extends Command {
   @Override
   public void execute() 
   {
+
     var pose = Limelight.getPose();
     boolean isBlue = Limelight.getIsBlue();
     Translation2d hub = Limelight.getHub(isBlue);
 
     angleToHub = Limelight.GetAngle();
-
-    System.out.println("angle is " + angleToHub);
     
     turret.turretMoveTgt(angleToHub);
 

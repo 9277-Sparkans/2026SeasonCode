@@ -26,7 +26,7 @@ public class Intake extends SubsystemBase
 
 	public Intake() 
 	{	
-		
+				
 		deployment = new TalonFX(Constants.IntakeConstants.deploymentID, kCANBus);
 		deploymentConfig = new TalonFXConfiguration();
 

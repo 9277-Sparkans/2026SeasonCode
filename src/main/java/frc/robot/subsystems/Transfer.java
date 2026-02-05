@@ -1,11 +1,13 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Telemetry;
+import frc.robot.Constants.IndexerConstants;
 import frc.robot.Constants.TransferConstants;;
 
 
@@ -20,6 +22,11 @@ public class Transfer extends SubsystemBase
     public Transfer() {
         transferMotor = new TalonFX(TransferConstants.transferID);
         transferMotorConfig = new TalonFXConfiguration();
+
+        transferMotorConfig.Slot0.kS = TransferConstants.kTransfer_kS;
+        transferMotorConfig.Slot0.kP = TransferConstants.kTransfer_kP;
+        transferMotorConfig.Slot0.kI = TransferConstants.kTransfer_kI;
+        transferMotorConfig.Slot0.kD = TransferConstants.kTransfer_kD;
 
         transferMotorConfig.Voltage.PeakForwardVoltage = TransferConstants.transferMaxVoltage;
         transferMotorConfig.Voltage.PeakReverseVoltage = -TransferConstants.transferMaxVoltage;
@@ -56,8 +63,14 @@ public class Transfer extends SubsystemBase
         }
     }
 
-    public void activateTransfer() {
+    public void activateTransferOLD() {
         transferMotor.set(-0.5);
+    }
+
+    public void activateTransfer()
+    {
+        final VelocityVoltage m_request = new VelocityVoltage(0).withSlot(0);
+            transferMotor.setControl(m_request.withVelocity(TransferConstants.kTargetTransferRPS));
     }
 
     public void stop() {

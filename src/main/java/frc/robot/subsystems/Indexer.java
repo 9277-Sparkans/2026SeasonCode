@@ -5,12 +5,14 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.IndexerConstants;
+import frc.robot.Constants.ShooterConstants;
 
 public class Indexer extends SubsystemBase {
   private final TalonFX indexerMotor;
@@ -61,14 +63,13 @@ public class Indexer extends SubsystemBase {
     }
   }
 
-  public void spin() {
-    indexerMotor.set(IndexerConstants.kIndexerSpeed);
+  public void spin()
+  {
+    final VelocityVoltage m_request = new VelocityVoltage(0).withSlot(0);
+        indexerMotor.setControl(m_request.withVelocity(IndexerConstants.kIndexerSpeedRPS));
   }
-
 
   public void stop() {
     indexerMotor.set(0);
   }
 }
-
-

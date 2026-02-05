@@ -15,6 +15,7 @@ import frc.robot.Constants.ShooterConstants;
 import frc.robot.Telemetry;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 
 public class Shooter extends SubsystemBase {
     public int targetRPM;
@@ -71,7 +72,7 @@ public class Shooter extends SubsystemBase {
         }
     }
 
-    public void fireAtRPM() {
+    public void fireAtRPMOLD() {
         SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(ShooterConstants.shooter_kS, ShooterConstants.shooter_kV, ShooterConstants.shooter_kA);
 
         // this is so that pidController gets destroyed eventually
@@ -84,6 +85,13 @@ public class Shooter extends SubsystemBase {
         }
     }
 
+    // untested with diff library
+    // feedforward might not be necessary
+    public void fireAtRPM()
+    {
+        final VelocityVoltage m_request = new VelocityVoltage(0).withSlot(0);
+        shooterMotor.setControl(m_request.withVelocity(shooterRPS));
+    }
     
     // getters
     public int GetCorrectRPS() {

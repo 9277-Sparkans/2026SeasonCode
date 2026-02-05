@@ -130,9 +130,6 @@ public class Constants {
         public static final double shooter_kD = 0.0;
         public static final double shooter_kV = 0.0;
         public static final double shooter_kA = 0.0;
-
-
-
     }
 
     public static class HoodConstants
@@ -220,18 +217,26 @@ public class Constants {
         public static final double transferMaxVoltage = 4; // can change if not needed
         public static final double transferMaxAcceleration = 40;
         public static final double transferMaxVelocity = 100; // rps
+
+        public static final double kTransfer_kS = 0.01;
+        public static final double kTransfer_kP = 1.5;
+        public static final double kTransfer_kI = 0.0;
+        public static final double kTransfer_kD = 0.1;
+
+        public static final double kTargetTransferRPS = 40;
     }
 
     public static final class IndexerConstants {
         public static final double kIndexerMaxVoltage = 5;// kraken x44 max voltage
         public static final int kIndexerMotorID = 35; // change this value
-        public static final double kIndexerSpeed = 0.25;
 
         public static final double kIndexer_kG = 0.03;
         public static final double kIndexer_kS = 0.01;
         public static final double kIndexer_kP = 1.5;
         public static final double kIndexer_kI = 0.0;
         public static final double kIndexer_kD = 0.3;
+
+        public static final double kIndexerSpeedRPS = 60;
     }
     
 }

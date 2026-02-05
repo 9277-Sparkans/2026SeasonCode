@@ -29,9 +29,15 @@ public class Climb extends SubsystemBase {
         climbConfig = new TalonFXConfiguration();
 
         /* PID */
-        climbConfig.Slot0.kP = 1.5;
+        climbConfig.Slot0.kP = 3;
         climbConfig.Slot0.kI = 0.0;
         climbConfig.Slot0.kD = 0.1;
+        climbConfig.Slot0.kV = 0.12;
+        climbConfig.Slot0.kS = 0.3;
+        climbConfig.Slot0.kG = 0;
+
+        climbConfig.CurrentLimits.StatorCurrentLimit = 100;
+        climbConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
         /* Default Motion Magic (UP profile) */
         climbConfig.MotionMagic.MotionMagicCruiseVelocity = 30;
@@ -54,7 +60,7 @@ public class Climb extends SubsystemBase {
         switch (state) {
             case UP:
                 MotionMagicVoltage climbUP = new MotionMagicVoltage(5).withSlot(0);
-                climbMotor.setControl(climbUP.withPosition(-228));
+                climbMotor.setControl(climbUP.withPosition(-155));
                 break;
             case DOWN:
                 MotionMagicVoltage DOWN = new MotionMagicVoltage(5).withSlot(0);

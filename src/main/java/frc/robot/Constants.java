@@ -97,8 +97,8 @@ public class Constants {
         public static double turret_kA = 0.0;
         public static double turret_kS = 0.01;
         public static double turret_kP = 4.5;
-        public static double turret_kI = 0.15;
-        public static double turret_kD = 0.3;
+        public static double turret_kI = 0.0;
+        public static double turret_kD = 0.0;
 
 
         public static double kMaximumAngle = 20.0;

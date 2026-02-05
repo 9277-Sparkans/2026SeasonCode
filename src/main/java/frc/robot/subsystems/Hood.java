@@ -25,7 +25,8 @@ public class Hood extends SubsystemBase {
   private final TalonFX hoodMotor;
   private final CANcoder hoodEncoder;
   private final TalonFXConfiguration hoodMotorConfiguration;
-  private final MotionMagicVoltage request = new MotionMagicVoltage(0);
+  private final MotionMagicVoltage request = new MotionMagicVoltage(0)
+    .withSlot(0);
 
   public double targetHoodPosition = HoodConstants.kMinimumEncoderPos;
 
@@ -67,7 +68,8 @@ public class Hood extends SubsystemBase {
         @Override
         public void initSendable(SendableBuilder builder) {
             builder.addDoubleProperty("Velocity", () -> hoodMotor.getVelocity().getValueAsDouble(), null);
-            builder.addDoubleProperty("Position", () -> (hoodEncoder.getPosition().getValueAsDouble()), (double val) -> hoodEncoder.setPosition(val));
+            builder.addDoubleProperty("Absolute Encoder Position", () -> (hoodEncoder.getAbsolutePosition().getValueAsDouble()), (double val) -> hoodEncoder.setPosition(val));
+            builder.addDoubleProperty("Motor Encoder Position", () -> (hoodMotor.getPosition().getValueAsDouble()), (double val) -> hoodEncoder.setPosition(val));
             builder.addDoubleProperty("Target Hood Position", () -> targetHoodPosition, (double val) -> targetHoodPosition = val);
         }
     });
@@ -78,7 +80,7 @@ public class Hood extends SubsystemBase {
     // keep the hood motor in sync with the hood encoder absolute position;
     // MotionMagic will NOT work if you tell the motor that it has
     // a remote CANcoder on it (in my testing)
-    hoodMotor.setPosition(hoodEncoder.getAbsolutePosition().getValueAsDouble());
+    // hoodMotor.setPosition(hoodEncoder.getAbsolutePosition().getValueAsDouble());
   }
 
   //motion magic
@@ -91,7 +93,7 @@ public class Hood extends SubsystemBase {
     // double motorTarget = hoodRotationsToMotor(hoodRotations);
     clampTarget();
 
-    System.out.println("moving to target!" + targetHoodPosition);
+    System.out.println("moving to target! " + targetHoodPosition);
     hoodMotor.setControl(request.withPosition(targetHoodPosition));
   }
 
@@ -130,13 +132,14 @@ public class Hood extends SubsystemBase {
 
   public void runHood() {
     // targetHoodPosition += HoodConstants.kHoodSpeed;
-    targetHoodPosition = 0.5;
+    targetHoodPosition = 0.4;
     moveHoodMotionMagic();
   }
 
 
   public void runHoodReverse() {
     targetHoodPosition -= HoodConstants.kHoodSpeed;
+    hoodMotor.set(-HoodConstants.kHoodSpeed);
     moveHoodMotionMagic();
   }
 

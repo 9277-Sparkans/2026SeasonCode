@@ -138,7 +138,7 @@ public class Constants {
     public static class HoodConstants
     {
         public static final int kHoodMotorId = 34;
-        public static final int kHoodEncoderId = 35;
+        public static final int kHoodEncoderId = 41;
 
         public static final double hood_maxVelocity = 0.5; // rotations per second; was 1.0, setting it to this to avoid grinding the gear again!
         public static final double hood_maxAcceleration = 80; // rotations per second^2

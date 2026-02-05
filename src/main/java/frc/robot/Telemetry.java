@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.ctre.phoenix6.SignalLogger;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
 
@@ -157,6 +158,24 @@ public class Telemetry {
             public void initSendable(SendableBuilder builder) {
                 builder.addDoubleProperty("Velocity", () -> motor.getVelocity().getValueAsDouble(), null);
                 builder.addDoubleProperty("Position", () -> (motor.getPosition().getValueAsDouble() / gearRatio) * 360, null);
+            }
+        });
+    }
+
+    public static void telemeterizeMotorWithPID(String motorName, TalonFX motor, double gearRatio, TalonFXConfiguration config) {
+        SmartDashboard.putData(motorName, new Sendable() {
+            @Override
+            public void initSendable(SendableBuilder builder) {
+                builder.addDoubleProperty("Velocity", () -> motor.getVelocity().getValueAsDouble(), null);
+                builder.addDoubleProperty("Position", () -> (motor.getPosition().getValueAsDouble() / gearRatio) * 360, null);
+                builder.addDoubleProperty("kS", () -> config.Slot0.kS , (value) -> config.Slot0.kS = value);
+                builder.addDoubleProperty("kV", () -> config.Slot0.kV , (value) -> config.Slot0.kV = value);
+                builder.addDoubleProperty("kA", () -> config.Slot0.kA , (value) -> config.Slot0.kA = value);
+                builder.addDoubleProperty("kP", () -> config.Slot0.kP , (value) -> config.Slot0.kP = value);
+                builder.addDoubleProperty("kI", () -> config.Slot0.kI , (value) -> config.Slot0.kI = value);
+                builder.addDoubleProperty("kD", () -> config.Slot0.kD , (value) -> config.Slot0.kD = value);
+
+                builder.addBooleanProperty("Click me to set PID!", () -> true, (value) -> motor.getConfigurator().apply(config));
             }
         });
     }

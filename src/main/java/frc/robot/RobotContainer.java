@@ -102,7 +102,7 @@ public class RobotContainer {
         joystick.povDown().onTrue(Commands.runOnce(() -> hood.runHoodReverse()));
 
         // joystick.povUp().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
-        // joystick.povDown().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
+        joystick.povDown().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
 
 
         // TURRET button controls

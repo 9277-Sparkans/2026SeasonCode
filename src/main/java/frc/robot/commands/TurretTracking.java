@@ -23,6 +23,7 @@ public class TurretTracking extends Command {
   public TurretTracking(Turret turret) {
 
     this.turret = turret;
+    addRequirements(turret);
     // Use addRequirements() here to declare subsystem dependencies.
 
     SmartDashboard.putData("Turret Stats", new Sendable() {
@@ -49,16 +50,17 @@ public class TurretTracking extends Command {
 
     angleToHub = Limelight.GetAngle();
 
-    System.out.println(angleToHub);
+    System.out.println("angle is " + angleToHub);
     
-    //return Commands.runOnce(() -> Turret.turretMoveTgt());
+    turret.turretMoveTgt(angleToHub);
 
-    //turret.setTurretToAngle(angleToHub); // hopefully this doesnt explode !
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    turret.stop();
+  }
 
   // Returns true when the command should end.
   @Override

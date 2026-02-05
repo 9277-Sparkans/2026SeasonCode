@@ -77,10 +77,16 @@ public class Hood extends SubsystemBase {
 
   @Override
   public void periodic() {
+<<<<<<< HEAD
     // keep the hood motor in sync with the hood encoder absolute position;
     // MotionMagic will NOT work if you tell the motor that it has
     // a remote CANcoder on it (in my testing)
     // hoodMotor.setPosition(hoodEncoder.getAbsolutePosition().getValueAsDouble());
+=======
+    // clampTarget();
+    // moveHoodWithEncoder(targetHoodPosition);
+    // System.out.println("Hood motor rotations: " + hoodMotor.getPosition().getValueAsDouble());
+>>>>>>> 8169323a2c69d14c39f3292a2c293f0431139af6
   }
 
   //motion magic

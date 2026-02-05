@@ -24,7 +24,6 @@ public class AutoFire extends Command
     Shooter shooter;
     Lookup lookup;
     Hood hood;
-    Lookup lookup;
     double tgtRPM;
     double tgtAngle;
 

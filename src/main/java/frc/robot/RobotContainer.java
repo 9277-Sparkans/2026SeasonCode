@@ -103,7 +103,7 @@ public class RobotContainer {
         joystick.a().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         // CLIMB button controls
-        joystick.povRight().whileTrue(climb.climbUp()).onFalse(climb.climbDown());
+        joystick.povRight().whileTrue(climb.climbUp());
         joystick.povLeft().whileTrue(climb.climbDown()); 
        // joystick.povLeft().onTrue(Commands.runOnce(() -> climb.climbDown()));
 

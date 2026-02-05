@@ -57,7 +57,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private final SwerveRequest.SysIdSwerveSteerGains m_steerCharacterization = new SwerveRequest.SysIdSwerveSteerGains();
     private final SwerveRequest.SysIdSwerveRotation m_rotationCharacterization = new SwerveRequest.SysIdSwerveRotation();
 
-    public final Pigeon2 pidgey = new Pigeon2(TunerConstants.DrivetrainConstants.Pigeon2Id, "*");
+    public final Pigeon2 pidgey = new Pigeon2(TunerConstants.DrivetrainConstants.Pigeon2Id);
 
     public final SwerveDriveOdometry m_odometry = new SwerveDriveOdometry(
             getKinematics(), pidgey.getRotation2d(),

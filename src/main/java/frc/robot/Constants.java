@@ -12,6 +12,7 @@ import edu.wpi.first.networktables.GenericEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.util.struct.Struct;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Timer;
 
 public class Constants {
@@ -150,7 +151,9 @@ public class Constants {
         public static final double shooter_kV = 0.0;
         public static final double shooter_kA = 0.0;
 
-        public static final String kLookupFilePath = System.getProperty("user.dir") + "../deploy/ShooterLookupTable/shooterlookup.csv";
+        public static final String lookupTablePath = Filesystem.getDeployDirectory().getPath() + "/shooter-lookup.csv"; // Generated with github.com/DanielR723/shooter
+        public static final double autoshootDistanceRange = 0.01; // Range of distances to check to choose the best shot (Least hood rotation and flywheel RPM change)
+        public static final double autoshootAngleWeight = 1.0; // How much the angle of the hood contributes to determining the best shot (Higher value = less hood movement)
     }
 
     public static class HoodConstants

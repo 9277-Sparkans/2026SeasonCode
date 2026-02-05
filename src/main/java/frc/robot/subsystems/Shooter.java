@@ -101,6 +101,11 @@ public class Shooter extends SubsystemBase {
         return shooterMotor.getVelocity().getValueAsDouble();
     }
 
+    public double GetShooterRPM()
+    {
+        return shooterMotor.getVelocity().getValueAsDouble() * 60;
+    }
+
     public void increaseSpeed()
     {
         if (shooterRPM + ShooterConstants.kRpmIncrement < ShooterConstants.kMaxRPM)

@@ -24,7 +24,7 @@ import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
 import frc.robot.Constants.OIConstants;
-import frc.robot.Constants.ShooterConstants;
+import frc.robot.Utils.Lookup;
 import frc.robot.commands.TurretTracking;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Shooter;
@@ -35,7 +35,6 @@ import frc.robot.commands.AutoFire;
 import frc.robot.subsystems.Transfer;
 import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Roller;
-import frc.robot.Utils.Lookup;
 
 
 public class RobotContainer {
@@ -63,10 +62,8 @@ public class RobotContainer {
     public final Climb climb = new Climb();
     public final Roller roller = new Roller();
 
-    public final Lookup lookupTable = new Lookup(ShooterConstants.kLookupFilePath);
-    
-    public final AutoFire autoFireCommand = new AutoFire(turret, transfer, shooter, hood, intake, lookupTable);
-
+    public final Lookup lookup = Utils.createLookup(hood, shooter);
+    public final AutoFire autoFireCommand = new AutoFire(turret, transfer, shooter, hood, intake, lookup);
 
     public RobotContainer() {
         NamedCommands.registerCommand("testNamedCommand", Commands.runOnce(() -> System.out.println("this named command works")));

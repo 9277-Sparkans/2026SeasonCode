@@ -112,7 +112,7 @@ public class Hood extends SubsystemBase {
 
   public void moveHoodWithEncoder(double rotation) {
     rotation = Utils.clamp(rotation, HoodConstants.kMinimumEncoderPos, HoodConstants.kMaximumEncoderPos);
-    System.out.println("clamped rotation: " + rotation);
+    // System.out.println("clamped rotation: " + rotation);
     PIDController pidController = new PIDController(HoodConstants.hood_kP, HoodConstants.hood_kI, HoodConstants.hood_kD);
 
     double feedback = pidController.calculate(hoodEncoder.getPosition().getValueAsDouble(), rotation);
@@ -160,4 +160,8 @@ public class Hood extends SubsystemBase {
     targetHoodPosition -= HoodConstants.kHoodSpeed;
   }
 
+  public double GetHoodAngle()
+  {
+    return 0; // TEMP VALUE
+  }
 }

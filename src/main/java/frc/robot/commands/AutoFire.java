@@ -9,6 +9,7 @@ import frc.robot.Constants.TransferConstants;
 import frc.robot.Constants.TurretConstants;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Limelight;
+import frc.robot.Utils.Lookup;
 import frc.robot.Constants.HoodConstants;
 import frc.robot.Utils.Lookup;
 
@@ -23,6 +24,7 @@ public class AutoFire extends Command
     Shooter shooter;
     Lookup lookup;
     Hood hood;
+    Lookup lookup;
     double tgtRPM;
     double tgtAngle;
 
@@ -32,8 +34,6 @@ public class AutoFire extends Command
         this.transfer = transfer;
         this.shooter = shooter;
         this.hood = hood;
-        this.intake = intake;
-        this.lookup = lookup;
 
         addRequirements(shooter, hood, transfer, turret, intake);
 
@@ -52,8 +52,8 @@ public class AutoFire extends Command
     {
         double distance = Limelight.GetDistance();
 
-        // both computed as a double, tgtRPM passed in as an integer
-        // tgtRPM, angle = lookup.FindOptimalRow(distance);
+        // set rpm from lookup 
+        // set angle from lookup
 
         shooter.setShooterRPM((int)(tgtRPM));
         hood.setHoodToAngle(tgtAngle);

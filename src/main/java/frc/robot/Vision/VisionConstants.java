@@ -47,13 +47,23 @@ public class VisionConstants {
 
     // Camera names, must match names configured on coprocessor
     public static String camera0Name = "cheap-camera";
-    // public static String camera1Name = "front_right";
+    public static String camera1Name = "front_right";
+    public static String camera2Name = "back_right";
+    public static String camera3Name = "back_left";
 
     // Robot to camera transforms
     // (Not used by Limelight, configure in web UI instead)
     public static Transform3d robotToCamera1 = new Transform3d(31.75, 31.75, 0.0, new Rotation3d(0.0, 0.0, 0.0));
     public static Transform3d robotToCamera0 = new Transform3d(Units.inchesToMeters(12.5),
-            Units.inchesToMeters(-12.5),
+            Units.inchesToMeters(12.5),
+            Units.inchesToMeters(6.2992),
+            new Rotation3d(0.0, Units.degreesToRadians(45), Units.degreesToRadians(0)));
+    public static Transform3d robotToCamera2 = new Transform3d(Units.inchesToMeters(12.5),
+            Units.inchesToMeters(12.5),
+            Units.inchesToMeters(6.2992),
+            new Rotation3d(0.0, Units.degreesToRadians(45), Units.degreesToRadians(0)));
+    public static Transform3d robotToCamera3 = new Transform3d(Units.inchesToMeters(12.5),
+            Units.inchesToMeters(12.5),
             Units.inchesToMeters(6.2992),
             new Rotation3d(0.0, Units.degreesToRadians(45), Units.degreesToRadians(0)));
 
@@ -70,7 +80,9 @@ public class VisionConstants {
     // (Adjust to trust some cameras more than others)
     public static double[] cameraStdDevFactors = new double[] {
             1.0, // Camera 0
-            1.0 // Camera 1
+            1.0, // Camera 1
+            1.0, // Camera 2
+            1.0 // Camera 3
     };
 
     public static List<Integer> rejectedTags = Arrays.asList(2, 3, 4, 5, 14, 15, 16);

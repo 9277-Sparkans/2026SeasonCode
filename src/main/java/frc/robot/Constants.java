@@ -24,21 +24,20 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.math.Matrix;
 
-
-
-
 public class Constants {
     public static final class QuickAccessConstants {
         public static final boolean swerveEnabled = true;
         public static final boolean manipulatorsEnabled = true;
         public static final boolean autoControlsEnabled = true;
-        
+
         public static final ControlTypes controlType = ControlTypes.DRIVER_STICKS;
+
         public static enum ControlTypes {
             DEV,
             DRIVER_STICKS,
             DRIVER_CONTROLLER
         };
+
         public static final boolean usingKeyboard = true;
     }
 
@@ -74,7 +73,6 @@ public class Constants {
         public static final int kController_leftTrigger = 7;
         public static final int kController_rightTrigger = 8;
 
-        
         // Flight Sticks
         public static final int kSticks_trigger = 1;
         public static final int kSticks_centerHandle = 2;
@@ -108,8 +106,7 @@ public class Constants {
         public static final int kRightSticks_rightGrid_bottomLeft = 14;
         public static final int kRightSticks_rightGrid_bottomMid = 15;
         public static final int kRightSticks_rightGrid_bottomRight = 16;
-    } 
-    
+    }
 
     public static final class TurretConstants {
 
@@ -129,7 +126,7 @@ public class Constants {
 
         public static double kGearRatio = 1.0 / (18.0 / 105.0);
     }
-    
+
     public static class ShooterConstants {
         public static final int kShooterMotorId = 33;
 
@@ -154,8 +151,7 @@ public class Constants {
 
     }
 
-    public static class HoodConstants
-    {
+    public static class HoodConstants {
         public static final int kHoodMotorId = 30;
 
         public static final double hood_maxVelocity = 125; // rotations per second
@@ -181,8 +177,7 @@ public class Constants {
         public static final double kHoodIncrement = 5;
     }
 
-    public static class IntakeConstants
-    {
+    public static class IntakeConstants {
         // deployment
         public static final int deploymentID = 0;
 
@@ -199,7 +194,7 @@ public class Constants {
         public static final int deploymentGearRatio = 1 / (1 / 1);
 
         public static final int deploymentMaxDeg = 115;
-    
+
         // rollers
         public static final int rollerID = 1;
 
@@ -213,20 +208,17 @@ public class Constants {
         public static final double rollerMaxVelocity = 100; // rps
     }
 
-    public static class ClimbConstants
-    {
+    public static class ClimbConstants {
         public static final int kClimbMotorID = 37;
 
         public static final double kClimbMaxVelocity = 90; // rps
-        public static final int kClimbCURRENT_LIMIT = 30;   
-        public static final double kClimb_SPEED = .3; 
-
+        public static final int kClimbCURRENT_LIMIT = 30;
+        public static final double kClimb_SPEED = .3;
 
         public static final int kClimbGearRatio = 9 / 1;
     }
 
-    public static class TransferConstants
-    {
+    public static class TransferConstants {
         public static final int transferID = 31; // change later
 
         public static final double transferMaxVoltage = 4; // can change if not needed
@@ -234,17 +226,20 @@ public class Constants {
         public static final double transferMaxVelocity = 100; // rps
     }
 
-    	/**
-    	 * DEPRECATED: Use frc.robot.Vision.VisionConstants.aprilTagLayout instead.
-    	 * This ensures all code uses the same AprilTag field layout as PhotonVision.
-    	 */
-    	@Deprecated(since = "2026")
-    	public static final class VisionConstants {
+    /**
+     * DEPRECATED: Use frc.robot.Vision.VisionConstants.aprilTagLayout instead.
+     * This ensures all code uses the same AprilTag field layout as PhotonVision.
+     */
+    @Deprecated(since = "2026")
+    public static final class VisionConstants {
 
-		/**
-		 * DEPRECATED: Use frc.robot.Vision.VisionConstants.aprilTagLayout instead.
-		 */
-		@Deprecated(since = "2026")
-		public static final AprilTagFieldLayout TAG_LAYOUT = frc.robot.Vision.VisionConstants.aprilTagLayout;
-	}
+        /**
+         * DEPRECATED: Use frc.robot.Vision.VisionConstants.aprilTagLayout instead.
+         */
+        @Deprecated(since = "2026")
+        public static final AprilTagFieldLayout TAG_LAYOUT = frc.robot.Vision.VisionConstants.aprilTagLayout;
+    }
+
+
+
 }

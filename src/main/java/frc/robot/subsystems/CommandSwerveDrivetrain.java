@@ -33,6 +33,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.generated.TunerConstants;
 
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
+import org.littletonrobotics.junction.Logger;
 
 /**
  * Class that extends the Phoenix 6 SwerveDrivetrain class and implements
@@ -49,6 +50,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private static final Rotation2d kRedAlliancePerspectiveRotation = Rotation2d.k180deg;
     /* Keep track if we've ever applied the operator perspective before or not */
     private boolean m_hasAppliedOperatorPerspective = false;
+
+    /* Debug counters for vision measurements */
+    private int m_visionMeasurementCount = 0;
 
     private final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
 
@@ -296,6 +300,19 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 m_hasAppliedOperatorPerspective = true;
             });
         }
+
+        // Debug telemetry: Log fused pose from internal estimator
+        var fusedPose = getStateCopy().Pose;
+        Logger.recordOutput("Drivetrain/Debug/FusedPose", fusedPose);
+        Logger.recordOutput("Drivetrain/Debug/FusedPoseX", fusedPose.getX());
+        Logger.recordOutput("Drivetrain/Debug/FusedPoseY", fusedPose.getY());
+        Logger.recordOutput("Drivetrain/Debug/FusedPoseRotDeg", fusedPose.getRotation().getDegrees());
+
+        // Log raw gyro heading for comparison
+        Logger.recordOutput("Drivetrain/Debug/RawGyroHeadingDeg", pidgey.getRotation2d().getDegrees());
+
+        // Log vision measurement count
+        Logger.recordOutput("Drivetrain/Debug/VisionMeasurementCount", m_visionMeasurementCount);
     }
 
     private void startSimThread() {
@@ -330,6 +347,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         // a seconds timestamp. Converting again with Utils.fpgaToCurrentTime can
         // produce timestamps far in the future/ past and cause measurements to be
         // ignored.
+        m_visionMeasurementCount++;
+        Logger.recordOutput("Drivetrain/Debug/LastVisionPose", visionRobotPoseMeters);
+        Logger.recordOutput("Drivetrain/Debug/LastVisionTimestamp", timestampSeconds);
         super.addVisionMeasurement(visionRobotPoseMeters, timestampSeconds);
     }
 
@@ -356,6 +376,15 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             Pose2d visionRobotPoseMeters,
             double timestampSeconds,
             Matrix<N3, N1> visionMeasurementStdDevs) {
+        m_visionMeasurementCount++;
+        Logger.recordOutput("Drivetrain/Debug/LastVisionPose", visionRobotPoseMeters);
+        Logger.recordOutput("Drivetrain/Debug/LastVisionPoseX", visionRobotPoseMeters.getX());
+        Logger.recordOutput("Drivetrain/Debug/LastVisionPoseY", visionRobotPoseMeters.getY());
+        Logger.recordOutput("Drivetrain/Debug/LastVisionPoseRotDeg", visionRobotPoseMeters.getRotation().getDegrees());
+        Logger.recordOutput("Drivetrain/Debug/LastVisionTimestamp", timestampSeconds);
+        Logger.recordOutput("Drivetrain/Debug/LastVisionStdDevX", visionMeasurementStdDevs.get(0, 0));
+        Logger.recordOutput("Drivetrain/Debug/LastVisionStdDevY", visionMeasurementStdDevs.get(1, 0));
+        Logger.recordOutput("Drivetrain/Debug/LastVisionStdDevTheta", visionMeasurementStdDevs.get(2, 0));
         super.addVisionMeasurement(visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
     }
 

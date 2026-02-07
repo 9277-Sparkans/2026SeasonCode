@@ -62,15 +62,17 @@ public class RobotContainer {
                         VisionConstants.robotToCamera0);
         private final VisionIOPhotonVision camera1 = new VisionIOPhotonVision(VisionConstants.camera1Name,
                         VisionConstants.robotToCamera1);
-        private final VisionIOPhotonVision camera2 = new VisionIOPhotonVision(VisionConstants.camera2Name,
-                        VisionConstants.robotToCamera2);
-        private final VisionIOPhotonVision camera3 = new VisionIOPhotonVision(VisionConstants.camera3Name,
-                        VisionConstants.robotToCamera3);
+        // private final VisionIOPhotonVision camera2 = new
+        // VisionIOPhotonVision(VisionConstants.camera2Name,
+        // VisionConstants.robotToCamera2);
+        // private final VisionIOPhotonVision camera3 = new
+        // VisionIOPhotonVision(VisionConstants.camera3Name,
+        // VisionConstants.robotToCamera3);
 
         public final Vision vision = new Vision(
                         (Vision.VisionConsumer) drivetrain::addVisionMeasurement,
                         (Supplier<Pose2d>) (() -> drivetrain.getStateCopy().Pose),
-                        camera0, camera1, camera2, camera3);
+                        camera0, camera1);
 
         private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
         public final Intake intake = new Intake();

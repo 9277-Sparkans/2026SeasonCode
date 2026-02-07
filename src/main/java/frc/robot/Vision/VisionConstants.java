@@ -49,8 +49,8 @@ public class VisionConstants {
     // Camera names, must match names configured on coprocessor
     public static String camera0Name = "front_left";
     public static String camera1Name = "front_right";
-    public static String camera2Name = "back_right";
-    public static String camera3Name = "back_left";
+    public static String camera2Name = "back_left";
+    public static String camera3Name = "back_right";
 
     // Robot to camera transforms (Units: Meters and Radians)
     
@@ -64,15 +64,15 @@ public class VisionConstants {
             0.31754, -0.324226, 0.178, 
             new Rotation3d(0.0, Units.degreesToRadians(-20), Units.degreesToRadians(30)));
 
-    // back right camera: 317.54mm back, 324.226mm right, 170mm up, and yaw 30 degrees out, pitch 20 degrees up.
-    public static Transform3d robotToCamera2 = new Transform3d(
-            -0.31754, -0.324226, 0.17, 
-            new Rotation3d(0.0, Units.degreesToRadians(-20), Units.degreesToRadians(-150)));
-
     // back left camera: 317.54mm back, 324.226mm left, 170mm up, and yaw 30 degrees out, pitch 20 degrees up.
-    public static Transform3d robotToCamera3 = new Transform3d(
+    public static Transform3d robotToCamera2 = new Transform3d(
             -0.31754, 0.324226, 0.17, 
             new Rotation3d(0.0, Units.degreesToRadians(-20), Units.degreesToRadians(150)));
+    
+        // back right camera: 317.54mm back, 324.226mm right, 170mm up, and yaw 30 degrees out, pitch 20 degrees up.
+    public static Transform3d robotToCamera3 = new Transform3d(
+            -0.31754, -0.324226, 0.17, 
+            new Rotation3d(0.0, Units.degreesToRadians(-20), Units.degreesToRadians(-150)));
 
     // Basic filtering thresholds
     public static double maxAmbiguity = 0.3;

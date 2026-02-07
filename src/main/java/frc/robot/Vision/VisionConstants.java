@@ -45,27 +45,34 @@ public class VisionConstants {
         Logger.recordOutput("Used Custom Field?", usedCustomField);
     }
 
+
     // Camera names, must match names configured on coprocessor
-    public static String camera0Name = "cheap-camera";
+    public static String camera0Name = "front_left";
     public static String camera1Name = "front_right";
     public static String camera2Name = "back_right";
     public static String camera3Name = "back_left";
 
-    // Robot to camera transforms
-    // (Not used by Limelight, configure in web UI instead)
-    public static Transform3d robotToCamera1 = new Transform3d(31.75, 31.75, 0.0, new Rotation3d(0.0, 0.0, 0.0));
-    public static Transform3d robotToCamera0 = new Transform3d(Units.inchesToMeters(12.5),
-            Units.inchesToMeters(12.5),
-            Units.inchesToMeters(6.2992),
-            new Rotation3d(0.0, Units.degreesToRadians(45), Units.degreesToRadians(0)));
-    public static Transform3d robotToCamera2 = new Transform3d(Units.inchesToMeters(12.5),
-            Units.inchesToMeters(12.5),
-            Units.inchesToMeters(6.2992),
-            new Rotation3d(0.0, Units.degreesToRadians(45), Units.degreesToRadians(0)));
-    public static Transform3d robotToCamera3 = new Transform3d(Units.inchesToMeters(12.5),
-            Units.inchesToMeters(12.5),
-            Units.inchesToMeters(6.2992),
-            new Rotation3d(0.0, Units.degreesToRadians(45), Units.degreesToRadians(0)));
+    // Robot to camera transforms (Units: Meters and Radians)
+    
+    // front left camera: 317.54mm front, 324.226mm left, 178 mm up, and yaw 30 degrees in, pitch 20 degrees up.
+    public static Transform3d robotToCamera0 = new Transform3d(
+            0.31754, 0.324226, 0.178, 
+            new Rotation3d(0.0, Units.degreesToRadians(-20), Units.degreesToRadians(-30)));
+
+    // front right camera: 317.54mm front, 324.226mm right, 178 mm up, and yaw 30 degrees in, pitch 20 degrees up.
+    public static Transform3d robotToCamera1 = new Transform3d(
+            0.31754, -0.324226, 0.178, 
+            new Rotation3d(0.0, Units.degreesToRadians(-20), Units.degreesToRadians(30)));
+
+    // back right camera: 317.54mm back, 324.226mm right, 170mm up, and yaw 30 degrees out, pitch 20 degrees up.
+    public static Transform3d robotToCamera2 = new Transform3d(
+            -0.31754, -0.324226, 0.17, 
+            new Rotation3d(0.0, Units.degreesToRadians(-20), Units.degreesToRadians(-150)));
+
+    // back left camera: 317.54mm back, 324.226mm left, 170mm up, and yaw 30 degrees out, pitch 20 degrees up.
+    public static Transform3d robotToCamera3 = new Transform3d(
+            -0.31754, 0.324226, 0.17, 
+            new Rotation3d(0.0, Units.degreesToRadians(-20), Units.degreesToRadians(150)));
 
     // Basic filtering thresholds
     public static double maxAmbiguity = 0.3;

@@ -87,9 +87,13 @@ public class VisionIOPhotonVision implements VisionIO {
 			}
 
 			// Update pose estimator
-			// Use the PhotonPoseEstimator's coprocessor multi-tag estimation method.
-			// This corresponds to the MULTI_TAG_PNP_ON_COPROCESSOR strategy.
+			// 1. Try Coprocessor Multi-Tag (most accurate)
 			Optional<EstimatedRobotPose> estimatedPose = estimator.estimateCoprocMultiTagPose(result);
+
+			// 2. Fallback to local estimation (single tag or if coproc fails)
+			if (estimatedPose.isEmpty() && result.hasTargets()) {
+				estimatedPose = estimator.update(result);
+			}
 
 			if (estimatedPose.isPresent()) {
 				var pose = estimatedPose.get();

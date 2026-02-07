@@ -58,13 +58,19 @@ public class RobotContainer {
 
         public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
-        private final VisionIOPhotonVision cameraIO = new VisionIOPhotonVision(VisionConstants.camera0Name,
+        private final VisionIOPhotonVision camera0 = new VisionIOPhotonVision(VisionConstants.camera0Name,
                         VisionConstants.robotToCamera0);
+        private final VisionIOPhotonVision camera1 = new VisionIOPhotonVision(VisionConstants.camera1Name,
+                        VisionConstants.robotToCamera1);
+        private final VisionIOPhotonVision camera2 = new VisionIOPhotonVision(VisionConstants.camera2Name,
+                        VisionConstants.robotToCamera2);
+        private final VisionIOPhotonVision camera3 = new VisionIOPhotonVision(VisionConstants.camera3Name,
+                        VisionConstants.robotToCamera3);
 
         public final Vision vision = new Vision(
                         (Vision.VisionConsumer) drivetrain::addVisionMeasurement,
                         (Supplier<Pose2d>) (() -> drivetrain.getStateCopy().Pose),
-                        cameraIO);
+                        camera0, camera1, camera2, camera3);
 
         private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
         public final Intake intake = new Intake();
@@ -146,7 +152,7 @@ public class RobotContainer {
                 drivetrain.registerTelemetry(logger::telemeterize);
 
                 // Chase fuel ball with X button
-                joystick.x().whileTrue(new FuelChaseCommand(25, cameraIO.getCamera(), drivetrain,
+                joystick.x().whileTrue(new FuelChaseCommand(25, camera0.getCamera(), drivetrain,
                                 () -> drivetrain.getStateCopy().Pose, VisionConstants.robotToCamera0));
 
                 // fix butten stuff *cough coguh* tyler change your button bindings
@@ -185,7 +191,7 @@ public class RobotContainer {
         public Command getAutonomousCommand() {
                 // Previously: return new PathPlannerAuto("boi");
                 // Now:
-                return new FuelChaseCommand(25, cameraIO.getCamera(), drivetrain,
+                return new FuelChaseCommand(25, camera0.getCamera(), drivetrain,
                                 () -> drivetrain.getStateCopy().Pose, VisionConstants.robotToCamera0);
         }
 }

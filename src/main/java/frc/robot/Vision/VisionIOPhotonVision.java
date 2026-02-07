@@ -24,7 +24,6 @@ import java.util.Set;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
 import org.photonvision.PhotonPoseEstimator;
-import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 /** IO implementation for real PhotonVision hardware. */
 public class VisionIOPhotonVision implements VisionIO {
@@ -37,9 +36,13 @@ public class VisionIOPhotonVision implements VisionIO {
 	 * @param name         The configured name of the camera.
 	 * @param roboToCamera The transform from the robot to the camera.
 	 */
+
 	public VisionIOPhotonVision(String name, Transform3d roboToCamera) {
 		camera = new PhotonCamera(name);
-		estimator = new PhotonPoseEstimator(VisionConstants.aprilTagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR,
+		// In PhotonLib v2026, the strategy is defined by the method called (e.g.
+		// estimateCoprocMultiTagPose)
+		// rather than the constructor.
+		estimator = new PhotonPoseEstimator(VisionConstants.aprilTagLayout,
 				roboToCamera);
 	}
 
@@ -84,10 +87,9 @@ public class VisionIOPhotonVision implements VisionIO {
 			}
 
 			// Update pose estimator
-			// Use the PhotonPoseEstimator's update method which respects the configured
-			// strategy (MULTI_TAG_PNP_ON_COPROCESSOR).
-			// This handles coordinate transformations internally and correctly.
-			Optional<EstimatedRobotPose> estimatedPose = estimator.update(result);
+			// Use the PhotonPoseEstimator's coprocessor multi-tag estimation method.
+			// This corresponds to the MULTI_TAG_PNP_ON_COPROCESSOR strategy.
+			Optional<EstimatedRobotPose> estimatedPose = estimator.estimateCoprocMultiTagPose(result);
 
 			if (estimatedPose.isPresent()) {
 				var pose = estimatedPose.get();

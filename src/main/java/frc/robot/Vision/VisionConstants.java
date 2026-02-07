@@ -82,7 +82,7 @@ public class VisionConstants {
             1.0, // Camera 0
             1.0, // Camera 1
             1.0, // Camera 2
-            1.0 // Camera 3
+            1.0 // Camera 3 print("hello world")
     };
 
     public static List<Integer> rejectedTags = Arrays.asList(2, 3, 4, 5, 14, 15, 16);

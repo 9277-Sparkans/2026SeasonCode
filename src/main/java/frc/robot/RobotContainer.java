@@ -139,7 +139,7 @@ public class RobotContainer {
                 joystick.leftBumper().onTrue(Commands.runOnce(() -> shooterSubsystem.decreaseSpeed()));
                 joystick.rightBumper().onTrue(Commands.runOnce(() -> shooterSubsystem.increaseSpeed()));
 
-                joystick.y().onTrue(new TurretTracking((turret)));
+                joystick.y().onTrue(new TurretTracking(turret, () -> drivetrain.getStateCopy().Pose));
 
                 joystick.b().onTrue(Commands.runOnce(() -> transfer.activateTransfer()));
 

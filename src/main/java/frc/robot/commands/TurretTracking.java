@@ -20,6 +20,8 @@ import static edu.wpi.first.units.Units.Meter;
 // import frc.robot.Limelight;
 
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Pose2d;
+import java.util.function.Supplier;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class TurretTracking extends Command {
@@ -27,10 +29,14 @@ public class TurretTracking extends Command {
 
   /** Creates a new TurretTracking. */
 
-  public TurretTracking(Turret turret) {
+  private final Supplier<Pose2d> poseSupplier;
+  private static final Translation2d targetLocation = new Translation2d(4.0218614, 4.2124376); // Midpoint of 25 and 26
 
+  /** Creates a new TurretTracking. */
+  public TurretTracking(Turret turret, Supplier<Pose2d> poseSupplier) {
     this.turret = turret;
-    // Use addRequirements() here to declare subsystem dependencies.
+    this.poseSupplier = poseSupplier;
+    addRequirements(turret);
   }
 
   // Called when the command is initially scheduled.
@@ -41,21 +47,32 @@ public class TurretTracking extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    // var pose = Limelight.getPose();
-    // boolean isBlue = Limelight.getIsBlue();
-    // Translation2d hub = Limelight.getHub(isBlue);
+    Pose2d robotPose = poseSupplier.get();
 
-    // var angleToHub = Limelight.GetAngle();
-    // System.out.println("bot position is " + pose.pose);
-    // System.out.println(hub);
-    // System.out.println("angle is " + angleToHub);
+    double targetAngleRad = Math.atan2(targetLocation.getY() - robotPose.getY(),
+        targetLocation.getX() - robotPose.getX());
+    double targetAngleDeg = Math.toDegrees(targetAngleRad);
 
-    // turret.setTurretToAngle(angleToHub); // hopefully this doesnt explode !
+    double robotRotationDeg = robotPose.getRotation().getDegrees();
+
+    double turretAngleDeg = targetAngleDeg - robotRotationDeg;
+
+    // Normalize to -180 to 180
+    while (turretAngleDeg > 180)
+      turretAngleDeg -= 360;
+    while (turretAngleDeg < -180)
+      turretAngleDeg += 360;
+
+    // System.out.println("Turret Tracking: Target Angle " + targetAngleDeg + ",
+    // Robot Angle " + robotRotationDeg + ", Turret Angle " + turretAngleDeg);
+
+    turret.setTurretToAngle(turretAngleDeg);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    turret.stop();
   }
 
   // Returns true when the command should end.

@@ -15,6 +15,10 @@ public class Limelight
     private static final Translation2d blueHub = new Translation2d(4.625467, 4.034536);
 
     static boolean isBlue = false;
+
+    public void periodic() {
+        System.out.println("angle is " + GetAngle());
+    }
     
     public static double GetTx()
     {

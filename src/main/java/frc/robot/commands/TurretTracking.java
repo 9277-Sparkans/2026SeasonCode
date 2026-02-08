@@ -50,9 +50,13 @@ public class TurretTracking extends Command {
     Translation2d hub = Limelight.getHub(isBlue);
 
     angleToHub = Limelight.GetAngle();
-    
-    turret.turretMoveTgt(angleToHub);
 
+    if (angleToHub == 0.0) {
+      return;
+    }
+    else {
+    turret.turretMoveTgt(angleToHub);
+    }
   }
 
   // Called once the command ends or is interrupted.

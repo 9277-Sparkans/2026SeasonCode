@@ -15,9 +15,7 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
@@ -28,27 +26,23 @@ import edu.wpi.first.math.geometry.Pose2d;
 import java.util.function.Supplier;
 import frc.robot.Vision.VisionConstants;
 
-import frc.robot.Constants.OIConstants;
 import frc.robot.commands.TurretTracking;
-import frc.robot.commands.FuelChaseCommand;
+import frc.robot.commands.NewFuelChaseCommand;
+import frc.robot.commands.AutoFire;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.Intake;
-import frc.robot.commands.AutoFire;
 import frc.robot.subsystems.Transfer;
+import frc.robot.subsystems.FuelVision;
 
 public class RobotContainer {
-        private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top
-                                                                                      // speed
-        private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per
-                                                                                          // second
-                                                                                          // max angular velocity
+        private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+        private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
 
         /* Setting up bindings for necessary control of the swerve drive platform */
         private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-                        .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
-                        .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive
-                                                                                 // motors
+                        .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1)
+                        .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
         private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
         private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
@@ -78,6 +72,7 @@ public class RobotContainer {
         public final Intake intake = new Intake();
         public final Turret turret = new Turret();
         public final Transfer transfer = new Transfer();
+        public final FuelVision gamePieceVision = new FuelVision();
 
         public final AutoFire autoFireCommand = new AutoFire(turret, transfer, shooterSubsystem);
 
@@ -92,26 +87,11 @@ public class RobotContainer {
                 // Note that X is defined as forward according to WPILib convention,
                 // and Y is defined as to the left according to WPILib convention.
                 drivetrain.setDefaultCommand(
-                                // Drivetrain will execute this command periodically
-                                drivetrain.applyRequest(() -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed * 0.3) // Drive
-                                                                                                                         // forward
-                                                                                                                         // with
-                                                                                                                         // negative
-                                                                                                                         // Y
-                                                                                                                         // (forward)
-                                                .withVelocityY(-joystick.getLeftX() * MaxSpeed * 0.3) // Drive left with
-                                                                                                      // negative X
-                                                                                                      // (left)
-                                                .withRotationalRate(-joystick.getRightX() * MaxAngularRate * 0.3) // Drive
-                                                                                                                  // counterclockwise
-                                                                                                                  // with
-                                                                                                                  // negative
-                                                                                                                  // X
-                                                                                                                  // (left)
-                                ));
+                                drivetrain.applyRequest(() -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed * 0.3)
+                                                .withVelocityY(-joystick.getLeftX() * MaxSpeed * 0.3)
+                                                .withRotationalRate(-joystick.getRightX() * MaxAngularRate * 0.3)));
 
-                // Idle while the robot is disabled. This ensures the configured
-                // neutral mode is applied to the drive motors while disabled.
+                // Idle while the robot is disabled
                 final var idle = new SwerveRequest.Idle();
                 RobotModeTriggers.disabled().whileTrue(
                                 drivetrain.applyRequest(() -> idle).ignoringDisable(true));
@@ -121,79 +101,44 @@ public class RobotContainer {
                                 () -> point.withModuleDirection(
                                                 new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))));
 
-                // joystick.x().onTrue(shooterSubsystem.shootCmd());
                 joystick.povUp().onTrue(shooterSubsystem.runHoodCmd());
                 joystick.povDown().onTrue(shooterSubsystem.runHoodReverseCmd());
-
                 joystick.povUp().onFalse(shooterSubsystem.stopHoodCmd());
                 joystick.povDown().onFalse(shooterSubsystem.stopHoodCmd());
 
-                // Run SysId routines when holding back/start and X/Y.
-                // Note that each routine should be run exactly once in a single log.
+                // Run SysId routines when holding back/start and X/Y
                 joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
                 joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
                 joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
                 joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
-                // reset the field-centric heading on left bumper press
-                // joystick.leftBumper().onTrue(drivetrain.runOnce(() ->
-                // drivetrain.seedFieldCentric()));
-
+                // Turret controls
                 joystick.rightTrigger().onTrue(Commands.runOnce(() -> turret.spinPositive()));
                 joystick.leftTrigger().onTrue(Commands.runOnce(() -> turret.spinNegative()));
                 joystick.leftTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
                 joystick.rightTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
 
+                // Shooter speed controls
                 joystick.leftBumper().onTrue(Commands.runOnce(() -> shooterSubsystem.decreaseSpeed()));
                 joystick.rightBumper().onTrue(Commands.runOnce(() -> shooterSubsystem.increaseSpeed()));
 
+                // Turret tracking
                 joystick.y().onTrue(new TurretTracking(turret, () -> drivetrain.getStateCopy().Pose));
 
+                // Transfer
                 joystick.b().onTrue(Commands.runOnce(() -> transfer.activateTransfer()));
 
                 drivetrain.registerTelemetry(logger::telemeterize);
 
-                // Chase fuel ball with X button
-                joystick.x().whileTrue(new FuelChaseCommand(25, camera0.getCamera(), drivetrain,
-                                () -> drivetrain.getStateCopy().Pose, VisionConstants.robotToCamera0));
-
-                // fix butten stuff *cough coguh* tyler change your button bindings
-
-                // joystick.rightTrigger()
-                // .whileTrue(
-                // new InstantCommand(() -> intake.intakeCommand()))
-                // .onFalse(
-                // new InstantCommand(() -> intake.stopRollerCommand()));
-
-                // joystick.leftTrigger()
-                // .whileTrue(
-                // new InstantCommand(() -> intake.outtakeCommand()))
-                // .onFalse(
-                // new InstantCommand(() -> intake.stopRollerCommand()));
-
-                // joystick.rightBumper()
-                // .whileTrue(
-                // new InstantCommand(() -> intake.deployCommand()));
-
-                // joystick.leftBumper()
-                // .whileTrue(
-                // new InstantCommand(() -> intake.retractCommand()));
-
-                // joystick.rightTrigger()
-                // .whileTrue(
-                // new InstantCommand(() -> transfer.activateTransferCommand()))
-                // .onFalse(
-                // new InstantCommand(() -> transfer.stopTransferCommand()));
-
-                // joystick.rightStick()
-                // .whileTrue(
-                // new InstantCommand(() -> autoFireCommand.execute()));
+                // ====== GAME PIECE CHASE (X button) ======
+                // Uses Jetson YOLO detection to chase and intake fuel
+                // Hold X button to run - drives toward detected game piece and runs intake
+                joystick.x().whileTrue(new NewFuelChaseCommand(drivetrain, intake, gamePieceVision));
         }
 
         public Command getAutonomousCommand() {
-                // Previously: return new PathPlannerAuto("boi");
-                // Now:
-                return new FuelChaseCommand(25, camera0.getCamera(), drivetrain,
-                                () -> drivetrain.getStateCopy().Pose, VisionConstants.robotToCamera0);
+                // TODO: Replace with actual auto routine
+                return Commands.print("No auto configured");
+        }
         }
 }

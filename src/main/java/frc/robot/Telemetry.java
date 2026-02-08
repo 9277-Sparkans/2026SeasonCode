@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.ctre.phoenix6.SignalLogger;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
 
 import edu.wpi.first.math.geometry.Pose2d;
@@ -17,6 +19,8 @@ import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.networktables.StringPublisher;
 import edu.wpi.first.networktables.StructArrayPublisher;
 import edu.wpi.first.networktables.StructPublisher;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.Mechanism2d;
 import edu.wpi.first.wpilibj.smartdashboard.MechanismLigament2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -142,5 +146,37 @@ public class Telemetry {
             m_moduleDirections[i].setAngle(state.ModuleStates[i].angle);
             m_moduleSpeeds[i].setLength(state.ModuleStates[i].speedMetersPerSecond / (2 * MaxSpeed));
         }
+    }
+
+    public static void telemeterizeMotor(String motorName, TalonFX motor) {
+        telemeterizeMotor(motorName, motor, 1.0);
+    }
+
+    public static void telemeterizeMotor(String motorName, TalonFX motor, double gearRatio) {
+        SmartDashboard.putData(motorName, new Sendable() {
+            @Override
+            public void initSendable(SendableBuilder builder) {
+                builder.addDoubleProperty("Velocity", () -> motor.getVelocity().getValueAsDouble(), null);
+                builder.addDoubleProperty("Position", () -> (motor.getPosition().getValueAsDouble() / gearRatio) * 360, null);
+            }
+        });
+    }
+
+    public static void telemeterizeMotorWithPID(String motorName, TalonFX motor, double gearRatio, TalonFXConfiguration config) {
+        SmartDashboard.putData(motorName, new Sendable() {
+            @Override
+            public void initSendable(SendableBuilder builder) {
+                builder.addDoubleProperty("Velocity", () -> motor.getVelocity().getValueAsDouble(), null);
+                builder.addDoubleProperty("Position", () -> (motor.getPosition().getValueAsDouble() / gearRatio) * 360, null);
+                builder.addDoubleProperty("kS", () -> config.Slot0.kS , (value) -> config.Slot0.kS = value);
+                builder.addDoubleProperty("kV", () -> config.Slot0.kV , (value) -> config.Slot0.kV = value);
+                builder.addDoubleProperty("kA", () -> config.Slot0.kA , (value) -> config.Slot0.kA = value);
+                builder.addDoubleProperty("kP", () -> config.Slot0.kP , (value) -> config.Slot0.kP = value);
+                builder.addDoubleProperty("kI", () -> config.Slot0.kI , (value) -> config.Slot0.kI = value);
+                builder.addDoubleProperty("kD", () -> config.Slot0.kD , (value) -> config.Slot0.kD = value);
+
+                builder.addBooleanProperty("Click me to set PID!", () -> true, (value) -> motor.getConfigurator().apply(config));
+            }
+        });
     }
 }

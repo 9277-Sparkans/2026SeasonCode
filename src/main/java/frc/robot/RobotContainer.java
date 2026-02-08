@@ -10,14 +10,11 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
@@ -28,172 +25,124 @@ import edu.wpi.first.math.geometry.Pose2d;
 import java.util.function.Supplier;
 import frc.robot.Vision.VisionConstants;
 
-import frc.robot.Constants.OIConstants;
 import frc.robot.commands.TurretTracking;
 import frc.robot.commands.FuelChaseCommand;
 import frc.robot.subsystems.Turret;
-import frc.robot.subsystems.ShooterSubsystem;
+import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Indexer;
 import frc.robot.commands.AutoFire;
 import frc.robot.subsystems.Transfer;
+import frc.robot.subsystems.Climb;
+import frc.robot.subsystems.Hinge;
 
 public class RobotContainer {
-        private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top
-                                                                                      // speed
-        private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per
-                                                                                          // second
-                                                                                          // max angular velocity
+    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
 
-        /* Setting up bindings for necessary control of the swerve drive platform */
-        private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-                        .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
-                        .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive
-                                                                                 // motors
-        private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-        private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
+    /* Setting up bindings for necessary control of the swerve drive platform */
+    private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
+            .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1)
+            .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+    private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
+    private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
-        private final Telemetry logger = new Telemetry(MaxSpeed);
+    private final Telemetry logger = new Telemetry(MaxSpeed);
 
-        private final CommandXboxController joystick = new CommandXboxController(0);
+    public final CommandXboxController joystick = new CommandXboxController(0);
 
-        public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
-        private final VisionIOPhotonVision camera0 = new VisionIOPhotonVision(VisionConstants.camera0Name,
-                        VisionConstants.robotToCamera0);
-        private final VisionIOPhotonVision camera1 = new VisionIOPhotonVision(VisionConstants.camera1Name,
-                        VisionConstants.robotToCamera1);
-        // private final VisionIOPhotonVision camera2 = new
-        // VisionIOPhotonVision(VisionConstants.camera2Name,
-        // VisionConstants.robotToCamera2);
-        // private final VisionIOPhotonVision camera3 = new
-        // VisionIOPhotonVision(VisionConstants.camera3Name,
-        // VisionConstants.robotToCamera3);
+    private final VisionIOPhotonVision camera0 = new VisionIOPhotonVision(VisionConstants.camera0Name,
+            VisionConstants.robotToCamera0);
+    private final VisionIOPhotonVision camera1 = new VisionIOPhotonVision(VisionConstants.camera1Name,
+            VisionConstants.robotToCamera1);
 
-        public final Vision vision = new Vision(
-                        (Vision.VisionConsumer) drivetrain::addVisionMeasurement,
-                        (Supplier<Pose2d>) (() -> drivetrain.getStateCopy().Pose),
-                        camera0, camera1);
+    public final Vision vision = new Vision(
+            (Vision.VisionConsumer) drivetrain::addVisionMeasurement,
+            (Supplier<Pose2d>) (() -> drivetrain.getStateCopy().Pose),
+            camera0, camera1);
 
-        private final ShooterSubsystem shooterSubsystem = new ShooterSubsystem();
-        public final Intake intake = new Intake();
-        public final Turret turret = new Turret();
-        public final Transfer transfer = new Transfer();
+    public final Shooter shooter = new Shooter();
+    public final Intake intake = new Intake();
+    public final Turret turret = new Turret();
+    public final Transfer transfer = new Transfer();
+    public final Hood hood = new Hood();
+    public final Climb climb = new Climb();
+    public final Indexer indexer = new Indexer();
+    public final Hinge hinge = new Hinge();
 
-        public final AutoFire autoFireCommand = new AutoFire(turret, transfer, shooterSubsystem);
+    public final AutoFire autoFireCommand = new AutoFire(turret, transfer, shooter, hood);
 
-        public RobotContainer() {
-                NamedCommands.registerCommand("testNamedCommand",
-                                Commands.runOnce(() -> System.out.println("this named command works")));
+    public RobotContainer() {
+        NamedCommands.registerCommand("testNamedCommand",
+                Commands.runOnce(() -> System.out.println("this named command works")));
 
-                configureBindings();
-        }
+        configureBindings();
+    }
 
-        private void configureBindings() {
-                // Note that X is defined as forward according to WPILib convention,
-                // and Y is defined as to the left according to WPILib convention.
-                drivetrain.setDefaultCommand(
-                                // Drivetrain will execute this command periodically
-                                drivetrain.applyRequest(() -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed * 0.3) // Drive
-                                                                                                                         // forward
-                                                                                                                         // with
-                                                                                                                         // negative
-                                                                                                                         // Y
-                                                                                                                         // (forward)
-                                                .withVelocityY(-joystick.getLeftX() * MaxSpeed * 0.3) // Drive left with
-                                                                                                      // negative X
-                                                                                                      // (left)
-                                                .withRotationalRate(-joystick.getRightX() * MaxAngularRate * 0.3) // Drive
-                                                                                                                  // counterclockwise
-                                                                                                                  // with
-                                                                                                                  // negative
-                                                                                                                  // X
-                                                                                                                  // (left)
-                                ));
+    private void configureBindings() {
+        drivetrain.setDefaultCommand(
+                drivetrain.applyRequest(() -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed * 0.3)
+                        .withVelocityY(-joystick.getLeftX() * MaxSpeed * 0.3)
+                        .withRotationalRate(-joystick.getRightX() * MaxAngularRate * 0.3)));
 
-                // Idle while the robot is disabled. This ensures the configured
-                // neutral mode is applied to the drive motors while disabled.
-                final var idle = new SwerveRequest.Idle();
-                RobotModeTriggers.disabled().whileTrue(
-                                drivetrain.applyRequest(() -> idle).ignoringDisable(true));
+        final var idle = new SwerveRequest.Idle();
+        RobotModeTriggers.disabled().whileTrue(
+                drivetrain.applyRequest(() -> idle).ignoringDisable(true));
 
-                joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-                joystick.b().whileTrue(drivetrain.applyRequest(
-                                () -> point.withModuleDirection(
-                                                new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))));
+        joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
+        joystick.b().whileTrue(drivetrain.applyRequest(
+                () -> point.withModuleDirection(
+                        new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))));
 
-                // joystick.x().onTrue(shooterSubsystem.shootCmd());
-                joystick.povUp().onTrue(shooterSubsystem.runHoodCmd());
-                joystick.povDown().onTrue(shooterSubsystem.runHoodReverseCmd());
+        // SysId routines
+        joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+        joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+        joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+        joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
-                joystick.povUp().onFalse(shooterSubsystem.stopHoodCmd());
-                joystick.povDown().onFalse(shooterSubsystem.stopHoodCmd());
+        // Seed field centric
+        joystick.povUp().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-                // Run SysId routines when holding back/start and X/Y.
-                // Note that each routine should be run exactly once in a single log.
-                joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-                joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-                joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-                joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        // Turret controls
+        joystick.rightTrigger().whileTrue(turret.turretPos());
+        joystick.leftTrigger().whileTrue(turret.turretNeg());
+        joystick.leftTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
+        joystick.rightTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
 
-                // reset the field-centric heading on left bumper press
-                // joystick.leftBumper().onTrue(drivetrain.runOnce(() ->
-                // drivetrain.seedFieldCentric()));
+        // Shooter controls
+        joystick.leftBumper().onTrue(Commands.runOnce(() -> shooter.decreaseSpeed()));
+        joystick.rightBumper().onTrue(Commands.runOnce(() -> shooter.increaseSpeed()));
+        
+        // Hood control
+        joystick.povDown().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
 
-                joystick.rightTrigger().onTrue(Commands.runOnce(() -> turret.spinPositive()));
-                joystick.leftTrigger().onTrue(Commands.runOnce(() -> turret.spinNegative()));
-                joystick.leftTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
-                joystick.rightTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
+        // Intake controls
+        joystick.povRight().whileTrue(intake.intakeCommand()).onFalse(intake.stopRollerCommand());
+        joystick.povLeft().whileTrue(intake.outtakeCommand()).onFalse(intake.stopRollerCommand());
 
-                joystick.leftBumper().onTrue(Commands.runOnce(() -> shooterSubsystem.decreaseSpeed()));
-                joystick.rightBumper().onTrue(Commands.runOnce(() -> shooterSubsystem.increaseSpeed()));
+        // Turret tracking
+        joystick.y().onTrue(new TurretTracking(turret, () -> drivetrain.getStateCopy().Pose));
 
-                joystick.y().onTrue(new TurretTracking(turret, () -> drivetrain.getStateCopy().Pose));
+        // Transfer control
+        joystick.b().onTrue(Commands.runOnce(() -> transfer.toggleTransfer()));
 
-                joystick.b().onTrue(Commands.runOnce(() -> transfer.activateTransfer()));
+        // Indexer control
+        // Moved to right stick click or something else to avoid conflict with Transfer (B) or TurretTracking (Y)?
+        // Let's use right stick button
+        joystick.rightStick().onTrue(indexer.toggleIndexer());
 
-                drivetrain.registerTelemetry(logger::telemeterize);
+        // Chase fuel ball with X button (PhotonVision feature)
+        joystick.x().whileTrue(new FuelChaseCommand(25, camera0.getCamera(), drivetrain,
+                () -> drivetrain.getStateCopy().Pose, VisionConstants.robotToCamera0));
 
-                // Chase fuel ball with X button
-                joystick.x().whileTrue(new FuelChaseCommand(25, camera0.getCamera(), drivetrain,
-                                () -> drivetrain.getStateCopy().Pose, VisionConstants.robotToCamera0));
+        drivetrain.registerTelemetry(logger::telemeterize);
+    }
 
-                // fix butten stuff *cough coguh* tyler change your button bindings
-
-                // joystick.rightTrigger()
-                // .whileTrue(
-                // new InstantCommand(() -> intake.intakeCommand()))
-                // .onFalse(
-                // new InstantCommand(() -> intake.stopRollerCommand()));
-
-                // joystick.leftTrigger()
-                // .whileTrue(
-                // new InstantCommand(() -> intake.outtakeCommand()))
-                // .onFalse(
-                // new InstantCommand(() -> intake.stopRollerCommand()));
-
-                // joystick.rightBumper()
-                // .whileTrue(
-                // new InstantCommand(() -> intake.deployCommand()));
-
-                // joystick.leftBumper()
-                // .whileTrue(
-                // new InstantCommand(() -> intake.retractCommand()));
-
-                // joystick.rightTrigger()
-                // .whileTrue(
-                // new InstantCommand(() -> transfer.activateTransferCommand()))
-                // .onFalse(
-                // new InstantCommand(() -> transfer.stopTransferCommand()));
-
-                // joystick.rightStick()
-                // .whileTrue(
-                // new InstantCommand(() -> autoFireCommand.execute()));
-        }
-
-        public Command getAutonomousCommand() {
-                // Previously: return new PathPlannerAuto("boi");
-                // Now:
-                return new FuelChaseCommand(25, camera0.getCamera(), drivetrain,
-                                () -> drivetrain.getStateCopy().Pose, VisionConstants.robotToCamera0);
-        }
+    public Command getAutonomousCommand() {
+        return new FuelChaseCommand(25, camera0.getCamera(), drivetrain,
+                () -> drivetrain.getStateCopy().Pose, VisionConstants.robotToCamera0);
+    }
 }

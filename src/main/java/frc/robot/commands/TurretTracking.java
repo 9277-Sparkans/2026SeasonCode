@@ -4,21 +4,8 @@
 
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
-// import frc.robot.LimelightHelpers;
 import frc.robot.subsystems.Turret;
-import edu.wpi.first.networktables.GenericEntry;
-import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.networktables.StructPublisher;
-import edu.wpi.first.units.measure.Distance;
-
-import static edu.wpi.first.units.Units.Inch;
-import static edu.wpi.first.units.Units.Meter;
-
-// import frc.robot.Limelight;
-
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.geometry.Pose2d;
 import java.util.function.Supplier;
@@ -26,8 +13,7 @@ import java.util.function.Supplier;
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class TurretTracking extends Command {
   private Turret turret;
-
-  /** Creates a new TurretTracking. */
+  double angleToHub;
 
   private final Supplier<Pose2d> poseSupplier;
   private static final Translation2d targetLocation = new Translation2d(4.0218614, 4.2124376); // Midpoint of 25 and 26
@@ -62,9 +48,6 @@ public class TurretTracking extends Command {
       turretAngleDeg -= 360;
     while (turretAngleDeg < -180)
       turretAngleDeg += 360;
-
-    // System.out.println("Turret Tracking: Target Angle " + targetAngleDeg + ",
-    // Robot Angle " + robotRotationDeg + ", Turret Angle " + turretAngleDeg);
 
     turret.setTurretToAngle(turretAngleDeg);
   }

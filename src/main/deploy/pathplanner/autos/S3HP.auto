@@ -7,29 +7,25 @@
         {
           "type": "path",
           "data": {
-<<<<<<<< HEAD:src/main/deploy/pathplanner/autos/boi.auto
-            "pathName": "New Path"
-========
-            "pathName": "Start 1"
+            "pathName": "Start 3"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 1.0
+            "waitTime": 0.5
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Depot(S1)"
+            "pathName": "HumanPlayer(S3)"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 5.0
->>>>>>>> origin/main:src/main/deploy/pathplanner/autos/S1DP.auto
+            "waitTime": 7.0
           }
         }
       ]

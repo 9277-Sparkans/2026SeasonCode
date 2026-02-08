@@ -1,5 +1,6 @@
 package frc.robot;
 
+<<<<<<< HEAD
 import java.util.List;
 import java.util.function.BooleanSupplier;
 
@@ -24,6 +25,8 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.math.Matrix;
 
+=======
+>>>>>>> origin/main
 public class Constants {
     public static final class QuickAccessConstants {
         public static final boolean swerveEnabled = true;
@@ -113,18 +116,22 @@ public class Constants {
         public static final double turret_maxVelocity = 40; // rotations per second
         public static final double turret_maxAcceleration = 20; // rotations per second^2
         public static final double turret_maxVoltage = 5;// kraken x44 max voltage
-        public static final int turret_motorId = 34; // change this value
+        public static final double turret_maxJerk = 100; // rotations per second^3
+        public static final int turret_motorId = 32; // change this value
+        public static final double turret_speed = 0.2;
 
-        public static final double turret_kG = 0.03;
-        public static final double turret_kS = 0.01;
-        public static final double turret_kP = 4.5;
-        public static final double turret_kI = 0.0;
-        public static final double turret_kD = 0.3;
+        public static double turret_kV = 0.25;
+        public static double turret_kA = 0.0;
+        public static double turret_kS = 0.01;
+        public static double turret_kP = 7.5;
+        public static double turret_kI = 0.0;
+        public static double turret_kD = 0.5;
 
-        public static int kMaximumAngle = 70;
-        public static int kMinimumAngle = -70;
 
-        public static double kGearRatio = 1.0 / (18.0 / 105.0);
+        public static double kMaximumAngle = 20.0;
+        public static double kMinimumAngle = -20.0;
+        
+        public static double kGearRatio = 105.0 / 18.0;
     }
 
     public static class ShooterConstants {
@@ -149,63 +156,93 @@ public class Constants {
         public static final double shooter_kV = 0.0;
         public static final double shooter_kA = 0.0;
 
+
+
     }
 
+<<<<<<< HEAD
     public static class HoodConstants {
         public static final int kHoodMotorId = 30;
+=======
+    public static class HoodConstants
+    {
+        public static final int kHoodMotorId = 34;
+        public static final int kHoodEncoderId = 41;
+>>>>>>> origin/main
 
-        public static final double hood_maxVelocity = 125; // rotations per second
+        public static final double hood_maxVelocity = 0.5; // rotations per second; was 1.0, setting it to this to avoid grinding the gear again!
         public static final double hood_maxAcceleration = 80; // rotations per second^2
         public static final double hood_maxVoltage = 5;// kraken x44 max voltage
 
         public static final double hood_kG = 0.03;
         public static final double hood_kS = 0.01;
-        public static final double hood_kP = 4.5;
+        public static final double hood_kP = 0.5;
         public static final double hood_kI = 0.0;
-        public static final double hood_kD = 0.3;
+        public static final double hood_kD = 0;
 
-        public static final double kHoodSpeed = 1;
+        public static final double kHoodSpeed = 0.1;
 
-        public static final double kMinimumAngle = 15;
-        public static final double kMaximumAngle = 45;
+        public static final double kMinimumAngle = 32;
+        public static final double kMaximumAngle = 49;
 
-        public static final double kGearRatio = 1.0 / (15.0 / 210.0);
+        public static final double kMinimumEncoderPos = 0.25;
+        public static final double kMaximumEncoderPos = 0.7;
 
-        public static final double kHoodCurrentLimit = 35;
-        public static final double kShooterCurrentLimit = 35;
+        public static final double maxEncoderValue = -1.258789; // test for this
 
-        public static final double kHoodIncrement = 5;
+        public static final double kGearRatio = 1.0 / (33.7 / 18.23);
+
+        public static final double kHoodCurrentLimit = 5;
+
+        public static final double kHoodIncremqent = 2;
     }
 
+<<<<<<< HEAD
     public static class IntakeConstants {
         // deployment
         public static final int deploymentID = 0;
+=======
+    public static class IntakeConstants
+    {
+        public static final int intakeMotorId = 38;
+>>>>>>> origin/main
 
-        public static final double deploymentKS = 0.01;
-        public static final double deploymentKP = 10;
-        public static final double deploymentKI = 0;
-        public static final double deploymentKD = 0.1;
+        public static final double intake_kS = 0.01;
+        public static final double intake_kP = 10;
+        public static final double intake_kI = 0;
+        public static final double intake_kD = 0.1;
 
-        public static final double deploymentMaxVoltage = 4;
-        public static final double deploymentMaxAcceleration = 40;
-        public static final double deploymentMaxVelocity = 100; // rps
+        public static final double intakeMaxVoltage = 4; // can change if not needed
+        public static final double intakeMaxAcceleration = 5;
+        public static final double intakeMaxVelocity = 100; // rps
+        public static final double intakeSpeed = 0.3;
+    }
 
-        public static final int deploymentCountsPerRevolution = 2048; // for kraken x60
-        public static final int deploymentGearRatio = 1 / (1 / 1);
+    public static class HingeConstants {
 
+<<<<<<< HEAD
         public static final int deploymentMaxDeg = 115;
 
         // rollers
         public static final int rollerID = 1;
+=======
+        public static final int kHingeMotorId = 39;
+>>>>>>> origin/main
 
-        public static final double rollerKS = 0.01;
-        public static final double rollerKP = 10;
-        public static final double rollerKI = 0;
-        public static final double rollerKD = 0.1;
+        public static final double hinge_kS = 0.01;
+        public static final double hinge_kP = 10;
+        public static final double hinge_kI = 0;
+        public static final double hinge_kD = 0.1;
+        public static final double hinge_kV = 0.12;
+        public static final double hingeMaxVoltage = 4;
+        public static final double hingeMaxAcceleration = 10;
+        public static final double hingeMaxVelocity = 10; // rps
+        public static final double kHingeCurrentLimit = 120;
 
-        public static final double rollerMaxVoltage = 4; // can change if not needed
-        public static final double rollerMaxAcceleration = 40;
-        public static final double rollerMaxVelocity = 100; // rps
+        public static final int hingeCountsPerRevolution = 2048; // for kraken x60
+        public static final double hingeGearRatio = 15.0 / 1.0;
+
+        public static final double hingeMaxDeg = -30.0;
     }
 
     public static class ClimbConstants {
@@ -226,6 +263,7 @@ public class Constants {
         public static final double transferMaxVelocity = 100; // rps
     }
 
+<<<<<<< HEAD
     /**
      * DEPRECATED: Use frc.robot.Vision.VisionConstants.aprilTagLayout instead.
      * This ensures all code uses the same AprilTag field layout as PhotonVision.
@@ -243,3 +281,28 @@ public class Constants {
 
 
 }
+=======
+    public static final class IndexerConstants {
+        public static final double kIndexerMaxVoltage = 5;// kraken x44 max voltage
+        public static final int kIndexerMotorID = 35; // change this value
+        public static final double kIndexerSpeed = 0.25;
+        public static final double kIndexerGearRatio = 12.0/15.0;
+        public static final double indexerSpeed = 30.0; //rps
+
+        public static final double kIndexer_kS = 0.01;
+        public static final double kIndexer_kV = 0.095;
+        public static final double kIndexer_kA = 0.01;
+        public static final double kIndexer_kP = 1.5;
+        public static final double kIndexer_kI = 0.0;
+        public static final double kIndexer_kD = 0.3;
+
+        public static final double kIndexerMaxAcceleration = 400;
+        public static final double kIndexerMaxJerk = 4000;
+    }
+
+    public static final class LimelightConstants {
+        public static final String limelightName = "limelight-a";
+    }
+    
+}
+>>>>>>> origin/main

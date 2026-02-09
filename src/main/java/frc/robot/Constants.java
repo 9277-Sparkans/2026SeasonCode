@@ -1,6 +1,5 @@
 package frc.robot;
 
-<<<<<<< HEAD
 import java.util.List;
 import java.util.function.BooleanSupplier;
 
@@ -25,8 +24,6 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.math.Matrix;
 
-=======
->>>>>>> origin/main
 public class Constants {
     public static final class QuickAccessConstants {
         public static final boolean swerveEnabled = true;
@@ -127,10 +124,9 @@ public class Constants {
         public static double turret_kI = 0.0;
         public static double turret_kD = 0.5;
 
-
         public static double kMaximumAngle = 20.0;
         public static double kMinimumAngle = -20.0;
-        
+
         public static double kGearRatio = 105.0 / 18.0;
     }
 
@@ -156,21 +152,14 @@ public class Constants {
         public static final double shooter_kV = 0.0;
         public static final double shooter_kA = 0.0;
 
-
-
     }
 
-<<<<<<< HEAD
     public static class HoodConstants {
-        public static final int kHoodMotorId = 30;
-=======
-    public static class HoodConstants
-    {
         public static final int kHoodMotorId = 34;
         public static final int kHoodEncoderId = 41;
->>>>>>> origin/main
 
-        public static final double hood_maxVelocity = 0.5; // rotations per second; was 1.0, setting it to this to avoid grinding the gear again!
+        public static final double hood_maxVelocity = 0.5; // rotations per second; was 1.0, setting it to this to avoid
+                                                           // grinding the gear again!
         public static final double hood_maxAcceleration = 80; // rotations per second^2
         public static final double hood_maxVoltage = 5;// kraken x44 max voltage
 
@@ -197,15 +186,10 @@ public class Constants {
         public static final double kHoodIncremqent = 2;
     }
 
-<<<<<<< HEAD
     public static class IntakeConstants {
         // deployment
         public static final int deploymentID = 0;
-=======
-    public static class IntakeConstants
-    {
         public static final int intakeMotorId = 38;
->>>>>>> origin/main
 
         public static final double intake_kS = 0.01;
         public static final double intake_kP = 10;
@@ -220,14 +204,11 @@ public class Constants {
 
     public static class HingeConstants {
 
-<<<<<<< HEAD
         public static final int deploymentMaxDeg = 115;
 
         // rollers
         public static final int rollerID = 1;
-=======
         public static final int kHingeMotorId = 39;
->>>>>>> origin/main
 
         public static final double hinge_kS = 0.01;
         public static final double hinge_kP = 10;
@@ -263,7 +244,6 @@ public class Constants {
         public static final double transferMaxVelocity = 100; // rps
     }
 
-<<<<<<< HEAD
     /**
      * DEPRECATED: Use frc.robot.Vision.VisionConstants.aprilTagLayout instead.
      * This ensures all code uses the same AprilTag field layout as PhotonVision.
@@ -278,16 +258,12 @@ public class Constants {
         public static final AprilTagFieldLayout TAG_LAYOUT = frc.robot.Vision.VisionConstants.aprilTagLayout;
     }
 
-
-
-}
-=======
     public static final class IndexerConstants {
         public static final double kIndexerMaxVoltage = 5;// kraken x44 max voltage
         public static final int kIndexerMotorID = 35; // change this value
         public static final double kIndexerSpeed = 0.25;
-        public static final double kIndexerGearRatio = 12.0/15.0;
-        public static final double indexerSpeed = 30.0; //rps
+        public static final double kIndexerGearRatio = 12.0 / 15.0;
+        public static final double indexerSpeed = 30.0; // rps
 
         public static final double kIndexer_kS = 0.01;
         public static final double kIndexer_kV = 0.095;
@@ -303,6 +279,5 @@ public class Constants {
     public static final class LimelightConstants {
         public static final String limelightName = "limelight-a";
     }
-    
+
 }
->>>>>>> origin/main

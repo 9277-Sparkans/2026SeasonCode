@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Telemetry;
 import frc.robot.Utils;
 import frc.robot.Constants.HoodConstants;
 
@@ -35,6 +36,8 @@ public class Hood extends SubsystemBase {
     hoodEncoder = new CANcoder(HoodConstants.kHoodEncoderId);
     hoodMotorConfiguration = new TalonFXConfiguration();
 
+    // hoodMotor.setPosition(hoodEncoder.getAbsolutePosition().getValueAsDouble());
+
     // Current limiting
     CurrentLimitsConfigs hoodCurrent = new CurrentLimitsConfigs();
     hoodCurrent.StatorCurrentLimit = HoodConstants.kHoodCurrentLimit;
@@ -43,6 +46,9 @@ public class Hood extends SubsystemBase {
 
     // PID + Gravity
     hoodMotorConfiguration.Slot0.kG = HoodConstants.hood_kG;
+    hoodMotorConfiguration.Slot0.kS = HoodConstants.hood_kS;
+    hoodMotorConfiguration.Slot0.kV = HoodConstants.hood_kV;
+    hoodMotorConfiguration.Slot0.kA = HoodConstants.hood_kA;
     hoodMotorConfiguration.Slot0.kP = HoodConstants.hood_kP;
     hoodMotorConfiguration.Slot0.kI = HoodConstants.hood_kI;
     hoodMotorConfiguration.Slot0.kD = HoodConstants.hood_kD;
@@ -58,9 +64,9 @@ public class Hood extends SubsystemBase {
     // set to brake mode to stop the motor within the deadband
     hoodMotorConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-    // hoodMotorConfiguration.Feedback.FeedbackRemoteSensorID = HoodConstants.kHoodEncoderId;
-    // hoodMotorConfiguration.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
-    // hoodMotorConfiguration.Feedback.RotorToSensorRatio = 1; // 1 motor rotation per 1 encoder rotation
+    hoodMotorConfiguration.Feedback.FeedbackRemoteSensorID = hoodEncoder.getDeviceID();
+    hoodMotorConfiguration.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+    hoodMotorConfiguration.Feedback.RotorToSensorRatio = 1; // 1 motor rotation per 1 encoder rotation
    
     hoodMotor.getConfigurator().apply(hoodMotorConfiguration);
 
@@ -69,24 +75,21 @@ public class Hood extends SubsystemBase {
         public void initSendable(SendableBuilder builder) {
             builder.addDoubleProperty("Velocity", () -> hoodMotor.getVelocity().getValueAsDouble(), null);
             builder.addDoubleProperty("Absolute Encoder Position", () -> (hoodEncoder.getAbsolutePosition().getValueAsDouble()), (double val) -> hoodEncoder.setPosition(val));
-            builder.addDoubleProperty("Motor Encoder Position", () -> (hoodMotor.getPosition().getValueAsDouble()), (double val) -> hoodEncoder.setPosition(val));
+            builder.addDoubleProperty("Motor Encoder Position", () -> (hoodMotor.getPosition().getValueAsDouble()), (double val) -> hoodMotor.setPosition(val));
             builder.addDoubleProperty("Target Hood Position", () -> targetHoodPosition, (double val) -> targetHoodPosition = val);
         }
     });
+
+    // SmartDashboard.putData(hoodMotor);
+
+    Telemetry.telemeterizeMotorWithPID("Hood (PID)", hoodMotor, 1);
   }
 
   @Override
   public void periodic() {
-<<<<<<< HEAD
     // keep the hood motor in sync with the hood encoder absolute position;
     // MotionMagic will NOT work if you tell the motor that it has
     // a remote CANcoder on it (in my testing)
-    // hoodMotor.setPosition(hoodEncoder.getAbsolutePosition().getValueAsDouble());
-=======
-    // clampTarget();
-    // moveHoodWithEncoder(targetHoodPosition);
-    // System.out.println("Hood motor rotations: " + hoodMotor.getPosition().getValueAsDouble());
->>>>>>> 8169323a2c69d14c39f3292a2c293f0431139af6
   }
 
   //motion magic
@@ -100,12 +103,12 @@ public class Hood extends SubsystemBase {
     clampTarget();
 
     System.out.println("moving to target! " + targetHoodPosition);
-    hoodMotor.setControl(request.withPosition(targetHoodPosition));
+    hoodMotor.setControl(request.withPosition(targetHoodPosition * 1/*.6303*/)); // is this a magic number? yes. does it work? maybe
   }
 
 
   public void moveHoodWithEncoder(double rotation) {
-    rotation = Utils.clamp(rotation, HoodConstants.kMinimumEncoderPos, HoodConstants.kMaximumEncoderPos);
+    // rotation = Utils.clamp(rotation, HoodConstants.kMinimumEncoderPos, HoodConstants.kMaximumEncoderPos);
     // fix `Resource leak: 'pidController' is never closed`
     try (PIDController pidController = new PIDController(HoodConstants.hood_kP, HoodConstants.hood_kI, HoodConstants.hood_kD)) {
       double feedback = pidController.calculate(hoodEncoder.getPosition().getValueAsDouble(), rotation);
@@ -133,20 +136,20 @@ public class Hood extends SubsystemBase {
 
   
   public void clampTarget() {
-    targetHoodPosition = Utils.clamp(targetHoodPosition, HoodConstants.kMinimumEncoderPos, HoodConstants.kMaximumEncoderPos);
+    // targetHoodPosition = Utils.clamp(targetHoodPosition, HoodConstants.kMinimumEncoderPos, HoodConstants.kMaximumEncoderPos);
   }
 
   public void runHood() {
     // targetHoodPosition += HoodConstants.kHoodSpeed;
-    targetHoodPosition = 0.4;
+    targetHoodPosition = 0.3;
     moveHoodMotionMagic();
   }
 
 
   public void runHoodReverse() {
-    targetHoodPosition -= HoodConstants.kHoodSpeed;
+    // targetHoodPosition -= HoodConstants.kHoodSpeed;
     hoodMotor.set(-HoodConstants.kHoodSpeed);
-    moveHoodMotionMagic();
+    // moveHoodMotionMagic();
   }
 
 }

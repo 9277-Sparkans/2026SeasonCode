@@ -42,13 +42,12 @@ public class Turret extends SubsystemBase {
 
     turretMotor.getConfigurator().apply(turretMotorConfig);
 
-    Telemetry.telemeterizeMotorWithPID("Turret", turretMotor, (1.0 / (15.0 / 108.0)), turretMotorConfig);
-
+    Telemetry.telemeterizeMotorWithPID("Turret", turretMotor, (1.0 / (15.0 / 108.0)));
   }
 
   @Override
   public void periodic() {
-    System.out.println(Limelight.GetAngle());
+    // System.out.println(Limelight.GetAngle());
   }
 
   public double getPosition() {

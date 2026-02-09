@@ -12,9 +12,11 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
@@ -25,6 +27,7 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Indexer;
+import frc.robot.Constants.OIConstants;
 import frc.robot.commands.AutoFire;
 import frc.robot.commands.TurretTracking;
 import frc.robot.subsystems.Transfer;
@@ -44,7 +47,8 @@ public class RobotContainer {
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
-    public final CommandXboxController joystick = new CommandXboxController(0);
+    public final CommandXboxController joystick = new CommandXboxController(OIConstants.kDriverControllerPort);
+    public final Joystick operatorJoystick = new Joystick(OIConstants.kOperatorControllerPort);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
@@ -154,11 +158,37 @@ public class RobotContainer {
         //         new InstantCommand(() -> intake.retractCommand()));
         
         
-        // ROLLER button controls
+        // Indexer button controls
         joystick.y().onTrue(indexer.toggleIndexer()); 
 
+        // Operator
+        operator(OIConstants.kKeyboard_lockModeLeft)
+            .onTrue(Commands.runOnce(() -> System.out.println("Lock left")));
+
+        operator(OIConstants.kKeyboard_lockModeRight)
+            .onTrue(Commands.runOnce(() -> System.out.println("Lock right")));
+
+        operator(OIConstants.kKeyboard_lockModeCenter)
+            .onTrue(Commands.runOnce(() -> System.out.println("Lock center")));
+
+        operator(OIConstants.kKeyboard_lockModeFire)
+            .onTrue(Commands.runOnce(() -> System.out.println("Lock fire")));
+
+        operator(OIConstants.kKeyboard_climbUp)
+            .onTrue(climb.climbUp());
+
+        operator(OIConstants.kKeyboard_climbDown)
+            .onTrue(climb.climbUp());
+
+        operator(OIConstants.kKeyboard_autoFire)
+            .onTrue(autoFireCommand);
+
         drivetrain.registerTelemetry(logger::telemeterize);
-    }   
+    }
+
+    public JoystickButton operator(int keyCode) {
+        return new JoystickButton(operatorJoystick, keyCode);
+    }
 
     public Command getAutonomousCommand() {
         return new PathPlannerAuto("testAuto");

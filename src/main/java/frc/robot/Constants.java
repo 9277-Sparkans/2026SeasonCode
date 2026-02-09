@@ -18,8 +18,8 @@ public class Constants {
     public static final class OIConstants {
 
         // Ports
-        public static final int kOperatorControllerPort = 0;
-        public static final int kDriverControllerPort = 1;
+        public static final int kDriverControllerPort = 0;
+        public static final int kOperatorControllerPort = 1;
         public static final int kDriverTranslateStickPort = 2;
         public static final int kDriverRotateStickPort = 3;
         public static final int kBackupOperatorControllerPort = 4;
@@ -40,6 +40,18 @@ public class Constants {
         public static final int kController_start = 10;
         public static final int kController_leftStickButton = 11;
         public static final int kController_rightStickButton = 12;
+
+        // Keyboard
+        // 87777877ui00o831.00
+        // NOTE: IDs here are 1-indexed as opposed to the keyboard firmware's 0-indexing
+        // Add one to your ID or else you'll be binding to a completely different button
+        public static final int kKeyboard_lockModeLeft = 2;
+        public static final int kKeyboard_lockModeCenter = 3;
+        public static final int kKeyboard_lockModeRight = 4;
+        public static final int kKeyboard_lockModeFire = 5;
+        public static final int kKeyboard_climbUp = 6;
+        public static final int kKeyboard_climbDown = 7;
+        public static final int kKeyboard_autoFire = 8;
 
         // Triggers [CONTROLLER ONLY]
         public static final int kController_leftBumper = 5;
@@ -140,12 +152,14 @@ public class Constants {
         public static final int kHoodMotorId = 34;
         public static final int kHoodEncoderId = 41;
 
-        public static final double hood_maxVelocity = 0.5; // rotations per second; was 1.0, setting it to this to avoid grinding the gear again!
+        public static final double hood_maxVelocity = 20; // rotations per second; was 1.0, setting it to this to avoid grinding the gear again!
         public static final double hood_maxAcceleration = 80; // rotations per second^2
-        public static final double hood_maxVoltage = 5;// kraken x44 max voltage
+        public static final double hood_maxVoltage = 15;// kraken x44 max voltage
 
         public static final double hood_kG = 0.03;
         public static final double hood_kS = 0.01;
+        public static final double hood_kV = 0.12;
+        public static final double hood_kA = 0.01;
         public static final double hood_kP = 0.5;
         public static final double hood_kI = 0.0;
         public static final double hood_kD = 0;

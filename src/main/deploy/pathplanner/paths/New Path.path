@@ -3,44 +3,41 @@
   "waypoints": [
     {
       "anchor": {
-<<<<<<<< HEAD:src/main/deploy/pathplanner/paths/New Path.path
-        "x": 2.0637258883248735,
-        "y": 4.058020304568529
+        "x": 2.3063962673638603,
+        "y": 0.9719722945619731
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.063725888324874,
-        "y": 4.058020304568529
-========
-        "x": 3.287103212290173,
-        "y": 7.383923076923077
-      },
-      "prevControl": null,
-      "nextControl": {
-        "x": 2.769858974358976,
-        "y": 7.511833333333334
->>>>>>>> origin/main:src/main/deploy/pathplanner/paths/Start 1.path
+        "x": 2.1387050722231726,
+        "y": 1.1573898316837024
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-<<<<<<<< HEAD:src/main/deploy/pathplanner/paths/New Path.path
-        "x": 3.233157360406091,
-        "y": 4.058020304568529
+        "x": 4.005989172392281,
+        "y": 0.5390052517340929
       },
       "prevControl": {
-        "x": 1.8335228426395938,
-        "y": 4.0303959390862945
-========
-        "x": 1.816,
-        "y": 6.849
+        "x": 2.6063546546257843,
+        "y": 0.5113808862518587
+      },
+      "nextControl": {
+        "x": 5.405623690158778,
+        "y": 0.566629617216327
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 5.001900700013439,
+        "y": 0.5390052517340929
       },
       "prevControl": {
-        "x": 2.0020500651145974,
-        "y": 7.255987735798893
->>>>>>>> origin/main:src/main/deploy/pathplanner/paths/Start 1.path
+        "x": 4.752243189798721,
+        "y": 0.5259236771580875
       },
       "nextControl": null,
       "isLocked": false,
@@ -61,11 +58,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-<<<<<<<< HEAD:src/main/deploy/pathplanner/paths/New Path.path
     "rotation": 0.0
-========
-    "rotation": -50.826
->>>>>>>> origin/main:src/main/deploy/pathplanner/paths/Start 1.path
   },
   "reversed": false,
   "folder": null,

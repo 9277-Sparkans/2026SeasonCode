@@ -96,8 +96,8 @@ public class RobotContainer {
         joystick.povUp().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         // CLIMB button controls
-        // joystick.povRight().whileTrue(climb.climbUp());
-        // joystick.povLeft().whileTrue(climb.climbDown());
+        joystick.povRight().whileTrue(climb.climbUp());
+        joystick.povLeft().whileTrue(climb.climbDown());
 
 
         // HOOD button controls
@@ -136,21 +136,21 @@ public class RobotContainer {
 
 
         // INTAKE button controls
-        joystick.povRight()
-            .whileTrue(
-                intake.intakeCommand())
-            .onFalse(
-                intake.stopRollerCommand());
+        // joystick.povRight()
+        //     .whileTrue(
+        //         intake.intakeCommand())
+        //     .onFalse(
+        //         intake.stopRollerCommand());
 
-        joystick.povLeft()
-            .whileTrue(
-                intake.outtakeCommand())
-            .onFalse(
-                intake.stopRollerCommand());
+        // joystick.povLeft()
+        //     .whileTrue(
+        //         intake.outtakeCommand())
+        //     .onFalse(
+        //         intake.stopRollerCommand());
 
 
         // HINGE button controls
-        // joystick.x()
+        // joystick.x()./
         //     .onTrue(hinge.hingeUp());
 
         // joystick.a()

@@ -145,7 +145,8 @@ public class RobotContainer {
 
         public Command getAutonomousCommand() {
                 return FuelChaseCommand.createChaseCommand(
-                                25, camera0.getCamera(), drivetrain,
+                                25, camera0.getCamera(), drivetrain, // Change to the camera that will chase fuel once
+                                                                     // we get the fuel pose calculations working!!
                                 () -> drivetrain.getStateCopy().Pose, VisionConstants.robotToCamera0);
         }
 }

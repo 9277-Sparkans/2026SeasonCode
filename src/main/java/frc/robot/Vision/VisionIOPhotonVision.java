@@ -74,13 +74,36 @@ public class VisionIOPhotonVision implements VisionIO {
 		Set<Short> tagIds = new HashSet<>();
 		List<PoseObservation> poseObservations = new LinkedList<>();
 
-		for (var result : camera.getAllUnreadResults()) {
+		// Get all unread results from camera
+		var allResults = camera.getAllUnreadResults();
+
+		// DEBUG: Log number of results received
+		org.littletonrobotics.junction.Logger.recordOutput(
+				"Vision/Debug/" + camera.getName() + "/ResultsCount", allResults.size());
+
+		for (var result : allResults) {
+			// DEBUG: Log target detection
+			org.littletonrobotics.junction.Logger.recordOutput(
+					"Vision/Debug/" + camera.getName() + "/HasTargets", result.hasTargets());
+			org.littletonrobotics.junction.Logger.recordOutput(
+					"Vision/Debug/" + camera.getName() + "/TargetCount",
+					result.hasTargets() ? result.getTargets().size() : 0);
+
 			// Update latest target observation
 			if (result.hasTargets()) {
 				inputs.setLatestTargetObservation(
 						new TargetObservation(
 								Rotation2d.fromDegrees(result.getBestTarget().getYaw()),
 								Rotation2d.fromDegrees(result.getBestTarget().getPitch())));
+
+				// DEBUG: Log detected tag IDs
+				var detectedTagIds = new java.util.ArrayList<Integer>();
+				for (var target : result.getTargets()) {
+					detectedTagIds.add(target.getFiducialId());
+				}
+				org.littletonrobotics.junction.Logger.recordOutput(
+						"Vision/Debug/" + camera.getName() + "/DetectedTagIDs",
+						detectedTagIds.stream().mapToInt(Integer::intValue).toArray());
 			} else {
 				inputs.setLatestTargetObservation(
 						new TargetObservation(new Rotation2d(), new Rotation2d()));
@@ -89,19 +112,55 @@ public class VisionIOPhotonVision implements VisionIO {
 			// Update pose estimator
 			// 1. Try Coprocessor Multi-Tag (most accurate)
 			Optional<EstimatedRobotPose> estimatedPose = estimator.estimateCoprocMultiTagPose(result);
+			boolean usedMultiTag = estimatedPose.isPresent();
+
+			// DEBUG: Log estimation method
+			org.littletonrobotics.junction.Logger.recordOutput(
+					"Vision/Debug/" + camera.getName() + "/UsedMultiTag", usedMultiTag);
 
 			// 2. Fallback to local estimation (single tag or if coproc fails)
 			if (estimatedPose.isEmpty() && result.hasTargets()) {
 				estimatedPose = estimator.update(result);
+				org.littletonrobotics.junction.Logger.recordOutput(
+						"Vision/Debug/" + camera.getName() + "/UsedLocalEstimation", true);
+			} else {
+				org.littletonrobotics.junction.Logger.recordOutput(
+						"Vision/Debug/" + camera.getName() + "/UsedLocalEstimation", false);
 			}
+
+			// DEBUG: Log whether we got a pose estimate
+			org.littletonrobotics.junction.Logger.recordOutput(
+					"Vision/Debug/" + camera.getName() + "/HasPoseEstimate", estimatedPose.isPresent());
 
 			if (estimatedPose.isPresent()) {
 				var pose = estimatedPose.get();
 
+				// DEBUG: Log raw pose from estimator (Pose3d)
+				org.littletonrobotics.junction.Logger.recordOutput(
+						"Vision/Debug/" + camera.getName() + "/RawPose3d", pose.estimatedPose);
+				org.littletonrobotics.junction.Logger.recordOutput(
+						"Vision/Debug/" + camera.getName() + "/RawPose3d_X", pose.estimatedPose.getX());
+				org.littletonrobotics.junction.Logger.recordOutput(
+						"Vision/Debug/" + camera.getName() + "/RawPose3d_Y", pose.estimatedPose.getY());
+				org.littletonrobotics.junction.Logger.recordOutput(
+						"Vision/Debug/" + camera.getName() + "/RawPose3d_Z", pose.estimatedPose.getZ());
+				org.littletonrobotics.junction.Logger.recordOutput(
+						"Vision/Debug/" + camera.getName() + "/RawPose3d_RotDeg",
+						pose.estimatedPose.getRotation().toRotation2d().getDegrees());
+
 				// Collect tag IDs from targets
+				var usedTagIds = new java.util.ArrayList<Integer>();
 				for (var target : pose.targetsUsed) {
 					tagIds.add((short) target.getFiducialId());
+					usedTagIds.add(target.getFiducialId());
 				}
+
+				// DEBUG: Log tags used for pose estimation
+				org.littletonrobotics.junction.Logger.recordOutput(
+						"Vision/Debug/" + camera.getName() + "/TagsUsedForPose",
+						usedTagIds.stream().mapToInt(Integer::intValue).toArray());
+				org.littletonrobotics.junction.Logger.recordOutput(
+						"Vision/Debug/" + camera.getName() + "/TagsUsedCount", pose.targetsUsed.size());
 
 				// Calculate ambiguity: for single-tag use target ambiguity,
 				// for multi-tag use average target ambiguity
@@ -116,8 +175,28 @@ public class VisionIOPhotonVision implements VisionIO {
 					ambiguity = totalAmbiguity / pose.targetsUsed.size();
 				}
 
+				// DEBUG: Log ambiguity
+				org.littletonrobotics.junction.Logger.recordOutput(
+						"Vision/Debug/" + camera.getName() + "/Ambiguity", ambiguity);
+
 				// Compute average distance to all targets for std dev scaling
 				double avgDistance = computeAverageTagDistance(pose.targetsUsed);
+
+				// DEBUG: Log average distance
+				org.littletonrobotics.junction.Logger.recordOutput(
+						"Vision/Debug/" + camera.getName() + "/AvgTagDistance", avgDistance);
+
+				// DEBUG: Log converted Pose2d that will be sent to Vision subsystem
+				var pose2d = pose.estimatedPose.toPose2d();
+				org.littletonrobotics.junction.Logger.recordOutput(
+						"Vision/Debug/" + camera.getName() + "/ConvertedPose2d", pose2d);
+				org.littletonrobotics.junction.Logger.recordOutput(
+						"Vision/Debug/" + camera.getName() + "/ConvertedPose2d_X", pose2d.getX());
+				org.littletonrobotics.junction.Logger.recordOutput(
+						"Vision/Debug/" + camera.getName() + "/ConvertedPose2d_Y", pose2d.getY());
+				org.littletonrobotics.junction.Logger.recordOutput(
+						"Vision/Debug/" + camera.getName() + "/ConvertedPose2d_RotDeg",
+						pose2d.getRotation().getDegrees());
 
 				// Add pose observation
 				poseObservations.add(
@@ -128,8 +207,19 @@ public class VisionIOPhotonVision implements VisionIO {
 								pose.targetsUsed.size(),
 								avgDistance,
 								PoseObservationType.PHOTONVISION));
+
+				// DEBUG: Log that we added a pose observation
+				org.littletonrobotics.junction.Logger.recordOutput(
+						"Vision/Debug/" + camera.getName() + "/AddedPoseObservation", true);
+			} else {
+				org.littletonrobotics.junction.Logger.recordOutput(
+						"Vision/Debug/" + camera.getName() + "/AddedPoseObservation", false);
 			}
 		}
+
+		// DEBUG: Log total pose observations created
+		org.littletonrobotics.junction.Logger.recordOutput(
+				"Vision/Debug/" + camera.getName() + "/PoseObservationsCount", poseObservations.size());
 
 		// Save pose observations to inputs object
 		inputs.setPoseObservations(new PoseObservation[poseObservations.size()]);

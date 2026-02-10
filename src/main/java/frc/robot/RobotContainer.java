@@ -38,111 +38,114 @@ import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Hinge;
 
 public class RobotContainer {
-    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
-    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
+        private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+        private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
 
-    /* Setting up bindings for necessary control of the swerve drive platform */
-    private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1)
-            .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
-    private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-    private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
+        /* Setting up bindings for necessary control of the swerve drive platform */
+        private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
+                        .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1)
+                        .withDriveRequestType(DriveRequestType.OpenLoopVoltage);
+        private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
+        private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
-    private final Telemetry logger = new Telemetry(MaxSpeed);
+        private final Telemetry logger = new Telemetry(MaxSpeed);
 
-    public final CommandXboxController joystick = new CommandXboxController(0);
+        public final CommandXboxController joystick = new CommandXboxController(0);
 
-    public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+        public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
-    private final VisionIOPhotonVision camera0 = new VisionIOPhotonVision(VisionConstants.camera0Name,
-            VisionConstants.robotToCamera0);
-    private final VisionIOPhotonVision camera1 = new VisionIOPhotonVision(VisionConstants.camera1Name,
-            VisionConstants.robotToCamera1);
+        private final VisionIOPhotonVision camera0 = new VisionIOPhotonVision(VisionConstants.camera0Name,
+                        VisionConstants.robotToCamera0);
+        private final VisionIOPhotonVision camera1 = new VisionIOPhotonVision(VisionConstants.camera1Name,
+                        VisionConstants.robotToCamera1);
 
-    public final Vision vision = new Vision(
-            (Vision.VisionConsumer) drivetrain::addVisionMeasurement,
-            (Supplier<Pose2d>) (() -> drivetrain.getStateCopy().Pose),
-            camera0, camera1);
+        public final Vision vision = new Vision(
+                        (Vision.VisionConsumer) drivetrain::addVisionMeasurement,
+                        (Supplier<Pose2d>) (() -> drivetrain.getStateCopy().Pose),
+                        camera0, camera1);
 
-    public final Shooter shooter = new Shooter();
-    public final Intake intake = new Intake();
-    public final Turret turret = new Turret();
-    public final Transfer transfer = new Transfer();
-    public final Hood hood = new Hood();
-    public final Climb climb = new Climb();
-    public final Indexer indexer = new Indexer();
-    public final Hinge hinge = new Hinge();
+        public final Shooter shooter = new Shooter();
+        public final Intake intake = new Intake();
+        public final Turret turret = new Turret();
+        public final Transfer transfer = new Transfer();
+        public final Hood hood = new Hood();
+        public final Climb climb = new Climb();
+        public final Indexer indexer = new Indexer();
+        public final Hinge hinge = new Hinge();
 
-    public final AutoFire autoFireCommand = new AutoFire(turret, transfer, shooter, hood);
+        public final AutoFire autoFireCommand = new AutoFire(turret, transfer, shooter, hood);
 
-    public RobotContainer() {
-        NamedCommands.registerCommand("testNamedCommand",
-                Commands.runOnce(() -> System.out.println("this named command works")));
+        public RobotContainer() {
+                NamedCommands.registerCommand("testNamedCommand",
+                                Commands.runOnce(() -> System.out.println("this named command works")));
 
-        configureBindings();
-    }
+                configureBindings();
+        }
 
-    private void configureBindings() {
-        drivetrain.setDefaultCommand(
-                drivetrain.applyRequest(() -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed * 0.3)
-                        .withVelocityY(-joystick.getLeftX() * MaxSpeed * 0.3)
-                        .withRotationalRate(-joystick.getRightX() * MaxAngularRate * 0.3)));
+        private void configureBindings() {
+                drivetrain.setDefaultCommand(
+                                drivetrain.applyRequest(() -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed * 0.3)
+                                                .withVelocityY(-joystick.getLeftX() * MaxSpeed * 0.3)
+                                                .withRotationalRate(-joystick.getRightX() * MaxAngularRate * 0.3)));
 
-        final var idle = new SwerveRequest.Idle();
-        RobotModeTriggers.disabled().whileTrue(
-                drivetrain.applyRequest(() -> idle).ignoringDisable(true));
+                final var idle = new SwerveRequest.Idle();
+                RobotModeTriggers.disabled().whileTrue(
+                                drivetrain.applyRequest(() -> idle).ignoringDisable(true));
 
-        joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
-        joystick.b().whileTrue(drivetrain.applyRequest(
-                () -> point.withModuleDirection(
-                        new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))));
+                joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
+                joystick.b().whileTrue(drivetrain.applyRequest(
+                                () -> point.withModuleDirection(
+                                                new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))));
 
-        // SysId routines
-        joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+                // SysId routines
+                joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+                joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+                joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+                joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
-        // Seed field centric
-        joystick.povUp().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+                // Seed field centric
+                joystick.povUp().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-        // Turret controls
-        joystick.rightTrigger().whileTrue(turret.turretPos());
-        joystick.leftTrigger().whileTrue(turret.turretNeg());
-        joystick.leftTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
-        joystick.rightTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
+                // Turret controls
+                joystick.rightTrigger().whileTrue(turret.turretPos());
+                joystick.leftTrigger().whileTrue(turret.turretNeg());
+                joystick.leftTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
+                joystick.rightTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
 
-        // Shooter controls
-        joystick.leftBumper().onTrue(Commands.runOnce(() -> shooter.decreaseSpeed()));
-        joystick.rightBumper().onTrue(Commands.runOnce(() -> shooter.increaseSpeed()));
-        
-        // Hood control
-        joystick.povDown().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
+                // Shooter controls
+                joystick.leftBumper().onTrue(Commands.runOnce(() -> shooter.decreaseSpeed()));
+                joystick.rightBumper().onTrue(Commands.runOnce(() -> shooter.increaseSpeed()));
 
-        // Intake controls
-        joystick.povRight().whileTrue(intake.intakeCommand()).onFalse(intake.stopRollerCommand());
-        joystick.povLeft().whileTrue(intake.outtakeCommand()).onFalse(intake.stopRollerCommand());
+                // Hood control
+                joystick.povDown().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
 
-        // Turret tracking
-        joystick.y().onTrue(new TurretTracking(turret, () -> drivetrain.getStateCopy().Pose));
+                // Intake controls
+                joystick.povRight().whileTrue(intake.intakeCommand()).onFalse(intake.stopRollerCommand());
+                joystick.povLeft().whileTrue(intake.outtakeCommand()).onFalse(intake.stopRollerCommand());
 
-        // Transfer control
-        joystick.b().onTrue(Commands.runOnce(() -> transfer.toggleTransfer()));
+                // Turret tracking
+                joystick.y().onTrue(new TurretTracking(turret, () -> drivetrain.getStateCopy().Pose));
 
-        // Indexer control
-        // Moved to right stick click or something else to avoid conflict with Transfer (B) or TurretTracking (Y)?
-        // Let's use right stick button
-        joystick.rightStick().onTrue(indexer.toggleIndexer());
+                // Transfer control
+                joystick.b().onTrue(Commands.runOnce(() -> transfer.toggleTransfer()));
 
-        // Chase fuel ball with X button (PhotonVision feature)
-        joystick.x().whileTrue(new FuelChaseCommand(25, camera0.getCamera(), drivetrain,
-                () -> drivetrain.getStateCopy().Pose, VisionConstants.robotToCamera0));
+                // Indexer control
+                // Moved to right stick click or something else to avoid conflict with Transfer
+                // (B) or TurretTracking (Y)?
+                // Let's use right stick button
+                joystick.rightStick().onTrue(indexer.toggleIndexer());
 
-        drivetrain.registerTelemetry(logger::telemeterize);
-    }
+                // Chase fuel ball with X button (PhotonVision feature)
+                joystick.x().whileTrue(FuelChaseCommand.createChaseCommand(
+                                25, camera0.getCamera(), drivetrain,
+                                () -> drivetrain.getStateCopy().Pose, VisionConstants.robotToCamera0));
 
-    public Command getAutonomousCommand() {
-        return new FuelChaseCommand(25, camera0.getCamera(), drivetrain,
-                () -> drivetrain.getStateCopy().Pose, VisionConstants.robotToCamera0);
-    }
+                drivetrain.registerTelemetry(logger::telemeterize);
+        }
+
+        public Command getAutonomousCommand() {
+                return FuelChaseCommand.createChaseCommand(
+                                25, camera0.getCamera(), drivetrain,
+                                () -> drivetrain.getStateCopy().Pose, VisionConstants.robotToCamera0);
+        }
 }

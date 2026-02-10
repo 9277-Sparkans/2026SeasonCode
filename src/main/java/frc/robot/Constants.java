@@ -206,7 +206,7 @@ public class Constants {
 
         public static final double kClimbMaxVelocity = 90; // rps
         public static final int kClimbCURRENT_LIMIT = 30;   
-        public static final double kClimb_SPEED = .3; 
+        public static final double kClimb_SPEED = 0.3; 
 
 
         public static final int kClimbGearRatio = 9 / 1;
@@ -224,7 +224,7 @@ public class Constants {
     public static final class IndexerConstants {
         public static final double kIndexerMaxVoltage = 5;// kraken x44 max voltage
         public static final int kIndexerMotorID = 35; // change this value
-        public static final double kIndexerSpeed = 0.25;
+        public static final double kIndexerSpeed = 0.5;
         public static final double kIndexerGearRatio = 12.0/15.0;
         public static final double indexerSpeed = 30.0; //rps
 

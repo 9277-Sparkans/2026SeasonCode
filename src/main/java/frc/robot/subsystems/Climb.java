@@ -12,20 +12,23 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 
 public class Climb extends SubsystemBase {
-    CANBus kCANBus = CANBus.roboRIO();
+    //CANBus kCANBus = CANBus.roboRIO();
     private final TalonFX climbMotor;
     private final TalonFXConfiguration climbConfig;
+    MotionMagicVoltage climb = new MotionMagicVoltage(0).withSlot(0);
+
 
     public enum ClimbState {
         DOWN,
-        UP
+        UP,
+        HANG
     }
 
     private ClimbState climbState;
 
     public Climb() {
 
-        climbMotor = new TalonFX(Constants.ClimbConstants.kClimbMotorID, kCANBus);
+        climbMotor = new TalonFX(Constants.ClimbConstants.kClimbMotorID);
         climbConfig = new TalonFXConfiguration();
 
         /* PID */
@@ -59,14 +62,15 @@ public class Climb extends SubsystemBase {
 
         switch (state) {
             case UP:
-                MotionMagicVoltage climbUP = new MotionMagicVoltage(5).withSlot(0);
-                climbMotor.setControl(climbUP.withPosition(-155));
+                climbMotor.setControl(climb.withPosition(-155));
                 break;
             case DOWN:
-                MotionMagicVoltage DOWN = new MotionMagicVoltage(5).withSlot(0);
-                climbMotor.setControl(DOWN.withPosition(0.0));
+                climbMotor.setControl(climb.withPosition(0.0));
                 break;
-
+            case HANG:
+                double currentPos = climbMotor.getPosition().getValueAsDouble();
+                MotionMagicVoltage HANG = new MotionMagicVoltage(currentPos).withSlot(0);
+                climbMotor.setControl(HANG.withPosition(currentPos));
         }
     }
 
@@ -75,14 +79,26 @@ public class Climb extends SubsystemBase {
     public Command climbUp() {
         return Commands.runOnce(() -> {
             System.out.println("climb UP command running");
-            states(ClimbState.UP);
+            climbMotor.setControl(climb.withPosition(-155));
+
+            // states(ClimbState.UP);
         });
     }
 
     public Command climbDown() {
         return Commands.runOnce(() -> {
             System.out.println("climb DOWN command running");
-            states(ClimbState.DOWN);
+            climbMotor.setControl(climb.withPosition(0.0));
+            // states(ClimbState.DOWN);
+        });
+    }
+
+    public Command climbHang() {
+        return Commands.runOnce(() -> {
+            System.out.println("climb HANG command running");
+            double currentPos = climbMotor.getPosition().getValueAsDouble();
+            climbMotor.setControl(new MotionMagicVoltage(currentPos).withSlot(0).withPosition(currentPos));
+            // states(ClimbState.HANG);
         });
     }
 }

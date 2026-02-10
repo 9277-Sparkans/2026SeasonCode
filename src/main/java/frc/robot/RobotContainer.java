@@ -96,8 +96,10 @@ public class RobotContainer {
         joystick.povUp().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         // CLIMB button controls
-        // joystick.povRight().whileTrue(climb.climbUp());
-        // joystick.povLeft().whileTrue(climb.climbDown());
+        joystick.povRight().whileTrue(climb.climbUp());
+        joystick.povRight().whileFalse(climb.climbHang());
+        joystick.povLeft().whileTrue(climb.climbDown());
+        joystick.povLeft().whileFalse(climb.climbHang());
 
 
         // HOOD button controls
@@ -128,25 +130,19 @@ public class RobotContainer {
         // TRANSFER button controls
         joystick.b().onTrue(Commands.runOnce(() -> transfer.toggleTransfer()));
 
-        // joystick.povRight()
-        //     .whileTrue(
-        //         new InstantCommand(() -> intake.intakeCommand()))
-        //     .onFalse(
-        //         new InstantCommand(() -> intake.stopRollerCommand()));
-
 
         // INTAKE button controls
-        joystick.povRight()
-            .whileTrue(
-                intake.intakeCommand())
-            .onFalse(
-                intake.stopRollerCommand());
+        // joystick.povRight()
+        //     .whileTrue(
+        //         intake.intakeCommand())
+        //     .onFalse(
+        //         intake.stopRollerCommand());
 
-        joystick.povLeft()
-            .whileTrue(
-                intake.outtakeCommand())
-            .onFalse(
-                intake.stopRollerCommand());
+        // joystick.povLeft()
+        //     .whileTrue(
+        //         intake.outtakeCommand())
+        //     .onFalse(
+        //         intake.stopRollerCommand());
 
 
         // HINGE button controls

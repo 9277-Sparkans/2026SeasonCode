@@ -66,34 +66,34 @@ public class Hinge extends SubsystemBase{
     }
 
     // state for climb up
-    // public void states(HingeState state) {
+    public void states(HingeState state) {
 
-    //     switch (state) {
-    //         case UP:
-    //             hinge.setControl(hingey.withPosition(degToRotations(Constants.HingeConstants.hingeMaxDeg)));
-    //             break;
-    //         case DOWN:
-    //             hinge.setControl(hingey.withPosition(0.0));
-    //             break;
+        switch (state) {
+            case UP:
+                hinge.setControl(hingey.withPosition(degToRotations(Constants.HingeConstants.hingeMaxDeg)));
+                break;
+             case DOWN:
+                hinge.setControl(hingey.withPosition(0.0));
+                break;
 
-    //     }
-    // }
+        }
+    }
 
     /* ================= COMMANDS ================= */
 
-    // public Command hingeUp() {
-    //     return Commands.runOnce(() -> {
-    //         System.out.println("hinge UP command running");
-    //         hinge.setControl(hingey.withPosition(degToRotations(Constants.HingeConstants.hingeMaxDeg)));
-    //         // states(HingeState.UP);
-    //     });
-    // }
+    public Command hingeUp() {
+        return Commands.runOnce(() -> {
+            System.out.println("hinge UP command running");
+            hinge.setControl(hingey.withPosition(degToRotations(Constants.HingeConstants.hingeMaxDeg)));
+            // states(HingeState.UP);
+        });
+    }
 
-    // public Command hingeDown() {
-    //     return Commands.runOnce(() -> {
-    //         System.out.println("hinge DOWN command running");
-    //         hinge.setControl(hingey.withPosition(0.0));
-    //         // states(HingeState.DOWN);
-    //     });
-    // }
+    public Command hingeDown() {
+        return Commands.runOnce(() -> {
+            System.out.println("hinge DOWN command running");
+            hinge.setControl(hingey.withPosition(0.0));
+            // states(HingeState.DOWN);
+        });
+    }
 }

@@ -101,8 +101,8 @@ public class Constants {
         public static double turret_kD = 0.5;
 
 
-        public static double kMaximumAngle = 20.0;
-        public static double kMinimumAngle = -20.0;
+        public static double kMaximumAngle = 60.0;
+        public static double kMinimumAngle = -60.0;
         
         public static double kGearRatio = 105.0 / 18.0;
     }

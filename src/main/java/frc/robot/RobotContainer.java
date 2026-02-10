@@ -114,8 +114,8 @@ public class RobotContainer {
         joystick.leftTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
         joystick.rightTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
 
-        // joystick.x().whileTrue(new TurretTracking((turret)));
-        // joystick.x().onFalse(Commands.runOnce(() -> turret.stop(), turret));
+        joystick.x().whileTrue(new TurretTracking((turret)));
+        joystick.x().onFalse(Commands.runOnce(() -> turret.stop(), turret));
 
         // SHOOTER button controls
         joystick.leftBumper().onTrue(Commands.runOnce(() -> shooter.decreaseSpeed()));

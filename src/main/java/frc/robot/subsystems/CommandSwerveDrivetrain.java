@@ -23,6 +23,8 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
@@ -386,6 +388,18 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         Logger.recordOutput("Drivetrain/Debug/LastVisionStdDevY", visionMeasurementStdDevs.get(1, 0));
         Logger.recordOutput("Drivetrain/Debug/LastVisionStdDevTheta", visionMeasurementStdDevs.get(2, 0));
         super.addVisionMeasurement(visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
+    }
+
+    /**
+     * Get the current 3D pose of the robot.
+     * Uses the 2D odometry pose and the 3D rotation from the Pigeon2.
+     * 
+     * @return The 3D pose of the robot.
+     */
+    public Pose3d getPose3d() {
+        var pose2d = getStateCopy().Pose;
+        var rotation3d = pidgey.getRotation3d();
+        return new Pose3d(pose2d.getX(), pose2d.getY(), 0.0, rotation3d);
     }
 
 }

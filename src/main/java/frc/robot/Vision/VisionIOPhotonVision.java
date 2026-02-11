@@ -15,6 +15,7 @@ package frc.robot.Vision;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Pose3d;
 
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -68,7 +69,7 @@ public class VisionIOPhotonVision implements VisionIO {
 		inputs.setConnected(camera.isConnected());
 
 		// Seed the estimator with the current pose
-		estimator.setReferencePose(currentPose);
+		// estimator.setReferencePose(currentPose); // Deprecated
 
 		// Read new camera observations
 		Set<Short> tagIds = new HashSet<>();
@@ -120,7 +121,7 @@ public class VisionIOPhotonVision implements VisionIO {
 
 			// 2. Fallback to local estimation (single tag or if coproc fails)
 			if (estimatedPose.isEmpty() && result.hasTargets()) {
-				estimatedPose = estimator.update(result);
+				estimatedPose = estimator.estimateClosestToReferencePose(result, new Pose3d(currentPose));
 				org.littletonrobotics.junction.Logger.recordOutput(
 						"Vision/Debug/" + camera.getName() + "/UsedLocalEstimation", true);
 			} else {

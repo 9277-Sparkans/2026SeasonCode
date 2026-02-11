@@ -138,7 +138,7 @@ public class RobotContainer {
                 // Chase fuel ball with X button (PhotonVision feature)
                 joystick.x().whileTrue(new FuelChaseCommand(
                                 25, camera0.getCamera(), drivetrain,
-                                () -> drivetrain.getStateCopy().Pose, VisionConstants.robotToCamera0));
+                                drivetrain::getPose3d, VisionConstants.robotToCamera0));
 
                 drivetrain.registerTelemetry(logger::telemeterize);
         }
@@ -147,6 +147,6 @@ public class RobotContainer {
                 return new FuelChaseCommand(
                                 25, camera0.getCamera(), drivetrain, // Change to the camera that will chase fuel once
                                                                      // we get the fuel pose calculations working!!
-                                () -> drivetrain.getStateCopy().Pose, VisionConstants.robotToCamera0);
+                                drivetrain::getPose3d, VisionConstants.robotToCamera0);
         }
 }

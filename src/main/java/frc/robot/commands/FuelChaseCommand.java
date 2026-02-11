@@ -23,7 +23,7 @@ public class FuelChaseCommand extends Command {
 
     private final CommandSwerveDrivetrain drivetrain;
     private final PhotonCamera camera;
-    private final Supplier<Pose2d> poseProvider;
+    private final Supplier<Pose3d> poseProvider;
     private final Transform3d robotToCamera;
     private final int idToChase;
 
@@ -84,7 +84,7 @@ public class FuelChaseCommand extends Command {
             int idToChase,
             PhotonCamera camera,
             CommandSwerveDrivetrain drivetrain,
-            Supplier<Pose2d> poseProvider,
+            Supplier<Pose3d> poseProvider,
             Transform3d robotToCamera) {
 
         this.idToChase = idToChase;
@@ -115,7 +115,8 @@ public class FuelChaseCommand extends Command {
         var robotPose = poseProvider.get();
         xController.reset(robotPose.getX());
         yController.reset(robotPose.getY());
-        omegaController.reset(robotPose.getRotation().getRadians());
+        // Using getZ() for rotation around Z (Yaw) from Rotation3d
+        omegaController.reset(robotPose.getRotation().getZ());
 
         lastTarget = null;
         goalPose = null;
@@ -156,7 +157,8 @@ public class FuelChaseCommand extends Command {
 
         double xSpeed = xController.calculate(robotPose.getX(), goalPose.getX());
         double ySpeed = yController.calculate(robotPose.getY(), goalPose.getY());
-        double omegaSpeed = omegaController.calculate(robotPose.getRotation().getRadians(),
+
+        double omegaSpeed = omegaController.calculate(robotPose.getRotation().getZ(),
                 goalPose.getRotation().getRadians());
 
         if (xController.atGoal())
@@ -172,10 +174,9 @@ public class FuelChaseCommand extends Command {
                 .withRotationalRate(omegaSpeed));
     }
 
-    private void updateGoal(PhotonTrackedTarget target, Pose2d robotPose2d) {
+    private void updateGoal(PhotonTrackedTarget target, Pose3d robotPose3d) {
         // Transform: Robot -> Camera -> Target -> Goal
-        // 1. Robot Pose (Field Frame)
-        var robotPose3d = new Pose3d(robotPose2d);
+        // 1. Robot Pose (Field Frame) - now passed as Pose3d directly
 
         // 2. Camera Pose (Field Frame) = Robot Pose + RobotToCamera
         var cameraPose = robotPose3d.transformBy(robotToCamera);

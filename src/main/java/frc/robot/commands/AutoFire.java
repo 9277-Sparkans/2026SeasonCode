@@ -11,6 +11,7 @@ import frc.robot.Constants.ShooterConstants;
 import frc.robot.Limelight;
 import frc.robot.Utils.Lookup;
 import frc.robot.Constants.HoodConstants;
+import frc.robot.Utils.Lookup;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -21,9 +22,9 @@ public class AutoFire extends Command
     Transfer transfer;
     Intake intake;
     Shooter shooter;
-    Hood hood;
     Lookup lookup;
-    int tgtRPM;
+    Hood hood;
+    double tgtRPM;
     double tgtAngle;
 
     public AutoFire(Turret turret, Transfer transfer, Shooter shooter, Hood hood, Intake intake, Lookup lookup)
@@ -32,9 +33,8 @@ public class AutoFire extends Command
         this.transfer = transfer;
         this.shooter = shooter;
         this.hood = hood;
-        this.lookup = lookup;
 
-        addRequirements(shooter, hood);
+        addRequirements(shooter, hood, transfer, turret, intake);
 
         tgtRPM = 0;
         tgtAngle = 0.0;
@@ -55,7 +55,7 @@ public class AutoFire extends Command
         tgtRPM = (int)(optimal[0]); // If possible RPM's should be doubles
         tgtAngle = optimal[1];
 
-        shooter.setShooterRPM(tgtRPM);
+        shooter.setShooterRPM((int)(tgtRPM));
         hood.setHoodToAngle(tgtAngle);
         transfer.activateTransfer();
         intake.intake();

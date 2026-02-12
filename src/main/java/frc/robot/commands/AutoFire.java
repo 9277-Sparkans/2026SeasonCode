@@ -7,9 +7,14 @@ import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
 import frc.robot.Constants.TransferConstants;
 import frc.robot.Constants.TurretConstants;
+import frc.robot.Limelight;
 import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.HoodConstants;
+import frc.robot.Utils.Lookup;
 
+import static edu.wpi.first.units.Units.Degrees;
+
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class AutoFire extends Command 
@@ -20,7 +25,7 @@ public class AutoFire extends Command
     Shooter shooter;
     Lookup lookup;
     Hood hood;
-    double tgtRPM;
+    double tgtRpm;
     double tgtAngle;
 
     public AutoFire(Turret turret, Transfer transfer, Shooter shooter, Hood hood, Intake intake, Lookup lookup)
@@ -39,7 +44,7 @@ public class AutoFire extends Command
     
     @Override
     public void initialize(){
-        tgtRPM = 0;
+        tgtRpm = 0;
     }
 
     @Override
@@ -50,8 +55,8 @@ public class AutoFire extends Command
         // set rpm from lookup 
         // set angle from lookup
 
-        shooter.setShooterRPM((int)(tgtRPM));
-        hood.setHoodToAngle(tgtAngle);
+        shooter.setTgtRpm((int)(tgtRpm));
+        hood.moveHoodToAngle(Angle.ofBaseUnits(tgtAngle, Degrees));
         transfer.activateTransfer();
         intake.intake();
     }
@@ -61,7 +66,7 @@ public class AutoFire extends Command
     {
         // hood.stopHood();
         shooter.targetRPM = 0;
-        shooter.fireAtRPM();
+        shooter.fireAtRpm();
         transfer.stop();
         intake.stop();
     }

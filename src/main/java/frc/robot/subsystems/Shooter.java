@@ -72,29 +72,23 @@ public class Shooter extends SubsystemBase {
         shooterMotor.setControl(m_request.withVelocity(tgt));
     }
 
-    // rps
-    public double GetShooterVelocity()
-    {
-        return shooterMotor.getVelocity().getValueAsDouble();
-    }
-
     public double GetShooterRPM()
     {
         return shooterMotor.getVelocity().getValueAsDouble() * 60;
     }
 
     public void increaseSpeed() {
-        if (shooterRpm + ShooterConstants.kRpmIncrement < ShooterConstants.kMaxRpm)
+        if (shooterRpm + ShooterConstants.kRpmIncrement < ShooterConstants.kMaxRPM)
         {
-            shooterRPS += ShooterConstants.kRpmIncrement;
+            shooterRpm += ShooterConstants.kRpmIncrement;
         }
     }
 
     public void decreaseSpeed()
     {
-        if (shooterRPS - ShooterConstants.kRpmIncrement > -10)
+        if (shooterRpm - ShooterConstants.kRpmIncrement > -10)
         {
-            shooterRPS -= ShooterConstants.kRpmIncrement;
+            shooterRpm -= ShooterConstants.kRpmIncrement;
         }
     }
 

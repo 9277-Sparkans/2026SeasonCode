@@ -45,17 +45,13 @@ import frc.robot.Constants.ShooterConstants;
 public class Hood extends SubsystemBase {
   private final TalonFX hoodMotor;
   private final CANcoder hoodEncoder;
-  private final CANcoder hoodEncoder;
   private final TalonFXConfiguration hoodMotorConfiguration;
   private final MotionMagicVoltage request = new MotionMagicVoltage(0).withSlot(0);
 
   public double targetHoodPosition = HoodConstants.kMinimumEncoderPos;
 
-  public double targetHoodPosition = HoodConstants.kMinimumEncoderPos;
-
   public Hood() {
     hoodMotor = new TalonFX(HoodConstants.kHoodMotorId);
-    hoodEncoder = new CANcoder(HoodConstants.kHoodEncoderId);
     hoodEncoder = new CANcoder(HoodConstants.kHoodEncoderId);
     hoodMotorConfiguration = new TalonFXConfiguration();
 
@@ -159,8 +155,6 @@ public class Hood extends SubsystemBase {
 
   // POV UP move hood to -0.75
   public Command moveHoodToTgtCmd() {
-    // return Commands.runOnce(() -> moveHoodMotionMagic(-27)); 
-    return Commands.runOnce(() -> {});
     // return Commands.runOnce(() -> moveHoodMotionMagic(-27)); 
     return Commands.runOnce(() -> {});
   }

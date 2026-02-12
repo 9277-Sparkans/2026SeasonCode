@@ -150,6 +150,10 @@ public class Constants {
         public static final double shooter_kV = 0.0;
         public static final double shooter_kA = 0.0;
 
+        public static double autoshootDistanceRange = 10;
+        public static double autoshootAngleWeight = 0.1; // idk tbh
+        public static String lookupTablePath = "";
+
 
 
     }
@@ -157,6 +161,7 @@ public class Constants {
     public static class HoodConstants
     {
         public static final int kHoodMotorId = 34;
+        public static final int kHoodEncoderId = 0;
 
         public static final double hood_maxVelocity = 1; // rotations per second
         public static final double hood_maxAcceleration = 80; // rotations per second^2

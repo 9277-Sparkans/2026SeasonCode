@@ -53,25 +53,6 @@ public class Intake extends SubsystemBase {
 		return Commands.runOnce(() -> stop());
 	}
 
-	// public void deployIntake()
-	// {
-	// 	MotionMagicVoltage deploymentRequest = new MotionMagicVoltage(IntakeConstants.deploymentMaxDeg).withSlot(0);
-	// 	deployment.setControl(deploymentRequest.withPosition(GetDeploymentPosition()));
-	// }
-//
-	public void deployIntake(){
-		double tgt = (IntakeConstants.deploymentMaxDeg * IntakeConstants.deploymentGearRatio) / 360;
-    	final MotionMagicVoltage m_request = new MotionMagicVoltage(0);
-
-    	deployment.setControl(m_request.withPosition(tgt)); //motor rotations
-	}
-
-	public void retractIntake()
-	{
-    	final MotionMagicVoltage m_request = new MotionMagicVoltage(0);
-    	deployment.setControl(m_request.withPosition(0)); //motor rotations
-	}
-
 	public void intake()
 	{
 		intakeMotor.set(IntakeConstants.intakeSpeed);

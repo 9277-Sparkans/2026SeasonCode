@@ -19,7 +19,7 @@ public class Climb extends SubsystemBase {
     private final TalonFXConfiguration climbConfig;
     MotionMagicVoltage m_request = new MotionMagicVoltage(-5).withSlot(0);
 
-        private ClimbState climbState;
+    private ClimbState climbState;
 
     public enum ClimbState {
         DOWN,
@@ -27,11 +27,10 @@ public class Climb extends SubsystemBase {
         HANG
     }
 
-    private ClimbState climbState;
 
     public Climb() {
 
-                climbMotor = new TalonFX(Constants.ClimbConstants.kClimbMotorID, kCANBus);
+                climbMotor = new TalonFX(Constants.ClimbConstants.kClimbMotorID);
                 climbConfig = new TalonFXConfiguration();
 
         /* PID */
@@ -55,19 +54,11 @@ public class Climb extends SubsystemBase {
     public void setState(ClimbState state) {
         climbState = state;
     }
-    public void setState(ClimbState state) {
-        climbState = state;
-    }
 
     public ClimbState getState() {
         return climbState;
     }
-    public ClimbState getState() {
-        return climbState;
-    }
 
-    // state for climb up
-    public void states(ClimbState state) {
     // state for climb up
     public void states(ClimbState state) {
 

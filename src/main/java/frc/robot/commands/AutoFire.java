@@ -14,7 +14,7 @@ public class AutoFire extends Command
     Transfer transfer;
     Shooter shooter;
     Hood hood;
-    int tgtRPM;
+    int tgtRpm;
     double tgtAngle;
 
     public AutoFire(Turret turret, Transfer transfer, Shooter shooter, Hood hood)
@@ -26,7 +26,7 @@ public class AutoFire extends Command
 
         addRequirements(shooter, hood);
 
-        tgtRPM = 0;
+        tgtRpm = 0;
         tgtAngle = 0.0;
         
     }
@@ -34,34 +34,35 @@ public class AutoFire extends Command
     
     @Override
     public void initialize(){
-        tgtRPM = shooter.GetCorrectRPS();
+        // tgtRpm = shooter.GetCorrectRps();
         //tgtAngle = hood.GetTargetHoodAngle();
     }
 
     @Override
     public void execute()
     {
-        shooter.fireAtRPM();
+        // get from lookup table
+        // shooter.fireAtRps();
         // hood.moveHoodToAngle(tgtAngle);
 
         // add in turret
 
-        if (Math.abs(shooter.GetCorrectRPS() - shooter.GetShooterVelocity()) < ShooterConstants.kRpmLenience)
-        {
-            transfer.activateTransfer();
-        }
-        else
-        {
-            transfer.stop();
-        }
+        // if (Math.abs(shooter.GetCorrectRps() - shooter.GetShooterVelocity()) < ShooterConstants.kRpsLenience)
+        // {
+        //     transfer.activateTransfer();
+        // }
+        // else
+        // {
+        //     transfer.stop();
+        // }
     }
 
     @Override
     public void end(boolean interrupted)
     {
         // hood.stopHood();
-        shooter.targetRPM = 0;
-        shooter.fireAtRPM();
+        // shooter.targetRpm = 0;
+        // shooter.fireAtRps();
         transfer.stop();
     }
 

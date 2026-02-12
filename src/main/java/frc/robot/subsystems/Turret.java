@@ -17,7 +17,8 @@ public class Turret extends SubsystemBase {
   private final TalonFXConfiguration turretMotorConfig;
   public double turretOffset = 0.0;
 
-  public double targetHoodAngle = HoodConstants.kMaximumAngle;
+  final MotionMagicVoltage m_request = new MotionMagicVoltage(0.0);
+
 
 
   /** Creates a new Turret. */
@@ -32,7 +33,6 @@ public class Turret extends SubsystemBase {
     turretMotorConfig.Slot0.kP = TurretConstants.turret_kP;
     turretMotorConfig.Slot0.kI = TurretConstants.turret_kI;
     turretMotorConfig.Slot0.kD = TurretConstants.turret_kD;
-    turretMotorConfig.Slot0.kG = TurretConstants.turret_kG;
 
     turretMotorConfig.Voltage.PeakForwardVoltage = TurretConstants.turret_maxVoltage;
     turretMotorConfig.Voltage.PeakReverseVoltage = -TurretConstants.turret_maxVoltage;
@@ -47,7 +47,6 @@ public class Turret extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // System.out.println(Limelight.GetAngle());
   }
 
   public double getPosition() {
@@ -90,16 +89,10 @@ public class Turret extends SubsystemBase {
   public void turretMoveTgt(double llAngle){
 
     boolean isAtTarget = Math.abs(turretMotor.getClosedLoopError().getValue()) < 1.5;
-    double tgt = (-llAngle * TurretConstants.kGearRatio) / 360;
- 
-    // if (isAtTarget) {
-    //   return;
-    // }
-
-    // else {
-      final MotionMagicVoltage m_request = new MotionMagicVoltage(tgt);
-      turretMotor.setControl(m_request); //motor rotations
-    // }
+    double tgt = (-llAngle * 10 * TurretConstants.kGearRatio) / 360;
+    
+    turretMotor.setControl(m_request.withPosition(tgt)); //motor rotations
+    
   }
 
 

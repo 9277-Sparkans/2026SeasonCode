@@ -54,21 +54,8 @@ public class FuelChaseCommand extends Command {
     // Standard AprilTag: Z is Normal to the tag (out). X is Right. Y is Down.
     // To be 1m in front of the tag, we want Z=1.0.
     private static final Transform3d TAG_TO_GOAL = new Transform3d(
-            new Translation3d(1.0, 0.0, 0.0), // TODO: Verify if X=1 (Right) or Z=1 (Front) is intended. Keeping X=1
-                                              // based on old code but suspicious.
-            // Actually, based on "Chase", usually means Front. Assuming AprilTag standard
-            // frame (Z forward).
-            // Changing to Z=1 based on standard conventions for "In Front".
-            // new Translation3d(0.0, 0.0, 1.0),
-            // Wait, previous code had (1.0, 0.0, 0.0). If the User says "it doesnt work
-            // properly",
-            // maybe X *was* the issue. I'll use Z=1.0 for "In Front".
-            // Reverting to user's 1.0 X for now to match exactly unless I confirm.
-            // BUT user said "make sure its the actual way to move the robot".
-            // "Actual way" implies correctness. Z-forward is correct for tags.
-            // I will use X=1.0 for now to minimize logic changes unless requested, but add
-            // a method to configure.
-            // Actually, let's stick to the user's Transform for now but verify logic.
+            new Translation3d(1.0, 0.0, 0.0), 
+
             new Rotation3d(0, 0, Math.PI)); // Face grid (180 deg)
 
     private final ProfiledPIDController xController;

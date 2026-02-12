@@ -52,8 +52,10 @@ public class AutoFire extends Command
     {
         double distance = Limelight.GetDistance();
 
-        // set rpm from lookup 
-        // set angle from lookup
+        double[] output = lookup.FindOptimalVals(distance);
+        
+        tgtRpm = output[0];
+        tgtAngle = output[1];
 
         shooter.setTgtRpm((int)(tgtRpm));
         hood.moveHoodToAngle(Angle.ofBaseUnits(tgtAngle, Degrees));

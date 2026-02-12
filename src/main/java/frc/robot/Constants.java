@@ -291,5 +291,17 @@ public class Constants {
     public static final class LimelightConstants {
         public static final String limelightName = "limelight-a";
     }
-    
+
+    public static final class LockModeConstants
+    {
+        public static final int kLockModeRPM = 3300;
+
+        public static final double kHoodLeft = 15;
+        public static final double kHoodCenter = 15;
+        public static final double kHoodRight = 15;
+        
+        public static final double kTurretLeft = 45;
+        public static final double kTurretCenter = 0;
+        public static final double kTurretRight = -45;
+    }
 }

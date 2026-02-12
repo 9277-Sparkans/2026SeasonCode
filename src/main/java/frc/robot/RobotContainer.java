@@ -113,24 +113,23 @@ public class RobotContainer {
         joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // reset the field-centric heading on left bumper press
-        joystick.povUp().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         // CLIMB button controls
-        // joystick.povRight().onTrue(climb.climbUp());
-        // joystick.povRight().onFalse(climb.climbHang());
-        // joystick.povLeft().onTrue(climb.climbDown());
-        // joystick.povLeft().onFalse(climb.climbHang());
+        // joystick.y().whileTrue(climb.climbUp());
+        // joystick.x().whileTrueFalse(climb.climbHang());
+        // joystick.a().whileTrue(climb.climbDown());
 
-        joystick.povRight().onTrue(climb.runClimbCommand());
-        joystick.povRight().onFalse(climb.stopCommand());
+        // joystick.povRight().onTrue(climb.runClimbCommand());
+        // joystick.povRight().onFalse(climb.stopCommand());
         
 
 
         // HOOD button controls
-        // joystick.povUp().onTrue(Commands.runOnce(() -> hood.runHood()));
-        // joystick.povDown().onTrue(Commands.runOnce(() -> hood.runHoodReverse()));
+        joystick.povUp().onTrue(Commands.runOnce(() -> hood.runHood()));
+        joystick.povDown().onTrue(Commands.runOnce(() -> hood.runHoodReverse()));
 
-        // joystick.povUp().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
+        joystick.povUp().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
         joystick.povDown().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
 
 
@@ -163,29 +162,30 @@ public class RobotContainer {
         // .andThen(Commands.runOnce(() -> lockModeCommand.execute())));
 
         // INTAKE button controls
-        // joystick.povRight()
-        //     .whileTrue(
-        //         intake.intakeCommand())
-        //     .onFalse(
-        //         intake.stopRollerCommand());
+        joystick.y()
+            .whileTrue(
+                intake.intakeCommand())
+            .onFalse(
+                intake.stopRollerCommand());
 
-        // joystick.povLeft()
-        //     .whileTrue(
-        //         intake.outtakeCommand())
-        //     .onFalse(
-        //         intake.stopRollerCommand());
+        joystick.a()
+            .whileTrue(
+                intake.outtakeCommand())
+            .onFalse(
+                intake.stopRollerCommand());
 
 
         // HINGE button controls
-        // joystick.x()
-        //     .onTrue(hinge.hingeUp());
+        joystick.povRight()
+            .onTrue(hinge.hingeUp());
 
-        // joystick.a()
-        //     .onTrue(hinge.hingeDown());
+        joystick.povLeft()
+            .onTrue(hinge.hingeDown());
         
         
-        // ROLLER button controls
-        joystick.y().onTrue(indexer.toggleIndexer()); 
+        // INDEXER button controls
+        joystick.b().onTrue(indexer.toggleIndexer());
+
 
         drivetrain.registerTelemetry(logger::telemeterize);
     }   

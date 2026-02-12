@@ -133,7 +133,7 @@ public class Constants {
 
         public static final int kRpmLenience = 200;
 
-        public static final int kRpmIncrement = 10;
+        public static final int kRpmIncrement = 50;
 
         public static final int kMinRPM = 2000;
         public static final int kMaxRPM = 6000;
@@ -219,12 +219,12 @@ public class Constants {
         public static final double hingeMaxVoltage = 4;
         public static final double hingeMaxAcceleration = 10;
         public static final double hingeMaxVelocity = 10; // rps
-        public static final double kHingeCurrentLimit = 120;
+        public static final double kHingeCurrentLimit = 50;
 
         public static final int hingeCountsPerRevolution = 2048; // for kraken x60
         public static final double hingeGearRatio = 45.0 / 1.0;
 
-        public static final double hingeMaxDeg = -30.0;
+        public static final double hingeMaxDeg = -120.0;
     }
 
     public static class ClimbConstants

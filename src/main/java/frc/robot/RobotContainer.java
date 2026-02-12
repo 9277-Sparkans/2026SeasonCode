@@ -23,12 +23,17 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
+import frc.robot.Constants.OIConstants;
+import frc.robot.Utils.Lookup;
+import frc.robot.commands.TurretTracking;
+import frc.robot.commands.LockMode.lockState;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Indexer;
 import frc.robot.commands.AutoFire;
+import frc.robot.commands.LockMode;
 import frc.robot.commands.TurretTracking;
 import frc.robot.subsystems.Transfer;
 import frc.robot.subsystems.Climb;
@@ -61,7 +66,9 @@ public class RobotContainer {
     public final Indexer indexer = new Indexer();
     public final Hinge hinge = new Hinge();
 
-    public final AutoFire autoFireCommand = new AutoFire(turret, transfer, shooter, hood);
+    public final Lookup lookup = Utils.createLookup(hood, shooter);
+    public final AutoFire autoFireCommand = new AutoFire(turret, transfer, shooter, hood, intake, lookup);
+    public final LockMode lockModeCommand = new LockMode(turret, shooter, hood);
 
     public RobotContainer() {
         NamedCommands.registerCommand("testNamedCommand", Commands.runOnce(() -> System.out.println("this named command works")));
@@ -147,6 +154,13 @@ public class RobotContainer {
         // TRANSFER button controls
         joystick.b().onTrue(Commands.runOnce(() -> transfer.toggleTransfer()));
 
+        // lock mode controls
+        // joystick.a().onTrue(Commands.runOnce(() -> lockModeCommand.setLockState(lockState.LEFT))
+        // .andThen(Commands.runOnce(() -> lockModeCommand.execute())));
+        // joystick.b().onTrue(Commands.runOnce(() -> lockModeCommand.setLockState(lockState.CENTER))
+        // .andThen(Commands.runOnce(() -> lockModeCommand.execute())));
+        // joystick.x().onTrue(Commands.runOnce(() -> lockModeCommand.setLockState(lockState.RIGHT))
+        // .andThen(Commands.runOnce(() -> lockModeCommand.execute())));
 
         // INTAKE button controls
         // joystick.povRight()

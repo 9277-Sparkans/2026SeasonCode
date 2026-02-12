@@ -3,11 +3,16 @@
 // // the WPILib BSD license file in the root directory of this project.
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Rotations;
+
 import static edu.wpi.first.units.Units.Degree;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.controls.PositionDutyCycle;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
@@ -19,11 +24,23 @@ import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Utils;
+import frc.robot.Telemetry;
+import frc.robot.Utils;
 import frc.robot.Constants.HoodConstants;
+import frc.robot.Constants.ShooterConstants;
 
 public class Hood extends SubsystemBase {
   private final TalonFX hoodMotor;
@@ -38,6 +55,8 @@ public class Hood extends SubsystemBase {
     hoodEncoder = new CANcoder(HoodConstants.kHoodEncoderId);
     hoodMotorConfiguration = new TalonFXConfiguration();
 
+    hoodMotor.setPosition(0);
+
     // Current limiting
     CurrentLimitsConfigs hoodCurrent = new CurrentLimitsConfigs();
     hoodCurrent.StatorCurrentLimit = HoodConstants.kHoodCurrentLimit;
@@ -48,6 +67,8 @@ public class Hood extends SubsystemBase {
     hoodMotorConfiguration.Slot0.kP = HoodConstants.hood_kP;
     hoodMotorConfiguration.Slot0.kI = HoodConstants.hood_kI;
     hoodMotorConfiguration.Slot0.kD = HoodConstants.hood_kD;
+
+    hoodMotorConfiguration.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0;
 
     hoodMotorConfiguration.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0;
 
@@ -83,6 +104,8 @@ public class Hood extends SubsystemBase {
     // MotionMagic will NOT work if you tell the motor that it has
     // a remote CANcoder on it (in my testing)
     // hoodMotor.setPosition(hoodEncoder.getAbsolutePosition().getValueAsDouble());
+    moveHoodWithEncoder(targetHoodPosition);
+    // System.out.println("Hood motor rotations: " + hoodMotor.getPosition().getValueAsDouble());
   }
 
   //motion magic
@@ -159,4 +182,8 @@ public class Hood extends SubsystemBase {
     moveHoodMotionMagic();
   }
 
+  public double GetHoodAngle()
+  {
+    return 0; // TEMP VALUE
+  }
 }

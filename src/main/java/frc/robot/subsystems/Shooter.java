@@ -71,20 +71,21 @@ public class Shooter extends SubsystemBase {
         double tgt = (shooterRpm / ShooterConstants.kShooterGearRatio) * 60.0; // convert to rpm at motor
         shooterMotor.setControl(m_request.withVelocity(tgt));
     }
-    
-    // getters
-    public int GetCorrectRpm() {
-        return shooterRpm;
+
+    public double GetShooterRPM()
+    {
+        return shooterMotor.getVelocity().getValueAsDouble() * 60;
     }
 
     public void increaseSpeed() {
-        if (shooterRpm + ShooterConstants.kRpmIncrement < ShooterConstants.kMaxRpm)
+        if (shooterRpm + ShooterConstants.kRpmIncrement < ShooterConstants.kMaxRPM)
         {
             shooterRpm += ShooterConstants.kRpmIncrement;
         }
     }
 
-    public void decreaseSpeed() {
+    public void decreaseSpeed()
+    {
         if (shooterRpm - ShooterConstants.kRpmIncrement > -10)
         {
             shooterRpm -= ShooterConstants.kRpmIncrement;
@@ -93,7 +94,8 @@ public class Shooter extends SubsystemBase {
 
     
 
-    public double GetShooterVelocity() {
+    public double GetShooterVelocity()
+    {
         return shooterMotor.getVelocity().getValueAsDouble();
     }
 

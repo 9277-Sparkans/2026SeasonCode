@@ -29,8 +29,7 @@ public class Hood extends SubsystemBase {
   private final TalonFX hoodMotor;
   private final CANcoder hoodEncoder;
   private final TalonFXConfiguration hoodMotorConfiguration;
-  private final MotionMagicVoltage request = new MotionMagicVoltage(0)
-    .withSlot(0);
+  private final MotionMagicVoltage request = new MotionMagicVoltage(0).withSlot(0);
 
   public double targetHoodPosition = HoodConstants.kMinimumEncoderPos;
 
@@ -46,7 +45,6 @@ public class Hood extends SubsystemBase {
     hoodMotor.getConfigurator().apply(hoodCurrent);
 
     // PID + Gravity
-    hoodMotorConfiguration.Slot0.kG = HoodConstants.hood_kG;
     hoodMotorConfiguration.Slot0.kP = HoodConstants.hood_kP;
     hoodMotorConfiguration.Slot0.kI = HoodConstants.hood_kI;
     hoodMotorConfiguration.Slot0.kD = HoodConstants.hood_kD;

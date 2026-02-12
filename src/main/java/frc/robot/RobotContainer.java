@@ -109,8 +109,14 @@ public class RobotContainer {
         joystick.povUp().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         // CLIMB button controls
-        joystick.povRight().whileTrue(climb.climbUp());
-        joystick.povLeft().whileTrue(climb.climbDown());
+        // joystick.povRight().onTrue(climb.climbUp());
+        // joystick.povRight().onFalse(climb.climbHang());
+        // joystick.povLeft().onTrue(climb.climbDown());
+        // joystick.povLeft().onFalse(climb.climbHang());
+
+        joystick.povRight().onTrue(climb.runClimbCommand());
+        joystick.povRight().onFalse(climb.stopCommand());
+        
 
 
         // HOOD button controls
@@ -127,8 +133,8 @@ public class RobotContainer {
         joystick.leftTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
         joystick.rightTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
 
-        // joystick.x().whileTrue(new TurretTracking((turret)));
-        // joystick.x().onFalse(Commands.runOnce(() -> turret.stop(), turret));
+        joystick.x().whileTrue(new TurretTracking((turret)));
+        joystick.x().onFalse(Commands.runOnce(() -> turret.stop(), turret));
 
         // SHOOTER button controls
         joystick.leftBumper().onTrue(Commands.runOnce(() -> shooter.decreaseSpeed()));
@@ -141,25 +147,19 @@ public class RobotContainer {
         // TRANSFER button controls
         joystick.b().onTrue(Commands.runOnce(() -> transfer.toggleTransfer()));
 
-        // joystick.povRight()
-        //     .whileTrue(
-        //         new InstantCommand(() -> intake.intakeCommand()))
-        //     .onFalse(
-        //         new InstantCommand(() -> intake.stopRollerCommand()));
-
 
         // INTAKE button controls
-        joystick.povRight()
-            .whileTrue(
-                intake.intakeCommand())
-            .onFalse(
-                intake.stopRollerCommand());
+        // joystick.povRight()
+        //     .whileTrue(
+        //         intake.intakeCommand())
+        //     .onFalse(
+        //         intake.stopRollerCommand());
 
-        joystick.povLeft()
-            .whileTrue(
-                intake.outtakeCommand())
-            .onFalse(
-                intake.stopRollerCommand());
+        // joystick.povLeft()
+        //     .whileTrue(
+        //         intake.outtakeCommand())
+        //     .onFalse(
+        //         intake.stopRollerCommand());
 
 
         // HINGE button controls

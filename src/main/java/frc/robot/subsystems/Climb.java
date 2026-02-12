@@ -61,7 +61,6 @@ public class Climb extends SubsystemBase {
 
     // state for climb up
     public void states(ClimbState state) {
-
         switch (state) {
             case UP:
                 climbMotor.setControl(m_request.withPosition(-100));
@@ -71,6 +70,7 @@ public class Climb extends SubsystemBase {
                 break;
             case HANG:
                 climbMotor.setControl(m_request.withPosition(-80));
+                break;
         }
     }
 

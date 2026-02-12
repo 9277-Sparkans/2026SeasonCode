@@ -48,18 +48,6 @@ public class Intake extends SubsystemBase {
 		return Commands.runOnce(() -> stopRoller());
 	}
 
-	// public void deployIntake()
-	// {
-	// 	MotionMagicVoltage deploymentRequest = new MotionMagicVoltage(IntakeConstants.deploymentMaxDeg).withSlot(0);
-	// 	deployment.setControl(deploymentRequest.withPosition(GetDeploymentPosition()));
-	// }
-//
-	public void deployIntake(){
-		MotionMagicVoltage request = 
-		new MotionMagicVoltage(0).withSlot(0);
-		deployment.setControl(request.withPosition(degToRotations(IntakeConstants.deploymentMaxDeg)));
-	}
-
 	public void retractIntake()
 	{
 		MotionMagicVoltage request = 

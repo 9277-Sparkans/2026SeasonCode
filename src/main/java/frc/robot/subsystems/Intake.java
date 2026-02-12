@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 import frc.robot.Constants;
 import frc.robot.Constants.IndexerConstants;
 import frc.robot.Constants.IntakeConstants;
+import frc.robot.Constants.TurretConstants;
 import frc.robot.Constants.ShooterConstants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -49,7 +50,26 @@ public class Intake extends SubsystemBase {
 	}
 	
 	public Command stopRollerCommand() {
-		return Commands.runOnce(() -> stopRoller());
+		return Commands.runOnce(() -> stop());
+	}
+
+	// public void deployIntake()
+	// {
+	// 	MotionMagicVoltage deploymentRequest = new MotionMagicVoltage(IntakeConstants.deploymentMaxDeg).withSlot(0);
+	// 	deployment.setControl(deploymentRequest.withPosition(GetDeploymentPosition()));
+	// }
+//
+	public void deployIntake(){
+		double tgt = (IntakeConstants.deploymentMaxDeg * IntakeConstants.deploymentGearRatio) / 360;
+    	final MotionMagicVoltage m_request = new MotionMagicVoltage(0);
+
+    	deployment.setControl(m_request.withPosition(tgt)); //motor rotations
+	}
+
+	public void retractIntake()
+	{
+    	final MotionMagicVoltage m_request = new MotionMagicVoltage(0);
+    	deployment.setControl(m_request.withPosition(0)); //motor rotations
 	}
 
 	public void intake()
@@ -63,7 +83,7 @@ public class Intake extends SubsystemBase {
 		intakeMotor.set(-IntakeConstants.intakeSpeed);
 	}
 
-	public void stopRoller()
+	public void stop()
 	{
 		intakeMotor.set(0);
 	}

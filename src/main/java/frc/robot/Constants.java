@@ -1,5 +1,20 @@
 package frc.robot;
 
+import java.util.function.BooleanSupplier;
+
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.hardware.TalonFX;
+
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.GenericEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructPublisher;
+import edu.wpi.first.util.struct.Struct;
+import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.Timer;
+
 public class Constants {
     public static final class QuickAccessConstants {
         public static final boolean swerveEnabled = true;
@@ -120,21 +135,30 @@ public class Constants {
 
         public static final int kRpmIncrement = 10;
 
-        public static final int kMaxRpm = 300;
+        public static final int kMinRPM = 2000;
+        public static final int kMaxRPM = 6000;
+
+        public static final int kMinFlywheelRPM = 2400;
+        public static final int kMaxFlywheelRPM = 7200;
+        // public static final double kGearRatio = 1 / (1 / 1);
+
+        public static final double shooter_kG = 0.0;
         public static final double shooter_kS = 0.0;
         public static final double shooter_kP = 0.1;
         public static final double shooter_kI = 0.0;
         public static final double shooter_kD = 0.0;
         public static final double shooter_kV = 0.0;
         public static final double shooter_kA = 0.0;
+
+
+
     }
 
     public static class HoodConstants
     {
         public static final int kHoodMotorId = 34;
-        public static final int kHoodEncoderId = 41;
 
-        public static final double hood_maxVelocity = 0.5; // rotations per second; was 1.0, setting it to this to avoid grinding the gear again!
+        public static final double hood_maxVelocity = 1; // rotations per second
         public static final double hood_maxAcceleration = 80; // rotations per second^2
         public static final double hood_maxVoltage = 5;// kraken x44 max voltage
 
@@ -155,9 +179,9 @@ public class Constants {
 
         public static final double kGearRatio = 1.0 / (33.7 / 18.23);
 
-        public static final double kHoodCurrentLimit = 5;
+        public static final double kHoodCurrentLimit = 35; // was 35, setting it to this to avoid grinding the gear again!
 
-        public static final double kHoodIncrement = 2;
+        public static final double kHoodIncremqent = 2;
     }
 
     public static class IntakeConstants

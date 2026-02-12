@@ -4,66 +4,66 @@ import frc.robot.subsystems.Transfer;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Hood;
-
+import frc.robot.subsystems.Intake;
+import frc.robot.Constants.TransferConstants;
+import frc.robot.Constants.TurretConstants;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.Constants.HoodConstants;
+
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class AutoFire extends Command 
 {
     Turret turret;
     Transfer transfer;
+    Intake intake;
     Shooter shooter;
+    Lookup lookup;
     Hood hood;
-    int tgtRpm;
+    double tgtRPM;
     double tgtAngle;
 
-    public AutoFire(Turret turret, Transfer transfer, Shooter shooter, Hood hood)
+    public AutoFire(Turret turret, Transfer transfer, Shooter shooter, Hood hood, Intake intake, Lookup lookup)
     {
         this.turret = turret;
         this.transfer = transfer;
         this.shooter = shooter;
         this.hood = hood;
 
-        addRequirements(shooter, hood);
+        addRequirements(shooter, hood, transfer, turret, intake);
 
         tgtRpm = 0;
         tgtAngle = 0.0;
-        
     }
 
     
     @Override
     public void initialize(){
-        tgtRpm = shooter.GetCorrectRps();
-        //tgtAngle = hood.GetTargetHoodAngle();
+        tgtRPM = 0;
     }
 
     @Override
     public void execute()
     {
-        // get from lookup table
-        shooter.fireAtRps();
-        // hood.moveHoodToAngle(tgtAngle);
+        double distance = Limelight.GetDistance();
 
-        // add in turret
+        // set rpm from lookup 
+        // set angle from lookup
 
-        if (Math.abs(shooter.GetCorrectRps() - shooter.GetShooterVelocity()) < ShooterConstants.kRpsLenience)
-        {
-            transfer.activateTransfer();
-        }
-        else
-        {
-            transfer.stop();
-        }
+        shooter.setShooterRPM((int)(tgtRPM));
+        hood.setHoodToAngle(tgtAngle);
+        transfer.activateTransfer();
+        intake.intake();
     }
 
     @Override
     public void end(boolean interrupted)
     {
         // hood.stopHood();
-        shooter.targetRpm = 0;
-        shooter.fireAtRps();
+        shooter.targetRPM = 0;
+        shooter.fireAtRPM();
         transfer.stop();
+        intake.stop();
     }
 
     @Override

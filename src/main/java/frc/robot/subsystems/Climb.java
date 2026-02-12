@@ -19,6 +19,7 @@ public class Climb extends SubsystemBase {
     private final TalonFXConfiguration climbConfig;
     MotionMagicVoltage m_request = new MotionMagicVoltage(-5).withSlot(0);
 
+        private ClimbState climbState;
 
     public enum ClimbState {
         DOWN,
@@ -30,8 +31,8 @@ public class Climb extends SubsystemBase {
 
     public Climb() {
 
-        climbMotor = new TalonFX(Constants.ClimbConstants.kClimbMotorID);
-        climbConfig = new TalonFXConfiguration();
+                climbMotor = new TalonFX(Constants.ClimbConstants.kClimbMotorID, kCANBus);
+                climbConfig = new TalonFXConfiguration();
 
         /* PID */
         climbConfig.Slot0.kP = ClimbConstants.kClimb_kP;
@@ -44,11 +45,9 @@ public class Climb extends SubsystemBase {
         climbConfig.CurrentLimits.StatorCurrentLimit = ClimbConstants.kClimbCurrent_Limit;
         climbConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
-        /* Default Motion Magic (UP profile) */
-        climbConfig.MotionMagic.MotionMagicCruiseVelocity = ClimbConstants.kClimbMaxVelocity;
-        climbConfig.MotionMagic.MotionMagicAcceleration = ClimbConstants.kClimbMaxAcceleration;
-        climbConfig.Voltage.PeakForwardVoltage = ClimbConstants.kClimbMaxVoltage;
-        climbConfig.Voltage.PeakReverseVoltage = -ClimbConstants.kClimbMaxVoltage;
+                /* Default Motion Magic (UP profile) */
+                climbConfig.MotionMagic.MotionMagicCruiseVelocity = 30;
+                climbConfig.MotionMagic.MotionMagicAcceleration = 15;
 
         climbMotor.getConfigurator().apply(climbConfig);
     }
@@ -56,11 +55,19 @@ public class Climb extends SubsystemBase {
     public void setState(ClimbState state) {
         climbState = state;
     }
+    public void setState(ClimbState state) {
+        climbState = state;
+    }
 
     public ClimbState getState() {
         return climbState;
     }
+    public ClimbState getState() {
+        return climbState;
+    }
 
+    // state for climb up
+    public void states(ClimbState state) {
     // state for climb up
     public void states(ClimbState state) {
 
@@ -76,6 +83,7 @@ public class Climb extends SubsystemBase {
         }
     }
 
+    /* ================= COMMANDS ================= */
     /* ================= COMMANDS ================= */
 
     public Command climbUp() {

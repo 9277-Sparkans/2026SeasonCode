@@ -23,6 +23,9 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
+import frc.robot.Constants.OIConstants;
+import frc.robot.Utils.Lookup;
+import frc.robot.commands.TurretTracking;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Hood;
@@ -61,7 +64,8 @@ public class RobotContainer {
     public final Indexer indexer = new Indexer();
     public final Hinge hinge = new Hinge();
 
-    public final AutoFire autoFireCommand = new AutoFire(turret, transfer, shooter, hood);
+    public final Lookup lookup = Utils.createLookup(hood, shooter);
+    public final AutoFire autoFireCommand = new AutoFire(turret, transfer, shooter, hood, intake, lookup);
 
     public RobotContainer() {
         NamedCommands.registerCommand("testNamedCommand", Commands.runOnce(() -> System.out.println("this named command works")));

@@ -126,7 +126,7 @@ public class Constants {
         public static final int kShooterMotorId = 33;
 
         public static final int kShooterCurrentLimit = 30;
-        public static final double kShooterGearRatio = 1.0 / (30.0 / 18.0);
+        public static final double kShooterGearRatio = 36.0 / 30.0;
 
         // subject to change if we end up automating these
         public static final double kShooterSpeed = 0.7;
@@ -182,7 +182,7 @@ public class Constants {
 
         public static final double maxEncoderValue = -1.258789; // test for this
 
-        public static final double kGearRatio = 1.0 / (33.7 / 18.23);
+        public static final double kGearRatio = 15.0 / 210.0;
 
         public static final double kHoodCurrentLimit = 35; // was 35, setting it to this to avoid grinding the gear again!
 
@@ -192,7 +192,7 @@ public class Constants {
     public static class IntakeConstants
     {
         public static final int intakeMotorId = 38;
-        public static final double kIntakeGearRatio = 45.0 / 1.0;
+        public static final double kIntakeGearRatio = 12.0 / 18.0;
 
         public static final double intake_kS = 0.01;
         public static final double intake_kV = 0.095;
@@ -222,7 +222,7 @@ public class Constants {
         public static final double kHingeCurrentLimit = 120;
 
         public static final int hingeCountsPerRevolution = 2048; // for kraken x60
-        public static final double hingeGearRatio = 15.0 / 1.0;
+        public static final double hingeGearRatio = 45.0 / 1.0;
 
         public static final double hingeMaxDeg = -30.0;
     }
@@ -246,7 +246,7 @@ public class Constants {
         public static final double kClimb_kG = 0.12;
 
 
-        public static final int kClimbGearRatio = 9 / 1;
+        public static final double kClimbGearRatio = 9.0 / 1.0;
     }
 
     public static class TransferConstants
@@ -257,7 +257,7 @@ public class Constants {
         public static final double transferMaxAcceleration = 40;
         public static final double transferMaxVelocity = 100; // rps
         public static final int kTransferCurrent_Limit = 20;
-        public static final double kTransferGearRatio = 30.0 / 36.0;
+        public static final double kTransferGearRatio = 30.0 / 24.0;
 
         public static final double kTransfer_kS = 0.01;
         public static final double kTransfer_kV = 0.095;
@@ -266,7 +266,7 @@ public class Constants {
         public static final double kTransfer_kI = 0.0;
         public static final double kTransfer_kD = 0.1;
 
-        public static final double kTargetTransferRps = -50;
+        public static final double kTargetTransferRps = -50.0;
     }
 
     public static final class IndexerConstants {
@@ -274,7 +274,7 @@ public class Constants {
         public static final double kIndexerCurrentLimit = 20;
         public static final int kIndexerMotorId = 35; // change this value
         public static final double kIndexerSpeed = 40; //rps
-        public static final double kIndexerGearRatio = 12.0/15.0;
+        public static final double kIndexerGearRatio = 12.0 / 15.0;
         public static final double indexerSpeed = 30.0; // old
 
         public static final double kIndexer_kS = 0.01;

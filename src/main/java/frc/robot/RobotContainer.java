@@ -12,6 +12,9 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -20,12 +23,17 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
+import frc.robot.Constants.OIConstants;
+import frc.robot.Utils.Lookup;
+import frc.robot.commands.TurretTracking;
+import frc.robot.commands.LockMode.lockState;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Indexer;
 import frc.robot.commands.AutoFire;
+import frc.robot.commands.LockMode;
 import frc.robot.commands.TurretTracking;
 import frc.robot.subsystems.Transfer;
 import frc.robot.subsystems.Climb;
@@ -58,10 +66,22 @@ public class RobotContainer {
     public final Indexer indexer = new Indexer();
     public final Hinge hinge = new Hinge();
 
-    public final AutoFire autoFireCommand = new AutoFire(turret, transfer, shooter, hood);
+    public final Lookup lookup = Utils.createLookup(hood, shooter);
+    public final AutoFire autoFireCommand = new AutoFire(turret, transfer, shooter, hood, intake, lookup);
+    public final LockMode lockModeCommand = new LockMode(turret, shooter, hood);
 
     public RobotContainer() {
         NamedCommands.registerCommand("testNamedCommand", Commands.runOnce(() -> System.out.println("this named command works")));
+
+        SmartDashboard.putData("Git Info", new Sendable() {
+            @Override
+            public void initSendable(SendableBuilder builder) {
+                builder.addStringProperty("Branch", () -> BuildConstants.GIT_BRANCH, null);
+                builder.addStringProperty("Commit", () -> BuildConstants.GIT_SHA, null);
+                builder.addStringProperty("Date of commit", () -> BuildConstants.GIT_DATE, null);
+                builder.addStringProperty("Uncommitted changes", () -> new Boolean(BuildConstants.DIRTY > 0).toString(), null);
+            }
+        });
 
         configureBindings();
     }
@@ -96,9 +116,13 @@ public class RobotContainer {
         joystick.povUp().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         // CLIMB button controls
-        joystick.povRight().whileTrue(climb.climbUp());
-        joystick.povLeft().whileTrue(climb.climbDown());
+        // joystick.povRight().onTrue(climb.climbUp());
+        // joystick.povRight().onFalse(climb.climbHang());
+        // joystick.povLeft().onTrue(climb.climbDown());
+        // joystick.povLeft().onFalse(climb.climbHang());
 
+        joystick.povRight().onTrue(climb.runClimbCommand());
+        joystick.povRight().onFalse(climb.stopCommand());
 
         // HOOD button controls
         // joystick.povUp().onTrue(Commands.runOnce(() -> hood.runHood()));
@@ -114,8 +138,8 @@ public class RobotContainer {
         joystick.leftTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
         joystick.rightTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
 
-        // joystick.x().whileTrue(new TurretTracking((turret)));
-        // joystick.x().onFalse(Commands.runOnce(() -> turret.stop(), turret));
+        joystick.x().whileTrue(new TurretTracking((turret)));
+        joystick.x().onFalse(Commands.runOnce(() -> turret.stop(), turret));
 
         // SHOOTER button controls
         joystick.leftBumper().onTrue(Commands.runOnce(() -> shooter.decreaseSpeed()));
@@ -128,12 +152,13 @@ public class RobotContainer {
         // TRANSFER button controls
         joystick.b().onTrue(Commands.runOnce(() -> transfer.toggleTransfer()));
 
-        // joystick.povRight()
-        //     .whileTrue(
-        //         new InstantCommand(() -> intake.intakeCommand()))
-        //     .onFalse(
-        //         new InstantCommand(() -> intake.stopRollerCommand()));
-
+        // lock mode controls
+        // joystick.a().onTrue(Commands.runOnce(() -> lockModeCommand.setLockState(lockState.LEFT))
+        // .andThen(Commands.runOnce(() -> lockModeCommand.execute())));
+        // joystick.b().onTrue(Commands.runOnce(() -> lockModeCommand.setLockState(lockState.CENTER))
+        // .andThen(Commands.runOnce(() -> lockModeCommand.execute())));
+        // joystick.x().onTrue(Commands.runOnce(() -> lockModeCommand.setLockState(lockState.RIGHT))
+        // .andThen(Commands.runOnce(() -> lockModeCommand.execute())));
 
         // INTAKE button controls
         // joystick.povRight()

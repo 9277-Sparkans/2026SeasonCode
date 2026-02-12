@@ -16,15 +16,18 @@ import frc.robot.Telemetry;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 
+import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
+import com.ctre.phoenix6.controls.VelocityVoltage;
+
 public class Shooter extends SubsystemBase {
     public int targetRPM;
     private final TalonFX shooterMotor;
     private final TalonFXConfiguration ShooterMotorConfiguration;
-
+    final MotionMagicVelocityVoltage m_request = new MotionMagicVelocityVoltage(0);
     private boolean shooting = false;
 
 
-    public int shooterRPS; // rps
+    public int shooterRpm; // rpm
 
     /** Creates a new Shooter. */
     public Shooter() {
@@ -37,7 +40,6 @@ public class Shooter extends SubsystemBase {
         shooterConfigs.StatorCurrentLimitEnable = true;
         shooterMotor.getConfigurator().apply(shooterConfigs);
 
-        ShooterMotorConfiguration.Slot0.kG = ShooterConstants.shooter_kG;
         ShooterMotorConfiguration.Slot0.kP = ShooterConstants.shooter_kP;
         ShooterMotorConfiguration.Slot0.kI = ShooterConstants.shooter_kI;
         ShooterMotorConfiguration.Slot0.kD = ShooterConstants.shooter_kD;
@@ -48,65 +50,52 @@ public class Shooter extends SubsystemBase {
 
         shooterMotor.getConfigurator().apply(ShooterMotorConfiguration);
 
-        shooterRPS = 0;
+        shooterRpm = 0;
 
         Telemetry.telemeterizeMotor("Shooter", shooterMotor);
 
     }
 
     public Command shootCmd() {
-        toggleShoot();
         return Commands.runOnce(() -> {});
     }
-    
-    
+
+    public void setTgtRpm(int rpm) {
+        this.shooterRpm = rpm;
+    }
+
+
     // shoot
-    private void toggleShoot() {
-        shooting = !shooting;
-
-        if (shooting) {
-            shooterMotor.set(ShooterConstants.kShooterSpeed);
-        } else {
-            shooterMotor.set(0);
-        }
+    public void fireAtRpm()
+    {
+        double tgt = (shooterRpm / ShooterConstants.kShooterGearRatio) * 60.0; // convert to rpm at motor
+        shooterMotor.setControl(m_request.withVelocity(tgt));
     }
 
-    public void fireAtRPM() {
-        SimpleMotorFeedforward feedforward = new SimpleMotorFeedforward(ShooterConstants.shooter_kS, ShooterConstants.shooter_kV, ShooterConstants.shooter_kA);
-
-        // this is so that pidController gets destroyed eventually
-        try (PIDController pidController = new PIDController(ShooterConstants.shooter_kP, ShooterConstants.shooter_kI, ShooterConstants.shooter_kD)) {
-            double setpointVelocity = shooterRPS;
-            double feedforwardVoltage = feedforward.calculate(setpointVelocity);
-            double feedbackVoltage = pidController.calculate(shooterMotor.getVelocity().getValueAsDouble(), setpointVelocity);
-
-            shooterMotor.setVoltage(feedforwardVoltage + feedbackVoltage);
-        }
-    }
-
-    
-    // getters
-    public int GetCorrectRPS() {
-        return shooterRPS; // replace with the actual math later
+    public double GetShooterRPM()
+    {
+        return shooterMotor.getVelocity().getValueAsDouble() * 60;
     }
 
     public void increaseSpeed() {
-        if (shooterRPS + ShooterConstants.kRpmIncrement < ShooterConstants.kMaxRPM)
+        if (shooterRpm + ShooterConstants.kRpmIncrement < ShooterConstants.kMaxRPM)
         {
-            shooterRPS += ShooterConstants.kRpmIncrement;
+            shooterRpm += ShooterConstants.kRpmIncrement;
         }
     }
 
-    public void decreaseSpeed() {
-        if (shooterRPS - ShooterConstants.kRpmIncrement > -10)
+    public void decreaseSpeed()
+    {
+        if (shooterRpm - ShooterConstants.kRpmIncrement > -10)
         {
-            shooterRPS -= ShooterConstants.kRpmIncrement;
+            shooterRpm -= ShooterConstants.kRpmIncrement;
         }
     }
 
     
 
-    public double GetShooterVelocity() {
+    public double GetShooterVelocity()
+    {
         return shooterMotor.getVelocity().getValueAsDouble();
     }
 
@@ -114,6 +103,6 @@ public class Shooter extends SubsystemBase {
 
     @Override
     public void periodic() {
-        fireAtRPM();
+        fireAtRpm();
     }
 }

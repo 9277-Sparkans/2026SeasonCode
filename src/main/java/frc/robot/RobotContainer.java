@@ -120,15 +120,10 @@ public class RobotContainer {
         // joystick.x().whileTrueFalse(climb.climbHang());
         // joystick.a().whileTrue(climb.climbDown());
 
-<<<<<<< HEAD
         // joystick.povRight().onTrue(climb.runClimbCommand());
         // joystick.povRight().onFalse(climb.stopCommand());
         
 
-=======
-        joystick.povRight().onTrue(climb.runClimbCommand());
-        joystick.povRight().onFalse(climb.stopCommand());
->>>>>>> ab4134f461bed495ed653596f705679140aedbff
 
         // HOOD button controls
         joystick.povUp().onTrue(Commands.runOnce(() -> hood.runHood()));
@@ -181,8 +176,8 @@ public class RobotContainer {
 
 
         // HINGE button controls
-        // joystick.x()./
-        //     .onTrue(hinge.hingeUp());
+        joystick.povRight()
+            .onTrue(hinge.hingeUp());
 
         joystick.povLeft()
             .onTrue(hinge.hingeDown());

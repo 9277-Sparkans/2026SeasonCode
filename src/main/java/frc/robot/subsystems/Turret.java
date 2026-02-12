@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Limelight;
 import frc.robot.Telemetry;
+import frc.robot.Constants.HoodConstants;
 import frc.robot.Constants.TurretConstants;
 
 public class Turret extends SubsystemBase {
@@ -15,6 +16,7 @@ public class Turret extends SubsystemBase {
   private final TalonFX turretMotor;
   private final TalonFXConfiguration turretMotorConfig;
   public double turretOffset = 0.0;
+
   final MotionMagicVoltage m_request = new MotionMagicVoltage(0.0);
 
   /** Creates a new Turret. */
@@ -39,11 +41,12 @@ public class Turret extends SubsystemBase {
     turretMotor.getConfigurator().apply(turretMotorConfig);
 
     Telemetry.telemeterizeMotorWithPID("Turret", turretMotor, (1.0 / (15.0 / 108.0)), turretMotorConfig);
+
   }
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+
   }
 
   public double getPosition() {
@@ -64,13 +67,9 @@ public class Turret extends SubsystemBase {
     return Commands.runOnce(() -> spinNegative());
   }
 
-  public double getTurretRotations() {
-    return turretMotor.getPosition().getValueAsDouble();
-  }
-
   public double getTurretAngle() {
-    double position = getTurretRotations(); // rotations
-    return (position / TurretConstants.kGearRatio) * 360;
+    double position = getTurretCurrent(); // turns
+    return position * 360;
   }
 
   public double getVelocity() {
@@ -87,22 +86,14 @@ public class Turret extends SubsystemBase {
   }
 
   public void turretMoveTgt(double llAngle) {
+
+    boolean isAtTarget = Math.abs(turretMotor.getClosedLoopError().getValue()) < 1.5;
     double tgt = (-llAngle * 10 * TurretConstants.kGearRatio) / 360;
+
+    // System.out.println(llAngle * 10);
+
     turretMotor.setControl(m_request.withPosition(tgt)); // motor rotations
-  }
 
-  public void setTurretToAngle(double angle) {
-    if (angle > TurretConstants.kMaximumAngle) {
-      angle = TurretConstants.kMaximumAngle;
-    }
-    if (angle < TurretConstants.kMinimumAngle) {
-      angle = TurretConstants.kMinimumAngle;
-    }
-
-    // Convert angle to motor rotations
-    double rotations = (angle / 360.0) * TurretConstants.kGearRatio;
-    MotionMagicVoltage angleTgt = new MotionMagicVoltage(rotations).withSlot(0);
-    turretMotor.setControl(angleTgt);
   }
 
   public void stop() {

@@ -124,7 +124,7 @@ public class RobotContainer {
                 joystick.povLeft().whileTrue(intake.outtakeCommand()).onFalse(intake.stopRollerCommand());
 
                 // Turret tracking
-                joystick.y().onTrue(new TurretTracking(turret, () -> drivetrain.getStateCopy().Pose));
+                joystick.y().onTrue(new TurretTracking(turret, camera0.getCamera(), VisionConstants.robotToCamera0));
 
                 // Transfer control
                 joystick.b().onTrue(Commands.runOnce(() -> transfer.toggleTransfer()));
@@ -144,9 +144,13 @@ public class RobotContainer {
         }
 
         public Command getAutonomousCommand() {
-                return new FuelChaseCommand(
-                                25, camera0.getCamera(), drivetrain, // Change to the camera that will chase fuel once
-                                                                     // we get the fuel pose calculations working!!
-                                drivetrain::getPose3d, VisionConstants.robotToCamera0);
+                return new TurretTracking(turret, camera0.getCamera(), VisionConstants.robotToCamera0);
+                // new FuelChaseCommand(
+                // 25, camera0.getCamera(), drivetrain, // Change to the camera that will
+                // // chase fuel once
+                // // we get the fuel pose
+                // // calculations working!!
+                // drivetrain::getPose3d, VisionConstants.robotToCamera0),
+                // new TurretTracking(turret, () -> drivetrain.getStateCopy().Pose));
         }
 }

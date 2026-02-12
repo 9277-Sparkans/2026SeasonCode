@@ -4,52 +4,92 @@
 
 package frc.robot.commands;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.photonvision.PhotonCamera;
+import org.photonvision.targeting.PhotonTrackedTarget;
+
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Turret;
-import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.math.geometry.Pose2d;
-import java.util.function.Supplier;
 
-/* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class TurretTracking extends Command {
   private Turret turret;
+  private PhotonCamera camera;
+  private Transform3d robotToCamera;
   double angleToHub;
 
-  private final Supplier<Pose2d> poseSupplier;
-  private static final Translation2d targetLocation = new Translation2d(4.0218614, 4.2124376); // Midpoint of 25 and 26
-
   /** Creates a new TurretTracking. */
-  public TurretTracking(Turret turret, Supplier<Pose2d> poseSupplier) {
+
+  public TurretTracking(Turret turret, PhotonCamera camera, Transform3d robotToCamera) {
+
     this.turret = turret;
-    this.poseSupplier = poseSupplier;
+    this.camera = camera;
+    this.robotToCamera = robotToCamera;
     addRequirements(turret);
+
+    SmartDashboard.putData("Turret Stats", new Sendable() {
+      @Override
+      public void initSendable(SendableBuilder builder) {
+        builder.addDoubleProperty("Angle to Hub", () -> angleToHub, null);
+      }
+    });
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
+
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Pose2d robotPose = poseSupplier.get();
+    var results = camera.getAllUnreadResults();
+    boolean isBlue = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Blue;
 
-    double targetAngleRad = Math.atan2(targetLocation.getY() - robotPose.getY(),
-        targetLocation.getX() - robotPose.getX());
-    double targetAngleDeg = Math.toDegrees(targetAngleRad);
+    // Valid IDs based on alliance
+    // Blue: 25, 26; Red: 9, 10
+    int id1 = isBlue ? 25 : 9;
+    int id2 = isBlue ? 26 : 10;
 
-    double robotRotationDeg = robotPose.getRotation().getDegrees();
+    PhotonTrackedTarget bestTarget = null;
 
-    double turretAngleDeg = targetAngleDeg - robotRotationDeg;
+    if (!results.isEmpty()) {
+      var result = results.get(results.size() - 1);
+      if (result.hasTargets()) {
+        List<PhotonTrackedTarget> targets = result.getTargets();
+        for (PhotonTrackedTarget target : targets) {
+          int id = target.getFiducialId();
+          if (id == id1 || id == id2) {
+            bestTarget = target;
+            break;
+          }
+        }
+      }
+    }
 
-    // Normalize to -180 to 180
-    while (turretAngleDeg > 180)
-      turretAngleDeg -= 360;
-    while (turretAngleDeg < -180)
-      turretAngleDeg += 360;
+    if (bestTarget == null) {
+      angleToHub = 0.0;
+    } else {
+      Transform3d cameraToTarget = bestTarget.getBestCameraToTarget();
+      Transform3d robotToTarget = robotToCamera.plus(cameraToTarget);
 
-    turret.setTurretToAngle(turretAngleDeg);
+      // Calculate angle in radians then convert to degrees
+      // atan2(y, x) gives the angle relative to the robot's forward axis (X-axis)
+      angleToHub = Math.toDegrees(Math.atan2(robotToTarget.getY(), robotToTarget.getX()));
+    }
+
+    if (angleToHub == 0.0) {
+      return;
+    } else {
+      turret.turretMoveTgt(angleToHub);
+    }
   }
 
   // Called once the command ends or is interrupted.

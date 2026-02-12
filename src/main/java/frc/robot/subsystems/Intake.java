@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 import frc.robot.Constants;
+import frc.robot.Constants.IndexerConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.ShooterConstants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -9,6 +10,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -18,6 +20,8 @@ public class Intake extends SubsystemBase {
 	
 	private final TalonFX intakeMotor;
 	private final TalonFXConfiguration intakeMotorConfig;
+  	final MotionMagicVelocityVoltage m_request = new MotionMagicVelocityVoltage(0);
+
 
 	public Intake() {	
 	
@@ -51,6 +55,7 @@ public class Intake extends SubsystemBase {
 	public void intake()
 	{
 		intakeMotor.set(IntakeConstants.intakeSpeed);
+		
 	}
 
 	public void outtake()
@@ -63,5 +68,9 @@ public class Intake extends SubsystemBase {
 		intakeMotor.set(0);
 	}
 
+	public void setVel() {
+		double tgt = IntakeConstants.intakeSpeed / IntakeConstants.kIntakeGearRatio;
+		intakeMotor.setControl(m_request.withVelocity(tgt)); //rps
+  	}
 
 }

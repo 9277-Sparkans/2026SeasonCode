@@ -46,10 +46,11 @@ public class Hinge extends SubsystemBase{
 		hingeConfig.Slot0.kI = Constants.HingeConstants.hinge_kI;
 		hingeConfig.Slot0.kD = Constants.HingeConstants.hinge_kD; 
 		hingeConfig.Slot0.kV = Constants.HingeConstants.hinge_kV;
-		
+        hingeConfig.Slot0.kS = Constants.HingeConstants.hinge_kS;
 
-		// hingeConfig.Voltage.PeakForwardVoltage = HingeConstants.hingeMaxVoltage;
-		// hingeConfig.Voltage.PeakReverseVoltage = -HingeConstants.hingeMaxVoltage;
+
+		hingeConfig.Voltage.PeakForwardVoltage = HingeConstants.hingeMaxVoltage;
+		hingeConfig.Voltage.PeakReverseVoltage = -HingeConstants.hingeMaxVoltage;
 		hingeConfig.MotionMagic.MotionMagicAcceleration = Constants.HingeConstants.hingeMaxAcceleration;
 		hingeConfig.MotionMagic.MotionMagicCruiseVelocity = Constants.HingeConstants.hingeMaxVelocity;
 
@@ -83,7 +84,6 @@ public class Hinge extends SubsystemBase{
 
     public Command hingeUp() {
         return Commands.runOnce(() -> {
-            System.out.println("hinge UP command running");
             // hinge.setControl(hingey.withPosition(degToRotations(Constants.HingeConstants.hingeMaxDeg)));
             states(HingeState.UP);
         });
@@ -91,7 +91,6 @@ public class Hinge extends SubsystemBase{
 
     public Command hingeDown() {
         return Commands.runOnce(() -> {
-            System.out.println("hinge DOWN command running");
             // hinge.setControl(hingey.withPosition(0.0));
             states(HingeState.DOWN);
         });

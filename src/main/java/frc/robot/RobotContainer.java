@@ -12,6 +12,9 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -79,6 +82,17 @@ public class RobotContainer {
                 NamedCommands.registerCommand("testNamedCommand",
                                 Commands.runOnce(() -> System.out.println("this named command works")));
 
+                SmartDashboard.putData("Git Info", new Sendable() {
+                        @Override
+                        public void initSendable(SendableBuilder builder) {
+                                builder.addStringProperty("Branch", () -> BuildConstants.GIT_BRANCH, null);
+                                builder.addStringProperty("Commit", () -> BuildConstants.GIT_SHA, null);
+                                builder.addStringProperty("Date of commit", () -> BuildConstants.GIT_DATE, null);
+                                builder.addStringProperty("Uncommitted changes",
+                                                () -> new Boolean(BuildConstants.DIRTY > 0).toString(), null);
+                        }
+                });
+
                 configureBindings();
         }
 
@@ -91,6 +105,10 @@ public class RobotContainer {
                 final var idle = new SwerveRequest.Idle();
                 RobotModeTriggers.disabled().whileTrue(
                                 drivetrain.applyRequest(() -> idle).ignoringDisable(true));
+
+                // CLIMB button controls
+                joystick.povRight().whileTrue(climb.climbUp());
+                joystick.povLeft().whileTrue(climb.climbDown());
 
                 joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
                 joystick.b().whileTrue(drivetrain.applyRequest(

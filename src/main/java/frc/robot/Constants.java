@@ -2,7 +2,6 @@ package frc.robot;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 
-
 public class Constants {
     public static final class QuickAccessConstants {
         public static final boolean swerveEnabled = true;
@@ -253,10 +252,6 @@ public class Constants {
 
         public static final double kIndexerMaxAcceleration = 400;
         public static final double kIndexerMaxJerk = 4000;
-    }
-
-    public static final class LimelightConstants {
-        public static final String limelightName = "limelight-a";
     }
 
 }

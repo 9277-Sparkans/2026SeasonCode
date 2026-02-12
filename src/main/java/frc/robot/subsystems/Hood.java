@@ -3,6 +3,8 @@
 // // the WPILib BSD license file in the root directory of this project.
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Degree;
+
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
@@ -12,6 +14,8 @@ import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.units.AngleUnit;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -97,6 +101,20 @@ public class Hood extends SubsystemBase {
     hoodMotor.setControl(request.withPosition(targetHoodPosition));
   }
 
+  public void moveHoodToAngle(Angle angle) {
+    double degrees = angle.in(Degree);
+
+    double hoodRangeDeg = HoodConstants.kMaximumAngle - HoodConstants.kMinimumAngle;
+    double hoodEncoderRange = HoodConstants.kMaximumEncoderPos - HoodConstants.kMinimumEncoderPos;
+
+    double positionRatio = degrees / hoodRangeDeg;
+    double position = HoodConstants.kMinimumEncoderPos + (hoodEncoderRange * positionRatio);
+    
+    targetHoodPosition = position;
+
+    clampTarget();
+    moveHoodMotionMagic();
+  }
 
   public void moveHoodWithEncoder(double rotation) {
     rotation = Utils.clamp(rotation, HoodConstants.kMinimumEncoderPos, HoodConstants.kMaximumEncoderPos);

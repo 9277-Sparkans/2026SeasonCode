@@ -84,16 +84,16 @@ public class Hinge extends SubsystemBase{
     public Command hingeUp() {
         return Commands.runOnce(() -> {
             System.out.println("hinge UP command running");
-            hinge.setControl(hingey.withPosition(degToRotations(Constants.HingeConstants.hingeMaxDeg)));
-            // states(HingeState.UP);
+            // hinge.setControl(hingey.withPosition(degToRotations(Constants.HingeConstants.hingeMaxDeg)));
+            states(HingeState.UP);
         });
     }
 
     public Command hingeDown() {
         return Commands.runOnce(() -> {
             System.out.println("hinge DOWN command running");
-            hinge.setControl(hingey.withPosition(0.0));
-            // states(HingeState.DOWN);
+            // hinge.setControl(hingey.withPosition(0.0));
+            states(HingeState.DOWN);
         });
     }
 }

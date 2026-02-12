@@ -15,7 +15,7 @@ public class Climb extends SubsystemBase {
     //CANBus kCANBus = CANBus.roboRIO();
     private final TalonFX climbMotor;
     private final TalonFXConfiguration climbConfig;
-    MotionMagicVoltage climb = new MotionMagicVoltage(0).withSlot(0);
+    MotionMagicVoltage m_request = new MotionMagicVoltage(-5).withSlot(0);
 
 
     public enum ClimbState {
@@ -62,15 +62,13 @@ public class Climb extends SubsystemBase {
 
         switch (state) {
             case UP:
-                climbMotor.setControl(climb.withPosition(-155));
+                climbMotor.setControl(m_request.withPosition(-100.0));
                 break;
             case DOWN:
-                climbMotor.setControl(climb.withPosition(0.0));
+                climbMotor.setControl(m_request.withPosition(0.0));
                 break;
             case HANG:
-                double currentPos = climbMotor.getPosition().getValueAsDouble();
-                MotionMagicVoltage HANG = new MotionMagicVoltage(currentPos).withSlot(0);
-                climbMotor.setControl(HANG.withPosition(currentPos));
+                climbMotor.setControl(m_request.withPosition(-80.0));
         }
     }
 
@@ -78,8 +76,7 @@ public class Climb extends SubsystemBase {
 
     public Command climbUp() {
         return Commands.runOnce(() -> {
-            System.out.println("climb UP command running");
-            climbMotor.setControl(climb.withPosition(-155));
+            climbMotor.setControl(m_request.withPosition(-100.0));
 
             // states(ClimbState.UP);
         });
@@ -87,17 +84,14 @@ public class Climb extends SubsystemBase {
 
     public Command climbDown() {
         return Commands.runOnce(() -> {
-            System.out.println("climb DOWN command running");
-            climbMotor.setControl(climb.withPosition(0.0));
+            climbMotor.setControl(m_request.withPosition(0.0));
             // states(ClimbState.DOWN);
         });
     }
 
     public Command climbHang() {
         return Commands.runOnce(() -> {
-            System.out.println("climb HANG command running");
-            double currentPos = climbMotor.getPosition().getValueAsDouble();
-            climbMotor.setControl(new MotionMagicVoltage(currentPos).withSlot(0).withPosition(currentPos));
+            climbMotor.setControl(m_request.withPosition(-80.0));
             // states(ClimbState.HANG);
         });
     }

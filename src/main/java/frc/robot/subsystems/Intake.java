@@ -27,10 +27,10 @@ public class Intake extends SubsystemBase {
 		intakeMotorConfig.Slot0.kP = Constants.IntakeConstants.intake_kP;
 		intakeMotorConfig.Slot0.kI = Constants.IntakeConstants.intake_kI;
 		intakeMotorConfig.Slot0.kD = Constants.IntakeConstants.intake_kD;
-		// intakeMotorConfig.Voltage.PeakForwardVoltage = IntakeConstants.intakeMaxVoltage;
-		// intakeMotorConfig.Voltage.PeakReverseVoltage = -IntakeConstants.intakeMaxVoltage;
-		// intakeMotorConfig.MotionMagic.MotionMagicAcceleration = IntakeConstants.intakeMaxAcceleration;
-		// intakeMotorConfig.MotionMagic.MotionMagicCruiseVelocity = IntakeConstants.intakeMaxVelocity;
+		intakeMotorConfig.Voltage.PeakForwardVoltage = IntakeConstants.intakeMaxVoltage;
+		intakeMotorConfig.Voltage.PeakReverseVoltage = -IntakeConstants.intakeMaxVoltage;
+		intakeMotorConfig.MotionMagic.MotionMagicAcceleration = IntakeConstants.intakeMaxAcceleration;
+		intakeMotorConfig.MotionMagic.MotionMagicCruiseVelocity = IntakeConstants.intakeMaxVelocity;
 
     	intakeMotor.getConfigurator().apply(intakeMotorConfig);
 	}
@@ -62,13 +62,6 @@ public class Intake extends SubsystemBase {
 	{
 		intakeMotor.set(0);
 	}
-
-	// public double GetDeploymentPosition()
-	// {
-	// 	double rawPosition = deployment.getPosition().getValueAsDouble() / Constants.IntakeConstants.deploymentGearRatio;
-	// 	double normalizedValue = (rawPosition / Constants.IntakeConstants.deploymentCountsPerRevolution);
-	// 	return normalizedValue * 360;
-	// }
 
 
 }

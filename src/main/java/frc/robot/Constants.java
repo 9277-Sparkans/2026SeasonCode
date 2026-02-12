@@ -93,20 +93,18 @@ public class Constants {
         public static final int turret_motorId = 32; // change this value
         public static final double turret_speed = 0.2;
 
-        public static final double turret_kS = 0.01;
-        public static final double turret_kV = 0.0;
-        public static final double turret_kA = 0.0;
-        public static final double turret_kP = 4.5;
-        public static final double turret_kI = 0.0;
-        public static final double turret_kD = 0.3;
-        public static final double turret_kG = 0.03;
+        public static double turret_kV = 0.25;
+        public static double turret_kA = 0.0;
+        public static double turret_kS = 0.01;
+        public static double turret_kP = 7.5;
+        public static double turret_kI = 0.0;
+        public static double turret_kD = 0.5;
 
 
         public static double kMaximumAngle = 20.0;
         public static double kMinimumAngle = -20.0;
         
         public static double kGearRatio = 105.0 / 18.0;
-        public static double tgtAngle = -(Limelight.GetAngle());
     }
     
     public static class ShooterConstants {
@@ -166,36 +164,37 @@ public class Constants {
 
     public static class IntakeConstants
     {
-        // deployment
-        public static final int deploymentID = 0;
+        public static final int intakeMotorId = 38;
 
-        public static final double deploymentKS = 0.01;
-        public static final double deploymentKP = 10;
-        public static final double deploymentKI = 0;
-        public static final double deploymentKD = 0.1;
+        public static final double intake_kS = 0.01;
+        public static final double intake_kP = 10;
+        public static final double intake_kI = 0;
+        public static final double intake_kD = 0.1;
 
-        public static final double deploymentMaxVoltage = 4;
-        public static final double deploymentMaxAcceleration = 40;
-        public static final double deploymentMaxVelocity = 100; // rps
-
-        public static final int deploymentCountsPerRevolution = 2048; // for kraken x60
-        public static final int deploymentGearRatio = 1 / (1 / 1);
-
-        public static final int deploymentMaxDeg = 115;
-    
-        // rollers
-        public static final int rollerID = 1;
-
-        public static final double rollerKS = 0.01;
-        public static final double rollerKP = 10;
-        public static final double rollerKI = 0;
-        public static final double rollerKD = 0.1;
-
-        public static final double rollerMaxVoltage = 4; // can change if not needed
-        public static final double rollerMaxAcceleration = 40;
-        public static final double rollerMaxVelocity = 100; // rps
-
+        public static final double intakeMaxVoltage = 4; // can change if not needed
+        public static final double intakeMaxAcceleration = 5;
+        public static final double intakeMaxVelocity = 100; // rps
         public static final double intakeSpeed = 0.3;
+    }
+
+    public static class HingeConstants {
+
+        public static final int kHingeMotorId = 39;
+
+        public static final double hinge_kS = 0.01;
+        public static final double hinge_kP = 10;
+        public static final double hinge_kI = 0;
+        public static final double hinge_kD = 0.1;
+        public static final double hinge_kV = 0.12;
+        public static final double hingeMaxVoltage = 4;
+        public static final double hingeMaxAcceleration = 10;
+        public static final double hingeMaxVelocity = 10; // rps
+        public static final double kHingeCurrentLimit = 120;
+
+        public static final int hingeCountsPerRevolution = 2048; // for kraken x60
+        public static final double hingeGearRatio = 15.0 / 1.0;
+
+        public static final double hingeMaxDeg = -30.0;
     }
 
     public static class ClimbConstants
@@ -229,14 +228,25 @@ public class Constants {
     public static final class IndexerConstants {
         public static final double kIndexerMaxVoltage = 5;// kraken x44 max voltage
         public static final int kIndexerMotorID = 35; // change this value
+        public static final double kIndexerSpeed = 0.25;
+        public static final double kIndexerGearRatio = 12.0/15.0;
+        public static final double indexerSpeed = 30.0; //rps
 
-        public static final double kIndexer_kG = 0.03;
         public static final double kIndexer_kS = 0.01;
+        public static final double kIndexer_kV = 0.095;
+        public static final double kIndexer_kA = 0.01;
         public static final double kIndexer_kP = 1.5;
         public static final double kIndexer_kI = 0.0;
         public static final double kIndexer_kD = 0.3;
 
         public static final double kIndexerSpeedRPS = 60;
+
+        public static final double kIndexerMaxAcceleration = 400;
+        public static final double kIndexerMaxJerk = 4000;
+    }
+
+    public static final class LimelightConstants {
+        public static final String limelightName = "limelight-a";
     }
     
 }

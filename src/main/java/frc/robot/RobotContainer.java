@@ -12,6 +12,9 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -29,6 +32,7 @@ import frc.robot.commands.AutoFire;
 import frc.robot.commands.TurretTracking;
 import frc.robot.subsystems.Transfer;
 import frc.robot.subsystems.Climb;
+import frc.robot.subsystems.Hinge;
 
 
 public class RobotContainer {
@@ -55,11 +59,22 @@ public class RobotContainer {
     public final Hood hood = new Hood();
     public final Climb climb = new Climb();
     public final Indexer indexer = new Indexer();
+    public final Hinge hinge = new Hinge();
 
     public final AutoFire autoFireCommand = new AutoFire(turret, transfer, shooter, hood);
 
     public RobotContainer() {
         NamedCommands.registerCommand("testNamedCommand", Commands.runOnce(() -> System.out.println("this named command works")));
+
+        SmartDashboard.putData("Git Info", new Sendable() {
+            @Override
+            public void initSendable(SendableBuilder builder) {
+                builder.addStringProperty("Branch", () -> BuildConstants.GIT_BRANCH, null);
+                builder.addStringProperty("Commit", () -> BuildConstants.GIT_SHA, null);
+                builder.addStringProperty("Date of commit", () -> BuildConstants.GIT_DATE, null);
+                builder.addStringProperty("Uncommitted changes", () -> new Boolean(BuildConstants.DIRTY > 0).toString(), null);
+            }
+        });
 
         configureBindings();
     }
@@ -91,16 +106,16 @@ public class RobotContainer {
         joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // reset the field-centric heading on left bumper press
-        //joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        joystick.povUp().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         // CLIMB button controls
         joystick.povRight().whileTrue(climb.climbUp());
-        joystick.povLeft().whileTrue(climb.climbDown()); 
+        joystick.povLeft().whileTrue(climb.climbDown());
 
 
         // HOOD button controls
-        joystick.povUp().onTrue(Commands.runOnce(() -> hood.runHood()));
-        joystick.povDown().onTrue(Commands.runOnce(() -> hood.runHoodReverse()));
+        // joystick.povUp().onTrue(Commands.runOnce(() -> hood.runHood()));
+        // joystick.povDown().onTrue(Commands.runOnce(() -> hood.runHoodReverse()));
 
         // joystick.povUp().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
         joystick.povDown().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
@@ -112,8 +127,8 @@ public class RobotContainer {
         joystick.leftTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
         joystick.rightTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
 
-        joystick.x().onTrue(new TurretTracking((turret)));
-        joystick.x().onFalse(Commands.runOnce(() -> turret.stop(), turret));
+        // joystick.x().whileTrue(new TurretTracking((turret)));
+        // joystick.x().onFalse(Commands.runOnce(() -> turret.stop(), turret));
 
         // SHOOTER button controls
         joystick.leftBumper().onTrue(Commands.runOnce(() -> shooter.decreaseSpeed()));
@@ -132,26 +147,27 @@ public class RobotContainer {
         //     .onFalse(
         //         new InstantCommand(() -> intake.stopRollerCommand()));
 
+
         // INTAKE button controls
-        // joystick.povRight()
-        //     .whileTrue(
-        //         new InstantCommand(() -> intake.intakeCommand()))
-        //     .onFalse(
-        //         new InstantCommand(() -> intake.stopRollerCommand()));
+        joystick.povRight()
+            .whileTrue(
+                intake.intakeCommand())
+            .onFalse(
+                intake.stopRollerCommand());
 
-        // joystick.povLeft()
-        //     .whileTrue(
-        //         new InstantCommand(() -> intake.outtakeCommand()))
-        //     .onFalse(
-        //         new InstantCommand(() -> intake.stopRollerCommand()));
+        joystick.povLeft()
+            .whileTrue(
+                intake.outtakeCommand())
+            .onFalse(
+                intake.stopRollerCommand());
 
-        // joystick.y()
-        //     .whileTrue(
-        //         new InstantCommand(() -> intake.deployCommand()));
+
+        // HINGE button controls
+        // joystick.x()
+        //     .onTrue(hinge.hingeUp());
 
         // joystick.a()
-        //     .whileTrue(
-        //         new InstantCommand(() -> intake.retractCommand()));
+        //     .onTrue(hinge.hingeDown());
         
         
         // ROLLER button controls

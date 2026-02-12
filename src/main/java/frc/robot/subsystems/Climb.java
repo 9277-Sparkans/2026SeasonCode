@@ -60,7 +60,7 @@ public class Climb extends SubsystemBase {
         switch (state) {
             case UP:
                 MotionMagicVoltage climbUP = new MotionMagicVoltage(5).withSlot(0);
-                climbMotor.setControl(climbUP.withPosition(-155));
+                climbMotor.setControl(climbUP.withPosition(155));
                 break;
             case DOWN:
                 MotionMagicVoltage DOWN = new MotionMagicVoltage(5).withSlot(0);

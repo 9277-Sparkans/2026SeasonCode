@@ -53,7 +53,7 @@ public class AutoFire extends Command
 
         double[] optimal = lookup.FindOptimalVals(distance);
         tgtRPM = (int)(optimal[0]); // If possible RPM's should be doubles
-        tgtAngle = optimal[1];;
+        tgtAngle = optimal[1];
 
         shooter.setShooterRPM(tgtRPM);
         hood.setHoodToAngle(tgtAngle);

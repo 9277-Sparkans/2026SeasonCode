@@ -1,9 +1,14 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+
+import java.util.function.Supplier;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Limelight;
@@ -19,13 +24,15 @@ public class Turret extends SubsystemBase {
 
   final MotionMagicVoltage m_request = new MotionMagicVoltage(0.0);
 
-
+  private Supplier<Double> botRotationSupplier;
 
   /** Creates a new Turret. */
-  public Turret() {
+  public Turret(Supplier<Double> botRotationSupplier) {
     turretMotor = new TalonFX(TurretConstants.turret_motorId);
     turretMotorConfig = new TalonFXConfiguration();
     turretMotor.setPosition(0);
+
+    this.botRotationSupplier = botRotationSupplier;
 
     turretMotorConfig.Slot0.kS = TurretConstants.turret_kS;
     turretMotorConfig.Slot0.kV = TurretConstants.turret_kV;
@@ -43,8 +50,6 @@ public class Turret extends SubsystemBase {
     turretMotor.getConfigurator().apply(turretMotorConfig);
 
     Telemetry.telemeterizeMotorWithPID("Turret", turretMotor, (1.0 / (15.0 / 108.0)), turretMotorConfig);
-
-
   }
 
   @Override
@@ -96,6 +101,21 @@ public class Turret extends SubsystemBase {
     
     turretMotor.setControl(m_request.withPosition(tgt)); //motor rotations
     
+  }
+
+  public void poseTurret()
+  {
+    Translation2d offset = Limelight.GetOffset();
+    double xComp = offset.getX();
+    double yComp = offset.getY();
+
+    double theta = Math.atan2(yComp, xComp);
+
+    double botRot = this.botRotationSupplier.get();
+
+    double tgtAngle = theta - botRot;
+    
+    turretMoveTgt(tgtAngle);
   }
 
 

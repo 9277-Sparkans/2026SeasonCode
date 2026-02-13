@@ -59,7 +59,7 @@ public class RobotContainer {
 
     private final Shooter shooter = new Shooter();
     public final Intake intake = new Intake();
-    public final Turret turret = new Turret();
+    public final Turret turret = new Turret(() -> drivetrain.pidgey.getRotation2d().getDegrees());
     public final Transfer transfer = new Transfer();
     public final Hood hood = new Hood();
     public final Climb climb = new Climb();
@@ -67,7 +67,7 @@ public class RobotContainer {
     public final Hinge hinge = new Hinge();
 
     public final Lookup lookup = Utils.createLookup(hood, shooter);
-    public final AutoFire autoFireCommand = new AutoFire(turret, transfer, shooter, hood, intake, lookup);
+    public final AutoFire autoFireCommand = new AutoFire(turret, transfer, shooter, hood, intake, lookup, indexer);
     public final LockMode lockModeCommand = new LockMode(turret, shooter, hood);
 
     public RobotContainer() {

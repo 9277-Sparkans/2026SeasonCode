@@ -209,7 +209,7 @@ public class Hood extends SubsystemBase {
 
   final MotionMagicVoltage m_request = new MotionMagicVoltage(0.0);
 
-
+  double tgt = 0.0;
 
   /** Creates a new Hood. */
   public Hood() {
@@ -282,13 +282,17 @@ public class Hood extends SubsystemBase {
     // double tgt = -1.0 * 2.209277238403452;
     // double tgt = -0.5;// * 2.209277238403452;
     // double tgt = -0.75;
-    double tgt = -0.3;
+    // tgt = -0.3;
 
     
     hoodMotor.setControl(m_request.withPosition(tgt)); //motor rotations
     
   }
 
+  public void setHoodTgt(double input)
+  {
+    tgt = input;
+  }
 
   public void stop() {
     hoodMotor.set(0);

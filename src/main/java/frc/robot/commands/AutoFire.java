@@ -4,6 +4,7 @@ import frc.robot.subsystems.Transfer;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Hood;
+import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.Constants.TransferConstants;
 import frc.robot.Constants.TurretConstants;
@@ -22,29 +23,27 @@ public class AutoFire extends Command
     Turret turret;
     Transfer transfer;
     Intake intake;
+    Indexer indexer;
     Shooter shooter;
     Lookup lookup;
     Hood hood;
     double tgtRpm;
     double tgtAngle;
 
-    public AutoFire(Turret turret, Transfer transfer, Shooter shooter, Hood hood, Intake intake, Lookup lookup)
+    public AutoFire(Turret turret, Transfer transfer, Shooter shooter, Hood hood, Intake intake, Lookup lookup, Indexer indexer)
     {
         this.turret = turret;
         this.transfer = transfer;
         this.shooter = shooter;
         this.hood = hood;
+        this.indexer = indexer;
 
         addRequirements(shooter, hood, transfer, turret, intake);
-
-        // tgtRpm = 0;
-        tgtAngle = 0.0;
     }
 
     
     @Override
     public void initialize(){
-        // tgtRpm = 0;
     }
 
     @Override
@@ -57,8 +56,9 @@ public class AutoFire extends Command
         tgtRpm = output[0];
         tgtAngle = output[1];
 
-        // shooter.setTgtRpm((int)(tgtRpm));
-        // hood.moveHoodToAngle(Angle.ofBaseUnits(tgtAngle, Degrees));
+        // shooter.setTgtRpm((int)(tgtRpm)); waiting on anu push
+        hood.setHoodTgt(tgtAngle);
+        indexer.setVel();
         transfer.activateTransfer();
         intake.intake();
     }
@@ -66,11 +66,9 @@ public class AutoFire extends Command
     @Override
     public void end(boolean interrupted)
     {
-        // hood.stopHood();
-        // shooter.targetRPM = 0;
-        // shooter.fireAtRpm();
         transfer.stop();
         intake.stop();
+        indexer.stop();
     }
 
     @Override

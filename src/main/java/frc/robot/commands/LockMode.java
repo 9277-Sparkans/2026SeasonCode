@@ -36,7 +36,7 @@ public class LockMode extends Command
 
         addRequirements(shooter, hood, turret);
 
-        tgtRpm = 0;
+        // tgtRpm = 0;
         tgtAngleHood = 0.0;
         tgtAngleTurret = 0.0;
     }
@@ -56,7 +56,7 @@ public class LockMode extends Command
     @Override
     public void initialize()
     {
-        tgtRpm = LockModeConstants.kLockModeRPM;
+        // tgtRpm = LockModeConstants.kLockModeRPM;
         tgtAngleHood = 0.0;
         tgtAngleTurret = 0.0;
     }
@@ -80,8 +80,8 @@ public class LockMode extends Command
                 break;
         }
 
-        shooter.setTgtRpm((int)(tgtRpm));
-        hood.moveHoodToAngle(Angle.ofBaseUnits(tgtAngleHood, Degrees));
+        // shooter.setTgtRpm((int)(tgtRpm));
+        // hood.moveHoodToAngle(Angle.ofBaseUnits(tgtAngleHood, Degrees));
         turret.turretMoveTgt(tgtAngleTurret);
     }
 
@@ -89,8 +89,8 @@ public class LockMode extends Command
     public void end(boolean interrupted)
     {
         // hood.stopHood();
-        shooter.targetRPM = 0;
-        shooter.fireAtRpm();
+        // shooter.targetRPM = 0;
+        // shooter.fireAtRpm();
     }
 
     @Override

@@ -68,6 +68,18 @@ public class RobotContainer {
     public RobotContainer() {
         NamedCommands.registerCommand("testNamedCommand", Commands.runOnce(() -> System.out.println("this named command works")));
 
+        // -------------------- Testing --------------------
+        System.out.println();
+
+        double[] optimal = lookup.FindOptimalVals(10.0);
+        double turretOffset = optimal[0];
+        double tgtRPM = optimal[1];
+        double tgtAngle = optimal[2];
+
+        System.out.println("Offset: " + turretOffset + ", RPM: " + tgtRPM + ", Angle: " + tgtAngle);
+        System.out.println();
+        // -------------------- Testing --------------------
+
         configureBindings();
     }
 

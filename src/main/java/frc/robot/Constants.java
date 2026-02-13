@@ -151,9 +151,14 @@ public class Constants {
         public static final double shooter_kV = 0.0;
         public static final double shooter_kA = 0.0;
 
-        public static final String lookupTablePath = Filesystem.getDeployDirectory().getPath() + "/shooter-lookup.csv"; // Generated with github.com/DanielR723/shooter
-        public static final double autoshootDistanceRange = 0.01; // Range of distances to check to choose the best shot (Least hood rotation and flywheel RPM change)
-        public static final double autoshootAngleWeight = 1.0; // How much the angle of the hood contributes to determining the best shot (Higher value = less hood movement)
+        public static final String lookupTablePath = Filesystem.getDeployDirectory().getPath() + "/ShooterLookupTable/shooter-lookup.csv"; // Generated with github.com/DanielR723/shooter
+        public static final double autoshootDistanceRange = 1.0; // Range of distances to check to choose the best shot (Least hood rotation and flywheel RPM change)
+        
+        // Weights of each value when calculating an optimal shot, higher value means higher priority to minimize
+        public static final double botXVelocityWeight = 1.0;
+        public static final double botYVelocityWeight = 1.0;
+        public static final double shooterRpmWeight = 1.0;
+        public static final double hoodAngleWeight = 1.0;
     }
 
     public static class HoodConstants

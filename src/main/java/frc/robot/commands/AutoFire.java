@@ -24,6 +24,7 @@ public class AutoFire extends Command
     Shooter shooter;
     Lookup lookup;
     Hood hood;
+    double turretOffset;
     double tgtRPM;
     double tgtAngle;
 
@@ -36,7 +37,8 @@ public class AutoFire extends Command
 
         addRequirements(shooter, hood, transfer, turret, intake);
 
-        tgtRPM = 0;
+        turretOffset = 0.0;
+        tgtRPM = 0.0;
         tgtAngle = 0.0;
     }
 
@@ -52,11 +54,17 @@ public class AutoFire extends Command
         double distance = Limelight.GetDistance();
 
         double[] optimal = lookup.FindOptimalVals(distance);
-        tgtRPM = (int)(optimal[0]); // If possible RPM's should be doubles
-        tgtAngle = optimal[1];
+        turretOffset = optimal[0];
+        tgtRPM = optimal[1];
+        tgtAngle = optimal[2];
+
+        // |-------------------- PLACEHOLDER --------------------|
+        // Turn turret to be turretOffset degrees from target
+        // |-------------------- PLACEHOLDER --------------------|
 
         shooter.setShooterRPM((int)(tgtRPM));
         hood.setHoodToAngle(tgtAngle);
+
         transfer.activateTransfer();
         intake.intake();
     }

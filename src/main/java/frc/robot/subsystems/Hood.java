@@ -91,7 +91,7 @@ public class Hood extends SubsystemBase {
 
   @Override
   public void periodic() {
-
+    System.out.println(hoodMotor.getPosition().getValueAsDouble());
   }
 
   public double getPosition() {

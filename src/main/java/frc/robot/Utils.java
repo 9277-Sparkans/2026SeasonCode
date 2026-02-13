@@ -106,8 +106,8 @@ public class Utils {
             double rpmRange = (double)(Constants.ShooterConstants.kMaxRPM - Constants.ShooterConstants.kMinRPM);
             double angleRange = Constants.HoodConstants.kMaximumAngle - Constants.HoodConstants.kMinimumAngle;
 
-            double currentNormalizedRPM = (shooter.GetShooterRPM() - Constants.ShooterConstants.kMinRPM) / rpmRange;
-
+            // double currentNormalizedRPM = (shooter.GetShooterRPM() - Constants.ShooterConstants.kMinRPM) / rpmRange;
+            double currentNormalizedRPM = 0;
             // double currentNormalizedAngle = (hood.GetHoodAngle() - Constants.HoodConstants.kMinimumAngle) / angleRange;
             double currentNormalizedAngle = 0;
 

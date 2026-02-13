@@ -2,105 +2,77 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
+// 
+
 package frc.robot.subsystems;
 
-import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
+import com.ctre.phoenix6.controls.ControlRequest;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.ShooterConstants;
-import frc.robot.Telemetry;
-import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-
-import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
-import com.ctre.phoenix6.controls.VelocityVoltage;
 
 public class Shooter extends SubsystemBase {
-    public int targetRPM;
-    private final TalonFX shooterMotor;
-    private final TalonFXConfiguration ShooterMotorConfiguration;
-    final MotionMagicVelocityVoltage m_request = new MotionMagicVelocityVoltage(0);
-    private boolean shooting = false;
+  private final TalonFX shooterMotor;
+  private final TalonFXConfiguration shooterMotorConfig;
+
+  final MotionMagicVelocityVoltage m_request = new MotionMagicVelocityVoltage(0);
+
+  /** Creates a new Shooter. */
+  public Shooter() {
+    shooterMotor = new TalonFX(ShooterConstants.kShooterMotorId);
+    shooterMotorConfig = new TalonFXConfiguration(); 
+    shooterMotor.setPosition(0);
+
+    shooterMotorConfig.CurrentLimits.StatorCurrentLimit = Constants.ShooterConstants.kShooterCurrentLimit;
+    shooterMotorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+
+    shooterMotorConfig.Slot0.kS = ShooterConstants.shooter_kS;
+    shooterMotorConfig.Slot0.kV = ShooterConstants.shooter_kV;
+    shooterMotorConfig.Slot0.kA = ShooterConstants.shooter_kA;
+    shooterMotorConfig.Slot0.kP = ShooterConstants.shooter_kP;
+    shooterMotorConfig.Slot0.kI = ShooterConstants.shooter_kI;
+    shooterMotorConfig.Slot0.kD = ShooterConstants.shooter_kD;
+
+    shooterMotorConfig.Voltage.PeakForwardVoltage = ShooterConstants.kShooterMaxVoltage;
+    shooterMotorConfig.Voltage.PeakReverseVoltage = -ShooterConstants.kShooterMaxVoltage;
+
+    shooterMotorConfig.MotionMagic.MotionMagicAcceleration = ShooterConstants.kShooterMaxAcceleration;
+    shooterMotorConfig.MotionMagic.MotionMagicJerk = ShooterConstants.kShooterMaxJerk;
+
+    shooterMotor.getConfigurator().apply(shooterMotorConfig);
+  }
 
 
-    public int shooterRpm; // rpm
+  @Override
+  public void periodic() {
+    // This method will be called once per scheduler run
+  }
 
-    /** Creates a new Shooter. */
-    public Shooter() {
+  public Command shooterSpin() {
+    return Commands.runOnce(() -> spin());
+  }
 
-        shooterMotor = new TalonFX(ShooterConstants.kShooterMotorId);
-        ShooterMotorConfiguration = new TalonFXConfiguration();
+  public Command shooterStop() {
+    return Commands.runOnce(() -> stop());
+  }
 
-        CurrentLimitsConfigs shooterConfigs = new CurrentLimitsConfigs();
-        shooterConfigs.StatorCurrentLimit = ShooterConstants.kShooterCurrentLimit;
-        shooterConfigs.StatorCurrentLimitEnable = true;
-        shooterMotor.getConfigurator().apply(shooterConfigs);
+  public void spin() {
+    shooterMotor.set(ShooterConstants.kShooterSpeed);
+  }
 
-        ShooterMotorConfiguration.Slot0.kP = ShooterConstants.shooter_kP;
-        ShooterMotorConfiguration.Slot0.kI = ShooterConstants.shooter_kI;
-        ShooterMotorConfiguration.Slot0.kD = ShooterConstants.shooter_kD;
+  public void stop() {
+    shooterMotor.set(0);
+  }
 
-        ShooterMotorConfiguration.Slot0.kS = ShooterConstants.shooter_kS;
-        ShooterMotorConfiguration.Slot0.kV = ShooterConstants.shooter_kV;
-        ShooterMotorConfiguration.Slot0.kA = ShooterConstants.shooter_kA;
-
-        shooterMotor.getConfigurator().apply(ShooterMotorConfiguration);
-
-        // shooterRpm = 0;
-
-        Telemetry.telemeterizeMotor("Shooter", shooterMotor);
-
-    }
-
-
-    public void setTgtRpm(int rpm) {
-        this.shooterRpm = rpm;
-    }
-
-
-    // shoot
-    public void fireAtRpm() {
-        // double tgt = (shooterRpm / ShooterConstants.kShooterGearRatio) * 60.0; // convert to rpm at motor
-        double tgt = 50.0;
-        // shooterMotor.setControl(m_request.withVelocity(tgt));
-    }
-
-    public double GetShooterRPM()
-    {
-        return shooterMotor.getVelocity().getValueAsDouble() * 60;
-    }
-
-    public void increaseSpeed() {
-        if (shooterRpm + ShooterConstants.kRpmIncrement < ShooterConstants.kMaxRPM)
-        {
-            shooterRpm += ShooterConstants.kRpmIncrement;
-        }
-    }
-
-    public void decreaseSpeed()
-    {
-        if (shooterRpm - ShooterConstants.kRpmIncrement > -10)
-        {
-            shooterRpm -= ShooterConstants.kRpmIncrement;
-        }
-    }
-
-    
-
-    public double GetShooterVelocity()
-    {
-        return shooterMotor.getVelocity().getValueAsDouble();
-    }
-
-    
-
-    @Override
-    public void periodic() {
-        // fireAtRpm();
-        shooterMotor.set(0.6);
-    }
+  public void setVel() {
+    double tgt = ShooterConstants.kShooterSpeed * ShooterConstants.kShooterGearRatio;
+    shooterMotor.setControl(m_request.withVelocity(tgt)); //rps
+  }
 }

@@ -33,7 +33,7 @@ public class VisionConstants {
                 try {
                         aprilTagLayout = new AprilTagFieldLayout(Path
                                         .of(Filesystem.getDeployDirectory().getAbsolutePath()
-                                                        + "/vision/welded.json"));
+                                                        + "/2026-rebuilt-welded.json"));
                 } catch (Exception e) {
                         aprilTagLayout = AprilTagFieldLayout.loadField(AprilTagFields.k2026RebuiltWelded);
                 }

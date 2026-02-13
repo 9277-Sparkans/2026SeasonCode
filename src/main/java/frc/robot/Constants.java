@@ -152,27 +152,29 @@ public class Constants {
 
         public static final double hood_kG = 0.00;
         public static final double hood_kS = 0.01;
-        public static final double hood_kV = 0.12;
+        public static final double hood_kV = 0.244;
         public static final double hood_kA = 0.01;
-        public static final double hood_kP = 0.5;
+        public static final double hood_kP = 6.5;
         public static final double hood_kI = 0.0;
-        public static final double hood_kD = 0;
+        public static final double hood_kD = 0.35;
 
         public static final double kHoodSpeed = 0.1;
 
-        public static final double kMinimumAngle = 32;
-        public static final double kMaximumAngle = 49;
+        public static final double kMinimumAngle = 12;
+        public static final double kMaximumAngle = 0;
 
-        public static final double kMinimumEncoderPos = 0.25;
-        public static final double kMaximumEncoderPos = 0.7;
+        public static final double kMinimumEncoderPos = -0.67236328125;
+        public static final double kMaximumEncoderPos = 0;
 
         public static final double maxEncoderValue = -1.258789; // test for this
 
         public static final double kGearRatio = 1.0 / (33.7 / 18.23);
 
-        public static final double kHoodCurrentLimit = 5;
+        public static final double kHoodCurrentLimit = 35;
 
         public static final double kHoodIncrement = 2;
+
+        public static final double kIdkManConstant = 1.209757239732467f;
     }
 
     public static class IntakeConstants

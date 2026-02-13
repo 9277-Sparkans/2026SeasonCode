@@ -32,7 +32,8 @@ public class Hood extends SubsystemBase {
   private final TalonFXConfiguration hoodMotorConfiguration;
   private final MotionMagicVoltage request = new MotionMagicVoltage(0).withSlot(0);
 
-  public double targetHoodPosition = HoodConstants.kMinimumEncoderPos;
+  public double targetHoodPosition = -0.25d;
+  public double convertedHoodPos = -1d;
 
   public Hood() {
     hoodMotor = new TalonFX(HoodConstants.kHoodMotorId);
@@ -67,9 +68,10 @@ public class Hood extends SubsystemBase {
     // set to brake mode to stop the motor within the deadband
     hoodMotorConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
-    hoodMotorConfiguration.Feedback.FeedbackRemoteSensorID = hoodEncoder.getDeviceID();
-    hoodMotorConfiguration.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
-    hoodMotorConfiguration.Feedback.RotorToSensorRatio = 1; // 1 motor rotation per 1 encoder rotation
+    // hoodMotorConfiguration.Feedback.FeedbackRemoteSensorID = hoodEncoder.getDeviceID();
+    // hoodMotorConfiguration.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+    // hoodMotorConfiguration.Feedback.RotorToSensorRatio = 1; // 1 motor rotation per 1 encoder rotation
+    // hoodMotorConfiguration.Feedback.SensorToMechanismRatio = 36.f / 20.f;
    
     hoodMotor.getConfigurator().apply(hoodMotorConfiguration);
 
@@ -80,6 +82,7 @@ public class Hood extends SubsystemBase {
             builder.addDoubleProperty("Absolute Encoder Position", () -> (hoodEncoder.getAbsolutePosition().getValueAsDouble()), (double val) -> hoodEncoder.setPosition(val));
             builder.addDoubleProperty("Motor Encoder Position", () -> (hoodMotor.getPosition().getValueAsDouble()), (double val) -> hoodMotor.setPosition(val));
             builder.addDoubleProperty("Target Hood Position", () -> targetHoodPosition, (double val) -> targetHoodPosition = val);
+            builder.addDoubleProperty("Supposed Hood Position", () -> convertedHoodPos, null);
         }
     });
 
@@ -106,8 +109,11 @@ public class Hood extends SubsystemBase {
     // double motorTarget = hoodRotationsToMotor(hoodRotations);
     clampTarget();
 
-    System.out.println("moving to target! " + targetHoodPosition);
-    hoodMotor.setControl(request.withPosition(targetHoodPosition * 1/*.6303*/)); // is this a magic number? yes. does it work? maybe
+    System.out.println("target: " + targetHoodPosition);
+    System.out.println("idk man constant: " + HoodConstants.kIdkManConstant);
+    convertedHoodPos = HoodConstants.kIdkManConstant * targetHoodPosition;
+    System.out.println("theoretical absolute position: " + convertedHoodPos);
+    hoodMotor.setControl(request.withPosition(targetHoodPosition));
   }
 
   public void moveHoodToAngle(Angle angle) {
@@ -118,27 +124,11 @@ public class Hood extends SubsystemBase {
 
     double positionRatio = degrees / hoodRangeDeg;
     double position = HoodConstants.kMinimumEncoderPos + (hoodEncoderRange * positionRatio);
-    
+
     targetHoodPosition = position;
 
     clampTarget();
     moveHoodMotionMagic();
-  }
-
-  public void moveHoodWithEncoder(double rotation) {
-    // rotation = Utils.clamp(rotation, HoodConstants.kMinimumEncoderPos, HoodConstants.kMaximumEncoderPos);
-    // fix `Resource leak: 'pidController' is never closed`
-    try (PIDController pidController = new PIDController(HoodConstants.hood_kP, HoodConstants.hood_kI, HoodConstants.hood_kD)) {
-      double feedback = pidController.calculate(hoodEncoder.getPosition().getValueAsDouble(), rotation);
-
-      double error = rotation - (hoodEncoder.getPosition().getValueAsDouble());
-
-      if (Math.abs(error) < 0.05) {
-        hoodMotor.set(0);
-      } else {
-        hoodMotor.set(feedback);
-      }
-    }
   }
 
   // POV UP move hood to -0.75
@@ -154,12 +144,12 @@ public class Hood extends SubsystemBase {
 
   
   public void clampTarget() {
-    // targetHoodPosition = Utils.clamp(targetHoodPosition, HoodConstants.kMinimumEncoderPos, HoodConstants.kMaximumEncoderPos);
+    targetHoodPosition = Utils.clamp(targetHoodPosition, HoodConstants.kMinimumEncoderPos, HoodConstants.kMaximumEncoderPos);
   }
 
   public void runHood() {
     // targetHoodPosition += HoodConstants.kHoodSpeed;
-    targetHoodPosition = 0.3;
+    // targetHoodPosition = 0.4;
     moveHoodMotionMagic();
   }
 

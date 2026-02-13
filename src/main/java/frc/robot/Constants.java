@@ -236,7 +236,7 @@ public class Constants {
         public static final AprilTagFieldLayout TAG_LAYOUT = frc.robot.Vision.VisionConstants.aprilTagLayout;
     }
 
-    public static final class IndexerConstants {
+    public static class IndexerConstants {
         public static final double kIndexerMaxVoltage = 5;// kraken x44 max voltage
         public static final int kIndexerMotorID = 35; // change this value
         public static final double kIndexerSpeed = 0.25;
@@ -252,6 +252,11 @@ public class Constants {
 
         public static final double kIndexerMaxAcceleration = 400;
         public static final double kIndexerMaxJerk = 4000;
+    }
+
+    public static class FieldConstants {
+        public static final double HUB_X = 8.23; // meters
+        public static final double HUB_Y = 4.11; // meters
     }
 
 }

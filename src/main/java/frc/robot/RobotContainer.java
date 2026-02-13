@@ -29,7 +29,7 @@ import java.util.function.Supplier;
 import frc.robot.Vision.VisionConstants;
 
 import frc.robot.commands.TurretTracking;
-import frc.robot.commands.FuelChaseCommand;
+// import frc.robot.commands.FuelChaseCommand;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Hood;
@@ -142,7 +142,8 @@ public class RobotContainer {
                 joystick.povLeft().whileTrue(intake.outtakeCommand()).onFalse(intake.stopRollerCommand());
 
                 // Turret tracking
-                joystick.y().onTrue(new TurretTracking(turret, camera0.getCamera(), VisionConstants.robotToCamera0));
+                joystick.y().onTrue(new TurretTracking(turret, camera0.getCamera(), VisionConstants.robotToCamera0,
+                                drivetrain::getPose3d));
 
                 // Transfer control
                 joystick.b().onTrue(Commands.runOnce(() -> transfer.toggleTransfer()));
@@ -154,15 +155,16 @@ public class RobotContainer {
                 joystick.rightStick().onTrue(indexer.toggleIndexer());
 
                 // Chase fuel ball with X button (PhotonVision feature)
-                joystick.x().whileTrue(new FuelChaseCommand(
-                                25, camera0.getCamera(), drivetrain,
-                                drivetrain::getPose3d, VisionConstants.robotToCamera0));
+                // joystick.x().whileTrue(new FuelChaseCommand(
+                // 25, camera0.getCamera(), drivetrain,
+                // drivetrain::getPose3d, VisionConstants.robotToCamera0));
 
                 drivetrain.registerTelemetry(logger::telemeterize);
         }
 
         public Command getAutonomousCommand() {
-                return new TurretTracking(turret, camera0.getCamera(), VisionConstants.robotToCamera0);
+                return new TurretTracking(turret, camera0.getCamera(), VisionConstants.robotToCamera0,
+                                drivetrain::getPose3d);
                 // new FuelChaseCommand(
                 // 25, camera0.getCamera(), drivetrain, // Change to the camera that will
                 // // chase fuel once

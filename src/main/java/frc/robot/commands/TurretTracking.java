@@ -4,33 +4,35 @@
 
 package frc.robot.commands;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.function.Supplier;
 
 import org.photonvision.PhotonCamera;
-import org.photonvision.targeting.PhotonTrackedTarget;
 
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Turret;
 
 public class TurretTracking extends Command {
   private Turret turret;
-  private PhotonCamera camera;
-  private Transform3d robotToCamera;
+  // private PhotonCamera camera; // Removed unused
+  // private Transform3d robotToCamera; // Removed unused
+  private final Supplier<Pose3d> poseProvider;
+
   double angleToHub;
+  double angleTohHubLocal;
 
   /** Creates a new TurretTracking. */
 
-  public TurretTracking(Turret turret, PhotonCamera camera, Transform3d robotToCamera) {
+  public TurretTracking(Turret turret, PhotonCamera camera, Transform3d robotToCamera, Supplier<Pose3d> poseProvider) {
 
     this.turret = turret;
-    this.camera = camera;
-    this.robotToCamera = robotToCamera;
+    // this.camera = camera;
+    // this.robotToCamera = robotToCamera;
+    this.poseProvider = poseProvider;
     addRequirements(turret);
 
     SmartDashboard.putData("Turret Stats", new Sendable() {
@@ -50,46 +52,23 @@ public class TurretTracking extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    var results = camera.getAllUnreadResults();
-    boolean isBlue = DriverStation.getAlliance().orElse(DriverStation.Alliance.Blue) == DriverStation.Alliance.Blue;
+    Pose3d robotPose = poseProvider.get();
 
-    // Valid IDs based on alliance
-    // Blue: 25, 26; Red: 9, 10
-    int id1 = isBlue ? 25 : 9;
-    int id2 = isBlue ? 26 : 10;
+    double dx = frc.robot.Constants.FieldConstants.HUB_X - robotPose.getX();
+    double dy = frc.robot.Constants.FieldConstants.HUB_Y - robotPose.getY();
 
-    PhotonTrackedTarget bestTarget = null;
+    double angleToHubRad = Math.atan2(dy, dx);
+    double robotYaw = robotPose.getRotation().getZ();
 
-    if (!results.isEmpty()) {
-      var result = results.get(results.size() - 1);
-      if (result.hasTargets()) {
-        List<PhotonTrackedTarget> targets = result.getTargets();
-        for (PhotonTrackedTarget target : targets) {
-          int id = target.getFiducialId();
-          if (id == id1 || id == id2) {
-            bestTarget = target;
-            break;
-          }
-        }
-      }
-    }
+    double angleToHubRobotRelative = angleToHubRad - robotYaw;
 
-    if (bestTarget == null) {
-      angleToHub = 0.0;
-    } else {
-      Transform3d cameraToTarget = bestTarget.getBestCameraToTarget();
-      Transform3d robotToTarget = robotToCamera.plus(cameraToTarget);
+    // Normalize to -180 to 180
+    angleToHubRobotRelative = Math.atan2(Math.sin(angleToHubRobotRelative), Math.cos(angleToHubRobotRelative));
 
-      // Calculate angle in radians then convert to degrees
-      // atan2(y, x) gives the angle relative to the robot's forward axis (X-axis)
-      angleToHub = Math.toDegrees(Math.atan2(robotToTarget.getY(), robotToTarget.getX()));
-    }
+    angleToHub = Math.toDegrees(angleToHubRobotRelative);
+    angleTohHubLocal = angleToHub; // Keeping this for whatever it was used for, presumably display
 
-    if (angleToHub == 0.0) {
-      return;
-    } else {
-      turret.turretMoveTgt(angleToHub);
-    }
+    turret.turretMoveTgt(angleToHub);
   }
 
   // Called once the command ends or is interrupted.

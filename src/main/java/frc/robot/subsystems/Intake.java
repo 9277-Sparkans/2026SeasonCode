@@ -1,7 +1,9 @@
 package frc.robot.subsystems;
 import frc.robot.Constants;
+import frc.robot.Constants.ClimbConstants;
 import frc.robot.Constants.IndexerConstants;
 import frc.robot.Constants.IntakeConstants;
+import frc.robot.Constants.TurretConstants;
 import frc.robot.Constants.ShooterConstants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -28,6 +30,10 @@ public class Intake extends SubsystemBase {
 		intakeMotor = new TalonFX(Constants.IntakeConstants.intakeMotorId);
 		intakeMotorConfig = new TalonFXConfiguration();
 
+
+		intakeMotorConfig.CurrentLimits.StatorCurrentLimit = IntakeConstants.kIntakeCurrentLimit;
+        intakeMotorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+
 		intakeMotorConfig.Slot0.kP = Constants.IntakeConstants.intake_kP;
 		intakeMotorConfig.Slot0.kI = Constants.IntakeConstants.intake_kI;
 		intakeMotorConfig.Slot0.kD = Constants.IntakeConstants.intake_kD;
@@ -41,15 +47,15 @@ public class Intake extends SubsystemBase {
 
 	
 	public Command intakeCommand() {
-		return Commands.runOnce(() -> intake());
+		return Commands.runOnce(() -> setVel());
 	}
 
 	public Command outtakeCommand() {
-		return Commands.runOnce(() -> outtake());
+		return Commands.runOnce(() -> setVelNeg());
 	}
 	
 	public Command stopRollerCommand() {
-		return Commands.runOnce(() -> stopRoller());
+		return Commands.runOnce(() -> stop());
 	}
 
 	public void intake()
@@ -63,13 +69,19 @@ public class Intake extends SubsystemBase {
 		intakeMotor.set(-IntakeConstants.intakeSpeed);
 	}
 
-	public void stopRoller()
+	public void stop()
 	{
 		intakeMotor.set(0);
 	}
 
 	public void setVel() {
 		double tgt = IntakeConstants.intakeSpeed / IntakeConstants.kIntakeGearRatio;
+		intakeMotor.setControl(m_request.withVelocity(tgt)); //rps
+  	}
+
+
+	public void setVelNeg() {
+		double tgt = -IntakeConstants.intakeSpeed / IntakeConstants.kIntakeGearRatio;
 		intakeMotor.setControl(m_request.withVelocity(tgt)); //rps
   	}
 

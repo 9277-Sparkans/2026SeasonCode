@@ -19,6 +19,7 @@ public class Climb extends SubsystemBase {
     private final TalonFXConfiguration climbConfig;
     MotionMagicVoltage m_request = new MotionMagicVoltage(-5).withSlot(0);
 
+    private ClimbState climbState;
 
     public enum ClimbState {
         DOWN,
@@ -26,12 +27,11 @@ public class Climb extends SubsystemBase {
         HANG
     }
 
-    private ClimbState climbState;
 
     public Climb() {
 
-        climbMotor = new TalonFX(Constants.ClimbConstants.kClimbMotorID);
-        climbConfig = new TalonFXConfiguration();
+                climbMotor = new TalonFX(Constants.ClimbConstants.kClimbMotorID);
+                climbConfig = new TalonFXConfiguration();
 
         /* PID */
         climbConfig.Slot0.kP = ClimbConstants.kClimb_kP;
@@ -44,11 +44,9 @@ public class Climb extends SubsystemBase {
         climbConfig.CurrentLimits.StatorCurrentLimit = ClimbConstants.kClimbCurrent_Limit;
         climbConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
-        /* Default Motion Magic (UP profile) */
-        climbConfig.MotionMagic.MotionMagicCruiseVelocity = ClimbConstants.kClimbMaxVelocity;
-        climbConfig.MotionMagic.MotionMagicAcceleration = ClimbConstants.kClimbMaxAcceleration;
-        climbConfig.Voltage.PeakForwardVoltage = ClimbConstants.kClimbMaxVoltage;
-        climbConfig.Voltage.PeakReverseVoltage = -ClimbConstants.kClimbMaxVoltage;
+                /* Default Motion Magic (UP profile) */
+                climbConfig.MotionMagic.MotionMagicCruiseVelocity = 30;
+                climbConfig.MotionMagic.MotionMagicAcceleration = 15;
 
         climbMotor.getConfigurator().apply(climbConfig);
     }
@@ -63,16 +61,16 @@ public class Climb extends SubsystemBase {
 
     // state for climb up
     public void states(ClimbState state) {
-
         switch (state) {
             case UP:
-                climbMotor.setControl(m_request.withPosition(-100));
+                climbMotor.setControl(m_request.withPosition(ClimbConstants.kClimbUp));
                 break;
             case DOWN:
-                climbMotor.setControl(m_request.withPosition(-5));
+                climbMotor.setControl(m_request.withPosition(ClimbConstants.kClimbDown));
                 break;
             case HANG:
-                climbMotor.setControl(m_request.withPosition(-80));
+                climbMotor.setControl(m_request.withPosition(ClimbConstants.kClimbHang));
+                break;
         }
     }
 
@@ -80,23 +78,22 @@ public class Climb extends SubsystemBase {
 
     public Command climbUp() {
         return Commands.runOnce(() -> {
-            climbMotor.setControl(m_request.withPosition(-100.0));
-
+            climbMotor.setControl(m_request.withPosition(ClimbConstants.kClimbUp));
             // states(ClimbState.UP);
         });
     }
 
     public Command climbDown() {
         return Commands.runOnce(() -> {
-            climbMotor.setControl(m_request.withPosition(0.0));
+            climbMotor.setControl(m_request.withPosition(ClimbConstants.kClimbDown));
             // states(ClimbState.DOWN);
         });
     }
 
     public Command climbHang() {
         return Commands.runOnce(() -> {
-            // climbMotor.setControl(m_request.withPosition(-80.0));
-            states(ClimbState.HANG);
+            climbMotor.setControl(m_request.withPosition(ClimbConstants.kClimbHang));
+            // states(ClimbState.HANG);
         });
     }
 
@@ -114,6 +111,5 @@ public class Climb extends SubsystemBase {
 
     public void stop(){
         climbMotor.set(0);
-
     }
 }

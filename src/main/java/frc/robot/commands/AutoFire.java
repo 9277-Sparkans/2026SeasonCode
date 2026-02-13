@@ -4,66 +4,73 @@ import frc.robot.subsystems.Transfer;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Hood;
-
+import frc.robot.subsystems.Intake;
+import frc.robot.Constants.TransferConstants;
+import frc.robot.Constants.TurretConstants;
+import frc.robot.Limelight;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.Constants.HoodConstants;
+import frc.robot.Utils.Lookup;
+
+import static edu.wpi.first.units.Units.Degrees;
+
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class AutoFire extends Command 
 {
     Turret turret;
     Transfer transfer;
+    Intake intake;
     Shooter shooter;
+    Lookup lookup;
     Hood hood;
-    int tgtRpm;
+    double tgtRpm;
     double tgtAngle;
 
-    public AutoFire(Turret turret, Transfer transfer, Shooter shooter, Hood hood)
+    public AutoFire(Turret turret, Transfer transfer, Shooter shooter, Hood hood, Intake intake, Lookup lookup)
     {
         this.turret = turret;
         this.transfer = transfer;
         this.shooter = shooter;
         this.hood = hood;
 
-        addRequirements(shooter, hood);
+        addRequirements(shooter, hood, transfer, turret, intake);
 
-        tgtRpm = 0;
+        // tgtRpm = 0;
         tgtAngle = 0.0;
-        
     }
 
     
     @Override
     public void initialize(){
-        // tgtRpm = shooter.GetCorrectRps();
-        //tgtAngle = hood.GetTargetHoodAngle();
+        // tgtRpm = 0;
     }
 
     @Override
     public void execute()
     {
-        // get from lookup table
-        // shooter.fireAtRps();
-        // hood.moveHoodToAngle(tgtAngle);
+        double distance = Limelight.GetDistance();
 
-        // add in turret
+        double[] output = lookup.FindOptimalVals(distance);
+        
+        tgtRpm = output[0];
+        tgtAngle = output[1];
 
-        // if (Math.abs(shooter.GetCorrectRps() - shooter.GetShooterVelocity()) < ShooterConstants.kRpsLenience)
-        // {
-        //     transfer.activateTransfer();
-        // }
-        // else
-        // {
-        //     transfer.stop();
-        // }
+        // shooter.setTgtRpm((int)(tgtRpm));
+        // hood.moveHoodToAngle(Angle.ofBaseUnits(tgtAngle, Degrees));
+        transfer.activateTransfer();
+        intake.intake();
     }
 
     @Override
     public void end(boolean interrupted)
     {
         // hood.stopHood();
-        // shooter.targetRpm = 0;
-        // shooter.fireAtRps();
+        // shooter.targetRPM = 0;
+        // shooter.fireAtRpm();
         transfer.stop();
+        intake.stop();
     }
 
     @Override

@@ -20,7 +20,7 @@ public class Hinge extends SubsystemBase{
     private final TalonFX hinge;
     private final TalonFXConfiguration hingeConfig;
 
-    MotionMagicVoltage hingey = new MotionMagicVoltage(0).withSlot(0);
+    MotionMagicVoltage m_request = new MotionMagicVoltage(0).withSlot(0);
 
     private double degToRotations(double degrees){
 		return (degrees / 360.0) * Constants.HingeConstants.hingeGearRatio;
@@ -46,10 +46,11 @@ public class Hinge extends SubsystemBase{
 		hingeConfig.Slot0.kI = Constants.HingeConstants.hinge_kI;
 		hingeConfig.Slot0.kD = Constants.HingeConstants.hinge_kD; 
 		hingeConfig.Slot0.kV = Constants.HingeConstants.hinge_kV;
-		
+        hingeConfig.Slot0.kS = Constants.HingeConstants.hinge_kS;
 
-		// hingeConfig.Voltage.PeakForwardVoltage = HingeConstants.hingeMaxVoltage;
-		// hingeConfig.Voltage.PeakReverseVoltage = -HingeConstants.hingeMaxVoltage;
+
+		hingeConfig.Voltage.PeakForwardVoltage = HingeConstants.hingeMaxVoltage;
+		hingeConfig.Voltage.PeakReverseVoltage = -HingeConstants.hingeMaxVoltage;
 		hingeConfig.MotionMagic.MotionMagicAcceleration = Constants.HingeConstants.hingeMaxAcceleration;
 		hingeConfig.MotionMagic.MotionMagicCruiseVelocity = Constants.HingeConstants.hingeMaxVelocity;
 
@@ -66,34 +67,32 @@ public class Hinge extends SubsystemBase{
     }
 
     // state for climb up
-    // public void states(HingeState state) {
+    public void states(HingeState state) {
 
-    //     switch (state) {
-    //         case UP:
-    //             hinge.setControl(hingey.withPosition(degToRotations(Constants.HingeConstants.hingeMaxDeg)));
-    //             break;
-    //         case DOWN:
-    //             hinge.setControl(hingey.withPosition(0.0));
-    //             break;
+        switch (state) {
+            case UP:
+                hinge.setControl(m_request.withPosition(degToRotations(Constants.HingeConstants.hingeMaxDeg)));
+                break;
+             case DOWN:
+                hinge.setControl(m_request.withPosition(0.0));
+                break;
 
-    //     }
-    // }
+        }
+    }
 
     /* ================= COMMANDS ================= */
 
-    // public Command hingeUp() {
-    //     return Commands.runOnce(() -> {
-    //         System.out.println("hinge UP command running");
-    //         hinge.setControl(hingey.withPosition(degToRotations(Constants.HingeConstants.hingeMaxDeg)));
-    //         // states(HingeState.UP);
-    //     });
-    // }
+    public Command hingeUp() {
+        return Commands.runOnce(() -> {
+            // hinge.setControl(hingey.withPosition(degToRotations(Constants.HingeConstants.hingeMaxDeg)));
+            states(HingeState.UP);
+        });
+    }
 
-    // public Command hingeDown() {
-    //     return Commands.runOnce(() -> {
-    //         System.out.println("hinge DOWN command running");
-    //         hinge.setControl(hingey.withPosition(0.0));
-    //         // states(HingeState.DOWN);
-    //     });
-    // }
+    public Command hingeDown() {
+        return Commands.runOnce(() -> {
+            // hinge.setControl(hingey.withPosition(0.0));
+            states(HingeState.DOWN);
+        });
+    }
 }

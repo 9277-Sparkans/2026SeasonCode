@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.VelocityVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.ControlRequest;
@@ -12,6 +13,7 @@ import com.ctre.phoenix6.controls.ControlRequest;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 import frc.robot.Constants.IndexerConstants;
 
 public class Indexer extends SubsystemBase {
@@ -24,9 +26,12 @@ public class Indexer extends SubsystemBase {
 
   /** Creates a new Indexer. */
   public Indexer() {
-    indexerMotor = new TalonFX(IndexerConstants.kIndexerMotorID);
+    indexerMotor = new TalonFX(IndexerConstants.kIndexerMotorId);
     indexerMotorConfig = new TalonFXConfiguration(); 
     indexerMotor.setPosition(0);
+
+    indexerMotorConfig.CurrentLimits.StatorCurrentLimit = Constants.IndexerConstants.kIndexerCurrentLimit;
+    indexerMotorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
     indexerMotorConfig.Slot0.kS = IndexerConstants.kIndexer_kS;
     indexerMotorConfig.Slot0.kV = IndexerConstants.kIndexer_kV;
@@ -65,16 +70,16 @@ public class Indexer extends SubsystemBase {
   public void toggle() {
     indexerOn = !indexerOn;
     if (indexerOn) {
-      spin();
+      setVel();
     } else {
       stop();
     }
   }
 
-  public void spin() {
+  public void spin()
+  {
     indexerMotor.set(IndexerConstants.kIndexerSpeed);
   }
-
 
   public void stop() {
     indexerMotor.set(0);
@@ -85,5 +90,3 @@ public class Indexer extends SubsystemBase {
     indexerMotor.setControl(m_request.withVelocity(tgt)); //rps
   }
 }
-
-

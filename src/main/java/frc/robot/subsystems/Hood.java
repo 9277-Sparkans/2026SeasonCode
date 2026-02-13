@@ -119,7 +119,7 @@ public class Hood extends SubsystemBase {
     double positionRatio = degrees / hoodRangeDeg;
     double position = HoodConstants.kMinimumEncoderPos + (hoodEncoderRange * positionRatio);
 
-    targetHoodPosition = position;
+    targetHoodPosition = -position;
 
     clampTarget();
     moveHoodMotionMagic();

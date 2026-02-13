@@ -26,16 +26,13 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
-import frc.robot.Constants.OIConstants;
-import frc.robot.Utils.Lookup;
-import frc.robot.commands.TurretTracking;
-import frc.robot.commands.LockMode.lockState;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Indexer;
 import frc.robot.Constants.OIConstants;
+import frc.robot.Utils.Lookup;
 import frc.robot.commands.AutoFire;
 import frc.robot.commands.LockMode;
 import frc.robot.commands.TurretTracking;
@@ -74,7 +71,7 @@ public class RobotContainer {
     public final Lookup lookup = Utils.createLookup(hood, shooter);
     public final AutoFire autoFireCommand = new AutoFire(turret, transfer, shooter, hood, intake, lookup);
     public final LockMode lockModeCommand = new LockMode(turret, shooter, hood);
-
+    
     public RobotContainer() {
         NamedCommands.registerCommand("testNamedCommand", Commands.runOnce(() -> System.out.println("this named command works")));
 
@@ -118,15 +115,16 @@ public class RobotContainer {
         joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // reset the field-centric heading on left bumper press
-        joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        joystick.povUp().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         // CLIMB button controls
-        // joystick.y().whileTrue(climb.climbUp());
-        // joystick.x().whileTrueFalse(climb.climbHang());
-        // joystick.a().whileTrue(climb.climbDown());
+        // joystick.povRight().onTrue(climb.climbUp());
+        // joystick.povRight().onFalse(climb.climbHang());
+        // joystick.povLeft().onTrue(climb.climbDown());
+        // joystick.povLeft().onFalse(climb.climbHang());
 
-        // joystick.povRight().onTrue(climb.runClimbCommand());
-        // joystick.povRight().onFalse(climb.stopCommand());
+        joystick.povRight().onTrue(climb.runClimbCommand());
+        joystick.povRight().onFalse(climb.stopCommand());
         
 
 
@@ -135,7 +133,7 @@ public class RobotContainer {
         // joystick.povDown().onTrue(Commands.runOnce(() -> hood.runHoodReverse()));
 
         // joystick.povUp().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
-        // joystick.povDown().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
+        joystick.povDown().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
 
 
         // TURRET button controls
@@ -146,7 +144,6 @@ public class RobotContainer {
 
         joystick.x().whileTrue(new TurretTracking((turret)));
         joystick.x().onFalse(Commands.runOnce(() -> turret.stop(), turret));
-
 
         // SHOOTER button controls
         joystick.leftBumper().onTrue(Commands.runOnce(() -> shooter.decreaseSpeed()));
@@ -159,39 +156,31 @@ public class RobotContainer {
         // TRANSFER button controls
         joystick.b().onTrue(Commands.runOnce(() -> transfer.toggleTransfer()));
 
-        // lock mode controls
-        // joystick.a().onTrue(Commands.runOnce(() -> lockModeCommand.setLockState(lockState.LEFT))
-        // .andThen(Commands.runOnce(() -> lockModeCommand.execute())));
-        // joystick.b().onTrue(Commands.runOnce(() -> lockModeCommand.setLockState(lockState.CENTER))
-        // .andThen(Commands.runOnce(() -> lockModeCommand.execute())));
-        // joystick.x().onTrue(Commands.runOnce(() -> lockModeCommand.setLockState(lockState.RIGHT))
-        // .andThen(Commands.runOnce(() -> lockModeCommand.execute())));
 
         // INTAKE button controls
-        joystick.y()
-            .whileTrue(
-                intake.intakeCommand())
-            .onFalse(
-                intake.stopRollerCommand());
+        // joystick.povRight()
+        //     .whileTrue(
+        //         intake.intakeCommand())
+        //     .onFalse(
+        //         intake.stopRollerCommand());
 
-        joystick.a()
-            .whileTrue(
-                intake.outtakeCommand())
-            .onFalse(
-                intake.stopRollerCommand());
+        // joystick.povLeft()
+        //     .whileTrue(
+        //         intake.outtakeCommand())
+        //     .onFalse(
+        //         intake.stopRollerCommand());
 
 
         // HINGE button controls
-        joystick.povRight()
-            .onTrue(hinge.hingeUp());
+        // joystick.x()
+        //     .onTrue(hinge.hingeUp());
 
-        joystick.povLeft()
-            .onTrue(hinge.hingeDown());
+        // joystick.a()
+        //     .onTrue(hinge.hingeDown());
         
         
-        // INDEXER button controls
-        joystick.b().onTrue(indexer.toggleIndexer());
-
+        // Indexer button controls
+        joystick.y().onTrue(indexer.toggleIndexer()); 
 
         // Operator
         operator(OIConstants.kKeyboard_lockModeLeft)

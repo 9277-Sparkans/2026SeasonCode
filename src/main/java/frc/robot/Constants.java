@@ -188,11 +188,11 @@ public class Constants {
 
         public static final double kHoodSpeed = 0.1;
 
-        public static final double kMinimumAngle = 12;
-        public static final double kMaximumAngle = 0;
+        public static final double kMinimumAngle = 0;
+        public static final double kMaximumAngle = 12;
 
-        public static final double kMinimumEncoderPos = -0.67236328125;
-        public static final double kMaximumEncoderPos = 0;
+        public static final double kMinimumEncoderPos = 0;
+        public static final double kMaximumEncoderPos = 0.67236328125;
 
         public static final double maxEncoderValue = -1.258789; // test for this
 

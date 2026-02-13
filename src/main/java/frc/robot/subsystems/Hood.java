@@ -241,7 +241,7 @@ public class Hood extends SubsystemBase {
 
   @Override
   public void periodic() {
-
+    System.out.println(hoodMotor.getPosition().getValueAsDouble());
   }
 
   public double getPosition() {
@@ -278,8 +278,12 @@ public class Hood extends SubsystemBase {
 
   public void hoodMoveTgt(){
 
-    // double tgt = (HoodConstants.kHoodTgtPos * HoodConstants.kGearRatio) / 360;
+    // double tgt = (-20.0 * HoodConstants.kGearRatio) / 360.0;
+    // double tgt = -1.0 * 2.209277238403452;
+    // double tgt = -0.5;// * 2.209277238403452;
+    // double tgt = -0.75;
     double tgt = -0.3;
+
     
     hoodMotor.setControl(m_request.withPosition(tgt)); //motor rotations
     

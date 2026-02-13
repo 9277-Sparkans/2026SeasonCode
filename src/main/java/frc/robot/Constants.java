@@ -128,8 +128,12 @@ public class Constants {
         public static final int kShooterCurrentLimit = 30;
         public static final double kShooterGearRatio = 36.0 / 30.0;
 
+        public static final double kShooterMaxVoltage = 5;// kraken x44 max voltage
+        public static final double kShooterMaxAcceleration = 100; // rotations per second^2
+        public static final double kShooterMaxJerk = 1000; // rotations per second^3
+
         // subject to change if we end up automating these
-        public static final double kShooterSpeed = 0.7;
+        public static final double kShooterSpeed = 100.0; //rps
 
         public static final int kRpmLenience = 200;
 
@@ -145,7 +149,7 @@ public class Constants {
         public static final double shooter_kS = 0.0;
         public static final double shooter_kP = 0.5;
         public static final double shooter_kI = 0.0;
-        public static final double shooter_kD = 0.05;
+        public static final double shooter_kD = 0.145;
         public static final double shooter_kV = 0.12;
         public static final double shooter_kA = 0.01;
 
@@ -167,14 +171,14 @@ public class Constants {
         public static final double hood_maxVoltage = 5;// kraken x44 max voltage
         public static final double kHoodMaxCurrent = 30;
 
-        public static final int kHoodTgtPos = 10;
+        public static final double kHoodTgtPos = -5.0;
 
         public static final double hood_kS = 0.01;
         public static final double hood_kV = 0.095;
         public static final double hood_kA = 0.01;
-        public static final double hood_kP = 0.5;
+        public static final double hood_kP = 1.0;
         public static final double hood_kI = 0.0;
-        public static final double hood_kD = 0;
+        public static final double hood_kD = 0.1;
 
         public static final double kHoodSpeed = 0.1;
 
@@ -188,9 +192,9 @@ public class Constants {
 
         public static final double kGearRatio = 15.0 / 210.0;
 
-        public static final double kHoodCurrentLimit = 35; // was 35, setting it to this to avoid grinding the gear again!
+        public static final double kHoodCurrentLimit = 35.0; // was 35, setting it to this to avoid grinding the gear again!
 
-        public static final double kHoodIncremqent = 2;
+        public static final double kHoodIncremqent = 2.0;
     }
 
     public static class IntakeConstants
@@ -275,7 +279,7 @@ public class Constants {
         public static final double kTransfer_kI = 0.0;
         public static final double kTransfer_kD = 0.1;
 
-        public static final double kTargetTransferRps = -120.0;
+        public static final double kTargetTransferRps = -150.0;
     }
 
     public static final class IndexerConstants {

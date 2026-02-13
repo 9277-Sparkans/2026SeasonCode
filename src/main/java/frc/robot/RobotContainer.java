@@ -132,7 +132,7 @@ public class RobotContainer {
         // joystick.povUp().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
         // joystick.povDown().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
 
-        joystick.povUp().onTrue(Commands.runOnce(() -> hood.hoodMoveTgt()));
+        joystick.povUp().whileTrue(Commands.runOnce(() -> hood.hoodMoveTgt()));
         joystick.povUp().onFalse(Commands.runOnce(() -> hood.stop()));
 
 
@@ -147,8 +147,9 @@ public class RobotContainer {
 
 
         // SHOOTER button controls
-        joystick.leftBumper().onTrue(Commands.runOnce(() -> shooter.decreaseSpeed()));
-        joystick.rightBumper().onTrue(Commands.runOnce(() -> shooter.increaseSpeed()));
+        // joystick.leftBumper().onTrue(Commands.runOnce(() -> shooter.decreaseSpeed()));
+        joystick.rightBumper().onTrue(Commands.runOnce(() -> shooter.setVel()));
+        joystick.rightBumper().onFalse(Commands.runOnce(() -> shooter.stop()));
 
         // joystick.x().onTrue(shooter.shootCmd());
         // joystick.x().whileTrue(Commands.runOnce(() -> autoFireCommand.execute()));

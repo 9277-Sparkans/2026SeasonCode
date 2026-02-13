@@ -129,7 +129,7 @@ public class RobotContainer {
 
 
         // HOOD button controls
-        joystick.povUp().onTrue(Commands.runOnce(() -> hood.moveHoodToAngle(Angle.ofBaseUnits(0, Degree))));
+        joystick.povUp().onTrue(Commands.runOnce(() -> hood.moveHoodToAngle(Angle.ofBaseUnits(hood.targetHoodAngle, Degree))));
         // joystick.povDown().onTrue(Commands.runOnce(() -> hood.runHoodReverse()));
 
         // joystick.povUp().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));

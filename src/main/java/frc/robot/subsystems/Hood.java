@@ -27,12 +27,12 @@ import frc.robot.Constants.HoodConstants;
 import frc.robot.Constants.TurretConstants;
 
 public class Hood extends SubsystemBase {
-
   private final TalonFX hoodMotor;
   private final CANcoder hoodEncoder;
   private final TalonFXConfiguration hoodMotorConfiguration;
 
   public double targetHoodPosition = -0.25d;
+  public double targetHoodAngle = 12;
   public double convertedHoodPos = -1d;
 
   private final MotionMagicVoltage request = new MotionMagicVoltage(0.0);
@@ -79,7 +79,8 @@ public class Hood extends SubsystemBase {
             builder.addDoubleProperty("Velocity", () -> hoodMotor.getVelocity().getValueAsDouble(), null);
             builder.addDoubleProperty("Absolute Encoder Position", () -> (hoodEncoder.getAbsolutePosition().getValueAsDouble()), (double val) -> hoodEncoder.setPosition(val));
             builder.addDoubleProperty("Motor Encoder Position", () -> (hoodMotor.getPosition().getValueAsDouble()), (double val) -> hoodMotor.setPosition(val));
-            builder.addDoubleProperty("Target Hood Position", () -> targetHoodPosition, (double val) -> targetHoodPosition = val);
+            // builder.addDoubleProperty("Target Hood Position", () -> targetHoodPosition, (double val) -> targetHoodPosition = val);
+            builder.addDoubleProperty("Target Angle Position", () -> targetHoodAngle, (double val) -> targetHoodAngle = val);
             builder.addDoubleProperty("Supposed Hood Position", () -> convertedHoodPos, null);
         }
     });

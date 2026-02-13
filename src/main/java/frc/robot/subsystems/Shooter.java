@@ -50,15 +50,12 @@ public class Shooter extends SubsystemBase {
 
         shooterMotor.getConfigurator().apply(ShooterMotorConfiguration);
 
-        shooterRpm = 0;
+        // shooterRpm = 0;
 
         Telemetry.telemeterizeMotor("Shooter", shooterMotor);
 
     }
 
-    public Command shootCmd() {
-        return Commands.runOnce(() -> {});
-    }
 
     public void setTgtRpm(int rpm) {
         this.shooterRpm = rpm;
@@ -66,10 +63,10 @@ public class Shooter extends SubsystemBase {
 
 
     // shoot
-    public void fireAtRpm()
-    {
-        double tgt = (shooterRpm / ShooterConstants.kShooterGearRatio) * 60.0; // convert to rpm at motor
-        shooterMotor.setControl(m_request.withVelocity(tgt));
+    public void fireAtRpm() {
+        // double tgt = (shooterRpm / ShooterConstants.kShooterGearRatio) * 60.0; // convert to rpm at motor
+        double tgt = 50.0;
+        // shooterMotor.setControl(m_request.withVelocity(tgt));
     }
 
     public double GetShooterRPM()
@@ -103,6 +100,7 @@ public class Shooter extends SubsystemBase {
 
     @Override
     public void periodic() {
-        fireAtRpm();
+        // fireAtRpm();
+        shooterMotor.set(0.6);
     }
 }

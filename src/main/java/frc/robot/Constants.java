@@ -140,15 +140,14 @@ public class Constants {
 
         public static final int kMinFlywheelRPM = 2400;
         public static final int kMaxFlywheelRPM = 7200;
-        // public static final double kGearRatio = 1 / (1 / 1);
 
         public static final double shooter_kG = 0.0;
         public static final double shooter_kS = 0.0;
-        public static final double shooter_kP = 0.1;
+        public static final double shooter_kP = 0.5;
         public static final double shooter_kI = 0.0;
-        public static final double shooter_kD = 0.0;
-        public static final double shooter_kV = 0.0;
-        public static final double shooter_kA = 0.0;
+        public static final double shooter_kD = 0.05;
+        public static final double shooter_kV = 0.12;
+        public static final double shooter_kA = 0.01;
 
         public static double autoshootDistanceRange = 10;
         public static double autoshootAngleWeight = 0.1; // idk tbh
@@ -161,13 +160,18 @@ public class Constants {
     public static class HoodConstants
     {
         public static final int kHoodMotorId = 34;
-        public static final int kHoodEncoderId = 0;
+        public static final int kHoodEncoderId = 41;
 
         public static final double hood_maxVelocity = 1; // rotations per second
         public static final double hood_maxAcceleration = 80; // rotations per second^2
         public static final double hood_maxVoltage = 5;// kraken x44 max voltage
+        public static final double kHoodMaxCurrent = 30;
+
+        public static final int kHoodTgtPos = 10;
 
         public static final double hood_kS = 0.01;
+        public static final double hood_kV = 0.095;
+        public static final double hood_kA = 0.01;
         public static final double hood_kP = 0.5;
         public static final double hood_kI = 0.0;
         public static final double hood_kD = 0;
@@ -194,17 +198,19 @@ public class Constants {
         public static final int intakeMotorId = 38;
         public static final double kIntakeGearRatio = 12.0 / 18.0;
 
+        public static final double kIntakeCurrentLimit = 80.0;
+
         public static final double intake_kS = 0.01;
         public static final double intake_kV = 0.095;
-        public static final double intake_kA = 0.01;
-        public static final double intake_kP = 10;
-        public static final double intake_kI = 0;
-        public static final double intake_kD = 0.1;
+        public static final double intake_kA = 0.1;
+        public static final double intake_kP = 2.0;
+        public static final double intake_kI = 0.0;
+        public static final double intake_kD = 0.2;
 
         public static final double intakeMaxVoltage = 4; // can change if not needed
         public static final double intakeMaxAcceleration = 5;
         public static final double intakeMaxVelocity = 100; // rps
-        public static final double intakeSpeed = 30.0; //rps
+        public static final double intakeSpeed = 50.0; //rps
     }
 
     public static class HingeConstants {
@@ -224,7 +230,7 @@ public class Constants {
         public static final int hingeCountsPerRevolution = 2048; // for kraken x60
         public static final double hingeGearRatio = 45.0 / 1.0;
 
-        public static final double hingeMaxDeg = -120.0;
+        public static final double hingeMaxDeg = -100.0;
     }
 
     public static class ClimbConstants
@@ -245,6 +251,9 @@ public class Constants {
         public static final double kClimb_kD = 0.1;
         public static final double kClimb_kG = 0.12;
 
+        public static final int kClimbUp = -150;
+        public static final int kClimbDown = -5;
+        public static final int kClimbHang = -120;
 
         public static final double kClimbGearRatio = 9.0 / 1.0;
     }
@@ -256,7 +265,7 @@ public class Constants {
         public static final double transferMaxVoltage = 4; // can change if not needed
         public static final double transferMaxAcceleration = 40;
         public static final double transferMaxVelocity = 100; // rps
-        public static final int kTransferCurrent_Limit = 20;
+        public static final int kTransferCurrent_Limit = 80;
         public static final double kTransferGearRatio = 30.0 / 24.0;
 
         public static final double kTransfer_kS = 0.01;
@@ -266,14 +275,14 @@ public class Constants {
         public static final double kTransfer_kI = 0.0;
         public static final double kTransfer_kD = 0.1;
 
-        public static final double kTargetTransferRps = -50.0;
+        public static final double kTargetTransferRps = -120.0;
     }
 
     public static final class IndexerConstants {
         public static final double kIndexerMaxVoltage = 5;// kraken x44 max voltage
-        public static final double kIndexerCurrentLimit = 20;
+        public static final double kIndexerCurrentLimit = 100;
         public static final int kIndexerMotorId = 35; // change this value
-        public static final double kIndexerSpeed = 40; //rps
+        public static final double kIndexerSpeed = 120; //rps
         public static final double kIndexerGearRatio = 12.0 / 15.0;
         public static final double indexerSpeed = 30.0; // old
 

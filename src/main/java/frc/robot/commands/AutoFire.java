@@ -37,14 +37,14 @@ public class AutoFire extends Command
 
         addRequirements(shooter, hood, transfer, turret, intake);
 
-        tgtRpm = 0;
+        // tgtRpm = 0;
         tgtAngle = 0.0;
     }
 
     
     @Override
     public void initialize(){
-        tgtRpm = 0;
+        // tgtRpm = 0;
     }
 
     @Override
@@ -57,8 +57,8 @@ public class AutoFire extends Command
         tgtRpm = output[0];
         tgtAngle = output[1];
 
-        shooter.setTgtRpm((int)(tgtRpm));
-        hood.moveHoodToAngle(Angle.ofBaseUnits(tgtAngle, Degrees));
+        // shooter.setTgtRpm((int)(tgtRpm));
+        // hood.moveHoodToAngle(Angle.ofBaseUnits(tgtAngle, Degrees));
         transfer.activateTransfer();
         intake.intake();
     }
@@ -67,8 +67,8 @@ public class AutoFire extends Command
     public void end(boolean interrupted)
     {
         // hood.stopHood();
-        shooter.targetRPM = 0;
-        shooter.fireAtRpm();
+        // shooter.targetRPM = 0;
+        // shooter.fireAtRpm();
         transfer.stop();
         intake.stop();
     }

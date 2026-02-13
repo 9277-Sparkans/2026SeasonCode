@@ -126,11 +126,14 @@ public class RobotContainer {
 
 
         // HOOD button controls
-        joystick.povUp().onTrue(Commands.runOnce(() -> hood.runHood()));
-        joystick.povDown().onTrue(Commands.runOnce(() -> hood.runHoodReverse()));
+        // joystick.povUp().onTrue(Commands.runOnce(() -> hood.runHood()));
+        // joystick.povDown().onTrue(Commands.runOnce(() -> hood.runHoodReverse()));
 
-        joystick.povUp().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
-        joystick.povDown().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
+        // joystick.povUp().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
+        // joystick.povDown().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
+
+        joystick.povUp().onTrue(Commands.runOnce(() -> hood.hoodMoveTgt()));
+        joystick.povUp().onFalse(Commands.runOnce(() -> hood.stop()));
 
 
         // TURRET button controls
@@ -141,6 +144,7 @@ public class RobotContainer {
 
         joystick.x().whileTrue(new TurretTracking((turret)));
         joystick.x().onFalse(Commands.runOnce(() -> turret.stop(), turret));
+
 
         // SHOOTER button controls
         joystick.leftBumper().onTrue(Commands.runOnce(() -> shooter.decreaseSpeed()));

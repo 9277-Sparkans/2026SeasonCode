@@ -63,39 +63,37 @@ public class Climb extends SubsystemBase {
     public void states(ClimbState state) {
         switch (state) {
             case UP:
-                climbMotor.setControl(m_request.withPosition(-100));
+                climbMotor.setControl(m_request.withPosition(ClimbConstants.kClimbUp));
                 break;
             case DOWN:
-                climbMotor.setControl(m_request.withPosition(-5));
+                climbMotor.setControl(m_request.withPosition(ClimbConstants.kClimbDown));
                 break;
             case HANG:
-                climbMotor.setControl(m_request.withPosition(-80));
+                climbMotor.setControl(m_request.withPosition(ClimbConstants.kClimbHang));
                 break;
         }
     }
 
     /* ================= COMMANDS ================= */
-    /* ================= COMMANDS ================= */
 
     public Command climbUp() {
         return Commands.runOnce(() -> {
-            climbMotor.setControl(m_request.withPosition(-100.0));
-
+            climbMotor.setControl(m_request.withPosition(ClimbConstants.kClimbUp));
             // states(ClimbState.UP);
         });
     }
 
     public Command climbDown() {
         return Commands.runOnce(() -> {
-            climbMotor.setControl(m_request.withPosition(0.0));
+            climbMotor.setControl(m_request.withPosition(ClimbConstants.kClimbDown));
             // states(ClimbState.DOWN);
         });
     }
 
     public Command climbHang() {
         return Commands.runOnce(() -> {
-            // climbMotor.setControl(m_request.withPosition(-80.0));
-            states(ClimbState.HANG);
+            climbMotor.setControl(m_request.withPosition(ClimbConstants.kClimbHang));
+            // states(ClimbState.HANG);
         });
     }
 
@@ -113,6 +111,5 @@ public class Climb extends SubsystemBase {
 
     public void stop(){
         climbMotor.set(0);
-
     }
 }

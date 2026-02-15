@@ -108,19 +108,12 @@ public class Utils {
             }
 
             // Helper values
-
-            // |-------------------- PLACEHOLDER VALUES --------------------|
-            double maxBotSpeed = 10.0; // The maximum (operational) speed the bot can travel m/sa
-            double botXVelocity = 0.0; // The bots velocity to or from the target (positive means towards)
-            double botYVelocity = 0.0; // The bots velocity to the left or right of the target (positive means left)
-            // |-------------------- PLACEHOLDER VALUES --------------------|
-
-            double botSpeedRange = 2.0 * maxBotSpeed;
+            double botSpeedRange = 2.0 * Constants.ShooterConstants.maxSpeed;
             double shooterRpmRange = (double)(Constants.ShooterConstants.kMaxRPM - Constants.ShooterConstants.kMinRPM);
             double hoodAngleRange = Constants.HoodConstants.kMaximumAngle - Constants.HoodConstants.kMinimumAngle;
 
-            double normalizedCurrentXVelocity= botXVelocity / botSpeedRange;
-            double normalizedCurrentYVelocity = botYVelocity / botSpeedRange;
+            double normalizedCurrentXVelocity= /* Replace with forward/backward (+/-) velocity from target */ 0.0 / botSpeedRange;
+            double normalizedCurrentYVelocity = /* Replace with left/right (+/-) velocity from target */ 0.0 / botSpeedRange;
             double normalizedCurrentShooterRPM = (shooter.GetShooterRPM() - Constants.ShooterConstants.kMinRPM) / shooterRpmRange;
             double normalizedCurrentHoodAngle = (hood.GetHoodAngle() - Constants.HoodConstants.kMinimumAngle) / hoodAngleRange;
 

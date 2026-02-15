@@ -57,11 +57,8 @@ public class AutoFire extends Command
         turretOffset = optimal[0];
         tgtRPM = optimal[1];
         tgtAngle = optimal[2];
-
-        // |-------------------- PLACEHOLDER --------------------|
-        // Turn turret to be turretOffset degrees from target
-        // |-------------------- PLACEHOLDER --------------------|
-
+        
+        turret.setTurretToAngle(turretOffset);
         shooter.setShooterRPM((int)(tgtRPM));
         hood.setHoodToAngle(tgtAngle);
 

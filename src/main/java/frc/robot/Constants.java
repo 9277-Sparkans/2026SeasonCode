@@ -154,6 +154,8 @@ public class Constants {
         public static final String lookupTablePath = Filesystem.getDeployDirectory().getPath() + "/ShooterLookupTable/shooter-lookup.csv"; // Generated with github.com/DanielR723/shooter
         public static final double autoshootDistanceRange = 1.0; // Range of distances to check to choose the best shot (Least hood rotation and flywheel RPM change)
         
+        public static final double maxSpeed = 10.0; // Max speed of the bot in m/s (Probably should be moved to some other constants class)
+        
         // Weights of each value when calculating an optimal shot, higher value means higher priority to minimize
         public static final double botXVelocityWeight = 1.0;
         public static final double botYVelocityWeight = 1.0;

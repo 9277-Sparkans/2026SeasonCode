@@ -56,7 +56,7 @@ public class AutoFire extends Command
         tgtRpm = output[0];
         tgtAngle = output[1];
 
-        // shooter.setTgtRpm((int)(tgtRpm)); waiting on anu push
+        // shooter.setTgtRpm((int)(tgtRpm)); waiting on push
         hood.setHoodTgt(tgtAngle);
         indexer.setVel();
         transfer.activateTransfer();

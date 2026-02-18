@@ -39,10 +39,7 @@ public class Indexer extends SubsystemBase {
     indexerMotorConfig.Slot0.kP = IndexerConstants.kIndexer_kP;
     indexerMotorConfig.Slot0.kI = IndexerConstants.kIndexer_kI;
     indexerMotorConfig.Slot0.kD = IndexerConstants.kIndexer_kD;
-
-    indexerMotorConfig.Voltage.PeakForwardVoltage = IndexerConstants.kIndexerMaxVoltage;
-    indexerMotorConfig.Voltage.PeakReverseVoltage = -IndexerConstants.kIndexerMaxVoltage;
-
+    
     indexerMotorConfig.MotionMagic.MotionMagicAcceleration = IndexerConstants.kIndexerMaxAcceleration;
     indexerMotorConfig.MotionMagic.MotionMagicJerk = IndexerConstants.kIndexerMaxJerk;
 

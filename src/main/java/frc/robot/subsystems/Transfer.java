@@ -36,8 +36,6 @@ public class Transfer extends SubsystemBase
         transferMotorConfig.CurrentLimits.StatorCurrentLimit = TransferConstants.kTransferCurrent_Limit;
         transferMotorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
-        transferMotorConfig.Voltage.PeakForwardVoltage = TransferConstants.transferMaxVoltage;
-        transferMotorConfig.Voltage.PeakReverseVoltage = -TransferConstants.transferMaxVoltage;
         transferMotorConfig.MotionMagic.MotionMagicAcceleration = TransferConstants.transferMaxAcceleration;
         transferMotorConfig.MotionMagic.MotionMagicCruiseVelocity = TransferConstants.transferMaxVelocity;
 

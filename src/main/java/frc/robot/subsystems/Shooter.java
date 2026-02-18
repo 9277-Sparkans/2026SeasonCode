@@ -12,6 +12,9 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.ControlRequest;
 
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -23,6 +26,8 @@ public class Shooter extends SubsystemBase {
   private final TalonFXConfiguration shooterMotorConfig;
 
   final MotionMagicVelocityVoltage m_request = new MotionMagicVelocityVoltage(0);
+
+  public double targetVel;
 
   /** Creates a new Shooter. */
   public Shooter() {
@@ -40,18 +45,28 @@ public class Shooter extends SubsystemBase {
     shooterMotorConfig.Slot0.kI = ShooterConstants.shooter_kI;
     shooterMotorConfig.Slot0.kD = ShooterConstants.shooter_kD;
 
-    shooterMotorConfig.Voltage.PeakForwardVoltage = ShooterConstants.kShooterMaxVoltage;
-    shooterMotorConfig.Voltage.PeakReverseVoltage = -ShooterConstants.kShooterMaxVoltage;
-
     shooterMotorConfig.MotionMagic.MotionMagicAcceleration = ShooterConstants.kShooterMaxAcceleration;
+    shooterMotorConfig.MotionMagic.MotionMagicCruiseVelocity = 200.0;
+
     shooterMotorConfig.MotionMagic.MotionMagicJerk = ShooterConstants.kShooterMaxJerk;
 
     shooterMotor.getConfigurator().apply(shooterMotorConfig);
+
+    SmartDashboard.putData("Shooter]]]", new Sendable() {
+        @Override
+        public void initSendable(SendableBuilder builder) {
+            builder.addDoubleProperty("Speed", () -> targetVel, (val) -> targetVel = val);
+        }
+    });
+
+    targetVel = 0.0;
   }
 
 
   @Override
   public void periodic() {
+    setVel();
+    System.out.println(targetVel);
     // This method will be called once per scheduler run
   }
 
@@ -71,8 +86,25 @@ public class Shooter extends SubsystemBase {
     shooterMotor.set(0);
   }
 
-  public void setVel() {
-    double tgt = ShooterConstants.kShooterSpeed * ShooterConstants.kShooterGearRatio;
-    shooterMotor.setControl(m_request.withVelocity(tgt)); //rps
+  public void increaseSpeed () {
+    if (targetVel + ShooterConstants.kRpmIncrement <= ShooterConstants.kMaxRPM) {
+        targetVel += ShooterConstants.kRpmIncrement;
+    }
   }
+
+  public void decreaseSpeed () {
+    if (targetVel - ShooterConstants.kRpmIncrement >= ShooterConstants.kMinRPM) {
+        targetVel -= ShooterConstants.kRpmIncrement;
+    }
+  }
+
+  public void setVel() {
+    double tgt = ShooterConstants.kShooterSpeed * ShooterConstants.kShooterGearRatio / 60.0;
+    if (targetVel == 0) {
+        shooterMotor.set(0.0);
+    }
+    else {
+        shooterMotor.setControl(m_request.withVelocity(targetVel));// * ShooterConstants.kShooterGearRatio / 60.0)); //rpm
+    }
+    }
 }

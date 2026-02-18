@@ -28,9 +28,8 @@ public class Climb extends SubsystemBase {
 
 
     public Climb() {
-
-                climbMotor = new TalonFX(Constants.ClimbConstants.kClimbMotorID);
-                climbConfig = new TalonFXConfiguration();
+        climbMotor = new TalonFX(Constants.ClimbConstants.kClimbMotorID);
+        climbConfig = new TalonFXConfiguration();
 
         /* PID */
         climbConfig.Slot0.kP = ClimbConstants.kClimb_kP;
@@ -105,6 +104,7 @@ public class Climb extends SubsystemBase {
     }
 
     public void runClimb() {
+        System.out.println("climb position: " + climbMotor.getPosition());
         climbMotor.set(0.5);
     }
 

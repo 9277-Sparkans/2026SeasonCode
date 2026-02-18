@@ -125,11 +125,11 @@ public class RobotContainer {
         // joystick.a().onTrue(climb.climbDown());
         // joystick.a().onFalse(climb.stopCommand());
 
-        joystick.y().onTrue(climb.runClimbCommand());
-        joystick.y().onFalse(climb.stopCommand());
-
-        joystick.a().onTrue(climb.runClimbNegCommand());
+        joystick.a().onTrue(climb.runClimbCommand());
         joystick.a().onFalse(climb.stopCommand());
+        
+        joystick.y().onTrue(climb.runClimbNegCommand());
+        joystick.y().onFalse(climb.stopCommand());
         
 
 

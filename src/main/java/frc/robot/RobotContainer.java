@@ -115,24 +115,29 @@ public class RobotContainer {
         joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // reset the field-centric heading on left bumper press
-        joystick.povUp().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         // CLIMB button controls
-        // joystick.povRight().onTrue(climb.climbUp());
-        // joystick.povRight().onFalse(climb.climbHang());
-        // joystick.povLeft().onTrue(climb.climbDown());
-        // joystick.povLeft().onFalse(climb.climbHang());
+        // joystick.y().onTrue(climb.climbUp());
+        // joystick.y().onFalse(climb.stopCommand());
+        // joystick.x().onTrue(climb.climbHang());
+        // joystick.x().onFalse(climb.stopCommand());
+        // joystick.a().onTrue(climb.climbDown());
+        // joystick.a().onFalse(climb.stopCommand());
 
-        joystick.povRight().onTrue(climb.runClimbCommand());
-        joystick.povRight().onFalse(climb.stopCommand());
+        joystick.y().onTrue(climb.runClimbCommand());
+        joystick.y().onFalse(climb.stopCommand());
+
+        joystick.a().onTrue(climb.runClimbNegCommand());
+        joystick.a().onFalse(climb.stopCommand());
         
 
 
         // HOOD button controls
         joystick.povUp().onTrue(Commands.runOnce(() -> hood.moveHoodToAngle(Angle.ofBaseUnits(hood.targetHoodAngle, Degree))));
-        // joystick.povDown().onTrue(Commands.runOnce(() -> hood.runHoodReverse()));
+        joystick.povDown().onTrue(Commands.runOnce(() -> hood.runHoodReverse()));
 
-        // joystick.povUp().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
+        joystick.povUp().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
         joystick.povDown().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
 
 
@@ -142,16 +147,13 @@ public class RobotContainer {
         joystick.leftTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
         joystick.rightTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
 
-        joystick.x().whileTrue(new TurretTracking((turret)));
-        joystick.x().onFalse(Commands.runOnce(() -> turret.stop(), turret));
+        // joystick.x().whileTrue(new TurretTracking((turret)));
+        // joystick.x().onFalse(Commands.runOnce(() -> turret.stop(), turret));
 
         // SHOOTER button controls
         joystick.leftBumper().onTrue(Commands.runOnce(() -> shooter.decreaseSpeed()));
         joystick.rightBumper().onTrue(Commands.runOnce(() -> shooter.increaseSpeed()));
 
-
-        // joystick.rightBumper().onTrue(Commands.runOnce(() -> shooter.setVel()));
-        // joystick.rightBumper().onFalse(Commands.runOnce(() -> shooter.stop()));
 
         // joystick.x().onTrue(shooter.shootCmd());
         // joystick.x().whileTrue(Commands.runOnce(() -> autoFireCommand.execute()));
@@ -162,13 +164,13 @@ public class RobotContainer {
 
 
         // INTAKE button controls
-        // joystick.povRight()
+        // joystick.y()
         //     .whileTrue(
         //         intake.intakeCommand())
         //     .onFalse(
         //         intake.stopRollerCommand());
 
-        // joystick.povLeft()
+        // joystick.a()
         //     .whileTrue(
         //         intake.outtakeCommand())
         //     .onFalse(
@@ -176,15 +178,17 @@ public class RobotContainer {
 
 
         // HINGE button controls
-        // joystick.x()
-        //     .onTrue(hinge.hingeUp());
+        joystick.povRight()
+            .onTrue(hinge.hingeUp())
+            .onFalse(hinge.hingeStopCommand());
 
-        // joystick.a()
-        //     .onTrue(hinge.hingeDown());
+        joystick.povLeft()
+            .onTrue(hinge.hingeDown())
+            .onFalse(hinge.hingeStopCommand());
         
         
         // Indexer button controls
-        joystick.y().onTrue(indexer.toggleIndexer()); 
+        joystick.b().onTrue(indexer.toggleIndexer()); 
 
         // Operator
         operator(OIConstants.kKeyboard_lockModeLeft)

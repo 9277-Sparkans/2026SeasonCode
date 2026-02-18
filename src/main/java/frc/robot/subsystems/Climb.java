@@ -14,10 +14,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 
 public class Climb extends SubsystemBase {
-    // CANBus kCANBus = CANBus.roboRIO();
     private final TalonFX climbMotor;
     private final TalonFXConfiguration climbConfig;
-    MotionMagicVoltage m_request = new MotionMagicVoltage(-5).withSlot(0);
+    MotionMagicVoltage m_request = new MotionMagicVoltage(5).withSlot(0);
 
     private ClimbState climbState;
 
@@ -44,9 +43,9 @@ public class Climb extends SubsystemBase {
         climbConfig.CurrentLimits.StatorCurrentLimit = ClimbConstants.kClimbCurrent_Limit;
         climbConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
-                /* Default Motion Magic (UP profile) */
-                climbConfig.MotionMagic.MotionMagicCruiseVelocity = 30;
-                climbConfig.MotionMagic.MotionMagicAcceleration = 15;
+        /* Default Motion Magic (UP profile) */
+        climbConfig.MotionMagic.MotionMagicCruiseVelocity = 100;
+        climbConfig.MotionMagic.MotionMagicAcceleration = 100;
 
         climbMotor.getConfigurator().apply(climbConfig);
     }
@@ -78,22 +77,22 @@ public class Climb extends SubsystemBase {
 
     public Command climbUp() {
         return Commands.runOnce(() -> {
-            climbMotor.setControl(m_request.withPosition(ClimbConstants.kClimbUp));
-            // states(ClimbState.UP);
+            // climbMotor.setControl(m_request.withPosition(ClimbConstants.kClimbUp));
+            states(ClimbState.UP);
         });
     }
 
     public Command climbDown() {
         return Commands.runOnce(() -> {
-            climbMotor.setControl(m_request.withPosition(ClimbConstants.kClimbDown));
-            // states(ClimbState.DOWN);
+            // climbMotor.setControl(m_request.withPosition(ClimbConstants.kClimbDown));
+            states(ClimbState.DOWN);
         });
     }
 
     public Command climbHang() {
         return Commands.runOnce(() -> {
-            climbMotor.setControl(m_request.withPosition(ClimbConstants.kClimbHang));
-            // states(ClimbState.HANG);
+            // climbMotor.setControl(m_request.withPosition(ClimbConstants.kClimbHang));
+            states(ClimbState.HANG);
         });
     }
 
@@ -106,7 +105,15 @@ public class Climb extends SubsystemBase {
     }
 
     public void runClimb() {
-        climbMotor.set(-0.1);
+        climbMotor.set(0.5);
+    }
+
+    public Command runClimbNegCommand() {
+        return Commands.runOnce(() -> runClimbNeg());
+    }
+
+    public void runClimbNeg() {
+        climbMotor.set(-0.5);
     }
 
     public void stop(){

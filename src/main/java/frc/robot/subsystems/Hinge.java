@@ -95,4 +95,10 @@ public class Hinge extends SubsystemBase{
             states(HingeState.DOWN);
         });
     }
+
+    public Command hingeStopCommand() {
+        return Commands.runOnce(() -> {
+            hinge.set(0.0);
+        });
+    }
 }

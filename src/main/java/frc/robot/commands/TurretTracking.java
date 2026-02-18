@@ -68,6 +68,8 @@ public class TurretTracking extends Command {
     angleToHub = Math.toDegrees(angleToHubRobotRelative);
     angleTohHubLocal = angleToHub; // Keeping this for whatever it was used for, presumably display
 
+    System.out.println("angle to hub: " + angleToHub);
+
     turret.turretMoveTgt(angleToHub);
   }
 

@@ -24,7 +24,7 @@ import java.util.Optional;
 import java.util.Set;
 import org.photonvision.EstimatedRobotPose;
 import org.photonvision.PhotonCamera;
-import org.photonvision.PhotonPoseEstimator;
+import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 
 /** IO implementation for real PhotonVision hardware. */
 public class VisionIOPhotonVision implements VisionIO {
@@ -45,6 +45,7 @@ public class VisionIOPhotonVision implements VisionIO {
 		// rather than the constructor.
 		estimator = new PhotonPoseEstimator(VisionConstants.aprilTagLayout,
 				roboToCamera);
+		estimator.setPrimaryStrategy(PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR);
 	}
 
 	/**

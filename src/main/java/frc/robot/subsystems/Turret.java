@@ -38,6 +38,13 @@ public class Turret extends SubsystemBase {
     turretMotorConfig.MotionMagic.MotionMagicCruiseVelocity = TurretConstants.turret_maxVelocity;
     turretMotorConfig.MotionMagic.MotionMagicJerk = TurretConstants.turret_maxJerk;
 
+    turretMotorConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = TurretConstants.kMaximumAngle / 360
+        * TurretConstants.kGearRatio;
+    turretMotorConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    turretMotorConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = TurretConstants.kMinimumAngle / 360
+        * TurretConstants.kGearRatio;
+    turretMotorConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+
     turretMotor.getConfigurator().apply(turretMotorConfig);
 
     Telemetry.telemeterizeMotorWithPID("Turret", turretMotor, (1.0 / (15.0 / 108.0)), turretMotorConfig);
@@ -88,7 +95,7 @@ public class Turret extends SubsystemBase {
   public void turretMoveTgt(double llAngle) {
 
     boolean isAtTarget = Math.abs(turretMotor.getClosedLoopError().getValue()) < 1.5;
-    double tgt = (-llAngle * 10 * TurretConstants.kGearRatio) / 360;
+    double tgt = (-llAngle * TurretConstants.kGearRatio) / 360;
 
     // System.out.println(llAngle * 10);
 

@@ -15,6 +15,7 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Turret;
+import edu.wpi.first.math.filter.LinearFilter;
 
 public class TurretTracking extends Command {
   private Turret turret;

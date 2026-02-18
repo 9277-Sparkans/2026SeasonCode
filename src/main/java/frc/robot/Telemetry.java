@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.ctre.phoenix6.SignalLogger;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.swerve.SwerveDrivetrain.SwerveDriveState;
 
@@ -162,20 +162,21 @@ public class Telemetry {
         });
     }
 
-    public static void telemeterizeMotorWithPID(String motorName, TalonFX motor, double gearRatio, TalonFXConfiguration config) {
+    public static void telemeterizeMotorWithPID(String motorName, TalonFX motor, double gearRatio) {
         SmartDashboard.putData(motorName, new Sendable() {
             @Override
             public void initSendable(SendableBuilder builder) {
+                Slot0Configs slot0Configs = new Slot0Configs();
                 builder.addDoubleProperty("Velocity", () -> motor.getVelocity().getValueAsDouble(), null);
                 builder.addDoubleProperty("Position", () -> (motor.getPosition().getValueAsDouble() / gearRatio) * 360, null);
-                builder.addDoubleProperty("kS", () -> config.Slot0.kS , (value) -> config.Slot0.kS = value);
-                builder.addDoubleProperty("kV", () -> config.Slot0.kV , (value) -> config.Slot0.kV = value);
-                builder.addDoubleProperty("kA", () -> config.Slot0.kA , (value) -> config.Slot0.kA = value);
-                builder.addDoubleProperty("kP", () -> config.Slot0.kP , (value) -> config.Slot0.kP = value);
-                builder.addDoubleProperty("kI", () -> config.Slot0.kI , (value) -> config.Slot0.kI = value);
-                builder.addDoubleProperty("kD", () -> config.Slot0.kD , (value) -> config.Slot0.kD = value);
+                builder.addDoubleProperty("kS", () -> slot0Configs.kS , (value) -> slot0Configs.kS = value);
+                builder.addDoubleProperty("kV", () -> slot0Configs.kV , (value) -> slot0Configs.kV = value);
+                builder.addDoubleProperty("kA", () -> slot0Configs.kA , (value) -> slot0Configs.kA = value);
+                builder.addDoubleProperty("kP", () -> slot0Configs.kP , (value) -> slot0Configs.kP = value);
+                builder.addDoubleProperty("kI", () -> slot0Configs.kI , (value) -> slot0Configs.kI = value);
+                builder.addDoubleProperty("kD", () -> slot0Configs.kD , (value) -> slot0Configs.kD = value);
 
-                builder.addBooleanProperty("Click me to set PID!", () -> true, (value) -> motor.getConfigurator().apply(config));
+                builder.addBooleanProperty("Click me to set PID!", () -> true, (value) -> motor.getConfigurator().apply(slot0Configs));
             }
         });
     }

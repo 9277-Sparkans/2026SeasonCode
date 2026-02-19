@@ -37,6 +37,29 @@ public class Vision extends SubsystemBase {
         private final frc.robot.generated.VisionIOInputsAutoLogged[] inputs;
         private final Alert[] disconnectedAlerts;
         public boolean visionHasTarget = false;
+        private Pose3d latestVisionPose = new Pose3d();
+        private Pose3d[] latestRobotPoses = new Pose3d[0];
+
+        /**
+         * Get all robot poses from the latest cycle (same as Vision/Summary/RobotPoses
+         * in NT).
+         *
+         * @return Array of all robot pose observations.
+         */
+        public Pose3d[] getRobotPoses() {
+                return latestRobotPoses;
+        }
+
+        /**
+         * Get the latest accepted vision pose with the lowest ambiguity.
+         * Falls back to the last known good pose if no new observations are accepted.
+         *
+         * @return The best vision pose as a Pose3d.
+         */
+        public Pose3d getLatestVisionPose() {
+                return latestVisionPose;
+        }
+
         private boolean seesThisTarget = false;
 
         public Vision(VisionConsumer consumer, Supplier<Pose2d> poseSupplier, VisionIO... io) {
@@ -81,6 +104,11 @@ public class Vision extends SubsystemBase {
                 List<Pose3d> allRobotPoses = new LinkedList<>();
                 List<Pose3d> allRobotPosesAccepted = new LinkedList<>();
                 List<Pose3d> allRobotPosesRejected = new LinkedList<>();
+                double bestAmbiguity = Double.MAX_VALUE;
+                Pose3d bestPose = null;
+                int totalAccepted = 0;
+                int totalRejected = 0;
+                StringBuilder rejectionLog = new StringBuilder();
 
                 // Loop over cameras
                 for (int cameraIndex = 0; cameraIndex < io.length; cameraIndex++) {
@@ -139,12 +167,28 @@ public class Vision extends SubsystemBase {
                                         robotPosesRejected.add(observation.pose());
                                 } else {
                                         robotPosesAccepted.add(observation.pose());
+                                        // Track lowest ambiguity pose across all cameras
+                                        if (observation.ambiguity() < bestAmbiguity) {
+                                                bestAmbiguity = observation.ambiguity();
+                                                bestPose = observation.pose();
+                                        }
                                 }
 
                                 // Skip if rejected
                                 if (rejectPose) {
+                                        totalRejected++;
+                                        rejectionLog.append("Camera").append(cameraIndex)
+                                                        .append(": ").append(rejectionReason)
+                                                        .append(" pose=(")
+                                                        .append(String.format("%.2f", observation.pose().getX()))
+                                                        .append(",")
+                                                        .append(String.format("%.2f", observation.pose().getY()))
+                                                        .append(",")
+                                                        .append(String.format("%.2f", observation.pose().getZ()))
+                                                        .append(") | ");
                                         continue;
                                 }
+                                totalAccepted++;
 
                                 // Calculate standard deviations
                                 double stdDevFactor = Math.pow(observation.averageTagDistance(), 2.0)
@@ -179,11 +223,24 @@ public class Vision extends SubsystemBase {
                         allRobotPosesRejected.addAll(robotPosesRejected);
                 }
 
+                // Store all robot poses for external access (same data as
+                // Vision/Summary/RobotPoses)
+                latestRobotPoses = allRobotPoses.toArray(new Pose3d[0]);
+
                 // Log summary data
                 Logger.recordOutput("Vision/Summary/TagPoses", allTagPoses.toArray(new Pose3d[0]));
                 Logger.recordOutput("Vision/Summary/RobotPoses", allRobotPoses.toArray(new Pose3d[0]));
                 Logger.recordOutput("Vision/Summary/RobotPosesAccepted", allRobotPosesAccepted.toArray(new Pose3d[0]));
                 Logger.recordOutput("Vision/Summary/RobotPosesRejected", allRobotPosesRejected.toArray(new Pose3d[0]));
+
+                // Update latest vision pose if we found an accepted observation this cycle
+                if (bestPose != null) {
+                        latestVisionPose = bestPose;
+                }
+                Logger.recordOutput("Vision/BestVisionPose", latestVisionPose);
+                Logger.recordOutput("Vision/Debug/AcceptedCount", totalAccepted);
+                Logger.recordOutput("Vision/Debug/RejectedCount", totalRejected);
+                Logger.recordOutput("Vision/Debug/RejectionReasons", rejectionLog.toString());
         }
 
         @FunctionalInterface

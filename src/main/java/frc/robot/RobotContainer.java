@@ -134,7 +134,7 @@ public class RobotContainer {
                 // CLIMB button controls (disabled — climb subsystem currently not used)
                 // joystick.povRight().whileTrue(climb.climbUp());
                 // joystick.povLeft().whileTrue(climb.climbDown());
-                
+
                 joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
                 joystick.b().whileTrue(drivetrain.applyRequest(
                                 () -> point.withModuleDirection(
@@ -159,8 +159,9 @@ public class RobotContainer {
                 // Turret tracking (camera-backed) — run on X button per request
                 // Turret tracking (camera-backed) — run on X button per request
                 joystick.x().toggleOnTrue(
-                                new TurretTracking(turret, camera0.getCamera(), VisionConstants.robotToCamera0,
-                                                drivetrain::getPose3d));
+                                new TurretTracking(turret,
+                                                vision::getRobotPoses,
+                                                () -> drivetrain.getStateCopy().Pose.getRotation()));
 
                 // SHOOTER button controls
                 // joystick.leftBumper().onTrue(Commands.runOnce(() ->
@@ -193,16 +194,31 @@ public class RobotContainer {
                 // drivetrain::getPose3d, VisionConstants.robotToCamera0));
 
                 drivetrain.setDefaultCommand(
-                                drivetrain.applyRequest(() -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed)
-                                                .withVelocityY(-joystick.getLeftX() * MaxSpeed)
-                                                .withRotationalRate(-joystick.getRightX() * MaxAngularRate)));
+                                // Drivetrain will execute this command periodically
+                                drivetrain.applyRequest(() -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed * 0.3) // Drive
+                                                                                                                         // forward
+                                                                                                                         // with
+                                                                                                                         // negative
+                                                                                                                         // Y
+                                                                                                                         // (forward)
+                                                .withVelocityY(-joystick.getLeftX() * MaxSpeed * 0.3) // Drive left with
+                                                                                                      // negative X
+                                                                                                      // (left)
+                                                .withRotationalRate(-joystick.getRightX() * MaxAngularRate * 0.3) // Drive
+                                                                                                                  // counterclockwise
+                                                                                                                  // with
+                                                                                                                  // negative
+                                                                                                                  // X
+                                                                                                                  // (left)
+                                ));
 
                 drivetrain.registerTelemetry(logger::telemeterize);
         }
 
         public Command getAutonomousCommand() {
-                return new TurretTracking(turret, camera0.getCamera(), VisionConstants.robotToCamera0,
-                                drivetrain::getPose3d);
+                return new TurretTracking(turret,
+                                vision::getRobotPoses,
+                                () -> drivetrain.getStateCopy().Pose.getRotation());
                 // new FuelChaseCommand(
                 // 25, camera0.getCamera(), drivetrain, // Change to the camera that will
                 // // chase fuel once

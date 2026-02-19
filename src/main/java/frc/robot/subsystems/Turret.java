@@ -95,7 +95,7 @@ public class Turret extends SubsystemBase {
   public void turretMoveTgt(double llAngle) {
 
     boolean isAtTarget = Math.abs(turretMotor.getClosedLoopError().getValue()) < 1.5;
-    double tgt = (-llAngle * TurretConstants.kGearRatio) / 360;
+    double tgt = (-llAngle * TurretConstants.kGearRatio * 5) / 360;
 
     // System.out.println(llAngle * 10);
 

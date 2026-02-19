@@ -109,7 +109,6 @@ public class Constants {
         public static final int kRightSticks_rightGrid_bottomMid = 15;
         public static final int kRightSticks_rightGrid_bottomRight = 16;
     } 
-    
 
     public static final class TurretConstants {
 

@@ -22,6 +22,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -115,7 +116,16 @@ public class RobotContainer {
         joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // reset the field-centric heading on left bumper press
-        joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        // joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+
+        joystick . start () . and ( joystick . povUp () ) . whileTrue ( shooter .
+        sysIdQuasistatic ( SysIdRoutine . Direction . kForward ) ) ;
+        joystick . start () . and ( joystick . povDown () ) . whileTrue ( shooter .
+        sysIdQuasistatic ( SysIdRoutine . Direction . kReverse ) ) ;
+        joystick . start () . and ( joystick . povRight () ) . whileTrue ( shooter .
+        sysIdDynamic ( SysIdRoutine . Direction . kForward ) ) ;
+        joystick . start () . and ( joystick . povLeft () ) . whileTrue ( shooter .
+        sysIdDynamic ( SysIdRoutine . Direction . kReverse ) ) ;
 
         // CLIMB button controls
         // joystick.y().onTrue(climb.climbUp());

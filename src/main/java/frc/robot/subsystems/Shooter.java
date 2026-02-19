@@ -8,13 +8,25 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VelocityVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.ControlRequest;
 
+import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import static edu . wpi . first . units . Units . Rotations ;
+import static edu . wpi . first . units . Units . RotationsPerSecond ;
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Seconds;
+import static edu.wpi.first.units.Units.Volts;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.ShooterConstants;
 
@@ -23,6 +35,11 @@ public class Shooter extends SubsystemBase {
   private final TalonFXConfiguration shooterMotorConfig;
 
   final MotionMagicVelocityVoltage m_request = new MotionMagicVelocityVoltage(0);
+
+  private final VoltageOut sysIdControl = new VoltageOut(0);
+  private final SysIdRoutine sysIdRoutine;
+
+  public double targetVel;
 
   /** Creates a new Shooter. */
   public Shooter() {
@@ -40,18 +57,52 @@ public class Shooter extends SubsystemBase {
     shooterMotorConfig.Slot0.kI = ShooterConstants.shooter_kI;
     shooterMotorConfig.Slot0.kD = ShooterConstants.shooter_kD;
 
-    shooterMotorConfig.Voltage.PeakForwardVoltage = ShooterConstants.kShooterMaxVoltage;
-    shooterMotorConfig.Voltage.PeakReverseVoltage = -ShooterConstants.kShooterMaxVoltage;
-
     shooterMotorConfig.MotionMagic.MotionMagicAcceleration = ShooterConstants.kShooterMaxAcceleration;
+    shooterMotorConfig.MotionMagic.MotionMagicCruiseVelocity = 200.0;
+
     shooterMotorConfig.MotionMagic.MotionMagicJerk = ShooterConstants.kShooterMaxJerk;
 
     shooterMotor.getConfigurator().apply(shooterMotorConfig);
+    
+    sysIdRoutine = new SysIdRoutine (
+      new SysIdRoutine . Config (
+        Volts . of (1) . per ( Second ) , // Quasi - increases by 1V per sec
+        Volts . of (7) , // Dynamic - jumps to 7V
+        Seconds . of (10) // maxes at 10s
+      ) ,
+      new SysIdRoutine . Mechanism (
+      ( Voltage volts ) -> {
+        shooterMotor . setControl ( sysIdControl . withOutput ( volts . in (
+      Volts ) ) ) ;
+      } ,
+      ( SysIdRoutineLog log ) -> {
+        log . motor (" Shooter - Motor ")
+        . voltage ( Volts . of ( shooterMotor . getMotorVoltage () .
+        getValueAsDouble () ) )
+        . angularPosition ( Rotations . of ( shooterMotor . getPosition () .
+        getValueAsDouble () ) )
+        . angularVelocity ( RotationsPerSecond . of ( shooterMotor .
+        getVelocity () . getValueAsDouble () ) ) ;
+      } ,
+        this
+      )
+    ) ;
+
+    SmartDashboard.putData("Shooter]]]", new Sendable() {
+        @Override
+        public void initSendable(SendableBuilder builder) {
+            builder.addDoubleProperty("Speed", () -> targetVel, (val) -> targetVel = val);
+        }
+    });
+
+    targetVel = 0.0;
   }
 
 
   @Override
   public void periodic() {
+    // setVel();
+    System.out.println(targetVel);
     // This method will be called once per scheduler run
   }
 
@@ -71,8 +122,33 @@ public class Shooter extends SubsystemBase {
     shooterMotor.set(0);
   }
 
+  public void increaseSpeed () {
+    if (targetVel + ShooterConstants.kRpmIncrement <= ShooterConstants.kMaxRPM) {
+        targetVel += ShooterConstants.kRpmIncrement;
+    }
+  }
+
+  public void decreaseSpeed () {
+    if (targetVel - ShooterConstants.kRpmIncrement >= ShooterConstants.kMinRPM) {
+        targetVel -= ShooterConstants.kRpmIncrement;
+    }
+  }
+
   public void setVel() {
-    double tgt = ShooterConstants.kShooterSpeed * ShooterConstants.kShooterGearRatio;
-    shooterMotor.setControl(m_request.withVelocity(tgt)); //rps
+    double tgt = ShooterConstants.kShooterSpeed * ShooterConstants.kShooterGearRatio / 60.0;
+    if (targetVel == 0) {
+        shooterMotor.set(0.0);
+    }
+    else {
+        shooterMotor.setControl(m_request.withVelocity(targetVel));// * ShooterConstants.kShooterGearRatio / 60.0)); //rpm
+    }
+  }
+
+  public Command sysIdQuasistatic ( SysIdRoutine . Direction direction ) {
+    return sysIdRoutine . quasistatic ( direction ) ;
+  }
+ 
+  public Command sysIdDynamic ( SysIdRoutine . Direction direction ) {
+    return sysIdRoutine . dynamic ( direction ) ;
   }
 }

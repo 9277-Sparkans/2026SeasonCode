@@ -37,8 +37,7 @@ public class Intake extends SubsystemBase {
 		intakeMotorConfig.Slot0.kP = Constants.IntakeConstants.intake_kP;
 		intakeMotorConfig.Slot0.kI = Constants.IntakeConstants.intake_kI;
 		intakeMotorConfig.Slot0.kD = Constants.IntakeConstants.intake_kD;
-		intakeMotorConfig.Voltage.PeakForwardVoltage = IntakeConstants.intakeMaxVoltage;
-		intakeMotorConfig.Voltage.PeakReverseVoltage = -IntakeConstants.intakeMaxVoltage;
+
 		intakeMotorConfig.MotionMagic.MotionMagicAcceleration = IntakeConstants.intakeMaxAcceleration;
 		intakeMotorConfig.MotionMagic.MotionMagicCruiseVelocity = IntakeConstants.intakeMaxVelocity;
 

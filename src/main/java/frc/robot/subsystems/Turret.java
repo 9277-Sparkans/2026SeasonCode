@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Limelight;
 import frc.robot.Telemetry;
+import frc.robot.Utils;
 import frc.robot.Constants.HoodConstants;
 import frc.robot.Constants.TurretConstants;
 
@@ -88,11 +89,30 @@ public class Turret extends SubsystemBase {
 
   public void turretMoveTgt(double llAngle){
 
-    boolean isAtTarget = Math.abs(turretMotor.getClosedLoopError().getValue()) < 1.5;
+    // if (getTurretAngle() > TurretConstants.kMaximumAngle) {
+    //   turretMotor.setControl(m_request.withPosition(TurretConstants.kMaximumAngle / 360.0 * TurretConstants.kGearRatio));
+    // }
+
+    // else if (getTurretAngle() < TurretConstants.kMinimumAngle) {
+    //   turretMotor.setControl(m_request.withPosition(TurretConstants.kMinimumAngle / 360.0 * TurretConstants.kGearRatio));
+    // }
+
+    // else {
     double tgt = (-llAngle * 10 * TurretConstants.kGearRatio) / 360;
-    
     turretMotor.setControl(m_request.withPosition(tgt)); //motor rotations
+    // }
+
     
+    
+  }
+
+  public void clampTurret () {
+    if (getTurretAngle() > TurretConstants.kMaximumAngle) {
+      turretMotor.setControl(m_request.withPosition(TurretConstants.kMaximumAngle / 360.0 * TurretConstants.kGearRatio));
+    }
+    else if (getTurretAngle() < TurretConstants.kMinimumAngle) {
+      turretMotor.setControl(m_request.withPosition(TurretConstants.kMinimumAngle / 360.0 * TurretConstants.kGearRatio));
+    }
   }
 
 

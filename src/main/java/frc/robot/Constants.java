@@ -187,9 +187,9 @@ public class Constants {
         public static final double hood_kS = 0.01;
         public static final double hood_kV = 0.095;
         public static final double hood_kA = 0.01;
-        public static final double hood_kP = 10.0;
+        public static final double hood_kP = 8.85;
         public static final double hood_kI = 0.0;
-        public static final double hood_kD = 0.4;
+        public static final double hood_kD = 0.5;
 
         public static final double kHoodSpeed = 0.1;
 
@@ -201,7 +201,7 @@ public class Constants {
 
         public static final double maxEncoderValue = -1.258789; // test for this
 
-        public static final double kGearRatio = 36.f / 20.f;
+        public static final double kGearRatio = 210.0 / 15.0;
 
         public static final double kHoodCurrentLimit = 35;
 

@@ -34,7 +34,7 @@ public class Hood extends SubsystemBase {
   private final TalonFXConfiguration hoodMotorConfiguration;
 
   public double targetHoodPosition = -0.25d;
-  public double targetHoodAngle = 12;
+  public double targetHoodAngle = 5;
   public double convertedHoodPos = -1d;
 
   private final MotionMagicVoltage request = new MotionMagicVoltage(0.0);
@@ -63,7 +63,6 @@ public class Hood extends SubsystemBase {
     hoodMotorConfiguration.Slot0.kD = HoodConstants.hood_kD;
 
     hoodMotorConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-
 
     hoodMotorConfiguration.Voltage.PeakForwardVoltage = HoodConstants.hood_maxVoltage;
     hoodMotorConfiguration.Voltage.PeakReverseVoltage = -HoodConstants.hood_maxVoltage;
@@ -123,7 +122,7 @@ public class Hood extends SubsystemBase {
     // double positionRatio = degrees / hoodRangeDeg;
     // double position = HoodConstants.kMinimumEncoderPos + (hoodEncoderRange * positionRatio);
 
-    targetHoodPosition = -(degrees / 360.f) * HoodConstants.kGearRatio;
+    targetHoodPosition = -((degrees + 1) / 360.f) * HoodConstants.kGearRatio;
     System.out.println("target angle to hood: " + targetHoodPosition);
     System.out.println("target degrees to hood: " + degrees);
 

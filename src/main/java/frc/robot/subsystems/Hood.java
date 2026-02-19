@@ -13,6 +13,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.util.sendable.Sendable;
@@ -61,6 +62,9 @@ public class Hood extends SubsystemBase {
     hoodMotorConfiguration.Slot0.kI = HoodConstants.hood_kI;
     hoodMotorConfiguration.Slot0.kD = HoodConstants.hood_kD;
 
+    hoodMotorConfiguration.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
+
     hoodMotorConfiguration.Voltage.PeakForwardVoltage = HoodConstants.hood_maxVoltage;
     hoodMotorConfiguration.Voltage.PeakReverseVoltage = -HoodConstants.hood_maxVoltage;
     hoodMotorConfiguration.MotionMagic.MotionMagicAcceleration = HoodConstants.hood_maxAcceleration;
@@ -92,7 +96,8 @@ public class Hood extends SubsystemBase {
 
   @Override
   public void periodic() {
-    System.out.println(hoodMotor.getPosition().getValueAsDouble());
+    // System.out.println(hoodMotor.getPosition().getValueAsDouble());
+    // hoodMotor.set(0.0);
   }
 
   public double getPosition() {
@@ -145,7 +150,8 @@ public class Hood extends SubsystemBase {
   public void runHood() {
     // targetHoodPosition += HoodConstants.kHoodSpeed;
     // targetHoodPosition = 0.4;
-    moveHoodMotionMagic();
+    hoodMotor.set(HoodConstants.kHoodSpeed);
+    // moveHoodMotionMagic();
   }
 
 

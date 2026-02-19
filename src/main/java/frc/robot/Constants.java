@@ -109,7 +109,6 @@ public class Constants {
         public static final int kRightSticks_rightGrid_bottomMid = 15;
         public static final int kRightSticks_rightGrid_bottomRight = 16;
     } 
-    
 
     public static final class TurretConstants {
 
@@ -160,9 +159,9 @@ public class Constants {
         public static final int kMaxFlywheelRPM = 7200;
 
         public static final double shooter_kS = 0.01;
-        public static final double shooter_kP = 1.5;
+        public static final double shooter_kP = 1.65;
         public static final double shooter_kI = 0.01;
-        public static final double shooter_kD = 0.08;
+        public static final double shooter_kD = 0.18;
         public static final double shooter_kV = 0.12;
         public static final double shooter_kA = 0.01;
 

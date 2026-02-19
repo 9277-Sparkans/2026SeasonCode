@@ -125,11 +125,11 @@ public class RobotContainer {
         // joystick.a().onTrue(climb.climbDown());
         // joystick.a().onFalse(climb.stopCommand());
 
-        joystick.a().onTrue(climb.runClimbCommand());
-        joystick.a().onFalse(climb.stopCommand());
+        // joystick.a().onTrue(climb.runClimbCommand());
+        // joystick.a().onFalse(climb.stopCommand());
         
-        joystick.y().onTrue(climb.runClimbNegCommand());
-        joystick.y().onFalse(climb.stopCommand());
+        // joystick.y().onTrue(climb.runClimbNegCommand());
+        // joystick.y().onFalse(climb.stopCommand());
         
 
 
@@ -147,8 +147,8 @@ public class RobotContainer {
         joystick.leftTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
         joystick.rightTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
 
-        // joystick.x().whileTrue(new TurretTracking((turret)));
-        // joystick.x().onFalse(Commands.runOnce(() -> turret.stop(), turret));
+        joystick.x().whileTrue(new TurretTracking((turret)));
+        joystick.x().onFalse(Commands.runOnce(() -> turret.stop(), turret));
 
         // SHOOTER button controls
         joystick.leftBumper().onTrue(Commands.runOnce(() -> shooter.decreaseSpeed()));
@@ -164,17 +164,17 @@ public class RobotContainer {
 
 
         // INTAKE button controls
-        // joystick.y()
-        //     .whileTrue(
-        //         intake.intakeCommand())
-        //     .onFalse(
-        //         intake.stopRollerCommand());
+        joystick.y()
+            .whileTrue(
+                intake.intakeCommand())
+            .onFalse(
+                intake.stopRollerCommand());
 
-        // joystick.a()
-        //     .whileTrue(
-        //         intake.outtakeCommand())
-        //     .onFalse(
-        //         intake.stopRollerCommand());
+        joystick.a()
+            .whileTrue(
+                intake.outtakeCommand())
+            .onFalse(
+                intake.stopRollerCommand());
 
 
         // HINGE button controls

@@ -10,29 +10,23 @@ import org.photonvision.PhotonCamera;
 
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Turret;
-import edu.wpi.first.math.filter.LinearFilter;
+import frc.robot.Constants.TurretConstants;
 
 public class TurretTracking extends Command {
   private Turret turret;
-  // private PhotonCamera camera; // Removed unused
-  // private Transform3d robotToCamera; // Removed unused
   private final Supplier<Pose3d> poseProvider;
 
   double angleToHub;
-  double angleTohHubLocal;
 
   /** Creates a new TurretTracking. */
-
   public TurretTracking(Turret turret, PhotonCamera camera, Transform3d robotToCamera, Supplier<Pose3d> poseProvider) {
-
     this.turret = turret;
-    // this.camera = camera;
-    // this.robotToCamera = robotToCamera;
     this.poseProvider = poseProvider;
     addRequirements(turret);
 
@@ -47,7 +41,6 @@ public class TurretTracking extends Command {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -55,19 +48,27 @@ public class TurretTracking extends Command {
   public void execute() {
     Pose3d robotPose = poseProvider.get();
 
-    double dx = frc.robot.Constants.FieldConstants.HUB_X - robotPose.getX();
-    double dy = frc.robot.Constants.FieldConstants.HUB_Y - robotPose.getY();
+    // Calculate turret position in field coordinates
+    Translation2d turretTranslation = robotPose
+        .transformBy(TurretConstants.ROBOT_TO_TURRET_TRANSFORM)
+        .toPose2d()
+        .getTranslation();
 
-    double angleToHubRad = Math.atan2(dy, dx);
-    double robotYaw = robotPose.getRotation().getZ();
+    // Target position (Hub)
+    Translation2d target = new Translation2d(
+        frc.robot.Constants.FieldConstants.HUB_X,
+        frc.robot.Constants.FieldConstants.HUB_Y);
 
-    double angleToHubRobotRelative = angleToHubRad - robotYaw;
+    // Direction from turret to hub
+    Translation2d direction = target.minus(turretTranslation);
 
-    // Normalize to -180 to 180
-    angleToHubRobotRelative = Math.atan2(Math.sin(angleToHubRobotRelative), Math.cos(angleToHubRobotRelative));
+    // Angle of that direction relative to the robot's heading
+    double angleToHubRad = direction.getAngle().minus(robotPose.getRotation().toRotation2d()).getRadians();
 
-    angleToHub = Math.toDegrees(angleToHubRobotRelative);
-    angleTohHubLocal = angleToHub; // Keeping this for whatever it was used for, presumably display
+    // Normalize to -PI to PI
+    angleToHubRad = Math.atan2(Math.sin(angleToHubRad), Math.cos(angleToHubRad));
+
+    angleToHub = Math.toDegrees(angleToHubRad);
 
     turret.turretMoveTgt(angleToHub);
   }

@@ -45,6 +45,7 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Transfer;
 // import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Hinge;
+import frc.robot.commands.AutoAlignCommand;
 
 public class RobotContainer {
         private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
@@ -133,7 +134,7 @@ public class RobotContainer {
                 // CLIMB button controls (disabled — climb subsystem currently not used)
                 // joystick.povRight().whileTrue(climb.climbUp());
                 // joystick.povLeft().whileTrue(climb.climbDown());
-
+                
                 joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
                 joystick.b().whileTrue(drivetrain.applyRequest(
                                 () -> point.withModuleDirection(
@@ -172,6 +173,7 @@ public class RobotContainer {
                 // joystick.povLeft().whileTrue(intake.outtakeCommand()).onFalse(intake.stopRollerCommand());
 
                 // Turret tracking moved to X button to avoid duplicate bindings
+                joystick.y().whileTrue(AutoAlignCommand.getAutoAlignCommand(drivetrain));
                 // joystick.y().onTrue(new TurretTracking(turret, camera0.getCamera(),
                 // VisionConstants.robotToCamera0,
                 // drivetrain::getPose3d));
@@ -189,6 +191,11 @@ public class RobotContainer {
                 // joystick.x().whileTrue(new FuelChaseCommand(
                 // 25, camera0.getCamera(), drivetrain,
                 // drivetrain::getPose3d, VisionConstants.robotToCamera0));
+
+                drivetrain.setDefaultCommand(
+                                drivetrain.applyRequest(() -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed)
+                                                .withVelocityY(-joystick.getLeftX() * MaxSpeed)
+                                                .withRotationalRate(-joystick.getRightX() * MaxAngularRate)));
 
                 drivetrain.registerTelemetry(logger::telemeterize);
         }

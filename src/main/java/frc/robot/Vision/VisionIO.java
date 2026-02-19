@@ -146,4 +146,13 @@ public interface VisionIO {
 	 */
 	default void updateInputs(VisionIOInputs inputs, edu.wpi.first.math.geometry.Pose2d currentPose) {
 	}
+
+	/**
+	 * Gets the name of the camera.
+	 * 
+	 * @return The name of the camera.
+	 */
+	default String getName() {
+		return "";
+	}
 }

@@ -19,6 +19,25 @@ public class Robot extends LoggedRobot {
   public final Timer timer = new Timer();
 
   public Robot() {
+    // Record metadata
+    org.littletonrobotics.junction.Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
+    org.littletonrobotics.junction.Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
+    org.littletonrobotics.junction.Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
+    org.littletonrobotics.junction.Logger.recordMetadata("GitBranch", BuildConstants.GIT_BRANCH);
+
+    // Set up data receivers
+    if (isReal()) {
+      org.littletonrobotics.junction.Logger.addDataReceiver(new org.littletonrobotics.junction.wpilog.WPILOGWriter());
+      org.littletonrobotics.junction.Logger
+          .addDataReceiver(new org.littletonrobotics.junction.networktables.NT4Publisher());
+    } else {
+      org.littletonrobotics.junction.Logger
+          .addDataReceiver(new org.littletonrobotics.junction.networktables.NT4Publisher());
+    }
+
+    // Start AdvantageKit logger
+    org.littletonrobotics.junction.Logger.start();
+
     m_robotContainer = new RobotContainer();
   }
 

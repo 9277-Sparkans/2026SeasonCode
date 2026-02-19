@@ -119,8 +119,12 @@ public class Constants {
 
         public static double kMaximumAngle = 20.0;
         public static double kMinimumAngle = -20.0;
-        
+
         public static double kGearRatio = 105.0 / 18.0;
+
+        public static final edu.wpi.first.math.geometry.Transform3d ROBOT_TO_TURRET_TRANSFORM = new edu.wpi.first.math.geometry.Transform3d(
+                new edu.wpi.first.math.geometry.Translation3d(0.0, 0.0, 0.4572), // 18 inches
+                new edu.wpi.first.math.geometry.Rotation3d());
     }
 
     public static class ShooterConstants {
@@ -134,7 +138,7 @@ public class Constants {
         public static final double kShooterMaxJerk = 1000; // rotations per second^3
 
         // subject to change if we end up automating these
-        public static final double kShooterSpeed = 100.0; //rps
+        public static final double kShooterSpeed = 100.0; // rps
 
         public static final int kRpmLenience = 200;
 
@@ -164,7 +168,8 @@ public class Constants {
         public static final int kHoodMotorId = 34;
         public static final int kHoodEncoderId = 41;
 
-        public static final double hood_maxVelocity = 0.5; // rotations per second; was 1.0, setting it to this to avoid grinding the gear again!
+        public static final double hood_maxVelocity = 0.5; // rotations per second; was 1.0, setting it to this to avoid
+                                                           // grinding the gear again!
         public static final double hood_maxAcceleration = 80; // rotations per second^2
         public static final double hood_maxVoltage = 5;// kraken x44 max voltage
         public static final double kHoodMaxCurrent = 30;
@@ -190,7 +195,8 @@ public class Constants {
 
         public static final double kGearRatio = 15.0 / 210.0;
 
-        public static final double kHoodCurrentLimit = 35.0; // was 35, setting it to this to avoid grinding the gear again!
+        public static final double kHoodCurrentLimit = 35.0; // was 35, setting it to this to avoid grinding the gear
+                                                             // again!
 
         public static final double kHoodIncremqent = 2.0;
     }
@@ -213,7 +219,7 @@ public class Constants {
         public static final double intakeMaxVoltage = 4; // can change if not needed
         public static final double intakeMaxAcceleration = 5;
         public static final double intakeMaxVelocity = 100; // rps
-        public static final double intakeSpeed = 50.0; //rps
+        public static final double intakeSpeed = 50.0; // rps
     }
 
     public static class HingeConstants {
@@ -224,7 +230,7 @@ public class Constants {
         public static final int rollerID = 1;
         public static final int kHingeMotorId = 39;
 
-        public static final double hinge_kS = 0.01;        
+        public static final double hinge_kS = 0.01;
         public static final double hinge_kP = 10;
         public static final double hinge_kI = 0;
         public static final double hinge_kD = 0.1;
@@ -244,9 +250,8 @@ public class Constants {
         public static final int kClimbMotorID = 37;
 
         public static final double kClimbMaxVelocity = 90; // rps
-        public static final int kClimbCURRENT_LIMIT = 30;   
-        public static final double kClimb_SPEED = .3; 
-
+        public static final int kClimbCURRENT_LIMIT = 30;
+        public static final double kClimb_SPEED = .3;
 
         public static final int kClimbGearRatio = 9 / 1;
     }
@@ -288,8 +293,8 @@ public class Constants {
         public static final double kIndexerMaxVoltage = 5;// kraken x44 max voltage
         public static final int kIndexerMotorID = 35; // change this value
         public static final double kIndexerSpeed = 0.25;
-        public static final double kIndexerGearRatio = 12.0/15.0;
-        public static final double indexerSpeed = 30.0; //rps
+        public static final double kIndexerGearRatio = 12.0 / 15.0;
+        public static final double indexerSpeed = 30.0; // rps
 
         public static final double kIndexer_kS = 0.01;
         public static final double kIndexer_kV = 0.095;
@@ -306,5 +311,5 @@ public class Constants {
         public static final double HUB_X = 8.23; // meters
         public static final double HUB_Y = 4.11; // meters
     }
-    
+
 }

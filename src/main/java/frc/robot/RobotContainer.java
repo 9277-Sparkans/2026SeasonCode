@@ -143,14 +143,13 @@ public class RobotContainer {
         
 
 
-        // HOOD button controls
-        // joystick.povUp().onTrue(Commands.runOnce(() -> hood.moveHoodToAngle(Angle.ofBaseUnits(hood.targetHoodAngle, Degree))));
-        joystick.povUp().onTrue(Commands.runOnce(() -> hood.runHood()));
-        joystick.povDown().onTrue(Commands.runOnce(() -> hood.runHoodReverse()));
+        // HOOD button controls 
+        joystick.povUp().onTrue(Commands.runOnce(() -> hood.moveHoodToAngle(Angle.ofBaseUnits(0, Degree))));
+        // joystick.povUp().onTrue(Commands.runOnce(() -> hood.runHood()));
+        // joystick.povDown().onTrue(Commands.runOnce(() -> hood.runHoodReverse()));
 
-        joystick.povUp().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
-        joystick.povDown().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
-
+        // joystick.povUp().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
+        // joystick.povDown().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
 
         // TURRET button controls
         joystick.rightTrigger().whileTrue(turret.turretPos());

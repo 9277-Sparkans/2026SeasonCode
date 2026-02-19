@@ -137,7 +137,7 @@ public class Constants {
         public static final int kShooterMotorId = 33;
 
         public static final int kShooterCurrentLimit = 50;
-        public static final double kShooterGearRatio = 36.0 / 30.0;
+        public static final double kShooterGearRatio = 24.0 / 36.0;
 
         public static final double kShooterMaxVoltage = 5;// kraken x44 max voltage
         public static final double kShooterMaxAcceleration = 100; // rotations per second^2

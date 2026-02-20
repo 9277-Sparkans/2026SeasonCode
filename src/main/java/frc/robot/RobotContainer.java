@@ -118,14 +118,14 @@ public class RobotContainer {
         // reset the field-centric heading on left bumper press
         joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-        joystick . start () . and ( joystick . povUp () ) . whileTrue ( hood .
-        sysIdQuasistatic ( SysIdRoutine . Direction . kForward ) ) ;
-        joystick . start () . and ( joystick . povDown () ) . whileTrue ( hood .
-        sysIdQuasistatic ( SysIdRoutine . Direction . kReverse ) ) ;
-        joystick . start () . and ( joystick . povRight () ) . whileTrue ( hood .
-        sysIdDynamic ( SysIdRoutine . Direction . kForward ) ) ;
-        joystick . start () . and ( joystick . povLeft () ) . whileTrue ( hood .
-        sysIdDynamic ( SysIdRoutine . Direction . kReverse ) ) ;
+        // joystick . start () . and ( joystick . povUp () ) . whileTrue ( hood .
+        // sysIdQuasistatic ( SysIdRoutine . Direction . kForward ) ) ;
+        // joystick . start () . and ( joystick . povDown () ) . whileTrue ( hood .
+        // sysIdQuasistatic ( SysIdRoutine . Direction . kReverse ) ) ;
+        // joystick . start () . and ( joystick . povRight () ) . whileTrue ( hood .
+        // sysIdDynamic ( SysIdRoutine . Direction . kForward ) ) ;
+        // joystick . start () . and ( joystick . povLeft () ) . whileTrue ( hood .
+        // sysIdDynamic ( SysIdRoutine . Direction . kReverse ) ) ;
         joystick.start().and(joystick.povUp()).whileTrue(hood.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
         joystick.start().and(joystick.povDown()).whileTrue(hood.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
         joystick.start().and(joystick.povRight()).whileTrue(hood.sysIdDynamic(SysIdRoutine.Direction.kForward));

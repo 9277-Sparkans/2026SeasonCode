@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Start 1"
+            "pathName": "Start 2.1"
           }
         },
         {
@@ -19,7 +19,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Depot(S1)"
+            "pathName": "Depost(S2)"
           }
         },
         {
@@ -32,6 +32,6 @@
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "S2",
   "choreoAuto": false
 }

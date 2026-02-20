@@ -150,7 +150,7 @@ public class Constants {
 
         public static final int kRpmLenience = 200;
 
-        public static final int kRpmIncrement = 5;
+        public static final double kRpmIncrement = 5.0/3.0;
 
         public static final int kMinRPM = 0;
         public static final int kMaxRPM = 6000;
@@ -187,11 +187,11 @@ public class Constants {
 
         public static final double hood_kG = 0.00;
         public static final double hood_kS = 0.01;
-        public static final double hood_kV = 0.244;
+        public static final double hood_kV = 0.095;
         public static final double hood_kA = 0.01;
-        public static final double hood_kP = 6.5;
+        public static final double hood_kP = 8.85;
         public static final double hood_kI = 0.0;
-        public static final double hood_kD = 0.35;
+        public static final double hood_kD = 0.5;
 
         public static final double kHoodSpeed = 0.1;
 
@@ -199,15 +199,15 @@ public class Constants {
         public static final double kMaximumAngle = 12;
 
         public static final double kMinimumEncoderPos = 0;
-        public static final double kMaximumEncoderPos = 0.67236328125;
+        public static final double kMaximumEncoderPos = -0.67236328125;
 
         public static final double maxEncoderValue = -1.258789; // test for this
 
-        public static final double kGearRatio = 15.0 / 210.0;
+        public static final double kGearRatio = 210.0 / 15.0;
 
         public static final double kHoodCurrentLimit = 35;
 
-        public static final double kHoodIncrement = 2;
+        public static final double kHoodIncrement = 17.0/2.0;
 
         public static final double kIdkManConstant = 1.209757239732467f;
     }

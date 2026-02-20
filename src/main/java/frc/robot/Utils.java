@@ -25,13 +25,7 @@ public class Utils {
         private final ArrayList<double[]> vals = new ArrayList<>(); // [Bot Speed, Bot Direction, Shooter RPM, Hood Angle]
         private final int size;
 
-        private final Shooter shooter;
-        private final Hood hood;
-
-        public Lookup(Hood hood, Shooter shooter) { // Load lookup table into lists
-            this.hood = hood;
-            this.shooter = shooter;
-
+        public Lookup() { // Load lookup table into lists
             try (BufferedReader br = new BufferedReader(new FileReader(Constants.ShooterConstants.lookupTablePath))) {
                 br.readLine(); // Skip header line
 
@@ -137,7 +131,7 @@ public class Utils {
         }
     }
 
-    public static Lookup createLookup(Hood hood, Shooter shooter) { // Create a Lookup object
-        return new Lookup(hood, shooter);
+    public static Lookup createLookup() { // Create a Lookup object
+        return new Lookup();
     }
 }

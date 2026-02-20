@@ -62,7 +62,7 @@ public class RobotContainer {
     public final Climb climb = new Climb();
     public final Roller roller = new Roller();
 
-    public final Lookup lookup = Utils.createLookup(hood, shooter);
+    public final Lookup lookup = Utils.createLookup();
     public final AutoFire autoFireCommand = new AutoFire(turret, transfer, shooter, hood, intake, lookup);
 
     public RobotContainer() {

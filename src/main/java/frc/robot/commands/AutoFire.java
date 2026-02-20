@@ -5,17 +5,11 @@ import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
-import frc.robot.Constants.TransferConstants;
-import frc.robot.Constants.TurretConstants;
-import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants;
 import frc.robot.Limelight;
 import frc.robot.Utils.Lookup;
-import frc.robot.Constants.HoodConstants;
-import frc.robot.Utils.Lookup;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
 
 public class AutoFire extends Command 
 {

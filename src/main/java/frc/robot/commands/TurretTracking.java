@@ -89,7 +89,7 @@ public class TurretTracking extends Command {
     // Angle of that direction relative to the robot's heading (use drivetrain gyro
     // yaw)
     Rotation2d robotYaw = yawSupplier.get();
-    double angleToHubRad = direction.getAngle().minus(robotYaw).getRadians();
+    double angleToHubRad = direction.getAngle().plus(robotYaw).getRadians();
 
     // Normalize to -PI to PI
     angleToHubRad = Math.atan2(Math.sin(angleToHubRad), Math.cos(angleToHubRad));

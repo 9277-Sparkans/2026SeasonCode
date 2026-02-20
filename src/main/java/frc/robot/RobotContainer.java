@@ -63,7 +63,7 @@ public class RobotContainer {
     public final Roller roller = new Roller();
 
     public final Lookup lookup = Utils.createLookup();
-    public final AutoFire autoFireCommand = new AutoFire(turret, transfer, shooter, hood, intake, lookup);
+    // public final AutoFire autoFireCommand = new AutoFire(turret, transfer, shooter, hood, intake, lookup);
 
     public RobotContainer() {
         NamedCommands.registerCommand("testNamedCommand", Commands.runOnce(() -> System.out.println("this named command works")));

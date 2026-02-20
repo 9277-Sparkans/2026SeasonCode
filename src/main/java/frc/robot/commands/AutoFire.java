@@ -22,12 +22,15 @@ public class AutoFire extends Command
     Transfer transfer;
     Intake intake;
     Shooter shooter;
-    Lookup lookup;
     Hood hood;
+    Lookup lookup;
 
-    double lastTime = 0.0;
-    double lastX = 0.0;
-    double lastY = 0.0;
+    Supplier<Pose3d[]> robotPosesSupplier;
+    Supplier<Rotation2d> yawSupplier;
+
+    double lastTime;
+    double lastX;
+    double lastY;
 
     double turretOffset;
     double tgtRPM;
@@ -39,8 +42,12 @@ public class AutoFire extends Command
         this.transfer = transfer;
         this.shooter = shooter;
         this.hood = hood;
+        this.lookup = lookup;
 
         addRequirements(shooter, hood, transfer, turret, intake);
+
+        this.robotPosesSupplier = robotPosesSupplier;
+        this.yawSupplier = yawSupplier;
 
         turretOffset = 0.0;
         tgtRPM = 0.0;
@@ -80,7 +87,7 @@ public class AutoFire extends Command
 
         double targetDirectionRad = Math.atan2(offsetY, offsetX);
         double targetDirectionDeg = targetDirectionRad * 180 / Math.PI;
-        double targetDistance = Math.sqrt(offsetX * offsetX + offsetY * offsetY)
+        double targetDistance = Math.sqrt(offsetX * offsetX + offsetY * offsetY);
 
         // Transform standard x-y velocity such that i^ is towards the shooter, j^ is 90 deg left from top-down
         double transformedVelocityX = velocityX * yaw.getCos() + velocityY * yaw.getSin();

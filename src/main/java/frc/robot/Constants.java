@@ -268,4 +268,8 @@ public class Constants {
         public static double kGearRatio = 1.0 / 1.0;
     }
     
+    public static class FieldConstants {
+        public static final double HUB_X = 8.23; // meters
+        public static final double HUB_Y = 4.11; // meters
+    }
 }

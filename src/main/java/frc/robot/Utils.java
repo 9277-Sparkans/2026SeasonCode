@@ -20,6 +20,10 @@ public class Utils {
         return value;
     }
 
+    public static double dist2d(double x1, double y1, double x2, double y2) {
+        return Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
+    }
+
     public static class Lookup {
         private final ArrayList<double[]> hits = new ArrayList<>(); // [Landing Distance, Landing Direction]
         private final ArrayList<double[]> vals = new ArrayList<>(); // [Bot Speed, Bot Direction, Shooter RPM, Hood Angle]
@@ -124,7 +128,7 @@ public class Utils {
                 }
             }
 
-            double optimalTurretOffset = -hits.get(minimumI)[1];
+            double optimalTurretOffset = hits.get(minimumI)[1];
             double optimalShooterRpm = vals.get(minimumI)[2];
             double optimalHoodAngle = vals.get(minimumI)[3];
             return new double[]{minimumWeight, optimalTurretOffset, optimalShooterRpm, optimalHoodAngle};

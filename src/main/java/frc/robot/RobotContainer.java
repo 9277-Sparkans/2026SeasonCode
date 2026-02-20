@@ -12,34 +12,29 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
-import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.units.measure.Angle;
-import edu.wpi.first.util.sendable.Sendable;
-import edu.wpi.first.util.sendable.SendableBuilder;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
+import frc.robot.Constants.OIConstants;
+import frc.robot.Utils.Lookup;
+import frc.robot.commands.TurretTracking;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Indexer;
-import frc.robot.Constants.OIConstants;
-import frc.robot.Utils.Lookup;
+import frc.robot.subsystems.Roller;
 import frc.robot.commands.AutoFire;
-import frc.robot.commands.LockMode;
-import frc.robot.commands.TurretTracking;
 import frc.robot.subsystems.Transfer;
 import frc.robot.subsystems.Climb;
-import frc.robot.subsystems.Hinge;
+import frc.robot.subsystems.Roller;
 
 
 public class RobotContainer {
@@ -50,13 +45,12 @@ public class RobotContainer {
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
             .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
-    // private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-    // private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
+    private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
+    private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
-    public final CommandXboxController joystick = new CommandXboxController(OIConstants.kDriverControllerPort);
-    public final Joystick operatorJoystick = new Joystick(OIConstants.kOperatorControllerPort);
+    public final CommandXboxController joystick = new CommandXboxController(0);
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
@@ -66,25 +60,13 @@ public class RobotContainer {
     public final Transfer transfer = new Transfer();
     public final Hood hood = new Hood();
     public final Climb climb = new Climb();
-    public final Indexer indexer = new Indexer();
-    public final Hinge hinge = new Hinge();
+    public final Roller roller = new Roller();
 
     public final Lookup lookup = Utils.createLookup();
     public final AutoFire autoFireCommand = new AutoFire(turret, transfer, shooter, hood, intake, lookup);
-    public final LockMode lockModeCommand = new LockMode(turret, shooter, hood);
-    
+
     public RobotContainer() {
         NamedCommands.registerCommand("testNamedCommand", Commands.runOnce(() -> System.out.println("this named command works")));
-
-        SmartDashboard.putData("Git Info", new Sendable() {
-            @Override
-            public void initSendable(SendableBuilder builder) {
-                builder.addStringProperty("Branch", () -> BuildConstants.GIT_BRANCH, null);
-                builder.addStringProperty("Commit", () -> BuildConstants.GIT_SHA, null);
-                builder.addStringProperty("Date of commit", () -> BuildConstants.GIT_DATE, null);
-                builder.addStringProperty("Uncommitted changes", () -> new Boolean(BuildConstants.DIRTY > 0).toString(), null);
-            }
-        });
 
         configureBindings();
     }
@@ -107,134 +89,125 @@ public class RobotContainer {
         RobotModeTriggers.disabled().whileTrue(
             drivetrain.applyRequest(() -> idle).ignoringDisable(true)
         );
+
+
+        //joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
+        // joystick.b().whileTrue(drivetrain.applyRequest(() ->
+        //     point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
+        // ));
+
+        
+        
+
         
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
-        // joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        // joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        // joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        // joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+        joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+        joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+        joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // reset the field-centric heading on left bumper press
-        joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-
-        // joystick . start () . and ( joystick . povUp () ) . whileTrue ( hood .
-        // sysIdQuasistatic ( SysIdRoutine . Direction . kForward ) ) ;
-        // joystick . start () . and ( joystick . povDown () ) . whileTrue ( hood .
-        // sysIdQuasistatic ( SysIdRoutine . Direction . kReverse ) ) ;
-        // joystick . start () . and ( joystick . povRight () ) . whileTrue ( hood .
-        // sysIdDynamic ( SysIdRoutine . Direction . kForward ) ) ;
-        // joystick . start () . and ( joystick . povLeft () ) . whileTrue ( hood .
-        // sysIdDynamic ( SysIdRoutine . Direction . kReverse ) ) ;
-        joystick.start().and(joystick.povUp()).whileTrue(hood.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-        joystick.start().and(joystick.povDown()).whileTrue(hood.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-        joystick.start().and(joystick.povRight()).whileTrue(hood.sysIdDynamic(SysIdRoutine.Direction.kForward));
-        joystick.start().and(joystick.povLeft()).whileTrue(hood.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        //joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         // CLIMB button controls
-        // joystick.y().onTrue(climb.climbUp());
-        // joystick.y().onFalse(climb.stopCommand());
-        // joystick.x().onTrue(climb.climbHang());
-        // joystick.x().onFalse(climb.stopCommand());
-        // joystick.a().onTrue(climb.climbDown());
-        // joystick.a().onFalse(climb.stopCommand());
+        joystick.povRight().whileTrue(climb.climbUp()).onFalse(climb.climbDown());
+        joystick.povLeft().whileTrue(climb.climbDown()); 
+       // joystick.povLeft().onTrue(Commands.runOnce(() -> climb.climbDown()));
 
-        joystick.a().onTrue(climb.runClimbCommand());
-        joystick.a().onFalse(climb.stopCommand());
-        
-        joystick.y().onTrue(climb.runClimbNegCommand());
-        joystick.y().onFalse(climb.stopCommand());
-        
+        // joystick.povRight().onFalse(Commands.runOnce(() -> climb.hang()));
+        // joystick.povLeft().onFalse(Commands.runOnce(() -> climb.hang()));
+
+
         // HOOD button controls
-        // joystick.povUp().whileTrue(Commands.runOnce(() -> hood.moveHoodToAngle(hood.targetHoodAngle)));
-        // joystick.povDown().onTrue(Commands.runOnce(() -> hood.runHoodReverse()));
-        // joystick.povUp().onTrue(Commands.runOnce(() -> hood.moveHoodToAngle(Angle.ofBaseUnits(hood.targetHoodAngle, Degree))));
-        // joystick.povUp().onTrue(Commands.runOnce(() -> hood.runHood()));
-        // joystick.povDown().onTrue(Commands.runOnce(() -> hood.runHoodReverse()));
+        joystick.povUp().onTrue(Commands.runOnce(() -> hood.runHood()));
+        joystick.povDown().onTrue(Commands.runOnce(() -> hood.runHoodReverse()));
 
-        // joystick.povUp().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
-        // joystick.povDown().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
+        joystick.povUp().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
+        joystick.povDown().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
+
+        // joystick.x().onTrue(Commands.runOnce(() -> hood.moveHoodToAngle(0)));
+
+        //test move hood to -0.75
+        // joystick.x().onTrue(hood.moveHoodToTgtCmd());
+        // joystick.x().onFalse(hood.stopHoodCmd());
+
+        // joystick.leftBumper().onTrue(Commands.runOnce(() -> hood.moveHoodDown()));
+        // joystick.rightBumper().onTrue(Commands.runOnce(() -> hood.moveHoodUp()));
+
+        // joystick.povUp().onTrue(Commands.runOnce(() -> hood.moveHoodUpCmd()));
+        // joystick.povDown().onTrue(Commands.runOnce(() -> hood.moveHoodDownCmd()));
+
+        // joystick.povUp().onFalse(Commands.runOnce(() -> hood.stopHood()));
+        // joystick.povDown().onFalse(Commands.runOnce(() -> hood.stopHood()));
+
 
         // TURRET button controls
         joystick.rightTrigger().whileTrue(turret.turretPos());
         joystick.leftTrigger().whileTrue(turret.turretNeg());
-        joystick.leftTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
-        joystick.rightTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
+        joystick.leftTrigger().whileFalse(Commands.runOnce(() -> turret.stop()));
+        joystick.rightTrigger().whileFalse(Commands.runOnce(() -> turret.stop()));
 
-        // joystick.x().whileTrue(new TurretTracking((turret)));
-        // joystick.x().onFalse(Commands.runOnce(() -> turret.stop(), turret));
+        joystick.x().onTrue(turret.turretTgtCommand());
+        joystick.x().onFalse(Commands.runOnce(() -> turret.stop()));
+
+        //joystick.y().onTrue(new TurretTracking((turret)));
+
 
         // SHOOTER button controls
         joystick.leftBumper().onTrue(Commands.runOnce(() -> shooter.decreaseSpeed()));
         joystick.rightBumper().onTrue(Commands.runOnce(() -> shooter.increaseSpeed()));
-
 
         // joystick.x().onTrue(shooter.shootCmd());
         // joystick.x().whileTrue(Commands.runOnce(() -> autoFireCommand.execute()));
 
 
         // TRANSFER button controls
+        // joystick.b().whileTrue(Commands.runOnce(() -> transfer.activateTransferCommand()));
+        // joystick.b().whileFalse(Commands.runOnce(() -> transfer.stopTransferCommand()));
         joystick.b().onTrue(Commands.runOnce(() -> transfer.toggleTransfer()));
 
+        // joystick.povRight()
+        //     .whileTrue(
+        //         new InstantCommand(() -> intake.intakeCommand()))
+        //     .onFalse(
+        //         new InstantCommand(() -> intake.stopRollerCommand()));
 
         // INTAKE button controls
-        joystick.y()
-            .whileTrue(
-                intake.intakeCommand())
-            .onFalse(
-                intake.stopRollerCommand());
-
-        joystick.a()
-            .whileTrue(
-                intake.outtakeCommand())
-            .onFalse(
-                intake.stopRollerCommand());
-
-
-        // HINGE button controls
         // joystick.povRight()
-        //     .onTrue(hinge.hingeUp())
-        //     .onFalse(hinge.hingeStopCommand());
+        //     .whileTrue(
+        //         new InstantCommand(() -> intake.intakeCommand()))
+        //     .onFalse(
+        //         new InstantCommand(() -> intake.stopRollerCommand()));
 
         // joystick.povLeft()
-        //     .onTrue(hinge.hingeDown())
-        //     .onFalse(hinge.hingeStopCommand());
+        //     .whileTrue(
+        //         new InstantCommand(() -> intake.outtakeCommand()))
+        //     .onFalse(
+        //         new InstantCommand(() -> intake.stopRollerCommand()));
+
+        // joystick.y()
+        //     .whileTrue(
+        //         new InstantCommand(() -> intake.deployCommand()));
+
+        // joystick.a()
+        //     .whileTrue(
+        //         new InstantCommand(() -> intake.retractCommand()));
         
         
-        // Indexer button controls
-        joystick.b().onTrue(indexer.toggleIndexer()); 
+        // ROLLER button controls
+        joystick.y().onTrue(roller.rollerSpin()); 
+        joystick.y().onFalse(roller.rollerStop()); 
 
-        // // Operator
-        // operator(OIConstants.kKeyboard_lockModeLeft)
-        //     .onTrue(Commands.runOnce(() -> System.out.println("Lock left")));
 
-        // operator(OIConstants.kKeyboard_lockModeRight)
-        //     .onTrue(Commands.runOnce(() -> System.out.println("Lock right")));
 
-        // operator(OIConstants.kKeyboard_lockModeCenter)
-        //     .onTrue(Commands.runOnce(() -> System.out.println("Lock center")));
 
-        // // operator(OIConstants.kKeyboard_lockModeFire)
-        // //     .onTrue(Commands.runOnce(() -> System.out.println("Lock fire")));
+        drivetrain.registerTelemetry(logger::telemeterize);
 
-        // operator(OIConstants.kKeyboard_climbUp)
-        //     .onTrue(climb.climbUp());
 
-        // operator(OIConstants.kKeyboard_climbDown)
-        //     .onTrue(climb.climbDown());
+        
 
-        // operator(OIConstants.kKeyboard_autoFire)
-        //     .onTrue(autoFireCommand);
-
-        // operator(16)
-        //     .onTrue(Commands.runOnce(() -> System.out.println("boobbbbbbxxxxccsdsssxcccccccxxxx")));
-
-        // drivetrain.registerTelemetry(logger::telemeterize);
-    }
-
-    public JoystickButton operator(int keyCode) {
-        return new JoystickButton(operatorJoystick, keyCode);
-    }
+    }   
 
     public Command getAutonomousCommand() {
         return new PathPlannerAuto("testAuto");

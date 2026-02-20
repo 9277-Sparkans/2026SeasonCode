@@ -4,20 +4,13 @@
   "holonomicMode": true,
   "pathFolders": [
     "Auto Align",
-    "Archive",
-    "Projections",
-    "S1",
-    "S2",
-    "S3"
+    "Projections"
   ],
   "autoFolders": [
     "Auto Align",
-    "S3",
-    "Projections",
-    "S1",
-    "S2"
+    "Projections"
   ],
-  "defaultMaxVel": 4.5,
+  "defaultMaxVel": 3.5,
   "defaultMaxAccel": 4.5,
   "defaultMaxAngVel": 1000.0,
   "defaultMaxAngAccel": 2831.0,
@@ -28,7 +21,7 @@
   "driveWheelRadius": 0.051,
   "driveGearing": 8.14,
   "maxDriveSpeed": 3.81,
-  "driveMotorType": "krakenX60FOC",
+  "driveMotorType": "NEO",
   "driveCurrentLimit": 40.0,
   "wheelCOF": 1.2,
   "flModuleX": 0.279,

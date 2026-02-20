@@ -50,7 +50,7 @@ public class AutoFire extends Command
     
     @Override
     public void initialize(){
-        // tgtRpm = 0;
+        tgtRPM = 0;
     }
 
     @Override
@@ -114,9 +114,7 @@ public class AutoFire extends Command
     @Override
     public void end(boolean interrupted)
     {
-        // hood.stopHood();
-        // shooter.targetRPM = 0;
-        // shooter.fireAtRpm();
+        shooter.fireAtRPM();
         transfer.stop();
         intake.stop();
     }

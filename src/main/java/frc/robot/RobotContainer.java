@@ -116,7 +116,7 @@ public class RobotContainer {
         // joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // reset the field-centric heading on left bumper press
-        // joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         joystick . start () . and ( joystick . povUp () ) . whileTrue ( shooter .
         sysIdQuasistatic ( SysIdRoutine . Direction . kForward ) ) ;
@@ -152,8 +152,8 @@ public class RobotContainer {
         // joystick.povUp().onTrue(Commands.runOnce(() -> hood.runHood()));
         joystick.povDown().onTrue(Commands.runOnce(() -> hood.runHoodReverse()));
 
-        // joystick.povUp().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
-        // joystick.povDown().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
+        joystick.povUp().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
+        joystick.povDown().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
 
         // TURRET button controls
         joystick.rightTrigger().whileTrue(turret.turretPos());
@@ -178,17 +178,17 @@ public class RobotContainer {
 
 
         // INTAKE button controls
-        // joystick.y()
-        //     .whileTrue(
-        //         intake.intakeCommand())
-        //     .onFalse(
-        //         intake.stopRollerCommand());
+        joystick.y()
+            .whileTrue(
+                intake.intakeCommand())
+            .onFalse(
+                intake.stopRollerCommand());
 
-        // joystick.a()
-        //     .whileTrue(
-        //         intake.outtakeCommand())
-        //     .onFalse(
-        //         intake.stopRollerCommand());
+        joystick.a()
+            .whileTrue(
+                intake.outtakeCommand())
+            .onFalse(
+                intake.stopRollerCommand());
 
 
         // HINGE button controls

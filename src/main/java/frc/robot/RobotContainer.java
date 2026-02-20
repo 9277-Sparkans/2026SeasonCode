@@ -110,10 +110,10 @@ public class RobotContainer {
         
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
-        joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        // joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+        // joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+        // joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+        // joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // reset the field-centric heading on left bumper press
         // joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
@@ -126,6 +126,10 @@ public class RobotContainer {
         sysIdDynamic ( SysIdRoutine . Direction . kForward ) ) ;
         joystick . start () . and ( joystick . povLeft () ) . whileTrue ( shooter .
         sysIdDynamic ( SysIdRoutine . Direction . kReverse ) ) ;
+        joystick.start().and(joystick.povUp()).whileTrue(shooter.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        joystick.start().and(joystick.povDown()).whileTrue(shooter.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        joystick.start().and(joystick.povRight()).whileTrue(shooter.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        joystick.start().and(joystick.povLeft()).whileTrue(shooter.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
         // CLIMB button controls
         // joystick.y().onTrue(climb.climbUp());
@@ -145,6 +149,7 @@ public class RobotContainer {
 
         // HOOD button controls
         // joystick.povUp().onTrue(Commands.runOnce(() -> hood.moveHoodToAngle(Angle.ofBaseUnits(hood.targetHoodAngle, Degree))));
+        joystick.povUp().onTrue(Commands.runOnce(() -> hood.runHood()));
         joystick.povUp().onTrue(Commands.runOnce(() -> hood.runHood()));
         joystick.povDown().onTrue(Commands.runOnce(() -> hood.runHoodReverse()));
 
@@ -201,32 +206,32 @@ public class RobotContainer {
         // Indexer button controls
         joystick.b().onTrue(indexer.toggleIndexer()); 
 
-        // Operator
-        operator(OIConstants.kKeyboard_lockModeLeft)
-            .onTrue(Commands.runOnce(() -> System.out.println("Lock left")));
+        // // Operator
+        // operator(OIConstants.kKeyboard_lockModeLeft)
+        //     .onTrue(Commands.runOnce(() -> System.out.println("Lock left")));
 
-        operator(OIConstants.kKeyboard_lockModeRight)
-            .onTrue(Commands.runOnce(() -> System.out.println("Lock right")));
+        // operator(OIConstants.kKeyboard_lockModeRight)
+        //     .onTrue(Commands.runOnce(() -> System.out.println("Lock right")));
 
-        operator(OIConstants.kKeyboard_lockModeCenter)
-            .onTrue(Commands.runOnce(() -> System.out.println("Lock center")));
+        // operator(OIConstants.kKeyboard_lockModeCenter)
+        //     .onTrue(Commands.runOnce(() -> System.out.println("Lock center")));
 
-        // operator(OIConstants.kKeyboard_lockModeFire)
-        //     .onTrue(Commands.runOnce(() -> System.out.println("Lock fire")));
+        // // operator(OIConstants.kKeyboard_lockModeFire)
+        // //     .onTrue(Commands.runOnce(() -> System.out.println("Lock fire")));
 
-        operator(OIConstants.kKeyboard_climbUp)
-            .onTrue(climb.climbUp());
+        // operator(OIConstants.kKeyboard_climbUp)
+        //     .onTrue(climb.climbUp());
 
-        operator(OIConstants.kKeyboard_climbDown)
-            .onTrue(climb.climbDown());
+        // operator(OIConstants.kKeyboard_climbDown)
+        //     .onTrue(climb.climbDown());
 
-        operator(OIConstants.kKeyboard_autoFire)
-            .onTrue(autoFireCommand);
+        // operator(OIConstants.kKeyboard_autoFire)
+        //     .onTrue(autoFireCommand);
 
-        operator(16)
-            .onTrue(Commands.runOnce(() -> System.out.println("boobbbbbbxxxxccsdsssxcccccccxxxx")));
+        // operator(16)
+        //     .onTrue(Commands.runOnce(() -> System.out.println("boobbbbbbxxxxccsdsssxcccccccxxxx")));
 
-        drivetrain.registerTelemetry(logger::telemeterize);
+        // drivetrain.registerTelemetry(logger::telemeterize);
     }
 
     public JoystickButton operator(int keyCode) {

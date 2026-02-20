@@ -134,7 +134,7 @@ public class Constants {
     }
     
     public static class ShooterConstants {
-        public static final int kShooterMotorId = 33;
+        public static final int kShooterMotorId = 33; //33
 
         public static final int kShooterCurrentLimit = 50;
         public static final double kShooterGearRatio = 36.0 / 30.0;
@@ -158,12 +158,14 @@ public class Constants {
         public static final int kMinFlywheelRPM = 2400;
         public static final int kMaxFlywheelRPM = 7200;
 
-        public static final double shooter_kS = 0.01;
-        public static final double shooter_kP = 1.65;
-        public static final double shooter_kI = 0.01;
-        public static final double shooter_kD = 0.18;
-        public static final double shooter_kV = 0.12;
-        public static final double shooter_kA = 0.01;
+        public static final double shooter_kS = 0.17909;
+        public static final double shooter_kP = 0.018595;
+        public static final double shooter_kI = 0.0;
+        public static final double shooter_kD = 0.0;
+        public static final double shooter_kV = 0.11753;
+        public static final double shooter_kA = 0.0038935;
+        // public static final double shooter_kA = 0.004;
+
 
 
         public static double autoshootDistanceRange = 10;
@@ -276,7 +278,7 @@ public class Constants {
 
     public static class TransferConstants
     {
-        public static final int transferID = 31; // change later
+        public static final int transferID = 31; // change later 31
 
         public static final double transferMaxVoltage = 4; // can change if not needed
         public static final double transferMaxAcceleration = 40;
@@ -284,12 +286,12 @@ public class Constants {
         public static final int kTransferCurrent_Limit = 80;
         public static final double kTransferGearRatio = 30.0 / 24.0;
 
-        public static final double kTransfer_kS = 0.01;
-        public static final double kTransfer_kV = 0.12;
-        public static final double kTransfer_kA = 0.01;
-        public static final double kTransfer_kP = 0.7;
-        public static final double kTransfer_kI = 0.001;
-        public static final double kTransfer_kD = 0.05;
+        public static final double kTransfer_kS = 0.18572;
+        public static final double kTransfer_kV = 0.11754;
+        public static final double kTransfer_kA = 0.0048972;
+        public static final double kTransfer_kP = 0.030667;
+        public static final double kTransfer_kI = 0.0;
+        public static final double kTransfer_kD = 0.0;
 
         public static final double kTargetTransferRps = -100.0;
     }
@@ -297,7 +299,7 @@ public class Constants {
     public static final class IndexerConstants {
         public static final double kIndexerMaxVoltage = 5;// kraken x44 max voltage
         public static final double kIndexerCurrentLimit = 100;
-        public static final int kIndexerMotorId = 35; // change this value
+        public static final int kIndexerMotorId = 35; // 35
         public static final double kIndexerSpeed = 100.0; //rps
         public static final double kIndexerGearRatio = 12.0 / 15.0;
         public static final double indexerSpeed = 30.0; // old

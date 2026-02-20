@@ -118,18 +118,18 @@ public class RobotContainer {
         // reset the field-centric heading on left bumper press
         joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-        joystick . start () . and ( joystick . povUp () ) . whileTrue ( shooter .
+        joystick . start () . and ( joystick . povUp () ) . whileTrue ( hood .
         sysIdQuasistatic ( SysIdRoutine . Direction . kForward ) ) ;
-        joystick . start () . and ( joystick . povDown () ) . whileTrue ( shooter .
+        joystick . start () . and ( joystick . povDown () ) . whileTrue ( hood .
         sysIdQuasistatic ( SysIdRoutine . Direction . kReverse ) ) ;
-        joystick . start () . and ( joystick . povRight () ) . whileTrue ( shooter .
+        joystick . start () . and ( joystick . povRight () ) . whileTrue ( hood .
         sysIdDynamic ( SysIdRoutine . Direction . kForward ) ) ;
-        joystick . start () . and ( joystick . povLeft () ) . whileTrue ( shooter .
+        joystick . start () . and ( joystick . povLeft () ) . whileTrue ( hood .
         sysIdDynamic ( SysIdRoutine . Direction . kReverse ) ) ;
-        joystick.start().and(joystick.povUp()).whileTrue(shooter.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-        joystick.start().and(joystick.povDown()).whileTrue(shooter.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-        joystick.start().and(joystick.povRight()).whileTrue(shooter.sysIdDynamic(SysIdRoutine.Direction.kForward));
-        joystick.start().and(joystick.povLeft()).whileTrue(shooter.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        joystick.start().and(joystick.povUp()).whileTrue(hood.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        joystick.start().and(joystick.povDown()).whileTrue(hood.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        joystick.start().and(joystick.povRight()).whileTrue(hood.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        joystick.start().and(joystick.povLeft()).whileTrue(hood.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
         // CLIMB button controls
         // joystick.y().onTrue(climb.climbUp());
@@ -146,14 +146,14 @@ public class RobotContainer {
         joystick.y().onFalse(climb.stopCommand());
         
         // HOOD button controls
-        joystick.povUp().whileTrue(Commands.runOnce(() -> hood.moveHoodToAngle(hood.targetHoodAngle)));
+        // joystick.povUp().whileTrue(Commands.runOnce(() -> hood.moveHoodToAngle(hood.targetHoodAngle)));
         // joystick.povDown().onTrue(Commands.runOnce(() -> hood.runHoodReverse()));
         // joystick.povUp().onTrue(Commands.runOnce(() -> hood.moveHoodToAngle(Angle.ofBaseUnits(hood.targetHoodAngle, Degree))));
         // joystick.povUp().onTrue(Commands.runOnce(() -> hood.runHood()));
-        joystick.povDown().onTrue(Commands.runOnce(() -> hood.runHoodReverse()));
+        // joystick.povDown().onTrue(Commands.runOnce(() -> hood.runHoodReverse()));
 
-        joystick.povUp().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
-        joystick.povDown().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
+        // joystick.povUp().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
+        // joystick.povDown().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
 
         // TURRET button controls
         joystick.rightTrigger().whileTrue(turret.turretPos());
@@ -192,13 +192,13 @@ public class RobotContainer {
 
 
         // HINGE button controls
-        joystick.povRight()
-            .onTrue(hinge.hingeUp())
-            .onFalse(hinge.hingeStopCommand());
+        // joystick.povRight()
+        //     .onTrue(hinge.hingeUp())
+        //     .onFalse(hinge.hingeStopCommand());
 
-        joystick.povLeft()
-            .onTrue(hinge.hingeDown())
-            .onFalse(hinge.hingeStopCommand());
+        // joystick.povLeft()
+        //     .onTrue(hinge.hingeDown())
+        //     .onFalse(hinge.hingeStopCommand());
         
         
         // Indexer button controls

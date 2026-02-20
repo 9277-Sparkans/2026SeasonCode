@@ -165,10 +165,9 @@ public class RobotContainer {
 
                 // Turret tracking (camera-backed) — run on X button per request
                 // Turret tracking (camera-backed) — run on X button per request
-                joystick.x().whileTrue(
+                joystick.povRight().whileTrue(
                                 new TurretTracking(turret,
-                                                vision::getRobotPoses,
-                                                () -> drivetrain.getStateCopy().Pose.getRotation()));
+                                                () -> drivetrain.getStateCopy().Pose));
 
                 // SHOOTER button controls
                 // joystick.leftBumper().onTrue(Commands.runOnce(() ->
@@ -224,8 +223,7 @@ public class RobotContainer {
 
         public Command getAutonomousCommand() {
                 return new TurretTracking(turret,
-                                vision::getRobotPoses,
-                                () -> drivetrain.getStateCopy().Pose.getRotation());
+                                () -> drivetrain.getStateCopy().Pose);
                 // new FuelChaseCommand(
                 // 25, camera0.getCamera(), drivetrain, // Change to the camera that will
                 // // chase fuel once

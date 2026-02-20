@@ -123,7 +123,7 @@ public class Constants {
         public static double kGearRatio = 105.0 / 18.0;
 
         public static final edu.wpi.first.math.geometry.Transform3d ROBOT_TO_TURRET_TRANSFORM = new edu.wpi.first.math.geometry.Transform3d(
-                new edu.wpi.first.math.geometry.Translation3d(0.0, 0.0, 0.4572), // 18 inches
+                new edu.wpi.first.math.geometry.Translation3d(0.25, 0.0, 0.4572), // 18 inches
                 new edu.wpi.first.math.geometry.Rotation3d());
     }
 

@@ -6,6 +6,7 @@ package frc.robot.commands;
 
 import java.util.function.Supplier;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
@@ -18,25 +19,19 @@ import frc.robot.Constants.TurretConstants;
 
 public class TurretTracking extends Command {
   private Turret turret;
-  private final Supplier<Pose3d[]> robotPosesSupplier;
-  private final Supplier<Rotation2d> yawSupplier;
+  private final Supplier<Pose2d> poseSupplier;
 
   double angleToHub;
 
   /**
    * Creates a new TurretTracking.
    *
-   * @param turret             The turret subsystem.
-   * @param robotPosesSupplier Supplies all robot pose observations from vision
-   *                           (same as Vision/Summary/RobotPoses in NT).
-   * @param yawSupplier        Supplies the robot's heading from the drivetrain
-   *                           gyro.
+   * @param turret       The turret subsystem.
+   * @param poseSupplier Supplies the robot's pose from the drivetrain.
    */
-  public TurretTracking(Turret turret, Supplier<Pose3d[]> robotPosesSupplier,
-      Supplier<Rotation2d> yawSupplier) {
+  public TurretTracking(Turret turret, Supplier<Pose2d> poseSupplier) {
     this.turret = turret;
-    this.robotPosesSupplier = robotPosesSupplier;
-    this.yawSupplier = yawSupplier;
+    this.poseSupplier = poseSupplier;
     addRequirements(turret);
 
     SmartDashboard.putData("Turret Stats", new Sendable() {
@@ -52,25 +47,16 @@ public class TurretTracking extends Command {
   public void initialize() {
   }
 
-  private Pose3d lastKnownPose = null;
-
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    Pose3d[] robotPoses = robotPosesSupplier.get();
+    Pose2d robotPose2d = poseSupplier.get();
 
-    // Update last known pose if we have new vision data
-    if (robotPoses != null && robotPoses.length > 0) {
-      lastKnownPose = robotPoses[0];
-    }
-
-    // If we've never seen a pose, do nothing
-    if (lastKnownPose == null) {
+    if (robotPose2d == null) {
       return;
     }
 
-    // Use the last known good pose
-    Pose3d robotPose = lastKnownPose;
+    Pose3d robotPose = new Pose3d(robotPose2d);
 
     // Calculate turret position in field coordinates
     Translation2d turretTranslation = robotPose
@@ -86,9 +72,9 @@ public class TurretTracking extends Command {
     // Direction from turret to hub
     Translation2d direction = target.minus(turretTranslation);
 
-    // Angle of that direction relative to the robot's heading (use drivetrain gyro
-    // yaw)
-    Rotation2d robotYaw = yawSupplier.get();
+    // Angle of that direction relative to the robot's heading (use drivetrain pose
+    // rotation)
+    Rotation2d robotYaw = robotPose2d.getRotation();
     double angleToHubRad = direction.getAngle().plus(robotYaw).getRadians();
 
     // Normalize to -PI to PI

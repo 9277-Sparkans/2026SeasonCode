@@ -94,28 +94,20 @@ public class Utils {
             }
         }
 
-        public double[] FindOptimalVals(double distance) { // Finds the optimal shot for minimum hood movement and RPM change
+        public double[] FindOptimalVals(double distance, double velocityX, double velocityY, double shooterRpm, double hoodAngle) { // Finds the optimal shot for minimum hood movement and RPM change
             // Get range
-            int bestI = GetClosestDist(distance);
-            int startI = bestI;
-            int endI = bestI;
-
-            while (distance - hits.get(startI)[0] < Constants.ShooterConstants.autoshootDistanceRange) {
-                startI--;
-            }
-            while (hits.get(endI)[0] - distance < Constants.ShooterConstants.autoshootDistanceRange) {
-                endI++;
-            }
+            int startI = GetClosestDist(distance - Constants.ShooterConstants.autoshootDistanceRange);
+            int endI = GetClosestDist(distance + Constants.ShooterConstants.autoshootDistanceRange);
 
             // Helper values
             double botSpeedRange = 2.0 * Constants.ShooterConstants.maxSpeed;
             double shooterRpmRange = (double)(Constants.ShooterConstants.kMaxRPM - Constants.ShooterConstants.kMinRPM);
             double hoodAngleRange = Constants.HoodConstants.kMaximumAngle - Constants.HoodConstants.kMinimumAngle;
 
-            double normalizedCurrentXVelocity= /* Replace with forward/backward (+/-) velocity from target */ 0.0 / botSpeedRange;
-            double normalizedCurrentYVelocity = /* Replace with left/right (+/-) velocity from target */ 0.0 / botSpeedRange;
-            double normalizedCurrentShooterRPM = (shooter.GetShooterRPM() - Constants.ShooterConstants.kMinRPM) / shooterRpmRange;
-            double normalizedCurrentHoodAngle = (hood.GetHoodAngle() - Constants.HoodConstants.kMinimumAngle) / hoodAngleRange;
+            double normalizedCurrentXVelocity= velocityX / botSpeedRange;
+            double normalizedCurrentYVelocity = velocityY / botSpeedRange;
+            double normalizedCurrentShooterRPM = (shooterRpm - Constants.ShooterConstants.kMinRPM) / shooterRpmRange;
+            double normalizedCurrentHoodAngle = (hoodAngle - Constants.HoodConstants.kMinimumAngle) / hoodAngleRange;
 
             // Get least square distance between current RPM and Angle vs desired
             double minimumWeight = Double.POSITIVE_INFINITY;
@@ -138,10 +130,10 @@ public class Utils {
                 }
             }
 
-            double turretOffset = -hits.get(minimumI)[1];
-            double shooterRpm = vals.get(minimumI)[2];
-            double hoodAngle = vals.get(minimumI)[3];
-            return new double[]{turretOffset, shooterRpm, hoodAngle};
+            double optimalTurretOffset = -hits.get(minimumI)[1];
+            double optimalShooterRpm = vals.get(minimumI)[2];
+            double optimalHoodAngle = vals.get(minimumI)[3];
+            return new double[]{minimumWeight, optimalTurretOffset, optimalShooterRpm, optimalHoodAngle};
         }
     }
 

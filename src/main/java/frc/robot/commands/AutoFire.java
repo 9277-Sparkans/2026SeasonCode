@@ -8,6 +8,7 @@ import frc.robot.subsystems.Intake;
 import frc.robot.Constants.TransferConstants;
 import frc.robot.Constants.TurretConstants;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.Constants;
 import frc.robot.Limelight;
 import frc.robot.Utils.Lookup;
 import frc.robot.Constants.HoodConstants;
@@ -52,18 +53,28 @@ public class AutoFire extends Command
     public void execute()
     {
         double distance = Limelight.GetDistance();
+        double velocityX = 0.0; // Velocity to or from the target (+/-)
+        double velocityY = 0.0; // Velocity left or right from the target (+/-)
+        double shooterRpm = shooter.GetShooterRPM();
+        double hoodAngle = hood.GetHoodAngle();
 
-        double[] optimal = lookup.FindOptimalVals(distance);
-        turretOffset = optimal[0];
-        tgtRPM = optimal[1];
-        tgtAngle = optimal[2];
+        double[] optimal = lookup.FindOptimalVals(distance, velocityX, velocityY, shooterRpm, hoodAngle);
+        double error = optimal[0];
+        turretOffset = optimal[1];
+        tgtRPM = optimal[2];
+        tgtAngle = optimal[3];
         
         turret.setTurretToAngle(turretOffset);
         shooter.setShooterRPM((int)(tgtRPM));
         hood.setHoodToAngle(tgtAngle);
 
-        transfer.activateTransfer();
-        intake.intake();
+        if (error < Constants.ShooterConstants.maxShotError) {
+            transfer.activateTransfer();
+            intake.intake();
+        } else {
+            transfer.stop();
+            intake.stop();
+        }
     }
 
     @Override

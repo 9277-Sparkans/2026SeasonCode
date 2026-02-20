@@ -1,119 +1,87 @@
 package frc.robot.subsystems;
 import frc.robot.Constants;
+import frc.robot.Constants.ClimbConstants;
+import frc.robot.Constants.IndexerConstants;
 import frc.robot.Constants.IntakeConstants;
 import frc.robot.Constants.TurretConstants;
+import frc.robot.Constants.ShooterConstants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 
-public class Intake extends SubsystemBase 
-{
-	CANBus kCANBus = CANBus.roboRIO();
-	private final TalonFX deployment;
-	private final TalonFXConfiguration deploymentConfig;
+public class Intake extends SubsystemBase {
+	
+	private final TalonFX intakeMotor;
+	private final TalonFXConfiguration intakeMotorConfig;
+  	final MotionMagicVelocityVoltage m_request = new MotionMagicVelocityVoltage(0);
 
-	private final TalonFX roller;
-	private final TalonFXConfiguration rollerConfig;
-	//added for test
-	private double degToRotations(double degrees){
-			return (degrees / 360.0) * IntakeConstants.deploymentGearRatio;
-		}
 
-	public Intake() 
-	{	
-		
-		deployment = new TalonFX(Constants.IntakeConstants.deploymentID, kCANBus);
-		deploymentConfig = new TalonFXConfiguration();
+	public Intake() {	
+	
+		intakeMotor = new TalonFX(Constants.IntakeConstants.intakeMotorId);
+		intakeMotorConfig = new TalonFXConfiguration();
 
-		deploymentConfig.Slot0.kP = Constants.IntakeConstants.deploymentKP;
-		deploymentConfig.Slot0.kI = Constants.IntakeConstants.deploymentKI;
-		deploymentConfig.Slot0.kD = Constants.IntakeConstants.deploymentKD; 
 
-		// deploymentConfig.Voltage.PeakForwardVoltage = IntakeConstants.deploymentMaxVoltage;
-		// deploymentConfig.Voltage.PeakReverseVoltage = -IntakeConstants.deploymentMaxVoltage;
-		// deploymentConfig.MotionMagic.MotionMagicAcceleration = IntakeConstants.deploymentMaxAcceleration;
-		// deploymentConfig.MotionMagic.MotionMagicCruiseVelocity = IntakeConstants.deploymentMaxVelocity;
+		intakeMotorConfig.CurrentLimits.StatorCurrentLimit = IntakeConstants.kIntakeCurrentLimit;
+        intakeMotorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
-		roller = new TalonFX(Constants.IntakeConstants.rollerID, kCANBus);
-		rollerConfig = new TalonFXConfiguration();
+		intakeMotorConfig.Slot0.kP = Constants.IntakeConstants.intake_kP;
+		intakeMotorConfig.Slot0.kI = Constants.IntakeConstants.intake_kI;
+		intakeMotorConfig.Slot0.kD = Constants.IntakeConstants.intake_kD;
 
-		rollerConfig.Slot0.kP = Constants.IntakeConstants.rollerKP;
-		rollerConfig.Slot0.kI = Constants.IntakeConstants.rollerKI;
-		rollerConfig.Slot0.kD = Constants.IntakeConstants.rollerKD;
+		intakeMotorConfig.MotionMagic.MotionMagicAcceleration = IntakeConstants.intakeMaxAcceleration;
+		intakeMotorConfig.MotionMagic.MotionMagicCruiseVelocity = IntakeConstants.intakeMaxVelocity;
 
-		// rollerConfig.Voltage.PeakForwardVoltage = IntakeConstants.rollerMaxVoltage;
-		// rollerConfig.Voltage.PeakReverseVoltage = -IntakeConstants.rollerMaxVoltage;
-		// rollerConfig.MotionMagic.MotionMagicAcceleration = IntakeConstants.rollerMaxAcceleration;
-		// rollerConfig.MotionMagic.MotionMagicCruiseVelocity = IntakeConstants.rollerMaxVelocity;
-
-		deployment.getConfigurator().apply(deploymentConfig);
-    	roller.getConfigurator().apply(rollerConfig);
+    	intakeMotor.getConfigurator().apply(intakeMotorConfig);
 	}
 
-	public Command deployCommand() {
-		return Commands.runOnce(() -> deployIntake());
-	}
-
-	public Command retractCommand() {
-		return Commands.runOnce(() -> retractIntake());
-	}
-
+	
 	public Command intakeCommand() {
-		return Commands.runOnce(() -> intake());
+		return Commands.runOnce(() -> setVel());
 	}
 
 	public Command outtakeCommand() {
-		return Commands.runOnce(() -> outtake());
+		return Commands.runOnce(() -> setVelNeg());
 	}
 	
 	public Command stopRollerCommand() {
 		return Commands.runOnce(() -> stop());
 	}
 
-	// public void deployIntake()
-	// {
-	// 	MotionMagicVoltage deploymentRequest = new MotionMagicVoltage(IntakeConstants.deploymentMaxDeg).withSlot(0);
-	// 	deployment.setControl(deploymentRequest.withPosition(GetDeploymentPosition()));
-	// }
-//
-	public void deployIntake(){
-		double tgt = (IntakeConstants.deploymentMaxDeg * IntakeConstants.deploymentGearRatio) / 360;
-    	final MotionMagicVoltage m_request = new MotionMagicVoltage(0);
-
-    	deployment.setControl(m_request.withPosition(tgt)); //motor rotations
-	}
-
-	public void retractIntake()
-	{
-    	final MotionMagicVoltage m_request = new MotionMagicVoltage(0);
-    	deployment.setControl(m_request.withPosition(0)); //motor rotations
-	}
-
 	public void intake()
 	{
-		roller.set(IntakeConstants.intakeSpeed);
+		intakeMotor.set(IntakeConstants.intakeSpeed);
+		
 	}
 
 	public void outtake()
 	{
-		roller.set(-IntakeConstants.intakeSpeed);
+		intakeMotor.set(-IntakeConstants.intakeSpeed);
 	}
 
 	public void stop()
 	{
-		roller.set(0);
+		intakeMotor.set(0);
 	}
 
-	public double GetDeploymentPosition()
-	{
-		double rawPosition = deployment.getPosition().getValueAsDouble() / Constants.IntakeConstants.deploymentGearRatio;
-		double normalizedValue = (rawPosition / Constants.IntakeConstants.deploymentCountsPerRevolution);
-		return normalizedValue * 360;
-	}
+	public void setVel() {
+		double tgt = IntakeConstants.intakeSpeed / IntakeConstants.kIntakeGearRatio;
+		intakeMotor.setControl(m_request.withVelocity(tgt)); //rps
+  	}
+
+
+	public void setVelNeg() {
+		double tgt = -IntakeConstants.intakeSpeed / IntakeConstants.kIntakeGearRatio;
+		intakeMotor.setControl(m_request.withVelocity(tgt)); //rps
+  	}
+
 }

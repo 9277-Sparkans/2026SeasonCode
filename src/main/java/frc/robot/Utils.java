@@ -4,9 +4,6 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
 
-import frc.robot.subsystems.Hood;
-import frc.robot.subsystems.Shooter;
-
 public class Utils {
     public static double clamp(double value, double min, double max) {
         if (value > max) {

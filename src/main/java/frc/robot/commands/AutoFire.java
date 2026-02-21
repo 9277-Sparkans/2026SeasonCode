@@ -19,8 +19,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 public class AutoFire extends Command 
 {
-    Transfer transfer;
     Intake intake;
+    Transfer transfer;
     Turret turret;
     Shooter shooter;
     Hood hood;
@@ -34,10 +34,10 @@ public class AutoFire extends Command
     double tgtRPM;
     double tgtAngle;
 
-    public AutoFire(Transfer transfer, Intake intake, Turret turret, Shooter shooter, Hood hood,
+    public AutoFire(Intake intake, Transfer transfer, Turret turret, Shooter shooter, Hood hood,
                     ChassisSpeeds speeds, Supplier<Pose3d[]> robotPosesSupplier, Supplier<Rotation2d> yawSupplier, Lookup lookup) {
-        this.transfer = transfer;
         this.intake = intake;
+        this.transfer = transfer;
         this.turret = turret;
         this.shooter = shooter;
         this.hood = hood;

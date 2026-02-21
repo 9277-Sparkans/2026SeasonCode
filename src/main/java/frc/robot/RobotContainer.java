@@ -6,6 +6,8 @@ package frc.robot;
 
 import static edu.wpi.first.units.Units.*;
 
+import java.util.function.Supplier;
+
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
@@ -65,7 +67,7 @@ public class RobotContainer {
     public final Roller roller = new Roller();
 
     public final Lookup lookup = Utils.createLookup();
-    // public final AutoFire autoFireCommand = new AutoFire(...);
+    // public final AutoFire autoFireCommand = new AutoFire(intake, transfer, turret, shooter, hood, speeds, robotPosesSupplier, yawSupplier, lookup);
 
     public RobotContainer() {
         NamedCommands.registerCommand("testNamedCommand", Commands.runOnce(() -> System.out.println("this named command works")));

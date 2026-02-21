@@ -7,8 +7,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Telemetry;
-import frc.robot.Constants.ClimbConstants;
-import frc.robot.Constants.IndexerConstants;
 import frc.robot.Constants.TransferConstants;;
 
 

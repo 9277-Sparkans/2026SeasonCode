@@ -185,9 +185,9 @@ public class Constants {
         public static final double hood_kS = 0.39;
         public static final double hood_kV = 0.095;
         public static final double hood_kA = 0.01;
-        public static final double hood_kP = 7.2;
-        public static final double hood_kI = 0.05;
-        public static final double hood_kD = 0.38;
+        public static final double hood_kP = 13.5; // 7.23, 11
+        public static final double hood_kI = 0.07; // 0.01
+        public static final double hood_kD = 0.25; //0.38
 
         public static final double kHoodSpeed = 0.1;
 

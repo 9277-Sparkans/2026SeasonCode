@@ -226,22 +226,22 @@ public class Constants {
 
     public static class IntakeConstants
     {
-        public static final int intakeMotorId = 38;
+        public static final int intakeMotorId = 38; //38
         public static final double kIntakeGearRatio = 12.0 / 18.0;
 
         public static final double kIntakeCurrentLimit = 80.0;
 
-        public static final double intake_kS = 0.01;
-        public static final double intake_kV = 0.095;
-        public static final double intake_kA = 0.01;
-        public static final double intake_kP = 2.5;
+        public static final double intake_kS = 0.18572;
+        public static final double intake_kV = 0.11754;
+        public static final double intake_kA = 0.0048972;
+        public static final double intake_kP = 0.030667;
         public static final double intake_kI = 0.0;
-        public static final double intake_kD = 0.1;
+        public static final double intake_kD = 0.0;
 
         public static final double intakeMaxVoltage = 5; // can change if not needed
         public static final double intakeMaxAcceleration = 100;
         public static final double intakeMaxVelocity = 500; // rps
-        public static final double intakeSpeed = 30.0; //rps
+        public static final double intakeSpeed = 100.0; //rps
     }
 
     public static class HingeConstants {
@@ -316,12 +316,12 @@ public class Constants {
         public static final double kIndexerGearRatio = 12.0 / 15.0;
         public static final double indexerSpeed = 30.0; // old
 
-        public static final double kIndexer_kS = 0.01;  
-        public static final double kIndexer_kV = 0.12;
-        public static final double kIndexer_kA = 0.01;
-        public static final double kIndexer_kP = 1;
-        public static final double kIndexer_kI = 0.005;
-        public static final double kIndexer_kD = 0.05;
+        public static final double kIndexer_kS = 0.18572;  
+        public static final double kIndexer_kV = 0.11754;
+        public static final double kIndexer_kA = 0.0048972;
+        public static final double kIndexer_kP = 0.030667;
+        public static final double kIndexer_kI = 0.0;
+        public static final double kIndexer_kD = 0.0;
         public static final double kIndexerMaxAcceleration = 400;
         public static final double kIndexerMaxJerk = 4000;
     }

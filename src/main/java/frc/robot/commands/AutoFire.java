@@ -14,40 +14,40 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 
 public class AutoFire extends Command 
 {
-    Turret turret;
     Transfer transfer;
     Intake intake;
+    Turret turret;
     Shooter shooter;
     Hood hood;
-    Lookup lookup;
 
+    ChassisSpeeds speeds;
     Supplier<Pose3d[]> robotPosesSupplier;
     Supplier<Rotation2d> yawSupplier;
-
-    double lastTime;
-    double lastX;
-    double lastY;
+    Lookup lookup;
 
     double turretOffset;
     double tgtRPM;
     double tgtAngle;
 
-    public AutoFire(Turret turret, Transfer transfer, Shooter shooter, Hood hood, Intake intake,
-                    Supplier<Pose3d[]> robotPosesSupplier, Supplier<Rotation2d> yawSupplier, Lookup lookup) {
-        this.turret = turret;
+    public AutoFire(Transfer transfer, Intake intake, Turret turret, Shooter shooter, Hood hood,
+                    ChassisSpeeds speeds, Supplier<Pose3d[]> robotPosesSupplier, Supplier<Rotation2d> yawSupplier, Lookup lookup) {
         this.transfer = transfer;
+        this.intake = intake;
+        this.turret = turret;
         this.shooter = shooter;
         this.hood = hood;
-        this.lookup = lookup;
 
-        addRequirements(shooter, hood, transfer, turret, intake);
+        addRequirements(transfer, intake, turret, shooter, hood);
 
+        this.speeds = speeds;
         this.robotPosesSupplier = robotPosesSupplier;
         this.yawSupplier = yawSupplier;
+        this.lookup = lookup;
 
         turretOffset = 0.0;
         tgtRPM = 0.0;
@@ -68,18 +68,14 @@ public class AutoFire extends Command
         Rotation2d yaw = yawSupplier.get();
 
         // Get values
-        double time = System.currentTimeMillis();
-        double posX = robotPoses[0].getX() + yaw.getCos() * 0.2;
-        double posY = robotPoses[0].getY() + yaw.getSin() * 0.2;
+        double posX = robotPoses[0].getX() + yaw.getCos() * Constants.HoodConstants.hoodOffset;
+        double posY = robotPoses[0].getY() + yaw.getSin() * Constants.HoodConstants.hoodOffset;
+        double velocityX = speeds.vxMetersPerSecond;
+        double velocityY = speeds.vyMetersPerSecond;
 
-        double dt = (lastTime - time) / 1000;
-        double velocityX = (posX - lastX) / dt;
-        double velocityY = (posY - lastY) / dt;
-
-        // Update values
-        lastTime = time;
-        lastX = posX;
-        lastY = posY;
+        // Transform standard x-y velocity such that i^ is towards the shooter, j^ is 90 deg left from top-down
+        double transformedVelocityX = velocityX * yaw.getCos() + velocityY * yaw.getSin();
+        double transformedVelocityY = -velocityX * yaw.getSin() + velocityY * yaw.getCos();
 
         // Calculate target vector
         double offsetX = Constants.FieldConstants.HUB_X - posX;
@@ -88,10 +84,6 @@ public class AutoFire extends Command
         double targetDirectionRad = Math.atan2(offsetY, offsetX);
         double targetDirectionDeg = targetDirectionRad * 180 / Math.PI;
         double targetDistance = Math.sqrt(offsetX * offsetX + offsetY * offsetY);
-
-        // Transform standard x-y velocity such that i^ is towards the shooter, j^ is 90 deg left from top-down
-        double transformedVelocityX = velocityX * yaw.getCos() + velocityY * yaw.getSin();
-        double transformedVelocityY = -velocityX * yaw.getSin() + velocityY * yaw.getCos();
 
         double shooterRpm = shooter.GetShooterRPM();
         double hoodAngle = hood.GetHoodAngle();

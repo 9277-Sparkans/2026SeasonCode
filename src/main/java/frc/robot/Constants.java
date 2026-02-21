@@ -195,6 +195,8 @@ public class Constants {
         public static final double kHoodCurrentLimit = 35; // was 35, setting it to this to avoid grinding the gear again!
 
         public static final double kHoodIncremqent = 2;
+
+        public static final double hoodOffset = 0.205; // Offset from center of the bot (m)
     }
 
     public static class IntakeConstants

@@ -119,6 +119,10 @@ public class RobotContainer {
                 // auto align while holding y button
                 joystick.y().whileTrue(AutoAlignCommand.getAutoAlignCommand(drivetrain));
 
+                // joystick buttons for sticks mode
+                rotateStick.button(3).whileTrue(AutoAlignCommand.getAutoAlignCommand(drivetrain));
+                translateStick.button(2).toggleOnTrue(new TurretTracking(turret));
+
                 // driver sticks support
                 drivetrain.setDefaultCommand(
                                 drivetrain.applyRequest(() -> {

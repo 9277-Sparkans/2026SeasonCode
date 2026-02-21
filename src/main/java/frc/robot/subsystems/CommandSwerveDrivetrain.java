@@ -327,13 +327,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
      */
     @Override
     public void addVisionMeasurement(Pose2d visionRobotPoseMeters, double timestampSeconds) {
-        // PhotonVision provides timestamps in seconds since the epoch (Unix time),
-        // so forward them directly to the drivetrain pose estimator which expects
-        // a seconds timestamp. Converting again with Utils.fpgaToCurrentTime can
-        // produce timestamps far in the future/ past and cause measurements to be
-        // ignored.
-        // ignored.
-        super.addVisionMeasurement(visionRobotPoseMeters, timestampSeconds);
+        // Convert WPILib FPGA time (from PhotonVision) to Phoenix 6 Epoch time
+        super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds));
     }
 
     /**
@@ -359,7 +354,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             Pose2d visionRobotPoseMeters,
             double timestampSeconds,
             Matrix<N3, N1> visionMeasurementStdDevs) {
-        super.addVisionMeasurement(visionRobotPoseMeters, timestampSeconds, visionMeasurementStdDevs);
+        super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds),
+                visionMeasurementStdDevs);
     }
 
     /**

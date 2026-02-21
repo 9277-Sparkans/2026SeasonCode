@@ -13,7 +13,6 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -22,7 +21,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
@@ -36,7 +34,6 @@ import frc.robot.Constants.OIConstants;
 import frc.robot.Utils.Lookup;
 import frc.robot.commands.AutoFire;
 import frc.robot.commands.LockMode;
-import frc.robot.commands.TurretTracking;
 import frc.robot.subsystems.Transfer;
 import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Hinge;
@@ -58,6 +55,8 @@ public class RobotContainer {
     public final CommandXboxController joystick = new CommandXboxController(OIConstants.kDriverControllerPort);
     public final Joystick operatorJoystick = new Joystick(OIConstants.kOperatorControllerPort);
 
+    private static final boolean OPERATOR_JOYSTICK_DEBUG = false;
+
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
     private final Shooter shooter = new Shooter();
@@ -73,6 +72,8 @@ public class RobotContainer {
     public final AutoFire autoFireCommand = new AutoFire(turret, transfer, shooter, hood, intake, lookup);
     public final LockMode lockModeCommand = new LockMode(turret, shooter, hood);
     
+    public boolean manualControl = false;
+
     public RobotContainer() {
 
         turret.setDefaultCommand(turret.initDefaultCommand(turret));
@@ -80,6 +81,7 @@ public class RobotContainer {
         NamedCommands.registerCommand("testNamedCommand", Commands.runOnce(() -> System.out.println("this named command works")));
 
         SmartDashboard.putData("Git Info", new Sendable() {
+            @SuppressWarnings("removal")
             @Override
             public void initSendable(SendableBuilder builder) {
                 builder.addStringProperty("Branch", () -> BuildConstants.GIT_BRANCH, null);
@@ -206,35 +208,93 @@ public class RobotContainer {
         // Indexer button controls
         joystick.b().onTrue(indexer.toggleIndexer()); 
 
-        // // Operator
-        // operator(OIConstants.kKeyboard_lockModeLeft)
-        //     .onTrue(Commands.runOnce(() -> System.out.println("Lock left")));
+        configureOperatorConsole();
 
-        // operator(OIConstants.kKeyboard_lockModeRight)
-        //     .onTrue(Commands.runOnce(() -> System.out.println("Lock right")));
+        drivetrain.registerTelemetry(logger::telemeterize);
+    }
 
-        // operator(OIConstants.kKeyboard_lockModeCenter)
-        //     .onTrue(Commands.runOnce(() -> System.out.println("Lock center")));
+    private void configureOperatorConsole() {
+        // Operator
+        operator(OIConstants.kKeyboard_modeToggle)
+            .onTrue(Commands.runOnce(() -> manualControl = !manualControl));
 
-        // // operator(OIConstants.kKeyboard_lockModeFire)
-        // //     .onTrue(Commands.runOnce(() -> System.out.println("Lock fire")));
+        operator(OIConstants.kKeyboard_lockModeToggle)
+            .onTrue(Commands.runOnce(() -> System.out.println("Lock toggle")));
+        
+        operator(OIConstants.kKeyboard_fire)
+            .onTrue(Commands.either(
+                Commands.parallel(
+                    transfer.toggleTransferCommand(),
+                    indexer.toggleIndexer()
+                ),
+                autoFireCommand,
+                () -> manualControl
+            ));
 
-        // operator(OIConstants.kKeyboard_climbUp)
-        //     .onTrue(climb.climbUp());
+        operator(OIConstants.kKeyboard_climbUp)
+            .onTrue(climb.climbUp());
 
-        // operator(OIConstants.kKeyboard_climbDown)
-        //     .onTrue(climb.climbDown());
+        operator(OIConstants.kKeyboard_climbHang)
+            .onTrue(climb.climbHang());
 
-        // operator(OIConstants.kKeyboard_autoFire)
-        //     .onTrue(autoFireCommand);
+        operator(OIConstants.kKeyboard_climbDown)
+            .onTrue(climb.climbDown());
+        
+        operator(OIConstants.kKeyboard_shooterSpeedUp)
+            .onTrue(Commands.runOnce(() -> {
+                if (manualControl) {
+                    shooter.increaseSpeed();
+                }
+            }));
 
-        // operator(16)
-        //     .onTrue(Commands.runOnce(() -> System.out.println("boobbbbbbxxxxccsdsssxcccccccxxxx")));
+        operator(OIConstants.kKeyboard_shooterSpeedDown)
+            .onTrue(Commands.runOnce(() -> {
+                if (manualControl) {
+                    shooter.decreaseSpeed();
+                }
+            }));
 
-        // drivetrain.registerTelemetry(logger::telemeterize);
+        operator(OIConstants.kKeyboard_intakeDeploy)
+            .onTrue(hinge.hingeDown());
+
+        operator(OIConstants.kKeyboard_intakeRetract)
+            .onTrue(hinge.hingeUp());
+        
+        operator(OIConstants.kKeyboard_hoodUp)
+            .onTrue(Commands.either(
+                Commands.runOnce(() -> { hood.runHood(); System.out.println("MANUAL!!! WOO"); }),
+                Commands.none(),
+                () -> manualControl
+            ));
+
+        operator(OIConstants.kKeyboard_hoodDown)
+            .onTrue(Commands.either(
+                Commands.runOnce(() -> hood.runHoodReverse()),
+                Commands.none(),
+                () -> manualControl
+            ));
+
+
+        operator(OIConstants.kKeyboard_turretLeft)
+            .onTrue(Commands.either(
+                turret.turretNeg(),
+                Commands.none(),
+                () -> manualControl
+            ));
+
+        operator(OIConstants.kKeyboard_turretRight)
+            .onTrue(Commands.either(
+                turret.turretPos(),
+                Commands.none(),
+                () -> manualControl
+            ));
     }
 
     public JoystickButton operator(int keyCode) {
+        if (OPERATOR_JOYSTICK_DEBUG) {
+            new JoystickButton(operatorJoystick, keyCode)
+                .onTrue(Commands.runOnce(() -> System.out.println("Pressed operator keycode " + keyCode)));
+        }
         return new JoystickButton(operatorJoystick, keyCode);
     }
 

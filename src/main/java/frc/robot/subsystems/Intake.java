@@ -1,35 +1,22 @@
 package frc.robot.subsystems;
 import frc.robot.Constants;
-import frc.robot.Constants.ClimbConstants;
-import frc.robot.Constants.IndexerConstants;
 import frc.robot.Constants.IntakeConstants;
-import frc.robot.Constants.TurretConstants;
-import frc.robot.Constants.ShooterConstants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
-
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 
 public class Intake extends SubsystemBase {
-	
 	private final TalonFX intakeMotor;
 	private final TalonFXConfiguration intakeMotorConfig;
   	final MotionMagicVelocityVoltage m_request = new MotionMagicVelocityVoltage(0);
 
-
 	public Intake() {	
-	
 		intakeMotor = new TalonFX(Constants.IntakeConstants.intakeMotorId);
 		intakeMotorConfig = new TalonFXConfiguration();
-
 
 		intakeMotorConfig.CurrentLimits.StatorCurrentLimit = IntakeConstants.kIntakeCurrentLimit;
         intakeMotorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
@@ -57,19 +44,16 @@ public class Intake extends SubsystemBase {
 		return Commands.runOnce(() -> stop());
 	}
 
-	public void intake()
-	{
+	public void intake() {
 		intakeMotor.set(IntakeConstants.intakeSpeed);
 		
 	}
 
-	public void outtake()
-	{
+	public void outtake() {
 		intakeMotor.set(-IntakeConstants.intakeSpeed);
 	}
 
-	public void stop()
-	{
+	public void stop() {
 		intakeMotor.set(0);
 	}
 
@@ -77,7 +61,6 @@ public class Intake extends SubsystemBase {
 		double tgt = IntakeConstants.intakeSpeed / IntakeConstants.kIntakeGearRatio;
 		intakeMotor.setControl(m_request.withVelocity(tgt)); //rps
   	}
-
 
 	public void setVelNeg() {
 		double tgt = -IntakeConstants.intakeSpeed / IntakeConstants.kIntakeGearRatio;

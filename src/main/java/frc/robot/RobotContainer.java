@@ -50,8 +50,8 @@ public class RobotContainer {
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
             .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
-    // private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
-    // private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
+    private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
+    private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
@@ -74,6 +74,9 @@ public class RobotContainer {
     public final LockMode lockModeCommand = new LockMode(turret, shooter, hood);
     
     public RobotContainer() {
+
+        turret.setDefaultCommand(turret.initDefaultCommand(turret));
+
         NamedCommands.registerCommand("testNamedCommand", Commands.runOnce(() -> System.out.println("this named command works")));
 
         SmartDashboard.putData("Git Info", new Sendable() {
@@ -110,26 +113,18 @@ public class RobotContainer {
         
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
-        joystick.start().and(joystick.povUp()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        joystick.start().and(joystick.povDown()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        joystick.start().and(joystick.povRight()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        joystick.start().and(joystick.povLeft()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        // joystick.start().and(joystick.povUp()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+        // joystick.start().and(joystick.povDown()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+        // joystick.start().and(joystick.povRight()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+        // joystick.start().and(joystick.povLeft()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
     
         // reset the field-centric heading on left bumper press
         joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-        // joystick . start () . and ( joystick . povUp () ) . whileTrue ( shooter .
-        // sysIdQuasistatic ( SysIdRoutine . Direction . kForward ) ) ;
-        // joystick . start () . and ( joystick . povDown () ) . whileTrue ( shooter .
-        // sysIdQuasistatic ( SysIdRoutine . Direction . kReverse ) ) ;
-        // joystick . start () . and ( joystick . povRight () ) . whileTrue ( shooter .
-        // sysIdDynamic ( SysIdRoutine . Direction . kForward ) ) ;
-        // joystick . start () . and ( joystick . povLeft () ) . whileTrue ( shooter .
-        // sysIdDynamic ( SysIdRoutine . Direction . kReverse ) ) ;
-        // joystick.start().and(joystick.povUp()).whileTrue(shooter.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-        // joystick.start().and(joystick.povDown()).whileTrue(shooter.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-        // joystick.start().and(joystick.povRight()).whileTrue(shooter.sysIdDynamic(SysIdRoutine.Direction.kForward));
-        // joystick.start().and(joystick.povLeft()).whileTrue(shooter.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        joystick.start().and(joystick.povUp()).whileTrue(hood.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        joystick.start().and(joystick.povDown()).whileTrue(hood.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        joystick.start().and(joystick.povRight()).whileTrue(hood.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        joystick.start().and(joystick.povLeft()).whileTrue(hood.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
         // CLIMB button controls
         // joystick.y().onTrue(climb.climbUp());
@@ -148,16 +143,13 @@ public class RobotContainer {
         // HOOD button controls
         // joystick.povUp().whileTrue(Commands.runOnce(() -> hood.moveHoodToAngle(hood.targetHoodAngle)));
         // joystick.povUp().whileTrue(Commands.runOnce(() -> hood.moveHoodToAngle(hood.targetHoodAngle)));
-        // joystick.povDown().onTrue(Commands.runOnce(() -> hood.runHoodReverse()));
         // joystick.povUp().onTrue(Commands.runOnce(() -> hood.moveHoodToAngle(Angle.ofBaseUnits(hood.targetHoodAngle, Degree))));
+     
         // joystick.povUp().onTrue(Commands.runOnce(() -> hood.runHood()));
         // joystick.povDown().onTrue(Commands.runOnce(() -> hood.runHoodReverse()));
-        // joystick.povDown().onTrue(Commands.runOnce(() -> hood.runHoodReverse()));
+        // joystick.povUp().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
+        // joystick.povDown().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
 
-        // joystick.povUp().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
-        // joystick.povDown().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
-        // joystick.povUp().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
-        // joystick.povDown().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
 
         // TURRET button controls
         joystick.rightTrigger().whileTrue(turret.turretPos());
@@ -167,6 +159,12 @@ public class RobotContainer {
 
         // joystick.x().whileTrue(new TurretTracking((turret)));
         // joystick.x().onFalse(Commands.runOnce(() -> turret.stop(), turret));
+
+        // joystick.x().whileTrue(turret.initDefaultCommand(turret));
+        joystick.x().whileTrue(Commands.runOnce(() -> turret.turretMoveTgt()));
+        joystick.x().onFalse(Commands.runOnce(() -> turret.stop()));
+
+
 
         // SHOOTER button controls
         joystick.leftBumper().onTrue(Commands.runOnce(() -> shooter.decreaseSpeed()));
@@ -178,7 +176,7 @@ public class RobotContainer {
 
 
         // TRANSFER button controls
-        // joystick.b().onTrue(Commands.runOnce(() -> transfer.toggleTransfer()));
+        joystick.b().onTrue(Commands.runOnce(() -> transfer.toggleTransfer()));
 
 
         // INTAKE button controls
@@ -199,13 +197,7 @@ public class RobotContainer {
         // joystick.povRight()
         //     .onTrue(hinge.hingeUp())
         //     .onFalse(hinge.hingeStopCommand());
-        // joystick.povRight()
-        //     .onTrue(hinge.hingeUp())
-        //     .onFalse(hinge.hingeStopCommand());
 
-        // joystick.povLeft()
-        //     .onTrue(hinge.hingeDown())
-        //     .onFalse(hinge.hingeStopCommand());
         // joystick.povLeft()
         //     .onTrue(hinge.hingeDown())
         //     .onFalse(hinge.hingeStopCommand());

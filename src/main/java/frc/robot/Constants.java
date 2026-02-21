@@ -116,15 +116,15 @@ public class Constants {
         public static final double turret_maxAcceleration = 20; // rotations per second^2
         public static final double turret_maxVoltage = 5;// kraken x44 max voltage
         public static final double turret_maxJerk = 100; // rotations per second^3
-        public static final int turret_motorId = 32; // change this value
+        public static final int turret_motorId = 32; // 32
         public static final double turret_speed = 0.2;
 
-        public static double turret_kV = 0.25;
+        public static double turret_kV = 0.095;
         public static double turret_kA = 0.0;
-        public static double turret_kS = 0.01;
-        public static double turret_kP = 7.5;
-        public static double turret_kI = 0.0;
-        public static double turret_kD = 0.5;
+        public static double turret_kS = 0.6;
+        public static double turret_kP = 13.5;
+        public static double turret_kI = 0.07;
+        public static double turret_kD = 0.25;
 
 
         public static double kMaximumAngle = 60.0;
@@ -164,7 +164,6 @@ public class Constants {
         public static final double shooter_kD = 0.0;
         public static final double shooter_kV = 0.11753;
         public static final double shooter_kA = 0.0038935;
-        // public static final double shooter_kA = 0.004;
 
 
 
@@ -178,8 +177,8 @@ public class Constants {
 
     public static class HoodConstants
     {
-        public static final int kHoodMotorId = 34;
-        public static final int kHoodEncoderId = 41;
+        public static final int kHoodMotorId = 34; //34
+        public static final int kHoodEncoderId = 41; //41
 
         public static final double hood_maxVelocity = 20; // rotations per second; was 1.0, setting it to this to avoid grinding the gear again!
         public static final double hood_maxAcceleration = 80; // rotations per second^2
@@ -203,9 +202,9 @@ public class Constants {
 
         public static final double maxEncoderValue = -1.258789; // test for this
 
-        public static final double kGearRatio = 210.0 / 15.0;
+        public static final double kGearRatio = 105.0 / 18.0; //210.0 / 15.0;
 
-        public static final double kHoodCurrentLimit = 35;
+        public static final double kHoodCurrentLimit = 50;
 
         public static final double kHoodIncrement = 17.0/2.0;
 
@@ -227,9 +226,9 @@ public class Constants {
         public static final double intake_kD = 0.0;
 
         public static final double intakeMaxVoltage = 5; // can change if not needed
-        public static final double intakeMaxAcceleration = 100;
+        public static final double intakeMaxAcceleration = 200;
         public static final double intakeMaxVelocity = 500; // rps
-        public static final double intakeSpeed = 100.0; //rps
+        public static final double intakeSpeed = 150.0; //rps
     }
 
     public static class HingeConstants {
@@ -249,7 +248,7 @@ public class Constants {
         public static final int hingeCountsPerRevolution = 2048; // for kraken x60
         public static final double hingeGearRatio = 45.0 / 1.0;
 
-        public static final double hingeMaxDeg = -100.0;
+        public static final double hingeMaxDeg = 0.0; //-100.0;
     }
 
     public static class ClimbConstants

@@ -74,7 +74,7 @@ public class Hinge extends SubsystemBase{
                 hinge.setControl(m_request.withPosition(degToRotations(Constants.HingeConstants.hingeMaxDeg)));
                 break;
              case DOWN:
-                hinge.setControl(m_request.withPosition(0.0));
+                hinge.setControl(m_request.withPosition(70.0));
                 break;
 
         }

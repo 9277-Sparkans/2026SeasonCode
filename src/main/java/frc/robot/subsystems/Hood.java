@@ -106,7 +106,7 @@ public class Hood extends SubsystemBase {
 
     sysIdRoutine = new SysIdRoutine(
       new SysIdRoutine.Config(
-        Volts.of(0.1).per(Second) , // Quasi - increases by 0.1 V per sec
+        Volts.of(0.2).per(Second) , // Quasi - increases by 0.1 V per sec
         Volts.of(0.65), // Dynamic - jumps to 0.5 V
         Seconds.of(10) // maxes at 10s
       ),

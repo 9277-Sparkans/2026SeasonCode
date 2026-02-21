@@ -4,6 +4,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Limelight;
@@ -27,6 +29,8 @@ public class Turret extends SubsystemBase {
     turretMotor = new TalonFX(TurretConstants.turret_motorId);
     turretMotorConfig = new TalonFXConfiguration();
     turretMotor.setPosition(0);
+
+    turretMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
     turretMotorConfig.Slot0.kS = TurretConstants.turret_kS;
     turretMotorConfig.Slot0.kV = TurretConstants.turret_kV;

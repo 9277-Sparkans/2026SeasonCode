@@ -148,7 +148,7 @@ public class Hood extends SubsystemBase {
 
   public void runHood() {
     // targetHoodPosition += HoodConstants.kHoodSpeed;
-    // targetHoodPosition = 0.4;
+    targetHoodPosition = 0.4;
     hoodMotor.set(HoodConstants.kHoodSpeed);
     // moveHoodMotionMagic();
   }

@@ -44,7 +44,6 @@ public class Hinge extends SubsystemBase{
 		hingeConfig.Slot0.kV = Constants.HingeConstants.hinge_kV;
         hingeConfig.Slot0.kS = Constants.HingeConstants.hinge_kS;
 
-
 		hingeConfig.Voltage.PeakForwardVoltage = HingeConstants.hingeMaxVoltage;
 		hingeConfig.Voltage.PeakReverseVoltage = -HingeConstants.hingeMaxVoltage;
 		hingeConfig.MotionMagic.MotionMagicAcceleration = Constants.HingeConstants.hingeMaxAcceleration;

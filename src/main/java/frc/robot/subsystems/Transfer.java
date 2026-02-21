@@ -44,8 +44,7 @@ public class Transfer extends SubsystemBase
 
 
     public Command toggleTransferCommand() {
-        toggleTransfer();
-        return Commands.runOnce(() -> {});
+        return Commands.runOnce(() -> toggleTransfer());
     }
 
     public void toggleTransfer() {

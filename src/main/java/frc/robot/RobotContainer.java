@@ -223,6 +223,9 @@ public class RobotContainer {
 
     private void configureOperatorConsole() {
         // Operator
+        operator(1)
+            .onTrue(Commands.runOnce(() -> hood.moveHoodToAngle(hood.targetHoodAngle)));
+
         operator(OIConstants.kKeyboard_modeToggle)
             .onTrue(Commands.runOnce(() -> manualControl = !manualControl));
 

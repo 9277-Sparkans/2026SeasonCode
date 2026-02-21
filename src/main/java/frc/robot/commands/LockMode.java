@@ -6,14 +6,20 @@ import frc.robot.subsystems.Hood;
 import frc.robot.Constants.LockModeConstants;
 import edu.wpi.first.wpilibj2.command.Command;
 
-public class LockMode extends Command  {
+public class LockMode extends Command {
+    public enum LockState {
+        LEFT,
+        CENTER,
+        RIGHT
+    }
+
     Turret turret;
     Shooter shooter;
     Hood hood;
     double tgtRpm;
     double tgtAngleHood;
     double tgtAngleTurret;
-    lockState targetLockState;
+    LockState targetLockState;
 
     public LockMode(Turret turret, Shooter shooter, Hood hood) {
         this.turret = turret;
@@ -27,13 +33,7 @@ public class LockMode extends Command  {
         tgtAngleTurret = 0.0;
     }
 
-    public enum lockState {
-        LEFT,
-        CENTER,
-        RIGHT
-    }
-
-    public void setLockState(lockState input) {
+    public void setLockState(LockState input) {
         targetLockState = input;
     }
     

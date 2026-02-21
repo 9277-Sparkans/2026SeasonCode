@@ -183,12 +183,12 @@ public class Constants {
         public static final double hood_maxVoltage = 15;// kraken x44 max voltage
 
         public static final double hood_kG = 0.00;
-        public static final double hood_kS = 0.01;
+        public static final double hood_kS = 0.39;
         public static final double hood_kV = 0.095;
         public static final double hood_kA = 0.01;
-        public static final double hood_kP = 8.85;
-        public static final double hood_kI = 0.0;
-        public static final double hood_kD = 0.5;
+        public static final double hood_kP = 7.2;
+        public static final double hood_kI = 0.05;
+        public static final double hood_kD = 0.38;
 
         public static final double kHoodSpeed = 0.1;
 

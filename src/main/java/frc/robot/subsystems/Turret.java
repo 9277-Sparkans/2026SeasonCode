@@ -11,7 +11,12 @@ import edu.wpi.first.math.filter.LinearFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.wpilibj.simulation.SingleJointedArmSim;
+import edu.wpi.first.math.util.Units;
 import org.littletonrobotics.junction.Logger;
+import com.ctre.phoenix6.sim.TalonFXSimState;
+import com.ctre.phoenix6.sim.CANcoderSimState;
 
 import frc.robot.Telemetry;
 
@@ -21,6 +26,9 @@ public class Turret extends SubsystemBase {
 
   private final TalonFX turretMotor;
   private final CANcoder turretEncoder;
+  private final TalonFXSimState turretMotorSim;
+  private final CANcoderSimState turretEncoderSim;
+  private final SingleJointedArmSim turretSim;
   private final TalonFXConfiguration turretMotorConfig;
   public double turretOffset = 0.0;
 
@@ -81,13 +89,48 @@ public class Turret extends SubsystemBase {
 
     turretMotor.getConfigurator().apply(turretMotorConfig);
 
+    // Initialize Simulation
+    turretMotorSim = turretMotor.getSimState();
+    turretEncoderSim = turretEncoder.getSimState();
+
+    turretSim = new SingleJointedArmSim(
+        DCMotor.getKrakenX60(1), // Assuming Kraken X60
+        totalGearRatio,
+        0.5, // Moment of Inertia (estimate)
+        0.3, // Arm length (meters)
+        Units.degreesToRadians(TurretConstants.kMinimumAngle),
+        Units.degreesToRadians(TurretConstants.kMaximumAngle),
+        true, // Simulate gravity (although turret is usually vertical, this is for plant sim)
+        Units.degreesToRadians(0) // Initial angle
+    );
+
     Telemetry.telemeterizeMotorWithPID("Turret", turretMotor, (1.0 / totalGearRatio), turretMotorConfig);
 
   }
 
   @Override
   public void periodic() {
+    Logger.recordOutput("Turret/Angle", getTurretAngle());
+  }
 
+  @Override
+  public void simulationPeriodic() {
+    // Update simulation
+    turretMotorSim.setSupplyVoltage(edu.wpi.first.wpilibj.RobotController.getBatteryVoltage());
+    turretSim.setInput(turretMotorSim.getMotorVoltage());
+    turretSim.update(0.02);
+
+    // Update motor and encoder sim states
+    double totalGearRatio = TurretConstants.kGearRatio * 5.0;
+    double turretRotations = Units.radiansToRotations(turretSim.getAngleRads());
+    double motorRotations = turretRotations * totalGearRatio;
+    double motorVelocityRps = Units.radiansToRotations(turretSim.getVelocityRadPerSec()) * totalGearRatio;
+    double turretVelocityRps = Units.radiansToRotations(turretSim.getVelocityRadPerSec());
+
+    turretMotorSim.setRawRotorPosition(motorRotations);
+    turretMotorSim.setRotorVelocity(motorVelocityRps);
+    turretEncoderSim.setRawPosition(turretRotations);
+    turretEncoderSim.setVelocity(turretVelocityRps);
   }
 
   public double getPosition() {

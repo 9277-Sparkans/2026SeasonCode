@@ -18,11 +18,15 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.Vision.Vision;
 import frc.robot.Vision.VisionIOPhotonVision;
 import edu.wpi.first.math.geometry.Pose2d;
+import frc.robot.Constants.OIConstants;
+import frc.robot.Constants.QuickAccessConstants;
+import frc.robot.Constants.QuickAccessConstants.ControlTypes;
 import java.util.function.Supplier;
 import frc.robot.Vision.VisionConstants;
 
@@ -43,7 +47,9 @@ public class RobotContainer {
 
         private final Telemetry logger = new Telemetry(MaxSpeed);
 
-        public final CommandXboxController joystick = new CommandXboxController(0);
+        public final CommandXboxController joystick = new CommandXboxController(OIConstants.kOperatorControllerPort);
+        public final CommandJoystick translateStick = new CommandJoystick(OIConstants.kDriverTranslateStickPort);
+        public final CommandJoystick rotateStick = new CommandJoystick(OIConstants.kDriverRotateStickPort);
 
         public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
@@ -57,11 +63,21 @@ public class RobotContainer {
                                         VisionConstants.robotToCamera1)
                         : new VisionIOPhotonVision(VisionConstants.camera1Name,
                                         VisionConstants.robotToCamera1);
+        private final VisionIOPhotonVision camera2 = edu.wpi.first.wpilibj.RobotBase.isSimulation()
+                        ? new frc.robot.Vision.VisionIOPhotonVisionSim(VisionConstants.camera2Name,
+                                        VisionConstants.robotToCamera2)
+                        : new VisionIOPhotonVision(VisionConstants.camera2Name,
+                                        VisionConstants.robotToCamera2);
+        private final VisionIOPhotonVision camera3 = edu.wpi.first.wpilibj.RobotBase.isSimulation()
+                        ? new frc.robot.Vision.VisionIOPhotonVisionSim(VisionConstants.camera3Name,
+                                        VisionConstants.robotToCamera3)
+                        : new VisionIOPhotonVision(VisionConstants.camera3Name,
+                                        VisionConstants.robotToCamera3);
 
         public final Vision vision = new Vision(
                         (Vision.VisionConsumer) drivetrain::addVisionMeasurement,
                         (Supplier<Pose2d>) (() -> drivetrain.getStateCopy().Pose),
-                        camera0, camera1);
+                        camera0, camera1, camera2, camera3);
         public final Turret turret = new Turret(() -> drivetrain.getStateCopy().Pose,
                         () -> drivetrain.getStateCopy().Speeds);
 
@@ -96,30 +112,33 @@ public class RobotContainer {
                 // Seed field centric
                 joystick.povUp().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-                // Turret tracking (camera-backed) — run on X button per request
+                // turret tracking toggled on x button
                 joystick.x().toggleOnTrue(
                                 new TurretTracking(turret));
 
+                // auto align while holding y button
                 joystick.y().whileTrue(AutoAlignCommand.getAutoAlignCommand(drivetrain));
 
+                // driver sticks support
                 drivetrain.setDefaultCommand(
-                                // Drivetrain will execute this command periodically
-                                drivetrain.applyRequest(() -> drive.withVelocityX(-joystick.getLeftY() * MaxSpeed * 0.3) // Drive
-                                                                                                                         // forward
-                                                                                                                         // with
-                                                                                                                         // negative
-                                                                                                                         // Y
-                                                                                                                         // (forward)
-                                                .withVelocityY(-joystick.getLeftX() * MaxSpeed * 0.3) // Drive left with
-                                                                                                      // negative X
-                                                                                                      // (left)
-                                                .withRotationalRate(-joystick.getRightX() * MaxAngularRate * 0.3) // Drive
-                                                                                                                  // counterclockwise
-                                                                                                                  // with
-                                                                                                                  // negative
-                                                                                                                  // X
-                                                                                                                  // (left)
-                                ));
+                                drivetrain.applyRequest(() -> {
+                                        double x, y, rot;
+                                        if (QuickAccessConstants.controlType == ControlTypes.DRIVER_STICKS) {
+                                                x = -translateStick.getRawAxis(1);
+
+                                                y = -translateStick.getRawAxis(0);
+
+                                                rot = -rotateStick.getRawAxis(0);
+                                        } else {
+                                                x = -joystick.getLeftY();
+                                                y = -joystick.getLeftX();
+                                                rot = -joystick.getRightX();
+                                        }
+
+                                        return drive.withVelocityX(x * MaxSpeed * 0.3)
+                                                        .withVelocityY(y * MaxSpeed * 0.3)
+                                                        .withRotationalRate(rot * MaxAngularRate * 0.3);
+                                }));
 
                 drivetrain.registerTelemetry(logger::telemeterize);
         }

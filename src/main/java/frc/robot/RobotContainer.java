@@ -147,11 +147,15 @@ public class RobotContainer {
         
         // HOOD button controls
         // joystick.povUp().whileTrue(Commands.runOnce(() -> hood.moveHoodToAngle(hood.targetHoodAngle)));
+        // joystick.povUp().whileTrue(Commands.runOnce(() -> hood.moveHoodToAngle(hood.targetHoodAngle)));
         // joystick.povDown().onTrue(Commands.runOnce(() -> hood.runHoodReverse()));
         // joystick.povUp().onTrue(Commands.runOnce(() -> hood.moveHoodToAngle(Angle.ofBaseUnits(hood.targetHoodAngle, Degree))));
         // joystick.povUp().onTrue(Commands.runOnce(() -> hood.runHood()));
         // joystick.povDown().onTrue(Commands.runOnce(() -> hood.runHoodReverse()));
+        // joystick.povDown().onTrue(Commands.runOnce(() -> hood.runHoodReverse()));
 
+        // joystick.povUp().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
+        // joystick.povDown().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
         // joystick.povUp().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
         // joystick.povDown().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
 
@@ -195,7 +199,13 @@ public class RobotContainer {
         // joystick.povRight()
         //     .onTrue(hinge.hingeUp())
         //     .onFalse(hinge.hingeStopCommand());
+        // joystick.povRight()
+        //     .onTrue(hinge.hingeUp())
+        //     .onFalse(hinge.hingeStopCommand());
 
+        // joystick.povLeft()
+        //     .onTrue(hinge.hingeDown())
+        //     .onFalse(hinge.hingeStopCommand());
         // joystick.povLeft()
         //     .onTrue(hinge.hingeDown())
         //     .onFalse(hinge.hingeStopCommand());

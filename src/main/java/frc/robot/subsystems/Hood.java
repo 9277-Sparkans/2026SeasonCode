@@ -5,21 +5,30 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
 import static edu.wpi.first.units.Units.Degree;
+import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Seconds;
+import static edu.wpi.first.units.Units.Volts;
 
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.units.measure.Angle;
+import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -38,6 +47,9 @@ public class Hood extends SubsystemBase {
   public double convertedHoodPos = -1d;
 
   private final MotionMagicVoltage request = new MotionMagicVoltage(0.0);
+
+  private final VoltageOut sysIdControl = new VoltageOut(0);
+  private final SysIdRoutine sysIdRoutine;
 
   /** Creates a new Hood. */
   public Hood() {
@@ -91,6 +103,29 @@ public class Hood extends SubsystemBase {
     // SmartDashboard.putData(hoodMotor);
 
     Telemetry.telemeterizeMotorWithPID("Hood (PID)", hoodMotor, 1);
+
+    sysIdRoutine = new SysIdRoutine(
+      new SysIdRoutine.Config(
+        Volts.of(0.1).per(Second) , // Quasi - increases by 0.1 V per sec
+        Volts.of(0.65), // Dynamic - jumps to 0.5 V
+        Seconds.of(10) // maxes at 10s
+      ),
+      new SysIdRoutine.Mechanism (
+        (Voltage volts) -> {
+          hoodMotor.setControl(sysIdControl.withOutput(volts.in(Volts)));
+        },
+        (SysIdRoutineLog log) -> {
+          log.motor("Hood-Motor")
+            .voltage(Volts.of(hoodMotor.getMotorVoltage().
+              getValueAsDouble()))
+            .angularPosition (Rotations.of(hoodMotor.getPosition().
+              getValueAsDouble()))
+            .angularVelocity(RotationsPerSecond.of(hoodMotor.
+              getVelocity().getValueAsDouble()));
+        },
+        this
+      )
+    );
   }
 
   @Override
@@ -158,6 +193,14 @@ public class Hood extends SubsystemBase {
     // targetHoodPosition -= HoodConstants.kHoodSpeed;
     hoodMotor.set(-HoodConstants.kHoodSpeed);
     // moveHoodMotionMagic();
+  }
+
+  public Command sysIdQuasistatic ( SysIdRoutine . Direction direction ) {
+    return sysIdRoutine . quasistatic ( direction ) ;
+  }
+ 
+  public Command sysIdDynamic ( SysIdRoutine . Direction direction ) {
+    return sysIdRoutine . dynamic ( direction ) ;
   }
 
 }

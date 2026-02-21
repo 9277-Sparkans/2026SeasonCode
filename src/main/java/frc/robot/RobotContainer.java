@@ -47,20 +47,16 @@ public class RobotContainer {
 
         public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
-        private final VisionIOPhotonVision camera0 = /*
-                                                      * RobotBase.isSimulation()
-                                                      * ? new VisionIOPhotonVisionSim(VisionConstants.camera0Name,
-                                                      * VisionConstants.robotToCamera0)
-                                                      * :
-                                                      */ new VisionIOPhotonVision(VisionConstants.camera0Name,
-                        VisionConstants.robotToCamera0);
-        private final VisionIOPhotonVision camera1 = /*
-                                                      * RobotBase.isSimulation()
-                                                      * ? new VisionIOPhotonVisionSim(VisionConstants.camera1Name,
-                                                      * VisionConstants.robotToCamera1)
-                                                      * :
-                                                      */ new VisionIOPhotonVision(VisionConstants.camera1Name,
-                        VisionConstants.robotToCamera1);
+        private final VisionIOPhotonVision camera0 = edu.wpi.first.wpilibj.RobotBase.isSimulation()
+                        ? new frc.robot.Vision.VisionIOPhotonVisionSim(VisionConstants.camera0Name,
+                                        VisionConstants.robotToCamera0)
+                        : new VisionIOPhotonVision(VisionConstants.camera0Name,
+                                        VisionConstants.robotToCamera0);
+        private final VisionIOPhotonVision camera1 = edu.wpi.first.wpilibj.RobotBase.isSimulation()
+                        ? new frc.robot.Vision.VisionIOPhotonVisionSim(VisionConstants.camera1Name,
+                                        VisionConstants.robotToCamera1)
+                        : new VisionIOPhotonVision(VisionConstants.camera1Name,
+                                        VisionConstants.robotToCamera1);
 
         public final Vision vision = new Vision(
                         (Vision.VisionConsumer) drivetrain::addVisionMeasurement,

@@ -1,14 +1,10 @@
 package frc.robot.subsystems;
 import frc.robot.Constants;
 import frc.robot.Constants.HingeConstants;
-import frc.robot.Constants.IntakeConstants;
-// import frc.robot.subsystems.Intake.HingeState;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import com.ctre.phoenix6.CANBus;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 
@@ -68,7 +64,7 @@ public class Hinge extends SubsystemBase{
 
     // state for climb up
     public void states(HingeState state) {
-
+        setState(state);
         switch (state) {
             case UP:
                 hinge.setControl(m_request.withPosition(degToRotations(Constants.HingeConstants.hingeMaxDeg)));
@@ -96,9 +92,22 @@ public class Hinge extends SubsystemBase{
         });
     }
 
+    public Command hingeToggle() {
+        return Commands.runOnce(() -> {
+            if (hingeState == HingeState.DOWN) {
+                hingeState = HingeState.UP;
+            } else {
+                hingeState = HingeState.DOWN;
+            }
+
+            states(hingeState);
+        });
+    }
+
     public Command hingeStopCommand() {
         return Commands.runOnce(() -> {
             hinge.set(0.0);
         });
     }
+
 }

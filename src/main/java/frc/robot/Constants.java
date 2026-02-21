@@ -60,13 +60,25 @@ public class Constants {
         // 87777877ui00o831.00
         // NOTE: IDs here are 1-indexed as opposed to the keyboard firmware's 0-indexing
         // Add one to your ID or else you'll be binding to a completely different button
-        public static final int kKeyboard_lockModeLeft = 2;
-        public static final int kKeyboard_lockModeCenter = 3;
-        public static final int kKeyboard_lockModeRight = 4;
-        // public static final int kKeyboard_lockModeFire = 5;
+        public static final int kKeyboard_modeToggle = 14;
+
+        public static final int kKeyboard_lockModeToggle = 8;
+
         public static final int kKeyboard_climbUp = 6;
-        public static final int kKeyboard_climbDown = 7;
-        public static final int kKeyboard_autoFire = 8;
+        public static final int kKeyboard_climbDown = 10;
+        public static final int kKeyboard_climbHang = 11;
+        
+        public static final int kKeyboard_fire = 15;
+        public static final int kKeyboard_shooterSpeedUp = 7;
+        public static final int kKeyboard_shooterSpeedDown = 8;
+
+        public static final int kKeyboard_intakeDeploy = 12;
+        public static final int kKeyboard_intakeRetract = 13;
+
+        public static final int kKeyboard_hoodUp = 2;
+        public static final int kKeyboard_hoodDown = 4;
+        public static final int kKeyboard_turretLeft = 3;
+        public static final int kKeyboard_turretRight = 5;
 
         // Triggers [CONTROLLER ONLY]
         public static final int kController_leftBumper = 5;

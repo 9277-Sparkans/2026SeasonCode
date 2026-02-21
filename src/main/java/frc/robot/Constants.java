@@ -232,11 +232,12 @@ public class Constants {
 
         public static final int kHingeMotorId = 39;
 
-        public static final double hinge_kS = 0.01;        
+        public static final double hinge_kS = 0.24;        
         public static final double hinge_kP = 10.0;
         public static final double hinge_kI = 0.0;
         public static final double hinge_kD = 0.1;
         public static final double hinge_kV = 0.12;
+        public static final double hinge_kG = 0.0;
         public static final double hingeMaxVoltage = 4;
         public static final double hingeMaxAcceleration = 10;
         public static final double hingeMaxVelocity = 10; // rps
@@ -296,11 +297,11 @@ public class Constants {
         public static final double kIndexerMaxVoltage = 5;// kraken x44 max voltage
         public static final double kIndexerCurrentLimit = 100;
         public static final int kIndexerMotorId = 35; // 35
-        public static final double kIndexerSpeed = 100.0; //rps
+        public static final double kIndexerSpeed = 60.0; //rps
         public static final double kIndexerGearRatio = 12.0 / 15.0;
         public static final double indexerSpeed = 30.0; // old
 
-        public static final double kIndexer_kS = 0.18572;  
+        public static final double kIndexer_kS = 0.18572;
         public static final double kIndexer_kV = 0.11754;
         public static final double kIndexer_kA = 0.0048972;
         public static final double kIndexer_kP = 0.030667;

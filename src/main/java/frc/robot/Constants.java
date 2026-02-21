@@ -108,6 +108,8 @@ public class Constants {
         public static final double turret_maxVoltage = 5;// kraken x44 max voltage
         public static final double turret_maxJerk = 100; // rotations per second^3
         public static final int turret_motorId = 32; // change this value
+        public static final int kTurretEncoderId = 40;
+        public static final double kTurretEncoderOffset = 0.0; // Rotations
         public static final double turret_speed = 0.2;
 
         public static double turret_kV = 0.25;
@@ -310,6 +312,10 @@ public class Constants {
     public static class FieldConstants {
         public static final double HUB_X = 8.23; // meters
         public static final double HUB_Y = 4.11; // meters
+        public static final edu.wpi.first.math.geometry.Translation3d HUB_BLUE = new edu.wpi.first.math.geometry.Translation3d(
+                HUB_X, HUB_Y, 1.4); // 1.4m height approx
+        public static final edu.wpi.first.math.geometry.Translation3d HUB_RED = new edu.wpi.first.math.geometry.Translation3d(
+                16.541 - HUB_X, HUB_Y, 1.4);
     }
 
 }

@@ -18,33 +18,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.Vision.Vision;
 import frc.robot.Vision.VisionIOPhotonVision;
-// import frc.robot.Vision.VisionIOPhotonVisionSim;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.wpilibj.RobotBase;
 import java.util.function.Supplier;
 import frc.robot.Vision.VisionConstants;
 
 import frc.robot.commands.TurretTracking;
-// import frc.robot.commands.FuelChaseCommand;
-import frc.robot.Constants.OIConstants;
-// import frc.robot.Utils.Lookup;
-// import frc.robot.commands.LockMode.lockState;
 import frc.robot.subsystems.Turret;
-import frc.robot.subsystems.Shooter;
-// import frc.robot.subsystems.Hood;
-import frc.robot.subsystems.Intake;
-// import frc.robot.subsystems.Indexer;
-// import frc.robot.commands.AutoFire;
-// import frc.robot.commands.LockMode;
-import frc.robot.subsystems.Transfer;
-// import frc.robot.subsystems.Climb;
-import frc.robot.subsystems.Hinge;
 import frc.robot.commands.AutoAlignCommand;
 
 public class RobotContainer {
@@ -83,22 +66,8 @@ public class RobotContainer {
                         (Vision.VisionConsumer) drivetrain::addVisionMeasurement,
                         (Supplier<Pose2d>) (() -> drivetrain.getStateCopy().Pose),
                         camera0, camera1);
-        // public final Lookup lookup = Utils.createLookup(hood, shooter);
-        // public final AutoFire autoFireCommand = new AutoFire(turret, transfer,
-        // shooter, hood, intake, lookup);
-        // public final LockMode lockModeCommand = new LockMode(turret, shooter, hood);
-
-        // public final Shooter shooter = new Shooter();
-        // public final Intake intake = new Intake();
-        public final Turret turret = new Turret();
-        // public final Transfer transfer = new Transfer();
-        // public final Hood hood = new Hood();
-        // public final Climb climb = new Climb();
-        // public final Indexer indexer = new Indexer();
-        // public final Hinge hinge = new Hinge();
-
-        // public final AutoFire autoFireCommand = new AutoFire(turret, transfer,
-        // shooter, hood);
+        public final Turret turret = new Turret(() -> drivetrain.getStateCopy().Pose,
+                        () -> drivetrain.getStateCopy().Speeds);
 
         public RobotContainer() {
                 NamedCommands.registerCommand("testNamedCommand",
@@ -123,75 +92,19 @@ public class RobotContainer {
                 // reset the field-centric heading on left bumper press
                 joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-                // CLIMB button controls
-                // joystick.y().whileTrue(climb.climbUp());
-                // joystick.x().whileTrueFalse(climb.climbHang());
-                // joystick.a().whileTrue(climb.climbDown());
-
-                // joystick.povRight().onTrue(climb.runClimbCommand());
-                // joystick.povRight().onFalse(climb.stopCommand());
-
-                // CLIMB button controls (disabled — climb subsystem currently not used)
-                // joystick.povRight().whileTrue(climb.climbUp());
-                // joystick.povLeft().whileTrue(climb.climbDown());
-
                 joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
                 joystick.b().whileTrue(drivetrain.applyRequest(
                                 () -> point.withModuleDirection(
                                                 new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))));
 
-                // joystick.povUp().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
-                // joystick.povDown().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
-
-                // Hood controls are disabled while hood subsystem is out-of-scope
-                // joystick.povUp().whileTrue(Commands.runOnce(() -> hood.hoodMoveTgt()));
-                // joystick.povUp().onFalse(Commands.runOnce(() -> hood.stop()));
-
                 // Seed field centric
                 joystick.povUp().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-                // Turret controls
-                joystick.rightTrigger().whileTrue(turret.turretPos());
-                joystick.leftTrigger().whileTrue(turret.turretNeg());
-                joystick.leftTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
-                joystick.rightTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
-
-                // Turret tracking (camera-backed) — run on X button per request
                 // Turret tracking (camera-backed) — run on X button per request
                 joystick.x().toggleOnTrue(
-                                new TurretTracking(turret,
-                                                vision::getRobotPoses,
-                                                () -> drivetrain.getStateCopy().Pose.getRotation()));
+                                new TurretTracking(turret));
 
-                // SHOOTER button controls
-                // joystick.leftBumper().onTrue(Commands.runOnce(() ->
-                // shooter.decreaseSpeed()));
-                // joystick.rightBumper().onTrue(Commands.runOnce(() -> shooter.setVel()));
-                // joystick.rightBumper().onFalse(Commands.runOnce(() -> shooter.stop()));
-
-                // Intake controls
-                // joystick.povRight().whileTrue(intake.intakeCommand()).onFalse(intake.stopRollerCommand());
-                // joystick.povLeft().whileTrue(intake.outtakeCommand()).onFalse(intake.stopRollerCommand());
-
-                // Turret tracking moved to X button to avoid duplicate bindings
                 joystick.y().whileTrue(AutoAlignCommand.getAutoAlignCommand(drivetrain));
-                // joystick.y().onTrue(new TurretTracking(turret, camera0.getCamera(),
-                // VisionConstants.robotToCamera0,
-                // drivetrain::getPose3d));
-
-                // Transfer control
-                // joystick.b().onTrue(Commands.runOnce(() -> transfer.toggleTransfer()));
-
-                // Indexer control
-                // Moved to right stick click or something else to avoid conflict with Transfer
-                // (B) or TurretTracking (Y)?
-                // Let's use right stick button
-                // joystick.rightStick().onTrue(indexer.toggleIndexer());
-
-                // Chase fuel ball with X button (PhotonVision feature)
-                // joystick.x().whileTrue(new FuelChaseCommand(
-                // 25, camera0.getCamera(), drivetrain,
-                // drivetrain::getPose3d, VisionConstants.robotToCamera0));
 
                 drivetrain.setDefaultCommand(
                                 // Drivetrain will execute this command periodically
@@ -216,9 +129,7 @@ public class RobotContainer {
         }
 
         public Command getAutonomousCommand() {
-                return new TurretTracking(turret,
-                                vision::getRobotPoses,
-                                () -> drivetrain.getStateCopy().Pose.getRotation());
+                return new TurretTracking(turret);
                 // new FuelChaseCommand(
                 // 25, camera0.getCamera(), drivetrain, // Change to the camera that will
                 // // chase fuel once

@@ -28,7 +28,10 @@ import org.photonvision.targeting.PhotonTrackedTarget;
 /** IO implementation for real PhotonVision hardware. */
 public class VisionIOPhotonVision implements VisionIO {
 	private final PhotonCamera camera;
-	private final Transform3d robotToCamera;
+	private Transform3d robotToCamera;
+	private final frc.robot.util.LoggedTunableNumber roll;
+	private final frc.robot.util.LoggedTunableNumber pitch;
+	private final frc.robot.util.LoggedTunableNumber yaw;
 
 	/**
 	 * Creates a new VisionIOPhotonVision.
@@ -39,11 +42,26 @@ public class VisionIOPhotonVision implements VisionIO {
 	public VisionIOPhotonVision(String name, Transform3d robotToCamera) {
 		this.camera = new PhotonCamera(name);
 		this.robotToCamera = robotToCamera;
+		this.roll = new frc.robot.util.LoggedTunableNumber(name + "/RollDegrees",
+				edu.wpi.first.math.util.Units.radiansToDegrees(robotToCamera.getRotation().getX()));
+		this.pitch = new frc.robot.util.LoggedTunableNumber(name + "/PitchDegrees",
+				edu.wpi.first.math.util.Units.radiansToDegrees(robotToCamera.getRotation().getY()));
+		this.yaw = new frc.robot.util.LoggedTunableNumber(name + "/YawDegrees",
+				edu.wpi.first.math.util.Units.radiansToDegrees(robotToCamera.getRotation().getZ()));
 	}
 
 	@Override
 	public void updateInputs(VisionIOInputs inputs, edu.wpi.first.math.geometry.Pose2d currentPose) {
 		inputs.setConnected(camera.isConnected());
+
+		// Update robot to camera transform from tunable numbers (converting degrees to
+		// radians)
+		robotToCamera = new Transform3d(
+				robotToCamera.getTranslation(),
+				new edu.wpi.first.math.geometry.Rotation3d(
+						edu.wpi.first.math.util.Units.degreesToRadians(roll.get()),
+						edu.wpi.first.math.util.Units.degreesToRadians(pitch.get()),
+						edu.wpi.first.math.util.Units.degreesToRadians(yaw.get())));
 
 		// Read new camera observations
 		Set<Short> tagIds = new HashSet<>();

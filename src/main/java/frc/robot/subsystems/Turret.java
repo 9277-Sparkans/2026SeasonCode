@@ -1,11 +1,17 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
+import java.util.function.Supplier;
+import edu.wpi.first.math.filter.LinearFilter;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import org.littletonrobotics.junction.Logger;
 
 import frc.robot.Telemetry;
 
@@ -14,16 +20,40 @@ import frc.robot.Constants.TurretConstants;
 public class Turret extends SubsystemBase {
 
   private final TalonFX turretMotor;
+  private final CANcoder turretEncoder;
   private final TalonFXConfiguration turretMotorConfig;
   public double turretOffset = 0.0;
 
-  final MotionMagicVoltage m_request = new MotionMagicVoltage(0.0);
+  private Supplier<Pose2d> poseSupplier;
+  private Supplier<ChassisSpeeds> speedsSupplier;
+
+  private final LinearFilter angleFilter = LinearFilter.singlePoleIIR(0.1, 0.02); // 0.1s time constant, 0.02s loop
+  private double filteredTargetAngle = 0;
+  private boolean isTracking = false;
+  private final MotionMagicVoltage m_request = new MotionMagicVoltage(0.0);
 
   /** Creates a new Turret. */
-  public Turret() {
+  public Turret(Supplier<Pose2d> poseSupplier, Supplier<ChassisSpeeds> speedsSupplier) {
+    this.poseSupplier = poseSupplier;
+    this.speedsSupplier = speedsSupplier;
     turretMotor = new TalonFX(TurretConstants.turret_motorId);
+    turretEncoder = new CANcoder(TurretConstants.kTurretEncoderId);
     turretMotorConfig = new TalonFXConfiguration();
-    turretMotor.setPosition(0);
+
+    // Configure CANcoder
+    var encoderConfig = new CANcoderConfiguration();
+    encoderConfig.MagnetSensor.MagnetOffset = TurretConstants.kTurretEncoderOffset;
+    turretEncoder.getConfigurator().apply(encoderConfig);
+
+    // Total gear ratio is kGearRatio * 5
+    double totalGearRatio = TurretConstants.kGearRatio * 5.0;
+
+    // Seed motor position from absolute encoder
+    // Assuming encoder is 1:1 with the turret final axis
+    double absolutePosition = turretEncoder.getAbsolutePosition().waitForUpdate(0.1).getValueAsDouble();
+    // Normalize absolute position to [-0.5, 0.5] to prevent seeding jumps
+    absolutePosition = edu.wpi.first.math.MathUtil.inputModulus(absolutePosition, -0.5, 0.5);
+    turretMotor.setPosition(absolutePosition * totalGearRatio);
 
     turretMotorConfig.Slot0.kS = TurretConstants.turret_kS;
     turretMotorConfig.Slot0.kV = TurretConstants.turret_kV;
@@ -38,16 +68,20 @@ public class Turret extends SubsystemBase {
     turretMotorConfig.MotionMagic.MotionMagicCruiseVelocity = TurretConstants.turret_maxVelocity;
     turretMotorConfig.MotionMagic.MotionMagicJerk = TurretConstants.turret_maxJerk;
 
-    turretMotorConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = TurretConstants.kMaximumAngle / 360
-        * TurretConstants.kGearRatio;
+    // Total gear ratio is kGearRatio * 5 (based on user's original turretMoveTgt
+    // math)
+    // totalGearRatio is already defined above
+
+    turretMotorConfig.SoftwareLimitSwitch.ForwardSoftLimitThreshold = TurretConstants.kMaximumAngle / 360.0
+        * totalGearRatio;
     turretMotorConfig.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-    turretMotorConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = TurretConstants.kMinimumAngle / 360
-        * TurretConstants.kGearRatio;
+    turretMotorConfig.SoftwareLimitSwitch.ReverseSoftLimitThreshold = TurretConstants.kMinimumAngle / 360.0
+        * totalGearRatio;
     turretMotorConfig.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
 
     turretMotor.getConfigurator().apply(turretMotorConfig);
 
-    Telemetry.telemeterizeMotorWithPID("Turret", turretMotor, (1.0 / (15.0 / 108.0)), turretMotorConfig);
+    Telemetry.telemeterizeMotorWithPID("Turret", turretMotor, (1.0 / totalGearRatio), turretMotorConfig);
 
   }
 
@@ -57,54 +91,59 @@ public class Turret extends SubsystemBase {
   }
 
   public double getPosition() {
-    double position = turretMotor.getPosition().getValueAsDouble() / TurretConstants.kGearRatio;
-    return position * 360;
-  }
-
-  public double getTurretCurrent() {
-    double turretCurrent = turretMotor.getSupplyCurrent().getValueAsDouble();
-    return turretCurrent;
-  }
-
-  public Command turretPos() {
-    return Commands.runOnce(() -> spinPositive());
-  }
-
-  public Command turretNeg() {
-    return Commands.runOnce(() -> spinNegative());
+    // Total gear ratio is kGearRatio * 5
+    double totalGearRatio = TurretConstants.kGearRatio * 5.0;
+    return turretMotor.getPosition().getValueAsDouble() / totalGearRatio;
   }
 
   public double getTurretAngle() {
-    double position = getTurretCurrent(); // turns
-    return position * 360;
+    return getPosition() * 360.0;
   }
 
   public double getVelocity() {
-    double turretVelocity = turretMotor.getVelocity().getValueAsDouble();
-    return (turretVelocity);
+    return turretMotor.getVelocity().getValueAsDouble();
   }
 
-  public void spinPositive() {
-    turretMotor.set(TurretConstants.turret_speed);
-  }
+  /**
+   * Automatically track the field target.
+   * 
+   * @param target The target to track in the field.
+   */
+  public void trackTarget(Translation3d target) {
+    Pose2d currentPose = poseSupplier.get();
+    double targetAngleDegrees = TurretCalculator.calculateAzimuthAngle(
+        currentPose,
+        target,
+        getPosition());
 
-  public void spinNegative() {
-    turretMotor.set(-TurretConstants.turret_speed);
-  }
+    // Smoothing: filter the target angle to prevent jerky movements
+    filteredTargetAngle = angleFilter.calculate(targetAngleDegrees);
+    isTracking = true;
 
-  public void turretMoveTgt(double llAngle) {
+    // Convert degrees to motor rotations using total gear ratio
+    double totalGearRatio = TurretConstants.kGearRatio * 5.0;
+    double targetMotorRotations = (filteredTargetAngle * totalGearRatio) / 360.0;
 
-    boolean isAtTarget = Math.abs(turretMotor.getClosedLoopError().getValue()) < 1.5;
-    double tgt = (-llAngle * TurretConstants.kGearRatio * 5) / 360;
+    // Add counter-rotation feedforward
+    // Filter the robot's omega to prevent noise from affecting turret stability
+    double rawOmegaRps = speedsSupplier.get().omegaRadiansPerSecond / (2 * Math.PI);
+    double feedforwardVoltage = -rawOmegaRps * TurretConstants.turret_kV * totalGearRatio;
 
-    // System.out.println(llAngle * 10);
+    turretMotor.setControl(m_request
+        .withPosition(targetMotorRotations)
+        .withFeedForward(feedforwardVoltage));
 
-    turretMotor.setControl(m_request.withPosition(tgt)); // motor rotations
-
+    // Logging for verification
+    Logger.recordOutput("Turret/IsTracking", isTracking);
+    Logger.recordOutput("Turret/RawTargetAngle", targetAngleDegrees);
+    Logger.recordOutput("Turret/FilteredTargetAngle", filteredTargetAngle);
+    Logger.recordOutput("Turret/DrivetrainPose", currentPose);
   }
 
   public void stop() {
-    turretMotor.set(0);
+    isTracking = false;
+    angleFilter.reset();
+    turretMotor.setControl(new com.ctre.phoenix6.controls.NeutralOut());
   }
 
 }

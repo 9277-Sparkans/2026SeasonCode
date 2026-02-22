@@ -237,11 +237,10 @@ public class Constants {
         public static final double hinge_kI = 0.0;
         public static final double hinge_kD = 0.1;
         public static final double hinge_kV = 0.12;
-        public static final double hinge_kG = 0.0;
-        public static final double hingeMaxVoltage = 4;
+        public static final double hinge_kG = 0.7; //0.25
         public static final double hingeMaxAcceleration = 10;
-        public static final double hingeMaxVelocity = 10; // rps
-        public static final double kHingeCurrentLimit = 50;
+        public static final double hingeMaxVelocity = 20; // rps
+        public static final double kHingeCurrentLimit = 80;
 
         public static final int hingeCountsPerRevolution = 2048; // for kraken x60
         public static final double hingeGearRatio = 45.0 / 1.0;

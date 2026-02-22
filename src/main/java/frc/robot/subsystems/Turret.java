@@ -61,7 +61,7 @@ public class Turret extends SubsystemBase {
 
     turretMotor.getConfigurator().apply(turretMotorConfig);
 
-    Telemetry.telemeterizeMotorWithPID("Turret", turretMotor, (1.0 / (15.0 / 108.0)));
+    Telemetry.telemeterizeMotorWithPID("Turret", turretMotor, (108.0 / 15.0));
 
     target = 0.0;
   }
@@ -108,43 +108,16 @@ public class Turret extends SubsystemBase {
   }
 
   public void turretMoveTgt(){
-
-    // if (getTurretAngle() > TurretConstants.kMaximumAngle) {
-    //   turretMotor.setControl(m_request.withPosition(TurretConstants.kMaximumAngle / 360.0 * TurretConstants.kGearRatio));
-    // }
-
-    // else if (getTurretAngle() < TurretConstants.kMinimumAngle) {
-    //   turretMotor.setControl(m_request.withPosition(TurretConstants.kMinimumAngle / 360.0 * TurretConstants.kGearRatio));
-    // }
-
-    // else {
-    // double tgt = (-llAngle * 10 * TurretConstants.kGearRatio) / 360;
-    // turretMotor.setControl(m_request.withPosition(tgt)); //motor rotations
-
-    double tgt = (-30.0 ); // * TurretConstants.kGearRatio) / 360.0;
+    double tgt = (-30.0 ); // angle
     target = tgt;
-    // System.out.println(67); //getPosition() * TurretConstants.kGearRatio / 360.0);
-    // turretMotor.setControl(m_request.withPosition(tgt)); //motor rotations
-    // }    
   }
-
-
-  // public void clampTurret () {
-  //   if (getTurretAngle() > TurretConstants.kMaximumAngle) {
-  //     turretMotor.setControl(m_request.withPosition(TurretConstants.kMaximumAngle / 360.0 * TurretConstants.kGearRatio));
-  //   }
-  //   else if (getTurretAngle() < TurretConstants.kMinimumAngle) {
-  //     turretMotor.setControl(m_request.withPosition(TurretConstants.kMinimumAngle / 360.0 * TurretConstants.kGearRatio));
-  //   }
-  // }
-
 
   public void stop() {
     turretMotor.set(0);
   }
 
   public void defaultCommand() {
-    System.out.println("taerget is " + target);
+    System.out.println("target is " + target);
     turretMotor.setControl(m_request.withPosition(target / 360.0 * TurretConstants.kGearRatio));
   }
 

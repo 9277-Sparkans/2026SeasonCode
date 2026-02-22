@@ -123,7 +123,7 @@ public class RobotContainer {
     
         // reset the field-centric heading on left bumper press
         joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-        
+
         joystick.start().and(joystick.povUp()).whileTrue(shooter.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
         joystick.start().and(joystick.povDown()).whileTrue(shooter.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
         joystick.start().and(joystick.povRight()).whileTrue(shooter.sysIdDynamic(SysIdRoutine.Direction.kForward));
@@ -259,10 +259,12 @@ public class RobotContainer {
             }));
 
         operator(OIConstants.kKeyboard_intakeDeploy)
-            .onTrue(hinge.hingeDown());
+            .onTrue(hinge.hingeDown())
+            .onFalse(hinge.hingeStopCommand());
 
         operator(OIConstants.kKeyboard_intakeRetract)
-            .onTrue(hinge.hingeUp());
+            .onTrue(hinge.hingeUp())
+            .onFalse(hinge.hingeStopCommand());
         
         operator(OIConstants.kKeyboard_hoodUp)
             .onTrue(Commands.either(

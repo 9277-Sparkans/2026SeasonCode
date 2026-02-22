@@ -16,7 +16,7 @@ public class Hinge extends SubsystemBase{
     private final TalonFX hinge;
     private final TalonFXConfiguration hingeConfig;
 
-    MotionMagicVoltage m_request = new MotionMagicVoltage(0).withSlot(0);
+    MotionMagicVoltage m_request = new MotionMagicVoltage(0.0).withSlot(0);
 
     private double degToRotations(double degrees){
 		return (degrees / 360.0) * Constants.HingeConstants.hingeGearRatio;
@@ -43,9 +43,8 @@ public class Hinge extends SubsystemBase{
 		hingeConfig.Slot0.kD = Constants.HingeConstants.hinge_kD; 
 		hingeConfig.Slot0.kV = Constants.HingeConstants.hinge_kV;
         hingeConfig.Slot0.kS = Constants.HingeConstants.hinge_kS;
+        hingeConfig.Slot0.kG = Constants.HingeConstants.hinge_kG;
 
-		hingeConfig.Voltage.PeakForwardVoltage = HingeConstants.hingeMaxVoltage;
-		hingeConfig.Voltage.PeakReverseVoltage = -HingeConstants.hingeMaxVoltage;
 		hingeConfig.MotionMagic.MotionMagicAcceleration = Constants.HingeConstants.hingeMaxAcceleration;
 		hingeConfig.MotionMagic.MotionMagicCruiseVelocity = Constants.HingeConstants.hingeMaxVelocity;
 
@@ -66,10 +65,10 @@ public class Hinge extends SubsystemBase{
         setState(state);
         switch (state) {
             case UP:
-                hinge.setControl(m_request.withPosition(degToRotations(Constants.HingeConstants.hingeMaxDeg)));
+                hinge.setControl(m_request.withPosition(-19.0)); //degToRotations(Constants.HingeConstants.hingeMaxDeg)));
                 break;
              case DOWN:
-                hinge.setControl(m_request.withPosition(70.0));
+                hinge.setControl(m_request.withPosition(4.0));
                 break;
 
         }

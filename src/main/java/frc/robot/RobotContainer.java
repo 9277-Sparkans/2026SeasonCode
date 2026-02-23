@@ -78,8 +78,7 @@ public class RobotContainer {
                         (Vision.VisionConsumer) drivetrain::addVisionMeasurement,
                         (Supplier<Pose2d>) (() -> drivetrain.getStateCopy().Pose),
                         camera0, camera1, camera2, camera3);
-        public final Turret turret = new Turret(() -> drivetrain.getStateCopy().Pose,
-                        () -> drivetrain.getStateCopy().Speeds);
+        public final Turret turret = new Turret();
 
         public RobotContainer() {
                 NamedCommands.registerCommand("testNamedCommand",
@@ -114,14 +113,14 @@ public class RobotContainer {
 
                 // turret tracking toggled on x button
                 joystick.x().toggleOnTrue(
-                                new TurretTracking(turret));
+                                new TurretTracking(turret, () -> drivetrain.getStateCopy().Pose));
 
                 // auto align while holding y button
                 joystick.y().whileTrue(AutoAlignCommand.getAutoAlignCommand(drivetrain));
 
                 // joystick buttons for sticks mode
                 translateStick.button(4).whileTrue(AutoAlignCommand.getAutoAlignCommand(drivetrain));
-                rotateStick.button(3).toggleOnTrue(new TurretTracking(turret));
+                rotateStick.button(3).toggleOnTrue(new TurretTracking(turret, () -> drivetrain.getStateCopy().Pose));
 
                 // driver sticks support
                 drivetrain.setDefaultCommand(
@@ -148,7 +147,7 @@ public class RobotContainer {
         }
 
         public Command getAutonomousCommand() {
-                return new TurretTracking(turret);
+                return new TurretTracking(turret, () -> drivetrain.getStateCopy().Pose);
                 // new FuelChaseCommand(
                 // 25, camera0.getCamera(), drivetrain, // Change to the camera that will
                 // // chase fuel once

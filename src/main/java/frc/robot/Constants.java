@@ -23,7 +23,8 @@ public class Constants {
         public static final boolean manipulatorsEnabled = true;
         public static final boolean autoControlsEnabled = true;
 
-        // change between DRIVER_CONTROLLER and DRIVER_STICKS for controller and sticks, erm i guess
+        // change between DRIVER_CONTROLLER and DRIVER_STICKS for controller and sticks,
+        // erm i guess
         public static final ControlTypes controlType = ControlTypes.DRIVER_STICKS;
 
         public static enum ControlTypes {
@@ -104,21 +105,21 @@ public class Constants {
 
     public static final class TurretConstants {
 
-        public static final double turret_maxVelocity = 10; // rotations per second
-        public static final double turret_maxAcceleration = 10; // rotations per second^2
+        public static final double turret_maxVelocity = 40; // rotations per second
+        public static final double turret_maxAcceleration = 20; // rotations per second^2
         public static final double turret_maxVoltage = 5;// kraken x44 max voltage
         public static final double turret_maxJerk = 100; // rotations per second^3
-        public static final int turret_motorId = 32; // change this value
+        public static final int turret_motorId = 32; // 32
         public static final int kTurretEncoderId = 40;
         public static final double kTurretEncoderOffset = 0.0; // Rotations
         public static final double turret_speed = 0.2;
 
-        public static double turret_kV = 0.25;
+        public static double turret_kV = 0.095;
         public static double turret_kA = 0.0;
-        public static double turret_kS = 0.01;
-        public static double turret_kP = 7.5;
-        public static double turret_kI = 0.0;
-        public static double turret_kD = 0.5;
+        public static double turret_kS = 0.6;
+        public static double turret_kP = 13.5;
+        public static double turret_kI = 0.07;
+        public static double turret_kD = 0.25;
 
         public static double kMaximumAngle = 60.0;
         public static double kMinimumAngle = -60.0;

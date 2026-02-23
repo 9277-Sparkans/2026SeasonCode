@@ -2,13 +2,15 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DutyCycleOut;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.Limelight;
 import frc.robot.Telemetry;
-import frc.robot.Constants.HoodConstants;
 import frc.robot.Constants.TurretConstants;
 
 public class Turret extends SubsystemBase {
@@ -17,15 +19,30 @@ public class Turret extends SubsystemBase {
   private final TalonFXConfiguration turretMotorConfig;
   public double turretOffset = 0.0;
 
+  public double target;
+
   final MotionMagicVoltage m_request = new MotionMagicVoltage(0.0);
 
+  NeutralModeValue brake = NeutralModeValue.Brake;
 
+  // final DigitalInput turret_forwardLimit = new DigitalInput(0);
+  // final DigitalInput turret_reverseLimit = new DigitalInput(1);
+
+  // final DutyCycleOut turret_dutyCycle = new DutyCycleOut(0.0);
 
   /** Creates a new Turret. */
   public Turret() {
     turretMotor = new TalonFX(TurretConstants.turret_motorId);
     turretMotorConfig = new TalonFXConfiguration();
     turretMotor.setPosition(0);
+
+    // turretMotor.setControl(
+    // turret_dutyCycle.withOutput(0.5)
+    // .withLimitForwardMotion(turret_forwardLimit.get())
+    // .withLimitReverseMotion(turret_reverseLimit.get())
+    // );
+
+    turretMotorConfig.MotorOutput.NeutralMode = brake;
 
     turretMotorConfig.Slot0.kS = TurretConstants.turret_kS;
     turretMotorConfig.Slot0.kV = TurretConstants.turret_kV;
@@ -42,19 +59,16 @@ public class Turret extends SubsystemBase {
 
     turretMotor.getConfigurator().apply(turretMotorConfig);
 
-    Telemetry.telemeterizeMotorWithPID("Turret", turretMotor, (1.0 / (15.0 / 108.0)), turretMotorConfig);
-
-
+    target = 0.0;
   }
 
   @Override
   public void periodic() {
-
   }
 
   public double getPosition() {
     double position = turretMotor.getPosition().getValueAsDouble() / TurretConstants.kGearRatio;
-    return position * 360; 
+    return position * 360;
   }
 
   public double getTurretCurrent() {
@@ -62,14 +76,13 @@ public class Turret extends SubsystemBase {
     return turretCurrent;
   }
 
-  public Command turretPos () {
-      return Commands.runOnce(() -> spinPositive());
-    }
+  public Command turretPos() {
+    return Commands.runOnce(() -> spinPositive());
+  }
 
-  public Command turretNeg () {
-      return Commands.runOnce(() -> spinNegative());
-    }
-
+  public Command turretNeg() {
+    return Commands.runOnce(() -> spinNegative());
+  }
 
   public double getTurretAngle() {
     double position = getTurretCurrent(); // turns
@@ -89,18 +102,21 @@ public class Turret extends SubsystemBase {
     turretMotor.set(-TurretConstants.turret_speed);
   }
 
-  public void turretMoveTgt(double llAngle){
-
-    boolean isAtTarget = Math.abs(turretMotor.getClosedLoopError().getValue()) < 1.5;
-    double tgt = (-llAngle * 10 * TurretConstants.kGearRatio) / 360;
-    
-    turretMotor.setControl(m_request.withPosition(tgt)); //motor rotations
-    
+  public void turretMoveTgt() {
+    double tgt = (-30.0); // angle
+    target = tgt;
   }
-
 
   public void stop() {
     turretMotor.set(0);
   }
 
+  public void defaultCommand() {
+    System.out.println("target is " + target);
+    turretMotor.setControl(m_request.withPosition(target / 360.0 * TurretConstants.kGearRatio));
+  }
+
+  public Command initDefaultCommand(Turret turret) {
+    return Commands.runOnce(() -> defaultCommand(), this);
+  }
 }

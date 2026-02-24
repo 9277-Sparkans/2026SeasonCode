@@ -7,6 +7,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -33,7 +34,7 @@ public class Hinge extends SubsystemBase{
         hinge = new TalonFX(Constants.HingeConstants.kHingeMotorId);
 		hingeConfig = new TalonFXConfiguration();
 
-        hingeConfig.CurrentLimits.StatorCurrentLimit = Constants.HingeConstants.kHingeCurrentLimit;
+        hingeConfig.CurrentLimits.StatorCurrentLimit = HingeConstants.kHingeCurrentLimit;
         hingeConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
 		hingeConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
@@ -60,15 +61,26 @@ public class Hinge extends SubsystemBase{
         return hingeState;
     }
 
+    
+    @Override
+    public void periodic() {
+        System.out.println("hingePos is " + getPosition());
+    }
+
+    public double getPosition() {
+        double position = hinge.getPosition().getValueAsDouble() / HingeConstants.hingeGearRatio * 360.0;
+        return position;
+    }
+
     // state for climb up
     public void states(HingeState state) {
         setState(state);
         switch (state) {
             case UP:
-                hinge.setControl(m_request.withPosition(-19.0)); //degToRotations(Constants.HingeConstants.hingeMaxDeg)));
+                hinge.setControl(m_request.withPosition(degToRotations(-200.0)));
                 break;
              case DOWN:
-                hinge.setControl(m_request.withPosition(4.0));
+                hinge.setControl(m_request.withPosition(degToRotations(-100.0)));
                 break;
 
         }
@@ -78,29 +90,27 @@ public class Hinge extends SubsystemBase{
 
     public Command hingeUp() {
         return Commands.runOnce(() -> {
-            // hinge.setControl(hingey.withPosition(degToRotations(Constants.HingeConstants.hingeMaxDeg)));
             states(HingeState.UP);
         });
     }
 
     public Command hingeDown() {
         return Commands.runOnce(() -> {
-            // hinge.setControl(hingey.withPosition(0.0));
             states(HingeState.DOWN);
         });
     }
 
-    public Command hingeToggle() {
-        return Commands.runOnce(() -> {
-            if (hingeState == HingeState.DOWN) {
-                hingeState = HingeState.UP;
-            } else {
-                hingeState = HingeState.DOWN;
-            }
+    // public Command hingeToggle() {
+    //     return Commands.runOnce(() -> {
+    //         if (hingeState == HingeState.DOWN) {
+    //             hingeState = HingeState.UP;
+    //         } else {
+    //             hingeState = HingeState.DOWN;
+    //         }
 
-            states(hingeState);
-        });
-    }
+    //         states(hingeState);
+    //     });
+    // }
 
     public Command hingeStopCommand() {
         return Commands.runOnce(() -> {

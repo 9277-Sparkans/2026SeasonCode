@@ -147,7 +147,7 @@ public class Constants {
 
         public static final int kRpmLenience = 200;
 
-        public static final double kRpmIncrement = 5.0/3.0;
+        public static final double kRpmIncrement = 5.0;
 
         public static final int kMinRPM = 0;
         public static final int kMaxRPM = 6000;
@@ -199,9 +199,9 @@ public class Constants {
 
         public static final double maxEncoderValue = -1.258789; // test for this
 
-        public static final double kGearRatio = 105.0 / 18.0; //210.0 / 15.0;
+        public static final double kGearRatio = 210.0 / 15.0; //210.0 / 15.0;
 
-        public static final double kHoodCurrentLimit = 50;
+        public static final double kHoodCurrentLimit = 45;
 
         public static final double kHoodIncrement = 17.0/2.0;
 
@@ -245,7 +245,7 @@ public class Constants {
         public static final int hingeCountsPerRevolution = 2048; // for kraken x60
         public static final double hingeGearRatio = 45.0 / 1.0;
 
-        public static final double hingeMaxDeg = 0.0; //-100.0;
+        public static final double hingeMaxDeg = 50.0; //-100.0;
     }
 
     public static class ClimbConstants
@@ -300,12 +300,13 @@ public class Constants {
         public static final double kIndexerGearRatio = 12.0 / 15.0;
         public static final double indexerSpeed = 30.0; // old
 
-        public static final double kIndexer_kS = 0.18572;
-        public static final double kIndexer_kV = 0.11754;
-        public static final double kIndexer_kA = 0.0048972;
-        public static final double kIndexer_kP = 0.030667;
-        public static final double kIndexer_kI = 0.0;
-        public static final double kIndexer_kD = 0.0;
+        // tomorrow - use the best tuning and then increase ka and kv cuz the recorrect is kinda messed up
+        public static final double kIndexer_kS = 0.01; //0.18572;
+        public static final double kIndexer_kV = 0.12; //0.11754;
+        public static final double kIndexer_kA = 0.01; //0.0048972;
+        public static final double kIndexer_kP = 1.0;// 0.030667; //0.030667
+        public static final double kIndexer_kI = 0.005; //0.01;
+        public static final double kIndexer_kD = 0.05; //0.0;
         public static final double kIndexerMaxAcceleration = 400;
         public static final double kIndexerMaxJerk = 4000;
     }
@@ -316,14 +317,16 @@ public class Constants {
 
     public static final class LockModeConstants
     {
-        public static final int kLockModeRPM = 3300;
+        public static final int kRPMLeft = 4300;
+        public static final int kRPMCenter = 4300;
+        public static final int kRPMRight = 4450;
 
-        public static final double kHoodLeft = 15;
+        public static final double kHoodLeft = 2; // check 3 if wrong
         public static final double kHoodCenter = 15;
-        public static final double kHoodRight = 15;
+        public static final double kHoodRight = 5;
         
-        public static final double kTurretLeft = 45;
+        public static final double kTurretLeft = 48;
         public static final double kTurretCenter = 0;
-        public static final double kTurretRight = -45;
+        public static final double kTurretRight = -44;
     }
 }

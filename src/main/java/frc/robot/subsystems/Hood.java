@@ -38,7 +38,7 @@ public class Hood extends SubsystemBase {
   private final TalonFXConfiguration hoodMotorConfiguration;
 
   public double targetHoodPosition = -0.25d;
-  public double targetHoodAngle = 5;
+  public double targetHoodAngle = 20.0;
   public double convertedHoodPos = -1d;
 
   private final MotionMagicVoltage request = new MotionMagicVoltage(0.0);
@@ -126,7 +126,7 @@ public class Hood extends SubsystemBase {
   }
 
   public Command moveToTargetAngle() {
-    return Commands.runOnce(() -> moveHoodToAngle(targetHoodAngle), this);
+    return Commands.runOnce(() -> moveHoodToAngle(5.0), this);
   }
 
   @Override
@@ -144,10 +144,10 @@ public class Hood extends SubsystemBase {
     // double motorTarget = hoodRotationsToMotor(hoodRotations);
     // clampTarget();
 
-    System.out.println("target: " + targetHoodPosition);
-    System.out.println("idk man constant: " + HoodConstants.kIdkManConstant);
+    // System.out.println("target: " + targetHoodPosition);
+    // System.out.println("idk man constant: " + HoodConstants.kIdkManConstant);
     convertedHoodPos = HoodConstants.kIdkManConstant * targetHoodPosition;
-    System.out.println("theoretical absolute position: " + convertedHoodPos);
+    // System.out.println("theoretical absolute position: " + convertedHoodPos);
     hoodMotor.setControl(request.withPosition(targetHoodPosition));
   }
 
@@ -158,9 +158,9 @@ public class Hood extends SubsystemBase {
     // double positionRatio = degrees / hoodRangeDeg;
     // double position = HoodConstants.kMinimumEncoderPos + (hoodEncoderRange * positionRatio);
 
-    targetHoodPosition = -((degrees + 1) / 360.f) * HoodConstants.kGearRatio;
-    System.out.println("target angle to hood: " + targetHoodPosition);
-    System.out.println("target degrees to hood: " + degrees);
+    targetHoodPosition = -((degrees / (7168.0/12321.0)) / 360.0) * HoodConstants.kGearRatio;
+    // System.out.println("target angle to hood: " + targetHoodPosition);
+    // System.out.println("target degrees to hood: " + degrees);
 
     // clampTarget();
     moveHoodMotionMagic();

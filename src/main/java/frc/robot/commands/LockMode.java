@@ -28,7 +28,7 @@ public class LockMode extends Command {
 
         addRequirements(shooter, hood, turret);
 
-        // tgtRpm = 0;
+        tgtRpm = 0;
         tgtAngleHood = 0.0;
         tgtAngleTurret = 0.0;
     }
@@ -39,7 +39,7 @@ public class LockMode extends Command {
     
     @Override
     public void initialize() {
-        // tgtRpm = LockModeConstants.kLockModeRPM;
+        tgtRpm = 0.0;
         tgtAngleHood = 0.0;
         tgtAngleTurret = 0.0;
     }
@@ -49,14 +49,17 @@ public class LockMode extends Command {
         switch (targetLockState) {
             case LEFT:
                 tgtAngleHood = LockModeConstants.kHoodLeft;
+                tgtRpm = LockModeConstants.kRPMLeft;
                 tgtAngleTurret = LockModeConstants.kTurretLeft;
                 break;
             case CENTER:
                 tgtAngleHood = LockModeConstants.kHoodCenter;
+                tgtRpm = LockModeConstants.kRPMCenter;
                 tgtAngleTurret = LockModeConstants.kTurretCenter;
                 break;
             case RIGHT:
                 tgtAngleHood = LockModeConstants.kHoodRight;
+                tgtRpm = LockModeConstants.kRPMRight;
                 tgtAngleTurret = LockModeConstants.kTurretRight;
                 break;
         }

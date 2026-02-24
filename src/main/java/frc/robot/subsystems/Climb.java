@@ -101,7 +101,7 @@ public class Climb extends SubsystemBase {
     }
 
     public void runClimb() {
-        System.out.println("climb position: " + climbMotor.getPosition());
+        // System.out.println("climb position: " + climbMotor.getPosition());
         climbMotor.set(0.5);
     }
 

@@ -107,7 +107,7 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     setVel();
-    // System.out.println(targetVel);
+    System.out.println(targetVel);
     // This method will be called once per scheduler run
   }
 
@@ -144,7 +144,7 @@ public class Shooter extends SubsystemBase {
         shooterMotor.set(0.0);
     }
     else {
-        shooterMotor.setControl(m_request.withVelocity(targetVel));// * ShooterConstants.kShooterGearRatio / 60.0)); //rpm
+        shooterMotor.setControl(m_request.withVelocity(4450.0 / 60.0)); //rpm 
     }
   }
 

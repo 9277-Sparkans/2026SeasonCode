@@ -144,13 +144,13 @@ public class RobotContainer {
         joystick.y().onFalse(climb.stopCommand());
         
         // HOOD button controls
-        // joystick.povUp().whileTrue(Commands.runOnce(() -> hood.moveHoodToAngle(hood.targetHoodAngle)));
+        joystick.povUp().whileTrue(Commands.runOnce(() -> hood.moveHoodToAngle(2)));
         // joystick.povUp().whileTrue(Commands.runOnce(() -> hood.moveHoodToAngle(hood.targetHoodAngle)));
         // joystick.povUp().onTrue(Commands.runOnce(() -> hood.moveHoodToAngle(Angle.ofBaseUnits(hood.targetHoodAngle, Degree))));
      
         // joystick.povUp().onTrue(Commands.runOnce(() -> hood.runHood()));
         // joystick.povDown().onTrue(Commands.runOnce(() -> hood.runHoodReverse()));
-        // joystick.povUp().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
+        joystick.povUp().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
         // joystick.povDown().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
 
 
@@ -164,8 +164,8 @@ public class RobotContainer {
         // joystick.x().onFalse(Commands.runOnce(() -> turret.stop(), turret));
 
         // joystick.x().whileTrue(turret.initDefaultCommand(turret));
-        joystick.x().whileTrue(Commands.runOnce(() -> turret.turretMoveTgt()));
-        joystick.x().onFalse(Commands.runOnce(() -> turret.stop()));
+        // joystick.x().whileTrue(Commands.runOnce(() -> turret.turretMoveTgt()));
+        // joystick.x().onFalse(Commands.runOnce(() -> turret.stop()));
 
 
 
@@ -179,7 +179,7 @@ public class RobotContainer {
 
 
         // TRANSFER button controls
-        joystick.b().onTrue(Commands.runOnce(() -> transfer.toggleTransfer()));
+        // joystick.b().onTrue(Commands.runOnce(() -> transfer.toggleTransfer()));
 
 
         // INTAKE button controls

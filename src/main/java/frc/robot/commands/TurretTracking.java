@@ -51,7 +51,6 @@ public class TurretTracking extends Command {
 
     angleToHub = Limelight.GetAngle();
 
-    System.out.println("hello");
 
     if (angleToHub == 0.0) {
       return;

@@ -42,6 +42,11 @@ public class Transfer extends SubsystemBase
         Telemetry.telemeterizeMotor("Transfer", transferMotor);
     }
 
+    
+    @Override
+    public void periodic() {
+        activateTransfer();
+    }
 
     public Command toggleTransferCommand() {
         return Commands.runOnce(() -> toggleTransfer());

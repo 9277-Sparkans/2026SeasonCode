@@ -7,7 +7,10 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Start 2.1"
+<<<<<<<< HEAD:src/main/deploy/pathplanner/autos/boi.auto
+            "pathName": "New Path"
+========
+            "pathName": "Start 1"
           }
         },
         {
@@ -19,19 +22,20 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Depost(S2)"
+            "pathName": "Depot(S1)"
           }
         },
         {
           "type": "wait",
           "data": {
             "waitTime": 5.0
+>>>>>>>> origin/main:src/main/deploy/pathplanner/autos/S1DP.auto
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "S2",
+  "folder": null,
   "choreoAuto": false
 }

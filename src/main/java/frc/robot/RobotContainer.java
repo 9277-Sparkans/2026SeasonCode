@@ -10,9 +10,9 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -41,11 +41,26 @@ import frc.robot.commands.LockMode;
 import frc.robot.subsystems.Transfer;
 import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Hinge;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
+import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.Vision.Vision;
+import frc.robot.Vision.VisionIOPhotonVision;
+import edu.wpi.first.math.geometry.Pose2d;
+import frc.robot.Constants.OIConstants;
+import frc.robot.Constants.QuickAccessConstants;
+import frc.robot.Constants.QuickAccessConstants.ControlTypes;
+import java.util.function.Supplier;
+import frc.robot.Vision.VisionConstants;
 
+import frc.robot.commands.TurretTracking;
+import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.Climb;
+import frc.robot.commands.AutoAlignCommand;
 
 public class RobotContainer {
-    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
-    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
+        private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+        private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -54,7 +69,7 @@ public class RobotContainer {
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
-    private final Telemetry logger = new Telemetry(MaxSpeed);
+        private final Telemetry logger = new Telemetry(MaxSpeed);
 
     public final CommandXboxController joystick = new CommandXboxController(OIConstants.kDriverControllerPort);
     public final CommandJoystick translateStick = new CommandJoystick(OIConstants.kDriverTranslateStickPort);
@@ -65,14 +80,21 @@ public class RobotContainer {
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
-    private final Shooter shooter = new Shooter();
-    public final Intake intake = new Intake();
-    public final Turret turret = new Turret();
-    public final Transfer transfer = new Transfer();
-    public final Hood hood = new Hood();
-    public final Climb climb = new Climb();
-    public final Indexer indexer = new Indexer();
-    public final Hinge hinge = new Hinge();
+    private final VisionIOPhotonVision camera0 = edu.wpi.first.wpilibj.RobotBase.isSimulation()
+                    ? new frc.robot.Vision.VisionIOPhotonVisionSim(VisionConstants.camera0Name,
+                                    VisionConstants.robotToCamera0)
+                    : new VisionIOPhotonVision(VisionConstants.camera0Name,
+                                    VisionConstants.robotToCamera0);
+    private final VisionIOPhotonVision camera1 = edu.wpi.first.wpilibj.RobotBase.isSimulation()
+                    ? new frc.robot.Vision.VisionIOPhotonVisionSim(VisionConstants.camera1Name,
+                                    VisionConstants.robotToCamera1)
+                    : new VisionIOPhotonVision(VisionConstants.camera1Name,
+                                    VisionConstants.robotToCamera1);
+    private final VisionIOPhotonVision camera2 = edu.wpi.first.wpilibj.RobotBase.isSimulation()
+                    ? new frc.robot.Vision.VisionIOPhotonVisionSim(VisionConstants.camera2Name,
+                                    VisionConstants.robotToCamera2)
+                    : new VisionIOPhotonVision(VisionConstants.camera2Name,
+                                        VisionConstants.robotToCamera2);
 
     public final Lookup lookup = Utils.createLookup(hood, shooter);
     public final AutoFire autoFireCommand = new AutoFire(turret, transfer, shooter, hood, intake, lookup);
@@ -96,9 +118,30 @@ public class RobotContainer {
                 builder.addStringProperty("Uncommitted changes", () -> new Boolean(BuildConstants.DIRTY > 0).toString(), null);
             }
         });
+        public final Vision vision = new Vision(
+                        (Vision.VisionConsumer) drivetrain::addVisionMeasurement,
+                        (Supplier<Pose2d>) (() -> drivetrain.getStateCopy().Pose),
+                        camera0, camera1, camera2);
+        public final Turret turret = new Turret();
+        public final Climb climb = new Climb();
 
-        configureBindings();
-    }
+        public RobotContainer() {
+                NamedCommands.registerCommand("testNamedCommand",
+                                Commands.runOnce(() -> System.out.println("this named command works")));
+
+                SmartDashboard.putData("Git Info", new Sendable() {
+                        @Override
+                        public void initSendable(SendableBuilder builder) {
+                                builder.addStringProperty("Branch", () -> BuildConstants.GIT_BRANCH, null);
+                                builder.addStringProperty("Commit", () -> BuildConstants.GIT_SHA, null);
+                                builder.addStringProperty("Date of commit", () -> BuildConstants.GIT_DATE, null);
+                                builder.addStringProperty("Uncommitted changes",
+                                                () -> new Boolean(BuildConstants.DIRTY > 0).toString(), null);
+                        }
+                });
+
+                configureBindings();
+        }
 
     private void configureBindings() {
         // Note that X is defined as forward according to WPILib convention,
@@ -166,13 +209,6 @@ public class RobotContainer {
         joystick.povUp().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
         // joystick.povDown().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
 
-
-        // TURRET button controls
-        joystick.rightTrigger().whileTrue(turret.turretPos());
-        joystick.leftTrigger().whileTrue(turret.turretNeg());
-        joystick.leftTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
-        joystick.rightTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
-
         // joystick.x().whileTrue(new TurretTracking((turret)));
         // joystick.x().onFalse(Commands.runOnce(() -> turret.stop(), turret));
 
@@ -181,6 +217,10 @@ public class RobotContainer {
         // joystick.x().onFalse(Commands.runOnce(() -> turret.stop()));
 
 
+                                //         return drive.withVelocityX(x * MaxSpeed * 0.3)
+                                //                         .withVelocityY(y * MaxSpeed * 0.3)
+                                //                         .withRotationalRate(rot * MaxAngularRate * 0.3);
+                                // }));
 
         // SHOOTER button controls
         joystick.leftBumper().onTrue(Commands.runOnce(() -> shooter.decreaseSpeed()));

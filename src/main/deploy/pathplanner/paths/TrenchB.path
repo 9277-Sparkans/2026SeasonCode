@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.293,
-        "y": 4.023
+        "x": 5.954616519174042,
+        "y": 0.646002949852508
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.095423076923078,
-        "y": 3.569871794871795
+        "x": 6.559886591387697,
+        "y": 0.6499713719142113
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "trenchne"
     },
     {
       "anchor": {
-        "x": 1.0605128205070071,
-        "y": 5.779230769230769
+        "x": 3.3467430441898522,
+        "y": 0.646002949852508
       },
       "prevControl": {
-        "x": 1.3049634240263592,
-        "y": 5.831613041413489
+        "x": 2.791250545287772,
+        "y": 0.6497276771392456
       },
       "nextControl": null,
       "isLocked": false,
@@ -33,7 +33,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 4.5,
+    "maxVelocity": 3.5,
     "maxAcceleration": 4.5,
     "maxAngularVelocity": 1000.0,
     "maxAngularAcceleration": 2831.0,
@@ -42,10 +42,10 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 0.5498466469204737
+    "rotation": 0.0
   },
   "reversed": false,
-  "folder": "Archive",
+  "folder": null,
   "idealStartingState": {
     "velocity": 0,
     "rotation": 0.0

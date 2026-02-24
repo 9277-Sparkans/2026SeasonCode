@@ -75,7 +75,7 @@ public class TurretTracking extends Command {
     // Angle of that direction relative to the robot's heading (use drivetrain pose
     // rotation)
     Rotation2d robotYaw = robotPose2d.getRotation();
-    double angleToHubRad = direction.getAngle().plus(robotYaw).getRadians();
+    double angleToHubRad = direction.getAngle().minus(robotYaw).getRadians();
 
     // Normalize to -PI to PI
     angleToHubRad = Math.atan2(Math.sin(angleToHubRad), Math.cos(angleToHubRad));

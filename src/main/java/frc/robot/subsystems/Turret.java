@@ -112,7 +112,6 @@ public class Turret extends SubsystemBase {
   }
 
   public void defaultCommand() {
-    System.out.println("target is " + target);
     turretMotor.setControl(m_request.withPosition(target / 360.0 * TurretConstants.kGearRatio));
   }
 

@@ -113,8 +113,10 @@ public class RobotContainer {
                 // auto align while holding y button
                 joystick.y().whileTrue(AutoAlignCommand.getAutoAlignCommand(drivetrain));
 
+                // run proper trench path on right bumper based on current pose
                 // joystick buttons for sticks mode
-                translateStick.button(4).whileTrue(AutoAlignCommand.getAutoAlignCommand(drivetrain));
+                translateStick.button(4).whileTrue(frc.robot.commands.PathCommands.getTrenchCommand(
+                                () -> drivetrain.getStateCopy().Pose));
                 rotateStick.button(3).toggleOnTrue(new TurretTracking(turret, () -> drivetrain.getStateCopy().Pose));
 
                 // driver sticks support

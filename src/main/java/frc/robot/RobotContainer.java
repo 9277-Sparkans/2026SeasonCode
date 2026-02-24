@@ -18,6 +18,7 @@ import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
@@ -32,6 +33,8 @@ import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Indexer;
 import frc.robot.Constants.OIConstants;
+import frc.robot.Constants.QuickAccessConstants;
+import frc.robot.Constants.QuickAccessConstants.ControlTypes;
 import frc.robot.Utils.Lookup;
 import frc.robot.commands.AutoFire;
 import frc.robot.commands.LockMode;
@@ -54,6 +57,8 @@ public class RobotContainer {
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
     public final CommandXboxController joystick = new CommandXboxController(OIConstants.kDriverControllerPort);
+    public final CommandJoystick translateStick = new CommandJoystick(OIConstants.kDriverTranslateStickPort);
+    public final CommandJoystick rotateStick = new CommandJoystick(OIConstants.kDriverRotateStickPort);
     public final Joystick operatorJoystick = new Joystick(OIConstants.kOperatorControllerPort);
 
     private static final boolean OPERATOR_JOYSTICK_DEBUG = false;
@@ -99,13 +104,21 @@ public class RobotContainer {
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
-            // Drivetrain will execute this command periodically
-            drivetrain.applyRequest(() ->
-                drive.withVelocityX(-joystick.getLeftY() * MaxSpeed * 0.5) // Drive forward with negative Y (forward)
-                    .withVelocityY(-joystick.getLeftX() * MaxSpeed * 0.5) // Drive left with negative X (left)
-                    .withRotationalRate(-joystick.getRightX() * MaxAngularRate * 0.5) // Drive counterclockwise with negative X (left)
-            )
-        );
+            drivetrain.applyRequest(() -> {
+                    double x, y, rot;
+                    if (QuickAccessConstants.controlType == ControlTypes.DRIVER_STICKS) {
+                        x = -translateStick.getRawAxis(1);
+                        y = -translateStick.getRawAxis(0);
+                        rot = -rotateStick.getRawAxis(0);
+                    } else {
+                        x = -joystick.getLeftY();
+                        y = -joystick.getLeftX();
+                        rot = -joystick.getRightX();
+                    }
+                    return drive.withVelocityX(x * MaxSpeed * 0.5)
+                            .withVelocityY(y * MaxSpeed * 0.5)
+                            .withRotationalRate(rot * MaxAngularRate * 0.5);
+                }));
 
         // Idle while the robot is disabled. This ensures the configured
         // neutral mode is applied to the drive motors while disabled.
@@ -212,6 +225,10 @@ public class RobotContainer {
         configureOperatorConsole();
 
         drivetrain.registerTelemetry(logger::telemeterize);
+
+        // for flight sticks controls, go to this https://gpadtester.com/ and put the button id +1 (so button 1 would actually be button 2 on here)
+        // rotateStick.button(3).whileTrue(AutoAlignCommand.getAutoAlignCommand(drivetrain));
+        // translateStick.button(2).toggleOnTrue(new TurretTracking(turret));
     }
 
     private void configureOperatorConsole() {
@@ -307,4 +324,5 @@ public class RobotContainer {
     public Command getAutonomousCommand() {
         return new PathPlannerAuto("testAuto");
     }
+
 }

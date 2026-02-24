@@ -33,7 +33,6 @@ import frc.robot.Vision.VisionConstants;
 import frc.robot.commands.TurretTracking;
 import frc.robot.subsystems.Turret;
 import frc.robot.commands.AutoAlignCommand;
-import frc.robot.commands.PathCommands;
 
 public class RobotContainer {
         private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
@@ -116,8 +115,7 @@ public class RobotContainer {
 
                 // run proper trench path on right bumper based on current pose
                 // joystick buttons for sticks mode
-                translateStick.button(4).whileTrue(PathCommands.getTrenchCommand(
-                                () -> drivetrain.getStateCopy().Pose));
+                translateStick.button(4).whileTrue(AutoAlignCommand.getTrenchCommand(drivetrain));
                 rotateStick.button(3).toggleOnTrue(new TurretTracking(turret, () -> drivetrain.getStateCopy().Pose));
 
                 // driver sticks support

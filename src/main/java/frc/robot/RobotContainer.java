@@ -32,6 +32,7 @@ import frc.robot.Vision.VisionConstants;
 
 import frc.robot.commands.TurretTracking;
 import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.Climb;
 import frc.robot.commands.AutoAlignCommand;
 
 public class RobotContainer {
@@ -74,6 +75,7 @@ public class RobotContainer {
                         (Supplier<Pose2d>) (() -> drivetrain.getStateCopy().Pose),
                         camera0, camera1, camera2);
         public final Turret turret = new Turret();
+        public final Climb climb = new Climb();
 
         public RobotContainer() {
                 NamedCommands.registerCommand("testNamedCommand",
@@ -116,6 +118,16 @@ public class RobotContainer {
                 // run proper trench path on right bumper based on current pose
                 // joystick buttons for sticks mode
                 translateStick.button(4).whileTrue(AutoAlignCommand.getTrenchCommand(drivetrain));
+
+                // Climb up then climb hang
+                rotateStick.button(4).onTrue(
+                                Commands.sequence(
+                                                climb.climbUp(),
+                                                AutoAlignCommand.getAutoAlignCommand(drivetrain),
+                                                Commands.waitSeconds(1.5), // Temporary wait before hanging, tune as
+                                                                           // needed
+                                                climb.climbHang()));
+
                 rotateStick.button(3).toggleOnTrue(new TurretTracking(turret, () -> drivetrain.getStateCopy().Pose));
 
                 // driver sticks support

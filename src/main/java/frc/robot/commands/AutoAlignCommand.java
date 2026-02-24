@@ -22,7 +22,7 @@ public class AutoAlignCommand {
     public static Command getAutoAlignCommand(CommandSwerveDrivetrain drivetrain) {
         try {
             // Load the "Start 2" path from the deploy directory
-            PathPlannerPath path = PathPlannerPath.fromPathFile("Sulovstdtest");
+            PathPlannerPath path = PathPlannerPath.fromPathFile("climbtest");
 
             // Define pathfinding constraints (max velocity, max acceleration, max angular
             // velocity, max angular acceleration)

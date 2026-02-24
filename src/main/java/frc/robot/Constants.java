@@ -254,10 +254,23 @@ public class Constants {
         public static final int kClimbMotorID = 37;
 
         public static final double kClimbMaxVelocity = 90; // rps
-        public static final int kClimbCURRENT_LIMIT = 30;
-        public static final double kClimb_SPEED = .3;
+        public static final double kClimbMaxAcceleration = 30; // rps^2
+        public static final int kClimbCurrent_Limit = 80;
+        public static final double kClimb_Speed = 0.3;
 
-        public static final int kClimbGearRatio = 9 / 1;
+        public static final double kClimb_kS = 0.01;
+        public static final double kClimb_kV = 0.12;
+        public static final double kClimb_kA = 0.01;
+        public static final double kClimb_kP = 10;
+        public static final double kClimb_kI = 0;
+        public static final double kClimb_kD = 0.1;
+        public static final double kClimb_kG = 0.12;
+
+        public static final int kClimbUp = 80;
+        public static final int kClimbDown = 5;
+        public static final int kClimbHang = 60;
+
+        public static final double kClimbGearRatio = 6.0 / 1.0;
     }
 
     public static class TransferConstants {

@@ -63,7 +63,7 @@ public class Turret extends SubsystemBase {
 
     Telemetry.telemeterizeMotorWithPID("Turret", turretMotor, (108.0 / 15.0));
 
-    target = -44.0;
+    target = 44.0;
   }
 
   @Override

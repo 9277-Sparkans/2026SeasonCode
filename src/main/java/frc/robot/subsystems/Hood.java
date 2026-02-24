@@ -38,7 +38,7 @@ public class Hood extends SubsystemBase {
   private final TalonFXConfiguration hoodMotorConfiguration;
 
   public double targetHoodPosition = -0.25d;
-  public double targetHoodAngle = 20.0;
+  public double targetHoodAngle = 5.0;
   public double convertedHoodPos = -1d;
 
   private final MotionMagicVoltage request = new MotionMagicVoltage(0.0);

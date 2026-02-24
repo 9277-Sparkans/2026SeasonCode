@@ -6,7 +6,7 @@ public class Constants {
         public static final boolean manipulatorsEnabled = true;
         public static final boolean autoControlsEnabled = true;
         
-        public static final ControlTypes controlType = ControlTypes.DRIVER_STICKS;
+        public static final ControlTypes controlType = ControlTypes.DRIVER_CONTROLLER;
         public static enum ControlTypes {
             DEV,
             DRIVER_STICKS,
@@ -301,12 +301,12 @@ public class Constants {
         public static final double indexerSpeed = 30.0; // old
 
         // tomorrow - use the best tuning and then increase ka and kv cuz the recorrect is kinda messed up
-        public static final double kIndexer_kS = 0.01; //0.18572;
+        public static final double kIndexer_kS = 0.18572; //0.01;
         public static final double kIndexer_kV = 0.12; //0.11754;
         public static final double kIndexer_kA = 0.01; //0.0048972;
-        public static final double kIndexer_kP = 1.0;// 0.030667; //0.030667
-        public static final double kIndexer_kI = 0.005; //0.01;
-        public static final double kIndexer_kD = 0.05; //0.0;
+        public static final double kIndexer_kP = 0.030667; //1.0;
+        public static final double kIndexer_kI = 0.01; //0.005; 
+        public static final double kIndexer_kD = 0.0; //0.05;
         public static final double kIndexerMaxAcceleration = 400;
         public static final double kIndexerMaxJerk = 4000;
     }
@@ -317,16 +317,16 @@ public class Constants {
 
     public static final class LockModeConstants
     {
-        public static final int kRPMLeft = 4300;
+        public static final int kRPMLeft = 4450;
         public static final int kRPMCenter = 4300;
         public static final int kRPMRight = 4450;
 
-        public static final double kHoodLeft = 2; // check 3 if wrong
-        public static final double kHoodCenter = 15;
-        public static final double kHoodRight = 5;
+        public static final double kHoodLeft = 5.0;
+        public static final double kHoodCenter = 15.0;
+        public static final double kHoodRight = 5.0;
         
-        public static final double kTurretLeft = 48;
-        public static final double kTurretCenter = 0;
-        public static final double kTurretRight = -44;
+        public static final double kTurretLeft = 44.0;
+        public static final double kTurretCenter = 0.0;
+        public static final double kTurretRight = -44.0;
     }
 }

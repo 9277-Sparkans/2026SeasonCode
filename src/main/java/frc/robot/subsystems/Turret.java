@@ -63,7 +63,7 @@ public class Turret extends SubsystemBase {
 
     Telemetry.telemeterizeMotorWithPID("Turret", turretMotor, (108.0 / 15.0));
 
-    target = 44.0;
+    target = 10.0;
   }
 
   @Override
@@ -100,19 +100,17 @@ public class Turret extends SubsystemBase {
   }
 
   public void spinPositive() {
-    // turretMotor.set(TurretConstants.turret_speed);
-    target += 1.0;
+    turretMotor.set(TurretConstants.turret_speed);
   }
 
   public void spinNegative() {
-    // turretMotor.set(-TurretConstants.turret_speed);
-    target -= 1.0;
+    turretMotor.set(-TurretConstants.turret_speed);
   }
 
-  // public void turretMoveTgt(){
-  //   double tgt = (-30.0 ); // angle
-  //   target = tgt;
-  // }
+  public void turretMoveTgt(){
+    double tgt = (-30.0 ); // angle
+    target = tgt;
+  }
 
   public void stop() {
     turretMotor.set(0);
@@ -120,7 +118,7 @@ public class Turret extends SubsystemBase {
 
   public void defaultCommand() {
     System.out.println("target is " + target);
-    turretMotor.setControl(m_request.withPosition(target / 360.0 * TurretConstants.kGearRatio)); //angles
+    turretMotor.setControl(m_request.withPosition(target / 360.0 * TurretConstants.kGearRatio));
   }
 
   public Command initDefaultCommand(Turret turret) {

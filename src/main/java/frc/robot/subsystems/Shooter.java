@@ -144,7 +144,7 @@ public class Shooter extends SubsystemBase {
         shooterMotor.set(0.0);
     }
     else {
-        shooterMotor.setControl(m_request.withVelocity(4450.0 / 60.0)); //rpm 
+        shooterMotor.setControl(m_request.withVelocity(targetVel / 60.0)); //rpm 
     }
   }
 

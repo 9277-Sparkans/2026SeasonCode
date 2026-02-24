@@ -147,7 +147,7 @@ public class Constants {
 
         public static final int kRpmLenience = 200;
 
-        public static final double kRpmIncrement = 5.0;
+        public static final double kRpmIncrement = 50.0;
 
         public static final int kMinRPM = 0;
         public static final int kMaxRPM = 6000;

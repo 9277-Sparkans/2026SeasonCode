@@ -157,7 +157,7 @@ public class RobotContainer {
         joystick.y().onFalse(climb.stopCommand());
         
         // HOOD button controls
-        joystick.povUp().whileTrue(Commands.runOnce(() -> hood.moveHoodToAngle(2)));
+        joystick.povUp().whileTrue(Commands.runOnce(() -> hood.moveHoodToAngle(5)));
         // joystick.povUp().whileTrue(Commands.runOnce(() -> hood.moveHoodToAngle(hood.targetHoodAngle)));
         // joystick.povUp().onTrue(Commands.runOnce(() -> hood.moveHoodToAngle(Angle.ofBaseUnits(hood.targetHoodAngle, Degree))));
      

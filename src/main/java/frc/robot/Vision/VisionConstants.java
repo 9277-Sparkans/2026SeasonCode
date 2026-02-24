@@ -43,7 +43,6 @@ public class VisionConstants {
         public static String camera0Name = "front_left";
         public static String camera1Name = "front_right";
         public static String camera2Name = "back_left";
-        public static String camera3Name = "back_right";
 
         // Robot to camera transforms (Units: Meters and Radians)
 
@@ -65,28 +64,21 @@ public class VisionConstants {
                         -0.31754, 0.324226, 0.17,
                         new Rotation3d(0.0, Units.degreesToRadians(-20), Units.degreesToRadians(150)));
 
-        // back right camera: 317.54mm back, 324.226mm right, 170mm up, and yaw 30
-        // degrees out, pitch 20 degrees up.
-        public static Transform3d robotToCamera3 = new Transform3d(
-                        -0.31754, -0.324226, 0.17,
-                        new Rotation3d(0.0, Units.degreesToRadians(-20), Units.degreesToRadians(-150)));
-
         // Basic filtering thresholds
         public static double maxAmbiguity = 0.5;
         public static double maxZError = 1.5;
 
         // Standard deviation baselines, for 1 meter distance and 1 tag
         // (Adjusted automatically based on distance and # of tags)
-        public static double linearStdDevBaseline = 0.08; // Meters
-        public static double angularStdDevBaseline = 1.0; // Radians
+        public static double linearStdDevBaseline = 0.5; // Meters (was 0.08)
+        public static double angularStdDevBaseline = 2.0; // Radians (was 1.0)
 
         // Standard deviation multipliers for each camera
         // (Adjust to trust some cameras more than others)
         public static double[] cameraStdDevFactors = new double[] {
                         1.0, // Camera 0
                         1.0, // Camera 1
-                        1.0, // Camera 2
-                        1.0 // Camera 3
+                        1.0 // Camera 2
         };
 
         public static List<Integer> rejectedTags = Arrays.asList(2, 3, 4, 5, 14, 15, 16);

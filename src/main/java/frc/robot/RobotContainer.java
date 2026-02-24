@@ -68,16 +68,11 @@ public class RobotContainer {
                                         VisionConstants.robotToCamera2)
                         : new VisionIOPhotonVision(VisionConstants.camera2Name,
                                         VisionConstants.robotToCamera2);
-        private final VisionIOPhotonVision camera3 = edu.wpi.first.wpilibj.RobotBase.isSimulation()
-                        ? new frc.robot.Vision.VisionIOPhotonVisionSim(VisionConstants.camera3Name,
-                                        VisionConstants.robotToCamera3)
-                        : new VisionIOPhotonVision(VisionConstants.camera3Name,
-                                        VisionConstants.robotToCamera3);
 
         public final Vision vision = new Vision(
                         (Vision.VisionConsumer) drivetrain::addVisionMeasurement,
                         (Supplier<Pose2d>) (() -> drivetrain.getStateCopy().Pose),
-                        camera0, camera1, camera2, camera3);
+                        camera0, camera1, camera2);
         public final Turret turret = new Turret();
 
         public RobotContainer() {

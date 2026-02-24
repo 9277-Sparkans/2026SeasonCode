@@ -1,0 +1,95 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+<<<<<<<< HEAD:src/main/deploy/pathplanner/paths/New Path.path
+        "x": 2.0637258883248735,
+        "y": 4.058020304568529
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 3.063725888324874,
+        "y": 4.058020304568529
+========
+        "x": 3.287103212290173,
+        "y": 7.383923076923077
+      },
+      "prevControl": null,
+      "nextControl": {
+<<<<<<< HEAD:src/main/deploy/pathplanner/paths/Start 1.2.path
+        "x": 2.8526950823264827,
+        "y": 7.533677053155971
+=======
+        "x": 2.769858974358976,
+        "y": 7.511833333333334
+>>>>>>>> origin/main:src/main/deploy/pathplanner/paths/Start 1.path
+>>>>>>> photonhammer:src/main/deploy/pathplanner/paths/Start 1.path
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+<<<<<<< HEAD:src/main/deploy/pathplanner/paths/Start 1.2.path
+        "x": 0.5256153846153859,
+        "y": 6.883910256410257
+      },
+      "prevControl": {
+        "x": 0.6492841708316356,
+        "y": 7.101179746481457
+=======
+<<<<<<<< HEAD:src/main/deploy/pathplanner/paths/New Path.path
+        "x": 3.233157360406091,
+        "y": 4.058020304568529
+      },
+      "prevControl": {
+        "x": 1.8335228426395938,
+        "y": 4.0303959390862945
+========
+        "x": 1.816,
+        "y": 6.849
+      },
+      "prevControl": {
+        "x": 2.0020500651145974,
+        "y": 7.255987735798893
+>>>>>>>> origin/main:src/main/deploy/pathplanner/paths/Start 1.path
+>>>>>>> photonhammer:src/main/deploy/pathplanner/paths/Start 1.path
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": null
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 3.5,
+    "maxAcceleration": 4.5,
+    "maxAngularVelocity": 1000.0,
+    "maxAngularAcceleration": 2831.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+<<<<<<< HEAD:src/main/deploy/pathplanner/paths/Start 1.2.path
+    "rotation": 89.07595464722732
+=======
+<<<<<<<< HEAD:src/main/deploy/pathplanner/paths/New Path.path
+    "rotation": 0.0
+========
+    "rotation": -50.826
+>>>>>>>> origin/main:src/main/deploy/pathplanner/paths/Start 1.path
+>>>>>>> photonhammer:src/main/deploy/pathplanner/paths/Start 1.path
+  },
+  "reversed": false,
+  "folder": "S1",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 0.0
+  },
+  "useDefaultConstraints": true
+}

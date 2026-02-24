@@ -127,6 +127,7 @@ public class RobotContainer {
                                                 Commands.waitSeconds(1.5), // Temporary wait before hanging, tune as
                                                                            // needed
                                                 climb.climbHang()));
+                rotateStick.button(1).onTrue(climb.climbUp());
 
                 rotateStick.button(3).toggleOnTrue(new TurretTracking(turret, () -> drivetrain.getStateCopy().Pose));
 

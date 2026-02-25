@@ -1,6 +1,5 @@
 package frc.robot.commands;
 
-import frc.robot.subsystems.Transfer;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Hood;
@@ -9,11 +8,10 @@ import frc.robot.subsystems.Intake;
 import frc.robot.Constants;
 import frc.robot.Utils;
 import frc.robot.Utils.Lookup;
-import frc.robot.Vision.Vision;
 
 import java.util.function.Supplier;
 
-import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -27,7 +25,8 @@ public class AutoFire extends Command
     Hood hood;
 
     ChassisSpeeds speeds;
-    Vision vision;
+    Supplier<Pose2d> poseSupplier;
+    Supplier<Rotation2d> rotationSupplier;
     Lookup lookup;
 
     double turretOffset;
@@ -35,7 +34,7 @@ public class AutoFire extends Command
     double tgtAngle;
 
     public AutoFire(Intake intake, Indexer indexer, Turret turret, Shooter shooter, Hood hood,
-                    ChassisSpeeds speeds, Vision vision, Lookup lookup) {
+                    ChassisSpeeds speeds, Supplier<Pose2d> poseSupplier, Lookup lookup) {
         this.intake = intake;
         this.indexer = indexer;
         this.turret = turret;
@@ -45,7 +44,8 @@ public class AutoFire extends Command
         addRequirements(intake, indexer, turret, shooter, hood);
 
         this.speeds = speeds;
-        this.vision = vision;
+        this.poseSupplier = poseSupplier;
+        //this.rotationSupplier = rotationSupplier;
         this.lookup = lookup;
 
         turretOffset = 0.0;
@@ -55,16 +55,14 @@ public class AutoFire extends Command
 
     
     @Override
-    public void initialize(){
-        tgtRPM = 0;
-    }
+    public void initialize() {}
 
     @Override
     public void execute()
     {
         // Get poses
-        Pose3d pose = vision.getLatestVisionPose();
-        Rotation2d rotation = pose.getRotation().toRotation2d();
+        Pose2d pose = poseSupplier.get();
+        Rotation2d rotation = pose.getRotation();
 
         // Get values
         double posX = pose.getX() + rotation.getCos() * Constants.HoodConstants.hoodOffset;
@@ -94,28 +92,30 @@ public class AutoFire extends Command
         tgtRPM = optimal[2];
         tgtAngle = optimal[3];
         
+        System.out.println("Pos X: " + posX + ", Pos Y: " + posY + ", Rotation: " + rotation.getDegrees() + ", Vel X: " + transformedVelocityX + ", Vel Y: " + transformedVelocityY + ", TGT RPM: " + tgtRPM + ", TGT Angle: " + tgtAngle);
+
         // Execute optimal shot
-        turret.target = turretOffset;
-        turret.defaultCommand();
-        shooter.targetVel = tgtRPM;
-        shooter.setVel();
-        hood.moveHoodToAngle(tgtAngle);
+        // turret.target = turretOffset;
+        // turret.defaultCommand();
+        // shooter.targetVel = tgtRPM;
+        // shooter.setVel();
+        // hood.moveHoodToAngle(tgtAngle);
 
         // Only start shooting if ready
         if (error < Constants.ShooterConstants.maxShotError) {
-            intake.intake();
-            indexer.spin();
+            // intake.intake();
+            // indexer.spin();
         } else {
-            intake.stop();
-            indexer.stop();
+            // intake.stop();
+            // indexer.stop();
         }
     }
 
     @Override
     public void end(boolean interrupted)
     {
-        intake.stop();
-        indexer.stop();
+        // intake.stop();
+        // indexer.stop();
     }
 
     @Override

@@ -13,7 +13,6 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
@@ -25,7 +24,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 
@@ -43,22 +41,11 @@ import frc.robot.commands.LockMode;
 import frc.robot.subsystems.Transfer;
 import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Hinge;
-import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
-import frc.robot.generated.TunerConstants;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.Vision.Vision;
 import frc.robot.Vision.VisionIOPhotonVision;
 import edu.wpi.first.math.geometry.Pose2d;
-import frc.robot.Constants.OIConstants;
-import frc.robot.Constants.QuickAccessConstants;
-import frc.robot.Constants.QuickAccessConstants.ControlTypes;
 import java.util.function.Supplier;
 import frc.robot.Vision.VisionConstants;
-
-import frc.robot.commands.TurretTracking;
-import frc.robot.subsystems.Turret;
-import frc.robot.subsystems.Climb;
-import frc.robot.commands.AutoAlignCommand;
 
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
@@ -117,7 +104,7 @@ public class RobotContainer {
                     camera0, camera1, camera2);
 
     public final Lookup lookup = Utils.createLookup();
-    public final AutoFire autoFireCommand = new AutoFire(intake, indexer, turret, shooter, hood, speeds, vision, lookup);
+    public final AutoFire autoFireCommand = new AutoFire(intake, indexer, turret, shooter, hood, speeds, () -> drivetrain.getStateCopy().Pose, lookup);
 
     public RobotContainer() {
             NamedCommands.registerCommand("testNamedCommand",
@@ -254,6 +241,7 @@ public class RobotContainer {
         
         // Indexer button controls
         joystick.b().onTrue(indexer.toggleIndexer()); 
+        joystick.x().whileTrue(autoFireCommand);
 
         configureOperatorConsole();
 

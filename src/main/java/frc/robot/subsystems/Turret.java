@@ -64,7 +64,7 @@ public class Turret extends SubsystemBase {
 
     Telemetry.telemeterizeMotorWithPID("Turret", turretMotor, (108.0 / 15.0));
 
-    target = Constants.LockModeConstants.kTurretTrenchLeft;
+    target = 0.0;
   }
 
   @Override

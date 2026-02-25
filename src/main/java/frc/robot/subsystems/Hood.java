@@ -38,7 +38,7 @@ public class Hood extends SubsystemBase {
   private final TalonFXConfiguration hoodMotorConfiguration;
 
   public double targetHoodPosition = -0.25d;
-  public double targetHoodAngle = 5.0;
+  public double targetHoodAngle = 6.0;
   public double convertedHoodPos = -1d;
 
   private final MotionMagicVoltage request = new MotionMagicVoltage(0.0);
@@ -126,7 +126,7 @@ public class Hood extends SubsystemBase {
   }
 
   public Command moveToTargetAngle() {
-    return Commands.runOnce(() -> moveHoodToAngle(5.0), this);
+    return Commands.runOnce(() -> moveHoodToAngle(6.0), this);
   }
 
   @Override
@@ -158,7 +158,7 @@ public class Hood extends SubsystemBase {
     // double positionRatio = degrees / hoodRangeDeg;
     // double position = HoodConstants.kMinimumEncoderPos + (hoodEncoderRange * positionRatio);
 
-    targetHoodPosition = -((5.0 / (7168.0/12321.0)) / 360.0) * HoodConstants.kGearRatio;
+    targetHoodPosition = -((10.0 / (7168.0/12321.0)) / 360.0) * HoodConstants.kGearRatio;
     // System.out.println("target angle to hood: " + targetHoodPosition);
     // System.out.println("target degrees to hood: " + degrees);
 

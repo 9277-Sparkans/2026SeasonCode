@@ -192,7 +192,7 @@ public class RobotContainer {
 
 
         // TRANSFER button controls
-        // joystick.b().onTrue(Commands.runOnce(() -> transfer.toggleTransfer()));
+        joystick.b().onTrue(Commands.runOnce(() -> transfer.toggleTransfer()));
 
 
         // INTAKE button controls

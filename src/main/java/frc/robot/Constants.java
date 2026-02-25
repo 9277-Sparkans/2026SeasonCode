@@ -225,7 +225,7 @@ public class Constants {
         public static final double intakeMaxVoltage = 5; // can change if not needed
         public static final double intakeMaxAcceleration = 200;
         public static final double intakeMaxVelocity = 500; // rps
-        public static final double intakeSpeed = 150.0; //rps
+        public static final double intakeSpeed = 100.0; //rps
     }
 
     public static class HingeConstants {
@@ -317,16 +317,29 @@ public class Constants {
 
     public static final class LockModeConstants
     {
+        //LEFT
         public static final int kRPMLeft = 4450;
-        public static final int kRPMCenter = 4300;
-        public static final int kRPMRight = 4450;
-
         public static final double kHoodLeft = 5.0;
-        public static final double kHoodCenter = 15.0;
-        public static final double kHoodRight = 5.0;
-        
         public static final double kTurretLeft = 44.0;
-        public static final double kTurretCenter = 0.0;
+
+        //CENTER
+        public static final int kRPMCenter = 4050;
+        public static final double kHoodCenter = 7.0;
+        public static final double kTurretCenter = 10.0;
+
+        //RIGHT
+        public static final int kRPMRight = 4450;
+        public static final double kHoodRight = 5.0;
         public static final double kTurretRight = -44.0;
+
+        //TRENCH LEFT
+        public static final int kRPMTrenchLeft = 4350;
+        public static final double kHoodTrenchLeft = 6.0;
+        public static final double kTurretTrenchLeft = 62.0;
+
+        //TRENCH RIGHT
+        public static final int kRPMTrenchRight = 4350;
+        public static final double kHoodTrenchRight = 6.0;
+        public static final double kTurretTrenchRight = -62.0;
     }
 }

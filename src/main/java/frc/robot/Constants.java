@@ -187,12 +187,15 @@ public class Constants {
         public static final double shooter_kV = 0.11753;
         public static final double shooter_kA = 0.0038935;
 
-
-
-        public static double autoshootDistanceRange = 10;
-        public static double autoshootAngleWeight = 0.1; // idk tbh
-        public static String lookupTablePath = "";
-
+        public static final String lookupTablePath = Filesystem.getDeployDirectory().getPath() + "/ShooterLookupTable/shooter-lookup.csv"; // Generated with github.com/DanielR723/shooter
+        public static final double autoshootDistanceRange = 1.0; // Range of distances to check to choose the best shot (Least hood rotation and flywheel RPM change)
+        public static final double maxShotError = 1.0; // The maximum allowed error for a shot to occur
+        
+        // Weights of each value when calculating an optimal shot, higher value means higher priority to minimize
+        public static final double botXVelocityWeight = 1.0;
+        public static final double botYVelocityWeight = 1.0;
+        public static final double shooterRpmWeight = 1.0;
+        public static final double hoodAngleWeight = 1.0;
     }
 
     public static class HoodConstants
@@ -229,6 +232,8 @@ public class Constants {
         public static final double kHoodIncrement = 17.0/2.0;
 
         public static final double kIdkManConstant = 1.209757239732467f;
+
+        public static final double hoodOffset = 0.205; // Offset from center of the bot (m)
     }
 
     public static class IntakeConstants

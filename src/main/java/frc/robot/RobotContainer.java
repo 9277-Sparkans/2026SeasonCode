@@ -10,9 +10,11 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -59,8 +61,8 @@ import frc.robot.subsystems.Climb;
 import frc.robot.commands.AutoAlignCommand;
 
 public class RobotContainer {
-        private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
-        private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
+    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -69,7 +71,7 @@ public class RobotContainer {
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
-        private final Telemetry logger = new Telemetry(MaxSpeed);
+    private final Telemetry logger = new Telemetry(MaxSpeed);
 
     public final CommandXboxController joystick = new CommandXboxController(OIConstants.kDriverControllerPort);
     public final CommandJoystick translateStick = new CommandJoystick(OIConstants.kDriverTranslateStickPort);
@@ -79,6 +81,7 @@ public class RobotContainer {
     private static final boolean OPERATOR_JOYSTICK_DEBUG = false;
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
+    public final ChassisSpeeds speeds = drivetrain.getState().Speeds;
 
     private final VisionIOPhotonVision camera0 = edu.wpi.first.wpilibj.RobotBase.isSimulation()
                     ? new frc.robot.Vision.VisionIOPhotonVisionSim(VisionConstants.camera0Name,
@@ -95,53 +98,43 @@ public class RobotContainer {
                                     VisionConstants.robotToCamera2)
                     : new VisionIOPhotonVision(VisionConstants.camera2Name,
                                         VisionConstants.robotToCamera2);
-
-    public final Lookup lookup = Utils.createLookup(hood, shooter);
-    public final AutoFire autoFireCommand = new AutoFire(turret, transfer, shooter, hood, intake, lookup);
+                                        
+    public final Turret turret = new Turret();
+    public final Climb climb = new Climb();
+    public final Shooter shooter = new Shooter();
+    public final Hood hood = new Hood();
+    public final Intake intake = new Intake();
+    public final Transfer transfer = new Transfer();
+    public final Indexer indexer = new Indexer();
+    public final Hinge hinge = new Hinge();
     public final LockMode lockModeCommand = new LockMode(turret, shooter, hood);
+
+    public final Lookup lookup = Utils.createLookup();
+    public final AutoFire autoFireCommand = new AutoFire(intake, transfer, turret, shooter, hood, speeds, null, null, lookup);
     
     public boolean manualControl = false;
 
+    // public final Vision vision = new Vision(
+    //                 (Vision.VisionConsumer) drivetrain::addVisionMeasurement,
+    //                 (Supplier<Pose2d>) (() -> drivetrain.getStateCopy().Pose),
+    //                 camera0, camera1, camera2);
+
     public RobotContainer() {
+            NamedCommands.registerCommand("testNamedCommand",
+                            Commands.runOnce(() -> System.out.println("this named command works")));
 
-        turret.setDefaultCommand(turret.initDefaultCommand(turret));
+            // SmartDashboard.putData("Git Info", new Sendable() {
+            //         @Override
+            //         public void initSendable(SendableBuilder builder) {
+            //                 builder.addStringProperty("Branch", () -> BuildConstants.GIT_BRANCH, null);
+            //                 builder.addStringProperty("Commit", () -> BuildConstants.GIT_SHA, null);
+            //                 builder.addStringProperty("Date of commit", () -> BuildConstants.GIT_DATE, null);
+            //                 builder.addStringProperty("Uncommitted changes", () -> new Boolean(BuildConstants.DIRTY > 0).toString(), null);
+            //         }
+            // });
 
-        NamedCommands.registerCommand("testNamedCommand", Commands.runOnce(() -> System.out.println("this named command works")));
-
-        SmartDashboard.putData("Git Info", new Sendable() {
-            @SuppressWarnings("removal")
-            @Override
-            public void initSendable(SendableBuilder builder) {
-                builder.addStringProperty("Branch", () -> BuildConstants.GIT_BRANCH, null);
-                builder.addStringProperty("Commit", () -> BuildConstants.GIT_SHA, null);
-                builder.addStringProperty("Date of commit", () -> BuildConstants.GIT_DATE, null);
-                builder.addStringProperty("Uncommitted changes", () -> new Boolean(BuildConstants.DIRTY > 0).toString(), null);
-            }
-        });
-        public final Vision vision = new Vision(
-                        (Vision.VisionConsumer) drivetrain::addVisionMeasurement,
-                        (Supplier<Pose2d>) (() -> drivetrain.getStateCopy().Pose),
-                        camera0, camera1, camera2);
-        public final Turret turret = new Turret();
-        public final Climb climb = new Climb();
-
-        public RobotContainer() {
-                NamedCommands.registerCommand("testNamedCommand",
-                                Commands.runOnce(() -> System.out.println("this named command works")));
-
-                SmartDashboard.putData("Git Info", new Sendable() {
-                        @Override
-                        public void initSendable(SendableBuilder builder) {
-                                builder.addStringProperty("Branch", () -> BuildConstants.GIT_BRANCH, null);
-                                builder.addStringProperty("Commit", () -> BuildConstants.GIT_SHA, null);
-                                builder.addStringProperty("Date of commit", () -> BuildConstants.GIT_DATE, null);
-                                builder.addStringProperty("Uncommitted changes",
-                                                () -> new Boolean(BuildConstants.DIRTY > 0).toString(), null);
-                        }
-                });
-
-                configureBindings();
-        }
+            configureBindings();
+    }
 
     private void configureBindings() {
         // Note that X is defined as forward according to WPILib convention,

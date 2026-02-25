@@ -20,10 +20,10 @@ public class Robot extends LoggedRobot {
 
   public Robot() {
     // Record metadata
-    org.littletonrobotics.junction.Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
-    org.littletonrobotics.junction.Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
-    org.littletonrobotics.junction.Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
-    org.littletonrobotics.junction.Logger.recordMetadata("GitBranch", BuildConstants.GIT_BRANCH);
+    // org.littletonrobotics.junction.Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
+    // org.littletonrobotics.junction.Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
+    // org.littletonrobotics.junction.Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
+    // org.littletonrobotics.junction.Logger.recordMetadata("GitBranch", BuildConstants.GIT_BRANCH);
 
     // Set up data receivers
     if (isReal()) {

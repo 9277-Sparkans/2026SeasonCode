@@ -1,81 +1,121 @@
-// package frc.robot.commands;
+package frc.robot.commands;
 
-// import frc.robot.subsystems.Transfer;
-// import frc.robot.subsystems.Turret;
-// import frc.robot.subsystems.Shooter;
-// import frc.robot.subsystems.Hood;
-// import frc.robot.subsystems.Intake;
-// import frc.robot.Constants.TransferConstants;
-// import frc.robot.Constants.TurretConstants;
-// import frc.robot.Limelight;
-// import frc.robot.Constants.ShooterConstants;
-// import frc.robot.Constants.HoodConstants;
-// import frc.robot.Utils.Lookup;
+import frc.robot.subsystems.Transfer;
+import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Hood;
+import frc.robot.subsystems.Intake;
+import frc.robot.Constants;
+import frc.robot.Utils;
+import frc.robot.Utils.Lookup;
 
-// import static edu.wpi.first.units.Units.Degrees;
+import java.util.function.Supplier;
 
-// import edu.wpi.first.units.measure.Angle;
-// import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj2.command.Command;
 
-// public class AutoFire extends Command 
-// {
-//     Turret turret;
-//     Transfer transfer;
-//     Intake intake;
-//     Shooter shooter;
-//     Lookup lookup;
-//     Hood hood;
-//     double tgtRpm;
-//     double tgtAngle;
+public class AutoFire extends Command 
+{
+    Intake intake;
+    Transfer transfer;
+    Turret turret;
+    Shooter shooter;
+    Hood hood;
 
-//     public AutoFire(Turret turret, Transfer transfer, Shooter shooter, Hood hood, Intake intake, Lookup lookup)
-//     {
-//         this.turret = turret;
-//         this.transfer = transfer;
-//         this.shooter = shooter;
-//         this.hood = hood;
+    ChassisSpeeds speeds;
+    Supplier<Pose3d[]> robotPosesSupplier;
+    Supplier<Rotation2d> yawSupplier;
+    Lookup lookup;
 
-//         addRequirements(shooter, hood, transfer, turret, intake);
+    double turretOffset;
+    double tgtRPM;
+    double tgtAngle;
 
-//         // tgtRpm = 0;
-//         tgtAngle = 0.0;
-//     }
+    public AutoFire(Intake intake, Transfer transfer, Turret turret, Shooter shooter, Hood hood,
+                    ChassisSpeeds speeds, Supplier<Pose3d[]> robotPosesSupplier, Supplier<Rotation2d> yawSupplier, Lookup lookup) {
+        this.intake = intake;
+        this.transfer = transfer;
+        this.turret = turret;
+        this.shooter = shooter;
+        this.hood = hood;
+
+        addRequirements(transfer, intake, turret, shooter, hood);
+
+        this.speeds = speeds;
+        this.robotPosesSupplier = robotPosesSupplier;
+        this.yawSupplier = yawSupplier;
+        this.lookup = lookup;
+
+        turretOffset = 0.0;
+        tgtRPM = 0.0;
+        tgtAngle = 0.0;
+    }
 
     
-//     @Override
-//     public void initialize(){
-//         // tgtRpm = 0;
-//     }
+    @Override
+    public void initialize(){
+        tgtRPM = 0;
+    }
 
-//     @Override
-//     public void execute()
-//     {
-//         double distance = Limelight.GetDistance();
+    @Override
+    public void execute()
+    {
+        // Get suppliers
+        Pose3d[] robotPoses = robotPosesSupplier.get();
+        Rotation2d yaw = yawSupplier.get();
 
-//         double[] output = lookup.FindOptimalVals(distance);
+        // Get values
+        double posX = robotPoses[0].getX() + yaw.getCos() * Constants.HoodConstants.hoodOffset;
+        double posY = robotPoses[0].getY() + yaw.getSin() * Constants.HoodConstants.hoodOffset;
+        double velocityX = speeds.vxMetersPerSecond;
+        double velocityY = speeds.vyMetersPerSecond;
+
+        // Transform standard x-y velocity such that i^ is towards the shooter, j^ is 90 deg left from top-down
+        double transformedVelocityX = velocityX * yaw.getCos() + velocityY * yaw.getSin();
+        double transformedVelocityY = -velocityX * yaw.getSin() + velocityY * yaw.getCos();
+
+        // Calculate target vector
+        double offsetX = Constants.FieldConstants.HUB_X - posX;
+        double offsetY = Constants.FieldConstants.HUB_Y - posY;
+
+        double targetDirectionRad = Math.atan2(offsetY, offsetX);
+        double targetDirectionDeg = targetDirectionRad * 180 / Math.PI;
+        double targetDistance = Math.sqrt(offsetX * offsetX + offsetY * offsetY);
+
+        double shooterRpm = 0.0; // shooter.GetShooterRPM();
+        double hoodAngle = 0.0; // hood.GetHoodAngle();
+
+        // Get optimal shot
+        double[] optimal = lookup.FindOptimalVals(targetDistance, transformedVelocityX, transformedVelocityY, shooterRpm, hoodAngle);
+        double error = optimal[0];
+        turretOffset = targetDirectionDeg - yaw.getDegrees() - optimal[1];
+        tgtRPM = optimal[2];
+        tgtAngle = optimal[3];
         
-//         tgtRpm = output[0];
-//         tgtAngle = output[1];
+        // Execute optimal shot
+        // turret.setTurretToAngle(turretOffset);
+        // shooter.setShooterRPM((int)(tgtRPM));
+        // hood.setHoodToAngle(tgtAngle);
 
-//         // shooter.setTgtRpm((int)(tgtRpm));
-//         // hood.moveHoodToAngle(Angle.ofBaseUnits(tgtAngle, Degrees));
-//         transfer.activateTransfer();
-//         intake.intake();
-//     }
+        // Only start shooting if ready
+        if (error < Constants.ShooterConstants.maxShotError) {
+            // Start shooting
+        } else {
+            // Stop shooting
+        }
+    }
 
-//     @Override
-//     public void end(boolean interrupted)
-//     {
-//         // hood.stopHood();
-//         // shooter.targetRPM = 0;
-//         // shooter.fireAtRpm();
-//         transfer.stop();
-//         intake.stop();
-//     }
+    @Override
+    public void end(boolean interrupted)
+    {
+        // Stop shooting
+    }
 
-//     @Override
-//     public boolean isFinished()
-//     {
-//         return false;
-//     }
-// }
+    @Override
+    public boolean isFinished()
+    {
+        return false;
+    }
+}

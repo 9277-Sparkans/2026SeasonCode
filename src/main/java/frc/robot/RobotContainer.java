@@ -128,6 +128,9 @@ public class RobotContainer {
                                                                            // needed
                                                 climb.climbHang()));
 
+                rotateStick.button(1).onTrue(climb.climbUp());
+                rotateStick.button(2).onTrue(climb.climbDown());
+
                 rotateStick.button(3).toggleOnTrue(new TurretTracking(turret, () -> drivetrain.getStateCopy().Pose));
 
                 // driver sticks support

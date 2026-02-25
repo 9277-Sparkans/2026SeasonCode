@@ -59,10 +59,9 @@ public class TurretTracking extends Command {
     Pose3d robotPose = new Pose3d(robotPose2d);
 
     // Calculate turret position in field coordinates
-    Translation2d turretTranslation = robotPose
-        .transformBy(TurretConstants.ROBOT_TO_TURRET_TRANSFORM)
-        .toPose2d()
-        .getTranslation();
+    Translation2d turretTranslation = robotPose2d.getTranslation()
+        .plus(TurretConstants.ROBOT_TO_TURRET_TRANSFORM.getTranslation().toTranslation2d()
+            .rotateBy(robotPose2d.getRotation()));
 
     // Target position (Hub)
     Translation2d target = new Translation2d(
@@ -80,9 +79,14 @@ public class TurretTracking extends Command {
     // Normalize to -PI to PI
     angleToHubRad = Math.atan2(Math.sin(angleToHubRad), Math.cos(angleToHubRad));
 
-    angleToHub = Math.toDegrees(angleToHubRad);
+    // The turret motor is CW-positive, so we invert the WPILib CCW-positive
+    // standard
+    // and apply the Center offset so "0" aims perfectly forward
+    angleToHub = Math.toDegrees(-angleToHubRad) + frc.robot.Constants.LockModeConstants.kTurretCenter;
 
     turret.target = angleToHub;
+
+    // Explicitly update the turret to aim here instead of relying on defaultCommand
     turret.defaultCommand();
   }
 

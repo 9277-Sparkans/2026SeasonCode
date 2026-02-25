@@ -150,10 +150,9 @@ public class RobotContainer {
                                                                                                            // targets to
                                                                                                            // reach
                                                                                                            // setpoints
-                                                                                Commands.runOnce(() -> {
-                                                                                        transfer.toggleTransfer();
-                                                                                        indexer.toggleIndexer();
-                                                                                }),
+                                                                                Commands.parallel(
+                                                                                                transfer.toggleTransferCommand(),
+                                                                                                indexer.toggleIndexer()),
                                                                                 Commands.waitSeconds(2.0) // Keep lock
                                                                                                           // mode active
                                                                                                           // while

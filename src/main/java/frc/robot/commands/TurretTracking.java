@@ -56,6 +56,7 @@ public class TurretTracking extends Command {
       return;
     }
     else {
+      turret.target = -angleToHub * 10.0;
     // turret.turretMoveTgt(angleToHub);
     }
   }

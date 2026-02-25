@@ -100,7 +100,7 @@ public class Shooter extends SubsystemBase {
     //     }
     // });
 
-    targetVel = 0.0;
+    targetVel = Constants.LockModeConstants.kRPMTrenchLeft;
   }
 
 

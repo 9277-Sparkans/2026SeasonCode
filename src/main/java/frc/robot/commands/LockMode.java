@@ -10,7 +10,9 @@ public class LockMode extends Command {
     public enum LockState {
         LEFT,
         CENTER,
-        RIGHT
+        RIGHT,
+        TRENCHLEFT,
+        TRENCHRIGHT
     }
 
     Turret turret;
@@ -62,17 +64,29 @@ public class LockMode extends Command {
                 tgtRpm = LockModeConstants.kRPMRight;
                 tgtAngleTurret = LockModeConstants.kTurretRight;
                 break;
+            case TRENCHLEFT:
+                tgtAngleHood = LockModeConstants.kHoodTrenchLeft;
+                tgtRpm = LockModeConstants.kRPMTrenchLeft;
+                tgtAngleTurret = LockModeConstants.kTurretTrenchLeft;
+                break;
+            case TRENCHRIGHT:
+                tgtAngleHood = LockModeConstants.kHoodTrenchRight;
+                tgtRpm = LockModeConstants.kRPMTrenchRight;
+                tgtAngleTurret = LockModeConstants.kTurretTrenchRight;
+                break;
         }
 
-        // shooter.setTgtRpm((int)(tgtRpm));
-        // hood.moveHoodToAngle(Angle.ofBaseUnits(tgtAngleHood, Degrees));
-        // turret.turretMoveTgt(tgtAngleTurret);
+        shooter.targetVel = ((int)(tgtRpm));
+        hood.targetHoodAngle = (tgtAngleHood);
+        turret.target = (tgtAngleTurret);
+        System.out.println("lcokmodeworkysyipee");
+
     }
 
     @Override
     public void end(boolean interrupted) {
         // hood.stopHood();
-        // shooter.targetRPM = 0;
+        // shooter.targetVel = 0;
         // shooter.fireAtRpm();
     }
 

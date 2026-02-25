@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Telemetry;
 import frc.robot.Constants.TurretConstants;
+import frc.robot.Constants;
 
 public class Turret extends SubsystemBase {
 
@@ -63,7 +64,7 @@ public class Turret extends SubsystemBase {
 
     Telemetry.telemeterizeMotorWithPID("Turret", turretMotor, (108.0 / 15.0));
 
-    target = 0.0;
+    target = Constants.LockModeConstants.kTurretTrenchLeft;
   }
 
   @Override
@@ -108,7 +109,7 @@ public class Turret extends SubsystemBase {
   }
 
   public void turretMoveTgt(){
-    double tgt = (-30.0 ); // angle
+    double tgt = (0.0); // angle
     target = tgt;
   }
 

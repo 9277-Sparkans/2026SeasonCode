@@ -38,6 +38,7 @@ import frc.robot.Constants.QuickAccessConstants.ControlTypes;
 import frc.robot.Utils.Lookup;
 import frc.robot.commands.AutoFire;
 import frc.robot.commands.LockMode;
+import frc.robot.commands.TurretTracking;
 import frc.robot.subsystems.Transfer;
 import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Hinge;
@@ -176,11 +177,8 @@ public class RobotContainer {
         // joystick.x().whileTrue(new TurretTracking((turret)));
         // joystick.x().onFalse(Commands.runOnce(() -> turret.stop(), turret));
 
-        // joystick.x().whileTrue(turret.initDefaultCommand(turret));
-        // joystick.x().whileTrue(Commands.runOnce(() -> turret.turretMoveTgt()));
-        // joystick.x().onFalse(Commands.runOnce(() -> turret.stop()));
-
-
+        // joystick.x().whileTrue(new LockMode(turret, shooter, hood));
+        joystick.x().onTrue(Commands.runOnce(() -> lockModeCommand.setLockState(LockMode.LockState.TRENCHLEFT), turret, hood, shooter));
 
         // SHOOTER button controls
         joystick.leftBumper().onTrue(Commands.runOnce(() -> shooter.decreaseSpeed()));
@@ -240,7 +238,7 @@ public class RobotContainer {
             .onTrue(Commands.runOnce(() -> manualControl = !manualControl));
 
         operator(OIConstants.kKeyboard_lockModeToggle)
-            .onTrue(Commands.runOnce(() -> System.out.println("Lock toggle")));
+            .onTrue(Commands.runOnce(() -> lockModeCommand.setLockState(LockMode.LockState.TRENCHLEFT)));
         
         operator(OIConstants.kKeyboard_fire)
             .onTrue(Commands.either(

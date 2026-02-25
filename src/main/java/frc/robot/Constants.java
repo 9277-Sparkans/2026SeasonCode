@@ -225,7 +225,7 @@ public class Constants {
         public static final double intakeMaxVoltage = 5; // can change if not needed
         public static final double intakeMaxAcceleration = 200;
         public static final double intakeMaxVelocity = 500; // rps
-        public static final double intakeSpeed = 100.0; //rps
+        public static final double intakeSpeed = 100.0; //rps max 66.6 rps
     }
 
     public static class HingeConstants {

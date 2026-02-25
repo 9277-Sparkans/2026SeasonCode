@@ -333,4 +333,30 @@ public class Constants {
                 16.541 - HUB_X, HUB_Y, 1.4);
     }
 
+    public static final class LockModeConstants {
+        // LEFT
+        public static final int kRPMLeft = 4450;
+        public static final double kHoodLeft = 5.0;
+        public static final double kTurretLeft = 44.0;
+
+        // CENTER
+        public static final int kRPMCenter = 4050;
+        public static final double kHoodCenter = 7.0;
+        public static final double kTurretCenter = 10.0;
+
+        // RIGHT
+        public static final int kRPMRight = 4450;
+        public static final double kHoodRight = 5.0;
+        public static final double kTurretRight = -44.0;
+
+        // TRENCH LEFT
+        public static final int kRPMTrenchLeft = 4350;
+        public static final double kHoodTrenchLeft = 6.0;
+        public static final double kTurretTrenchLeft = 62.0;
+
+        // TRENCH RIGHT
+        public static final int kRPMTrenchRight = 4350;
+        public static final double kHoodTrenchRight = 6.0;
+        public static final double kTurretTrenchRight = -62.0;
+    }
 }

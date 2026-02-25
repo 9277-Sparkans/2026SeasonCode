@@ -30,7 +30,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants;
 import frc.robot.Telemetry;
-import frc.robot.Utils;
+import edu.wpi.first.math.MathUtil;
 import frc.robot.Constants.HoodConstants;
 import frc.robot.Constants;
 
@@ -63,7 +63,8 @@ public class Hood extends SubsystemBase {
     hoodMotor.getConfigurator().apply(hoodCurrent);
 
     // PID + Gravity
-    hoodMotorConfiguration.Slot0.kG = HoodConstants.hood_kG;
+    // hoodMotorConfiguration.Slot0.kG = HoodConstants.hood_kG; // kG does not exist
+    // in Constants
     hoodMotorConfiguration.Slot0.kS = HoodConstants.hood_kS;
     hoodMotorConfiguration.Slot0.kV = HoodConstants.hood_kV;
     hoodMotorConfiguration.Slot0.kA = HoodConstants.hood_kA;
@@ -80,49 +81,51 @@ public class Hood extends SubsystemBase {
 
     hoodMotor.getConfigurator().apply(hoodMotorConfiguration);
 
-    // hoodMotorConfiguration.Feedback.FeedbackRemoteSensorID = hoodEncoder.getDeviceID();
-    // hoodMotorConfiguration.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
-    // hoodMotorConfiguration.Feedback.RotorToSensorRatio = 1; // 1 motor rotation per 1 encoder rotation
+    // hoodMotorConfiguration.Feedback.FeedbackRemoteSensorID =
+    // hoodEncoder.getDeviceID();
+    // hoodMotorConfiguration.Feedback.FeedbackSensorSource =
+    // FeedbackSensorSourceValue.RemoteCANcoder;
+    // hoodMotorConfiguration.Feedback.RotorToSensorRatio = 1; // 1 motor rotation
+    // per 1 encoder rotation
     // hoodMotorConfiguration.Feedback.SensorToMechanismRatio = ;
-   
+
     SmartDashboard.putData("Hood", new Sendable() {
-        @Override
-        public void initSendable(SendableBuilder builder) {
-            builder.addDoubleProperty("Velocity", () -> hoodMotor.getVelocity().getValueAsDouble(), null);
-            builder.addDoubleProperty("Absolute Encoder Position", () -> (hoodEncoder.getAbsolutePosition().getValueAsDouble()), (double val) -> hoodEncoder.setPosition(val));
-            builder.addDoubleProperty("Motor Encoder Position", () -> (hoodMotor.getPosition().getValueAsDouble()), (double val) -> hoodMotor.setPosition(val));
-            builder.addDoubleProperty("Target Hood Position", () -> targetHoodPosition, (double val) -> targetHoodPosition = val);
-            builder.addDoubleProperty("Target Angle Position", () -> targetHoodAngle, (double val) -> targetHoodAngle = val);
-            builder.addDoubleProperty("Supposed Hood Position", () -> convertedHoodPos, null);
-        }
+      @Override
+      public void initSendable(SendableBuilder builder) {
+        builder.addDoubleProperty("Velocity", () -> hoodMotor.getVelocity().getValueAsDouble(), null);
+        builder.addDoubleProperty("Absolute Encoder Position",
+            () -> (hoodEncoder.getAbsolutePosition().getValueAsDouble()), (double val) -> hoodEncoder.setPosition(val));
+        builder.addDoubleProperty("Motor Encoder Position", () -> (hoodMotor.getPosition().getValueAsDouble()),
+            (double val) -> hoodMotor.setPosition(val));
+        builder.addDoubleProperty("Target Hood Position", () -> targetHoodPosition,
+            (double val) -> targetHoodPosition = val);
+        builder.addDoubleProperty("Target Angle Position", () -> targetHoodAngle,
+            (double val) -> targetHoodAngle = val);
+        builder.addDoubleProperty("Supposed Hood Position", () -> convertedHoodPos, null);
+      }
     });
 
     // SmartDashboard.putData(hoodMotor);
 
-    Telemetry.telemeterizeMotorWithPID("Hood (PID)", hoodMotor, 1);
+    Telemetry.telemeterizeMotorWithPID("Hood (PID)", hoodMotor, 1, hoodMotorConfiguration);
 
     sysIdRoutine = new SysIdRoutine(
-      new SysIdRoutine.Config(
-        Volts.of(0.2).per(Second) , // Quasi - increases by 0.1 V per sec
-        Volts.of(0.65), // Dynamic - jumps to 0.5 V
-        Seconds.of(10) // maxes at 10s
-      ),
-      new SysIdRoutine.Mechanism (
-        (Voltage volts) -> {
-          hoodMotor.setControl(sysIdControl.withOutput(volts.in(Volts)));
-        },
-        (SysIdRoutineLog log) -> {
-          log.motor("Hood-Motor")
-            .voltage(Volts.of(hoodMotor.getMotorVoltage().
-              getValueAsDouble()))
-            .angularPosition (Rotations.of(hoodMotor.getPosition().
-              getValueAsDouble()))
-            .angularVelocity(RotationsPerSecond.of(hoodMotor.
-              getVelocity().getValueAsDouble()));
-        },
-        this
-      )
-    );
+        new SysIdRoutine.Config(
+            Volts.of(0.2).per(Second), // Quasi - increases by 0.1 V per sec
+            Volts.of(0.65), // Dynamic - jumps to 0.5 V
+            Seconds.of(10) // maxes at 10s
+        ),
+        new SysIdRoutine.Mechanism(
+            (Voltage volts) -> {
+              hoodMotor.setControl(sysIdControl.withOutput(volts.in(Volts)));
+            },
+            (SysIdRoutineLog log) -> {
+              log.motor("Hood-Motor")
+                  .voltage(Volts.of(hoodMotor.getMotorVoltage().getValueAsDouble()))
+                  .angularPosition(Rotations.of(hoodMotor.getPosition().getValueAsDouble()))
+                  .angularVelocity(RotationsPerSecond.of(hoodMotor.getVelocity().getValueAsDouble()));
+            },
+            this));
 
     this.setDefaultCommand(moveToTargetAngle());
   }
@@ -139,7 +142,7 @@ public class Hood extends SubsystemBase {
 
   public double getPosition() {
     double position = hoodMotor.getPosition().getValueAsDouble() / HoodConstants.kGearRatio;
-    return position * 360; 
+    return position * 360;
   }
 
   public void moveHoodMotionMagic() {
@@ -154,13 +157,16 @@ public class Hood extends SubsystemBase {
   }
 
   public void moveHoodToAngle(double degrees) {
-    // double hoodRangeDeg = HoodConstants.kMaximumAngle - HoodConstants.kMinimumAngle;
-    // double hoodEncoderRange = HoodConstants.kMaximumEncoderPos - HoodConstants.kMinimumEncoderPos;
+    // double hoodRangeDeg = HoodConstants.kMaximumAngle -
+    // HoodConstants.kMinimumAngle;
+    // double hoodEncoderRange = HoodConstants.kMaximumEncoderPos -
+    // HoodConstants.kMinimumEncoderPos;
 
     // double positionRatio = degrees / hoodRangeDeg;
-    // double position = HoodConstants.kMinimumEncoderPos + (hoodEncoderRange * positionRatio);
+    // double position = HoodConstants.kMinimumEncoderPos + (hoodEncoderRange *
+    // positionRatio);
 
-    targetHoodPosition = -((targetHoodAngle / (7168.0/12321.0)) / 360.0) * HoodConstants.kGearRatio;
+    targetHoodPosition = -((targetHoodAngle / (7168.0 / 12321.0)) / 360.0) * HoodConstants.kGearRatio;
     // System.out.println("target angle to hood: " + targetHoodPosition);
     // System.out.println("target degrees to hood: " + degrees);
 
@@ -170,18 +176,20 @@ public class Hood extends SubsystemBase {
 
   // POV UP move hood to -0.75
   public Command moveHoodToTgtCmd() {
-    // return Commands.runOnce(() -> moveHoodMotionMagic(-27)); 
-    return Commands.runOnce(() -> {});
+    // return Commands.runOnce(() -> moveHoodMotionMagic(-27));
+    return Commands.runOnce(() -> {
+    });
   }
 
   public Command stopHoodCmd() {
     hoodMotor.set(0);
-    return Commands.runOnce(() -> {});
+    return Commands.runOnce(() -> {
+    });
   }
 
-  
   public void clampTarget() {
-    targetHoodPosition = Utils.clamp(targetHoodPosition, HoodConstants.kMinimumEncoderPos, HoodConstants.kMaximumEncoderPos);
+    targetHoodPosition = MathUtil.clamp(targetHoodPosition, HoodConstants.kMinimumEncoderPos,
+        HoodConstants.kMaximumEncoderPos);
   }
 
   public void runHood() {
@@ -191,19 +199,18 @@ public class Hood extends SubsystemBase {
     // moveHoodMotionMagic();
   }
 
-
   public void runHoodReverse() {
     // targetHoodPosition -= HoodConstants.kHoodSpeed;
     hoodMotor.set(-HoodConstants.kHoodSpeed);
     // moveHoodMotionMagic();
   }
 
-  public Command sysIdQuasistatic ( SysIdRoutine . Direction direction ) {
-    return sysIdRoutine . quasistatic ( direction ) ;
+  public Command sysIdQuasistatic(SysIdRoutine.Direction direction) {
+    return sysIdRoutine.quasistatic(direction);
   }
- 
-  public Command sysIdDynamic ( SysIdRoutine . Direction direction ) {
-    return sysIdRoutine . dynamic ( direction ) ;
+
+  public Command sysIdDynamic(SysIdRoutine.Direction direction) {
+    return sysIdRoutine.dynamic(direction);
   }
 
 }

@@ -31,8 +31,6 @@ public class Turret extends SubsystemBase {
 
   // final DutyCycleOut turret_dutyCycle = new DutyCycleOut(0.0);
 
-  
-
   /** Creates a new Turret. */
   public Turret() {
     turretMotor = new TalonFX(TurretConstants.turret_motorId);
@@ -41,8 +39,8 @@ public class Turret extends SubsystemBase {
 
     // turretMotor.setControl(
     // turret_dutyCycle.withOutput(0.5)
-    //     .withLimitForwardMotion(turret_forwardLimit.get())
-    //     .withLimitReverseMotion(turret_reverseLimit.get())
+    // .withLimitForwardMotion(turret_forwardLimit.get())
+    // .withLimitReverseMotion(turret_reverseLimit.get())
     // );
 
     turretMotorConfig.MotorOutput.NeutralMode = brake;
@@ -62,7 +60,7 @@ public class Turret extends SubsystemBase {
 
     turretMotor.getConfigurator().apply(turretMotorConfig);
 
-    Telemetry.telemeterizeMotorWithPID("Turret", turretMotor, (108.0 / 15.0));
+    Telemetry.telemeterizeMotorWithPID("Turret", turretMotor, (108.0 / 15.0), turretMotorConfig);
 
     target = Constants.LockModeConstants.kTurretTrenchLeft;
   }
@@ -73,7 +71,7 @@ public class Turret extends SubsystemBase {
 
   public double getPosition() {
     double position = turretMotor.getPosition().getValueAsDouble() / TurretConstants.kGearRatio;
-    return position * 360; 
+    return position * 360;
   }
 
   public double getTurretCurrent() {
@@ -81,14 +79,13 @@ public class Turret extends SubsystemBase {
     return turretCurrent;
   }
 
-  public Command turretPos () {
-      return Commands.runOnce(() -> spinPositive());
-    }
+  public Command turretPos() {
+    return Commands.runOnce(() -> spinPositive());
+  }
 
-  public Command turretNeg () {
-      return Commands.runOnce(() -> spinNegative());
-    }
-
+  public Command turretNeg() {
+    return Commands.runOnce(() -> spinNegative());
+  }
 
   public double getTurretAngle() {
     double position = getTurretCurrent(); // turns
@@ -108,7 +105,7 @@ public class Turret extends SubsystemBase {
     turretMotor.set(-TurretConstants.turret_speed);
   }
 
-  public void turretMoveTgt(){
+  public void turretMoveTgt() {
     double tgt = (0.0); // angle
     target = tgt;
   }

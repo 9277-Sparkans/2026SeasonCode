@@ -33,7 +33,14 @@ import frc.robot.Vision.VisionConstants;
 import frc.robot.commands.TurretTracking;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Climb;
+import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Hood;
+import frc.robot.subsystems.Indexer;
+import frc.robot.subsystems.Transfer;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Hinge;
 import frc.robot.commands.AutoAlignCommand;
+import frc.robot.commands.LockMode;
 
 public class RobotContainer {
         private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
@@ -76,6 +83,12 @@ public class RobotContainer {
                         camera0, camera1, camera2);
         public final Turret turret = new Turret();
         public final Climb climb = new Climb();
+        public final Shooter shooter = new Shooter();
+        public final Hood hood = new Hood();
+        public final Transfer transfer = new Transfer();
+        public final Indexer indexer = new Indexer();
+        public final Intake intake = new Intake();
+        public final Hinge hinge = new Hinge();
 
         public RobotContainer() {
                 NamedCommands.registerCommand("testNamedCommand",
@@ -119,14 +132,33 @@ public class RobotContainer {
                 // joystick buttons for sticks mode
                 translateStick.button(4).whileTrue(AutoAlignCommand.getTrenchCommand(drivetrain));
 
-                // Climb up then climb hang
+                // Climb up, autoalign, climb hang, lock mode center and shoot
                 rotateStick.button(4).onTrue(
                                 Commands.sequence(
                                                 climb.climbUp(),
                                                 AutoAlignCommand.getAutoAlignCommand(drivetrain),
                                                 Commands.waitSeconds(1.5), // Temporary wait before hanging, tune as
                                                                            // needed
-                                                climb.climbHang()));
+                                                climb.climbHang(),
+                                                Commands.waitSeconds(1.5), // Wait for hang to stabilize
+                                                Commands.race(
+                                                                new LockMode(turret, shooter, hood).withLockState(
+                                                                                LockMode.LockState.CENTER),
+                                                                Commands.sequence(
+                                                                                Commands.waitSeconds(1.0), // Allow time
+                                                                                                           // for
+                                                                                                           // targets to
+                                                                                                           // reach
+                                                                                                           // setpoints
+                                                                                Commands.runOnce(() -> {
+                                                                                        transfer.toggleTransfer();
+                                                                                        indexer.toggleIndexer();
+                                                                                }),
+                                                                                Commands.waitSeconds(2.0) // Keep lock
+                                                                                                          // mode active
+                                                                                                          // while
+                                                                                                          // shooting
+                                                                ))));
                 rotateStick.button(1).onTrue(climb.climbUp());
 
                 rotateStick.button(1).onTrue(climb.climbUp());

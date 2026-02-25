@@ -23,11 +23,12 @@ public class Indexer extends SubsystemBase {
 
   /** Creates a new Indexer. */
   public Indexer() {
-    indexerMotor = new TalonFX(IndexerConstants.kIndexerMotorId);
-    indexerMotorConfig = new TalonFXConfiguration(); 
+    indexerMotor = new TalonFX(IndexerConstants.kIndexerMotorID);
+    indexerMotorConfig = new TalonFXConfiguration();
     indexerMotor.setPosition(0);
 
-    indexerMotorConfig.CurrentLimits.StatorCurrentLimit = Constants.IndexerConstants.kIndexerCurrentLimit;
+    // indexerMotorConfig.CurrentLimits.StatorCurrentLimit =
+    // Constants.IndexerConstants.kIndexerCurrentLimit;
     indexerMotorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
     indexerMotorConfig.Slot0.kS = IndexerConstants.kIndexer_kS;
@@ -36,13 +37,12 @@ public class Indexer extends SubsystemBase {
     indexerMotorConfig.Slot0.kP = IndexerConstants.kIndexer_kP;
     indexerMotorConfig.Slot0.kI = IndexerConstants.kIndexer_kI;
     indexerMotorConfig.Slot0.kD = IndexerConstants.kIndexer_kD;
-    
+
     indexerMotorConfig.MotionMagic.MotionMagicAcceleration = IndexerConstants.kIndexerMaxAcceleration;
     indexerMotorConfig.MotionMagic.MotionMagicJerk = IndexerConstants.kIndexerMaxJerk;
 
     indexerMotor.getConfigurator().apply(indexerMotorConfig);
   }
-
 
   @Override
   public void periodic() {
@@ -60,7 +60,7 @@ public class Indexer extends SubsystemBase {
   public Command toggleIndexer() {
     return Commands.runOnce(() -> toggle());
   }
-  
+
   public void toggle() {
     indexerOn = !indexerOn;
     if (indexerOn) {
@@ -70,8 +70,7 @@ public class Indexer extends SubsystemBase {
     }
   }
 
-  public void spin()
-  {
+  public void spin() {
     indexerMotor.set(IndexerConstants.kIndexerSpeed);
   }
 
@@ -81,6 +80,6 @@ public class Indexer extends SubsystemBase {
 
   public void setVel() {
     double tgt = IndexerConstants.kIndexerSpeed / IndexerConstants.kIndexerGearRatio;
-    indexerMotor.setControl(m_request.withVelocity(tgt)); //rps
+    indexerMotor.setControl(m_request.withVelocity(tgt)); // rps
   }
 }

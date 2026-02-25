@@ -7,8 +7,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Telemetry;
-import frc.robot.Constants.ClimbConstants;
-import frc.robot.Constants.IndexerConstants;
 import frc.robot.Constants.TransferConstants;;
 
 
@@ -36,8 +34,6 @@ public class Transfer extends SubsystemBase
         transferMotorConfig.CurrentLimits.StatorCurrentLimit = TransferConstants.kTransferCurrent_Limit;
         transferMotorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
-        transferMotorConfig.Voltage.PeakForwardVoltage = TransferConstants.transferMaxVoltage;
-        transferMotorConfig.Voltage.PeakReverseVoltage = -TransferConstants.transferMaxVoltage;
         transferMotorConfig.MotionMagic.MotionMagicAcceleration = TransferConstants.transferMaxAcceleration;
         transferMotorConfig.MotionMagic.MotionMagicCruiseVelocity = TransferConstants.transferMaxVelocity;
 
@@ -46,10 +42,14 @@ public class Transfer extends SubsystemBase
         Telemetry.telemeterizeMotor("Transfer", transferMotor);
     }
 
+    
+    @Override
+    public void periodic() {
+        // activateTransfer();
+    }
 
     public Command toggleTransferCommand() {
-        toggleTransfer();
-        return Commands.runOnce(() -> {});
+        return Commands.runOnce(() -> toggleTransfer());
     }
 
     public void toggleTransfer() {

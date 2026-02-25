@@ -22,6 +22,18 @@ public class Utils {
         return Math.sqrt((x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1));
     }
 
+    public static double wrapAngle(double angle) {
+        angle = angle % 360.0;
+        
+        if (angle > 180.0) {
+            angle -= 360.0;
+        } else if (angle < -180.0) {
+            angle += 360.0;
+        }
+
+        return angle;
+    }
+
     public static class Lookup {
         private final ArrayList<double[]> hits = new ArrayList<>(); // [Landing Distance, Landing Direction]
         private final ArrayList<double[]> vals = new ArrayList<>(); // [Bot Speed, Bot Direction, Shooter RPM, Hood Angle]

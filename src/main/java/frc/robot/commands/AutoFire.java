@@ -4,10 +4,12 @@ import frc.robot.subsystems.Transfer;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Hood;
+import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
 import frc.robot.Constants;
 import frc.robot.Utils;
 import frc.robot.Utils.Lookup;
+import frc.robot.Vision.Vision;
 
 import java.util.function.Supplier;
 
@@ -19,33 +21,31 @@ import edu.wpi.first.wpilibj2.command.Command;
 public class AutoFire extends Command 
 {
     Intake intake;
-    Transfer transfer;
+    Indexer indexer;
     Turret turret;
     Shooter shooter;
     Hood hood;
 
     ChassisSpeeds speeds;
-    Supplier<Pose3d[]> robotPosesSupplier;
-    Supplier<Rotation2d> yawSupplier;
+    Vision vision;
     Lookup lookup;
 
     double turretOffset;
     double tgtRPM;
     double tgtAngle;
 
-    public AutoFire(Intake intake, Transfer transfer, Turret turret, Shooter shooter, Hood hood,
-                    ChassisSpeeds speeds, Supplier<Pose3d[]> robotPosesSupplier, Supplier<Rotation2d> yawSupplier, Lookup lookup) {
+    public AutoFire(Intake intake, Indexer indexer, Turret turret, Shooter shooter, Hood hood,
+                    ChassisSpeeds speeds, Vision vision, Lookup lookup) {
         this.intake = intake;
-        this.transfer = transfer;
+        this.indexer = indexer;
         this.turret = turret;
         this.shooter = shooter;
         this.hood = hood;
 
-        addRequirements(transfer, intake, turret, shooter, hood);
+        addRequirements(intake, indexer, turret, shooter, hood);
 
         this.speeds = speeds;
-        this.robotPosesSupplier = robotPosesSupplier;
-        this.yawSupplier = yawSupplier;
+        this.vision = vision;
         this.lookup = lookup;
 
         turretOffset = 0.0;
@@ -62,19 +62,19 @@ public class AutoFire extends Command
     @Override
     public void execute()
     {
-        // Get suppliers
-        Pose3d[] robotPoses = robotPosesSupplier.get();
-        Rotation2d yaw = yawSupplier.get();
+        // Get poses
+        Pose3d pose = vision.getLatestVisionPose();
+        Rotation2d rotation = pose.getRotation().toRotation2d();
 
         // Get values
-        double posX = robotPoses[0].getX() + yaw.getCos() * Constants.HoodConstants.hoodOffset;
-        double posY = robotPoses[0].getY() + yaw.getSin() * Constants.HoodConstants.hoodOffset;
+        double posX = pose.getX() + rotation.getCos() * Constants.HoodConstants.hoodOffset;
+        double posY = pose.getY() + rotation.getSin() * Constants.HoodConstants.hoodOffset;
         double velocityX = speeds.vxMetersPerSecond;
         double velocityY = speeds.vyMetersPerSecond;
 
         // Transform standard x-y velocity such that i^ is towards the shooter, j^ is 90 deg left from top-down
-        double transformedVelocityX = velocityX * yaw.getCos() + velocityY * yaw.getSin();
-        double transformedVelocityY = -velocityX * yaw.getSin() + velocityY * yaw.getCos();
+        double transformedVelocityX = velocityX * rotation.getCos() + velocityY * rotation.getSin();
+        double transformedVelocityY = -velocityX * rotation.getSin() + velocityY * rotation.getCos();
 
         // Calculate target vector
         double offsetX = Constants.FieldConstants.HUB_X - posX;
@@ -84,33 +84,38 @@ public class AutoFire extends Command
         double targetDirectionDeg = targetDirectionRad * 180 / Math.PI;
         double targetDistance = Math.sqrt(offsetX * offsetX + offsetY * offsetY);
 
-        double shooterRpm = 0.0; // shooter.GetShooterRPM();
-        double hoodAngle = 0.0; // hood.GetHoodAngle();
+        double shooterRpm = shooter.getMotorRPM();
+        double hoodAngle = hood.getPosition();
 
         // Get optimal shot
         double[] optimal = lookup.FindOptimalVals(targetDistance, transformedVelocityX, transformedVelocityY, shooterRpm, hoodAngle);
         double error = optimal[0];
-        turretOffset = targetDirectionDeg - yaw.getDegrees() - optimal[1];
+        turretOffset = Utils.wrapAngle(targetDirectionDeg - rotation.getDegrees() - optimal[1]);
         tgtRPM = optimal[2];
         tgtAngle = optimal[3];
         
         // Execute optimal shot
-        // turret.setTurretToAngle(turretOffset);
-        // shooter.setShooterRPM((int)(tgtRPM));
-        // hood.setHoodToAngle(tgtAngle);
+        turret.target = turretOffset;
+        turret.defaultCommand();
+        shooter.targetVel = tgtRPM;
+        shooter.setVel();
+        hood.moveHoodToAngle(tgtAngle);
 
         // Only start shooting if ready
         if (error < Constants.ShooterConstants.maxShotError) {
-            // Start shooting
+            intake.intake();
+            indexer.spin();
         } else {
-            // Stop shooting
+            intake.stop();
+            indexer.stop();
         }
     }
 
     @Override
     public void end(boolean interrupted)
     {
-        // Stop shooting
+        intake.stop();
+        indexer.stop();
     }
 
     @Override

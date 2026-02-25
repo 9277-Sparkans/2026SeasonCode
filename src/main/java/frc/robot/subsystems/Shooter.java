@@ -148,6 +148,10 @@ public class Shooter extends SubsystemBase {
     }
   }
 
+  public double getMotorRPM() {
+    return shooterMotor.getVelocity().getValueAsDouble() * 60.0;
+  }
+
   public Command sysIdQuasistatic ( SysIdRoutine . Direction direction ) {
     return sysIdRoutine . quasistatic ( direction ) ;
   }

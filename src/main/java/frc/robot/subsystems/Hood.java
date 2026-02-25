@@ -158,7 +158,7 @@ public class Hood extends SubsystemBase {
     // double positionRatio = degrees / hoodRangeDeg;
     // double position = HoodConstants.kMinimumEncoderPos + (hoodEncoderRange * positionRatio);
 
-    targetHoodPosition = -((5.0 / (7168.0/12321.0)) / 360.0) * HoodConstants.kGearRatio;
+    targetHoodPosition = -((degrees / (7168.0/12321.0)) / 360.0) * HoodConstants.kGearRatio;
     // System.out.println("target angle to hood: " + targetHoodPosition);
     // System.out.println("target degrees to hood: " + degrees);
 

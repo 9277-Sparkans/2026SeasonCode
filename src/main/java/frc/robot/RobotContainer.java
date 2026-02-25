@@ -108,30 +108,30 @@ public class RobotContainer {
     public final Indexer indexer = new Indexer();
     public final Hinge hinge = new Hinge();
     public final LockMode lockModeCommand = new LockMode(turret, shooter, hood);
-
-    public final Lookup lookup = Utils.createLookup();
-    public final AutoFire autoFireCommand = new AutoFire(intake, transfer, turret, shooter, hood, speeds, null, null, lookup);
     
     public boolean manualControl = false;
 
-    // public final Vision vision = new Vision(
-    //                 (Vision.VisionConsumer) drivetrain::addVisionMeasurement,
-    //                 (Supplier<Pose2d>) (() -> drivetrain.getStateCopy().Pose),
-    //                 camera0, camera1, camera2);
+    public final Vision vision = new Vision(
+                    (Vision.VisionConsumer) drivetrain::addVisionMeasurement,
+                    (Supplier<Pose2d>) (() -> drivetrain.getStateCopy().Pose),
+                    camera0, camera1, camera2);
+
+    public final Lookup lookup = Utils.createLookup();
+    public final AutoFire autoFireCommand = new AutoFire(intake, indexer, turret, shooter, hood, speeds, vision, lookup);
 
     public RobotContainer() {
             NamedCommands.registerCommand("testNamedCommand",
                             Commands.runOnce(() -> System.out.println("this named command works")));
 
-            // SmartDashboard.putData("Git Info", new Sendable() {
-            //         @Override
-            //         public void initSendable(SendableBuilder builder) {
-            //                 builder.addStringProperty("Branch", () -> BuildConstants.GIT_BRANCH, null);
-            //                 builder.addStringProperty("Commit", () -> BuildConstants.GIT_SHA, null);
-            //                 builder.addStringProperty("Date of commit", () -> BuildConstants.GIT_DATE, null);
-            //                 builder.addStringProperty("Uncommitted changes", () -> new Boolean(BuildConstants.DIRTY > 0).toString(), null);
-            //         }
-            // });
+            SmartDashboard.putData("Git Info", new Sendable() {
+                    @Override
+                    public void initSendable(SendableBuilder builder) {
+                            builder.addStringProperty("Branch", () -> BuildConstants.GIT_BRANCH, null);
+                            builder.addStringProperty("Commit", () -> BuildConstants.GIT_SHA, null);
+                            builder.addStringProperty("Date of commit", () -> BuildConstants.GIT_DATE, null);
+                            builder.addStringProperty("Uncommitted changes", () -> new Boolean(BuildConstants.DIRTY > 0).toString(), null);
+                    }
+            });
 
             configureBindings();
     }

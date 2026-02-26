@@ -108,7 +108,6 @@ public class AutoFire extends Command
     @Override
     public void end(boolean interrupted)
     {
-        // intake.stop();
         // indexer.stop();
     }
 

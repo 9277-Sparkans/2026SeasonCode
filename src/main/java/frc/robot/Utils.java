@@ -36,7 +36,7 @@ public class Utils {
 
     public static class Lookup {
         private final ArrayList<double[]> hits = new ArrayList<>(); // [Landing Distance, Landing Direction]
-        private final ArrayList<double[]> vals = new ArrayList<>(); // [Bot Speed, Bot Direction, Shooter RPM, Hood Angle]
+        private final ArrayList<double[]> vals = new ArrayList<>(); // [x Velocity, Y Velocity, Shooter RPM, Hood Angle]
         private final int size;
 
         public Lookup() { // Load lookup table into lists
@@ -53,11 +53,11 @@ public class Utils {
 
                     double botSpeed = Double.parseDouble(values[2]);
                     double botDirection = Double.parseDouble(values[3]);
-                    double shooterRpm = Double.parseDouble(values[4]);
+                    double shooterRPM = Double.parseDouble(values[4]);
                     double hoodAngle = Double.parseDouble(values[5]);
                     
                     hits.add(new double[]{landingDistance, landingDirection});
-                    vals.add(new double[]{botSpeed, botDirection, shooterRpm, hoodAngle});
+                    vals.add(new double[]{botSpeed, botDirection, shooterRPM, hoodAngle});
                 }
             } catch (Exception e) {
                 System.out.println("Error forming lookup table");
@@ -102,19 +102,19 @@ public class Utils {
             }
         }
 
-        public double[] FindOptimalVals(double distance, double velocityX, double velocityY, double shooterRpm, double hoodAngle) { // Finds the optimal shot for minimum hood movement and RPM change
+        public double[] FindOptimalVals(double distance, double velocityX, double velocityY, double shooterRPM, double hoodAngle) { // Finds the optimal shot for minimum hood movement and RPM change
             // Get range
             int startI = GetClosestDist(distance - Constants.ShooterConstants.autoshootDistanceRange);
             int endI = GetClosestDist(distance + Constants.ShooterConstants.autoshootDistanceRange);
 
             // Helper values
             double botSpeedRange = 2.0 * TunerConstants.kSpeedAt12Volts.magnitude();
-            double shooterRpmRange = (double)(Constants.ShooterConstants.kMaxRPM - Constants.ShooterConstants.kMinRPM);
+            double shooterRPMRange = (double)(Constants.ShooterConstants.kMaxRPM - Constants.ShooterConstants.kMinRPM);
             double hoodAngleRange = Constants.HoodConstants.kMaximumAngle - Constants.HoodConstants.kMinimumAngle;
 
             double normalizedCurrentXVelocity= velocityX / botSpeedRange;
             double normalizedCurrentYVelocity = velocityY / botSpeedRange;
-            double normalizedCurrentShooterRPM = (shooterRpm - Constants.ShooterConstants.kMinRPM) / shooterRpmRange;
+            double normalizedCurrentShooterRPM = (shooterRPM - Constants.ShooterConstants.kMinRPM) / shooterRPMRange;
             double normalizedCurrentHoodAngle = (hoodAngle - Constants.HoodConstants.kMinimumAngle) / hoodAngleRange;
 
             // Get least square distance between current RPM and Angle vs desired
@@ -125,12 +125,12 @@ public class Utils {
 
                 double normalizedRowBotXVelocity = row[0] / botSpeedRange;
                 double normalizedRowBotYVelocity = row[1] / botSpeedRange;
-                double normalizedRowShooterRpm = (row[2] - Constants.ShooterConstants.kMinRPM) / shooterRpmRange;
+                double normalizedRowShooterRPM = (row[2] - Constants.ShooterConstants.kMinRPM) / shooterRPMRange;
                 double normalizedRowAngle = (row[3] - Constants.HoodConstants.kMinimumAngle) / hoodAngleRange;
 
                 double weight = Constants.ShooterConstants.botXVelocityWeight * (normalizedRowBotXVelocity - normalizedCurrentXVelocity)  * (normalizedRowBotXVelocity - normalizedCurrentXVelocity)
                               + Constants.ShooterConstants.botYVelocityWeight * (normalizedRowBotYVelocity - normalizedCurrentYVelocity) * (normalizedRowBotYVelocity - normalizedCurrentYVelocity)
-                              + Constants.ShooterConstants.shooterRpmWeight * (normalizedRowShooterRpm - normalizedCurrentShooterRPM) * (normalizedRowShooterRpm - normalizedCurrentShooterRPM)
+                              + Constants.ShooterConstants.shooterRPMWeight * (normalizedRowShooterRPM - normalizedCurrentShooterRPM) * (normalizedRowShooterRPM - normalizedCurrentShooterRPM)
                               + Constants.ShooterConstants.hoodAngleWeight * (normalizedRowAngle - normalizedCurrentHoodAngle) * (normalizedRowAngle - normalizedCurrentHoodAngle);
                 if (weight < minimumWeight) {
                     minimumWeight = weight;
@@ -138,10 +138,11 @@ public class Utils {
                 }
             }
 
+            double optimalWeight = minimumWeight / (Constants.ShooterConstants.botXVelocityWeight + Constants.ShooterConstants.botYVelocityWeight + Constants.ShooterConstants.shooterRPMWeight + Constants.ShooterConstants.hoodAngleWeight);
             double optimalTurretOffset = hits.get(minimumI)[1];
-            double optimalShooterRpm = vals.get(minimumI)[2];
+            double optimalShooterRPM = vals.get(minimumI)[2];
             double optimalHoodAngle = vals.get(minimumI)[3];
-            return new double[]{minimumWeight, optimalTurretOffset, optimalShooterRpm, optimalHoodAngle};
+            return new double[]{optimalWeight, optimalTurretOffset, optimalShooterRPM, optimalHoodAngle};
         }
     }
 

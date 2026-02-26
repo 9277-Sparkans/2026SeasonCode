@@ -25,7 +25,7 @@ public class Constants {
 
         // change between DRIVER_CONTROLLER and DRIVER_STICKS for controller and sticks,
         // erm i guess
-        public static final ControlTypes controlType = ControlTypes.DRIVER_STICKS;
+        public static final ControlTypes controlType = ControlTypes.DRIVER_CONTROLLER;
 
         public static enum ControlTypes {
             DEV,
@@ -188,13 +188,13 @@ public class Constants {
         public static final double shooter_kA = 0.0038935;
 
         public static final String lookupTablePath = Filesystem.getDeployDirectory().getPath() + "/ShooterLookupTable/shooter-lookup.csv"; // Generated with github.com/DanielR723/shooter
-        public static final double autoshootDistanceRange = 1.0; // Range of distances to check to choose the best shot (Least hood rotation and flywheel RPM change)
+        public static final double autoshootDistanceRange = 0.2649855; // Range of distances to check to choose the best shot (Least hood rotation and flywheel RPM change)
         public static final double maxShotError = 1.0; // The maximum allowed error for a shot to occur
         
         // Weights of each value when calculating an optimal shot, higher value means higher priority to minimize
         public static final double botXVelocityWeight = 1.0;
         public static final double botYVelocityWeight = 1.0;
-        public static final double shooterRpmWeight = 1.0;
+        public static final double shooterRPMWeight = 1.0;
         public static final double hoodAngleWeight = 1.0;
     }
 
@@ -357,8 +357,8 @@ public class Constants {
     }
 
     public static class FieldConstants {
-        public static final double HUB_X = 8.23; // meters
-        public static final double HUB_Y = 4.11; // meters
+        public static final double HUB_X = 4.625594; // meters
+        public static final double HUB_Y = 4.034536; // meters
         public static final edu.wpi.first.math.geometry.Translation3d HUB_BLUE = new edu.wpi.first.math.geometry.Translation3d(
                 HUB_X, HUB_Y, 1.4); // 1.4m height approx
         public static final edu.wpi.first.math.geometry.Translation3d HUB_RED = new edu.wpi.first.math.geometry.Translation3d(

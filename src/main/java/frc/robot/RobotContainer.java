@@ -68,7 +68,6 @@ public class RobotContainer {
     private static final boolean OPERATOR_JOYSTICK_DEBUG = false;
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
-    public final ChassisSpeeds speeds = drivetrain.getState().Speeds;
 
     private final VisionIOPhotonVision camera0 = edu.wpi.first.wpilibj.RobotBase.isSimulation()
                     ? new frc.robot.Vision.VisionIOPhotonVisionSim(VisionConstants.camera0Name,
@@ -104,7 +103,6 @@ public class RobotContainer {
                     camera0, camera1, camera2);
 
     public final Lookup lookup = Utils.createLookup();
-    public final AutoFire autoFireCommand = new AutoFire(intake, indexer, turret, shooter, hood, speeds, () -> drivetrain.getStateCopy().Pose, lookup);
 
     public RobotContainer() {
             NamedCommands.registerCommand("testNamedCommand",
@@ -241,7 +239,7 @@ public class RobotContainer {
         
         // Indexer button controls
         joystick.b().onTrue(indexer.toggleIndexer()); 
-        joystick.x().whileTrue(autoFireCommand);
+        joystick.x().whileTrue(new AutoFire(intake, indexer, turret, shooter, hood, () -> drivetrain.getStateCopy().Speeds, () -> drivetrain.getStateCopy().Pose, lookup));
 
         configureOperatorConsole();
 
@@ -269,7 +267,7 @@ public class RobotContainer {
                     transfer.toggleTransferCommand(),
                     indexer.toggleIndexer()
                 ),
-                autoFireCommand,
+                new AutoFire(intake, indexer, turret, shooter, hood, () -> drivetrain.getStateCopy().Speeds, () -> drivetrain.getStateCopy().Pose, lookup),
                 () -> manualControl
             ));
 

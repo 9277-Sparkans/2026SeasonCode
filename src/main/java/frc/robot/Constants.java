@@ -56,8 +56,8 @@ public class Constants {
         public static final int kKeyboard_lockModeTrenchRight = 15;
 
         public static final int kKeyboard_climbUp = 7;
-        public static final int kKeyboard_climbDown = 9;
-        public static final int kKeyboard_climbHang = 7;
+        public static final int kKeyboard_climbDown = 10;
+        public static final int kKeyboard_climbHang = 9;
         
         public static final int kKeyboard_intakeDeploy = 16;
         public static final int kKeyboard_intakeRetract = 6;
@@ -262,9 +262,9 @@ public class Constants {
         public static final double kClimb_kD = 0.1;
         public static final double kClimb_kG = 0.12;
 
-        public static final int kClimbUp = 80;
-        public static final int kClimbDown = 0;
-        public static final int kClimbHang = 60;
+        public static final int kClimbUp = 130;
+        public static final int kClimbDown = 5;
+        public static final int kClimbHang = 80;
 
         public static final double kClimbGearRatio = 6.0 / 1.0;
     }

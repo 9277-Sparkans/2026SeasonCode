@@ -66,25 +66,22 @@ public class Constants {
         // 87777877ui00o831.00
         // NOTE: IDs here are 1-indexed as opposed to the keyboard firmware's 0-indexing
         // Add one to your ID or else you'll be binding to a completely different button
-        public static final int kKeyboard_modeToggle = 14;
+        public static final int kKeyboard_modeToggle = 5;
+        public static final int kKeyboard_trackToggle = 3;
 
-        public static final int kKeyboard_lockModeToggle = 8;
+        public static final int kKeyboard_lockModeToggle = 2;
+        public static final int kKeyboard_lockModeLeft = 11;
+        public static final int kKeyboard_lockModeRight = 13;
+        public static final int kKeyboard_lockModeCenter = 12;
+        public static final int kKeyboard_lockModeTrenchLeft = 8;
+        public static final int kKeyboard_lockModeTrenchRight = 15;
 
-        public static final int kKeyboard_climbUp = 6;
+        public static final int kKeyboard_climbUp = 7;
         public static final int kKeyboard_climbDown = 10;
-        public static final int kKeyboard_climbHang = 11;
+        public static final int kKeyboard_climbHang = 9;
         
-        public static final int kKeyboard_fire = 15;
-        public static final int kKeyboard_shooterSpeedUp = 7;
-        public static final int kKeyboard_shooterSpeedDown = 8;
-
-        public static final int kKeyboard_intakeDeploy = 12;
-        public static final int kKeyboard_intakeRetract = 13;
-
-        public static final int kKeyboard_hoodUp = 2;
-        public static final int kKeyboard_hoodDown = 4;
-        public static final int kKeyboard_turretLeft = 3;
-        public static final int kKeyboard_turretRight = 5;
+        public static final int kKeyboard_intakeDeploy = 16;
+        public static final int kKeyboard_intakeRetract = 6;
 
         // Triggers [CONTROLLER ONLY]
         public static final int kController_leftBumper = 5;
@@ -253,7 +250,7 @@ public class Constants {
         public static final double intakeMaxVoltage = 5; // can change if not needed
         public static final double intakeMaxAcceleration = 200;
         public static final double intakeMaxVelocity = 500; // rps
-        public static final double intakeSpeed = 150.0; //rps
+        public static final double intakeSpeed = 120.0; //rps max 66.6 rps
     }
 
     public static class HingeConstants {
@@ -280,12 +277,13 @@ public class Constants {
         public static final double hingeMaxDeg = 50.0; //-100.0;
     }
 
-    public static class ClimbConstants {
-        public static final int kClimbMotorID = 37;
+    public static class ClimbConstants
+    {
+        public static final int kClimbMotorID = 37; // climb motor id is 37
 
         public static final double kClimbMaxVelocity = 90; // rps
         public static final double kClimbMaxAcceleration = 30; // rps^2
-        public static final int kClimbCurrent_Limit = 80;   
+        public static final int kClimbCurrent_Limit = 120;   
         public static final double kClimb_Speed = 0.3; 
 
         public static final double kClimb_kS = 0.01;
@@ -296,9 +294,9 @@ public class Constants {
         public static final double kClimb_kD = 0.1;
         public static final double kClimb_kG = 0.12;
 
-        public static final int kClimbUp = 80;
+        public static final int kClimbUp = 130;
         public static final int kClimbDown = 5;
-        public static final int kClimbHang = 60;
+        public static final int kClimbHang = 80;
 
         public static final double kClimbGearRatio = 6.0 / 1.0;
     }
@@ -365,18 +363,36 @@ public class Constants {
                 16.541 - HUB_X, HUB_Y, 1.4);
     }
 
+    public static final class CanBusConstants {
+        // setting the canivore
+        public static final String kCANivore = "DriveTrain";
+    }
+
     public static final class LockModeConstants
     {
+        //LEFT
         public static final int kRPMLeft = 4450;
-        public static final int kRPMCenter = 4300;
-        public static final int kRPMRight = 4450;
-
         public static final double kHoodLeft = 5.0;
-        public static final double kHoodCenter = 15.0;
-        public static final double kHoodRight = 5.0;
-        
         public static final double kTurretLeft = 44.0;
-        public static final double kTurretCenter = 0.0;
+
+        //CENTER
+        public static final int kRPMCenter = 4050;
+        public static final double kHoodCenter = 7.0;
+        public static final double kTurretCenter = 10.0;
+
+        //RIGHT
+        public static final int kRPMRight = 4450;
+        public static final double kHoodRight = 5.0;
         public static final double kTurretRight = -44.0;
+
+        //TRENCH LEFT
+        public static final int kRPMTrenchLeft = 4350;
+        public static final double kHoodTrenchLeft = 6.0;
+        public static final double kTurretTrenchLeft = 62.0;
+
+        //TRENCH RIGHT
+        public static final int kRPMTrenchRight = 4350;
+        public static final double kHoodTrenchRight = 6.0;
+        public static final double kTurretTrenchRight = -62.0;
     }
 }

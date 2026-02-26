@@ -38,6 +38,8 @@ import frc.robot.Constants.QuickAccessConstants.ControlTypes;
 import frc.robot.Utils.Lookup;
 import frc.robot.commands.AutoFire;
 import frc.robot.commands.LockMode;
+import frc.robot.commands.TurretTracking;
+import frc.robot.commands.LockMode.LockState;
 import frc.robot.subsystems.Transfer;
 import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Hinge;
@@ -157,6 +159,8 @@ public class RobotContainer {
     
         // reset the field-centric heading on left bumper press
         joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        // joystick.().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+
 
         joystick.start().and(joystick.povUp()).whileTrue(shooter.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
         joystick.start().and(joystick.povDown()).whileTrue(shooter.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
@@ -164,18 +168,18 @@ public class RobotContainer {
         joystick.start().and(joystick.povLeft()).whileTrue(shooter.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
         // CLIMB button controls
-        // joystick.y().onTrue(climb.climbUp());
-        // joystick.y().onFalse(climb.stopCommand());
-        // joystick.x().onTrue(climb.climbHang());
-        // joystick.x().onFalse(climb.stopCommand());
-        // joystick.a().onTrue(climb.climbDown());
-        // joystick.a().onFalse(climb.stopCommand());
-
-        joystick.a().onTrue(climb.runClimbCommand());
-        joystick.a().onFalse(climb.stopCommand());
-        
-        joystick.y().onTrue(climb.runClimbNegCommand());
+        joystick.y().onTrue(climb.climbUp());
         joystick.y().onFalse(climb.stopCommand());
+        joystick.x().onTrue(climb.climbHang());
+        joystick.x().onFalse(climb.stopCommand());
+        joystick.a().onTrue(climb.climbDown());
+        joystick.a().onFalse(climb.stopCommand());
+
+        // joystick.a().onTrue(climb.runClimbCommand());
+        // joystick.a().onFalse(climb.stopCommand());
+        
+        // joystick.y().onTrue(climb.runClimbNegCommand());
+        // joystick.y().onFalse(climb.stopCommand());
         
         // HOOD button controls
         joystick.povUp().whileTrue(Commands.runOnce(() -> hood.moveHoodToAngle(5)));
@@ -190,15 +194,6 @@ public class RobotContainer {
         // joystick.x().whileTrue(new TurretTracking((turret)));
         // joystick.x().onFalse(Commands.runOnce(() -> turret.stop(), turret));
 
-        // joystick.x().whileTrue(turret.initDefaultCommand(turret));
-        // joystick.x().whileTrue(Commands.runOnce(() -> turret.turretMoveTgt()));
-        // joystick.x().onFalse(Commands.runOnce(() -> turret.stop()));
-
-
-                                //         return drive.withVelocityX(x * MaxSpeed * 0.3)
-                                //                         .withVelocityY(y * MaxSpeed * 0.3)
-                                //                         .withRotationalRate(rot * MaxAngularRate * 0.3);
-                                // }));
 
         // SHOOTER button controls
         joystick.leftBumper().onTrue(Commands.runOnce(() -> shooter.decreaseSpeed()));
@@ -210,21 +205,21 @@ public class RobotContainer {
 
 
         // TRANSFER button controls
-        // joystick.b().onTrue(Commands.runOnce(() -> transfer.toggleTransfer()));
+        joystick.b().onTrue(Commands.runOnce(() -> transfer.toggleTransfer()));
 
 
         // INTAKE button controls
-        joystick.y()
-            .whileTrue(
-                intake.intakeCommand())
-            .onFalse(
-                intake.stopRollerCommand());
+        // joystick.y()
+        //     .whileTrue(
+        //         intake.intakeCommand())
+        //     .onFalse(
+        //         intake.stopRollerCommand());
 
-        joystick.a()
-            .whileTrue(
-                intake.outtakeCommand())
-            .onFalse(
-                intake.stopRollerCommand());
+        // joystick.a()
+        //     .whileTrue(
+        //         intake.outtakeCommand())
+        //     .onFalse(
+        //         intake.stopRollerCommand());
 
 
         // HINGE button controls
@@ -247,7 +242,7 @@ public class RobotContainer {
 
         // for flight sticks controls, go to this https://gpadtester.com/ and put the button id +1 (so button 1 would actually be button 2 on here)
         // rotateStick.button(3).whileTrue(AutoAlignCommand.getAutoAlignCommand(drivetrain));
-        // translateStick.button(2).toggleOnTrue(new TurretTracking(turret));
+        translateStick.button(2).toggleOnTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
     }
 
     private void configureOperatorConsole() {
@@ -259,17 +254,22 @@ public class RobotContainer {
             .onTrue(Commands.runOnce(() -> manualControl = !manualControl));
 
         operator(OIConstants.kKeyboard_lockModeToggle)
-            .onTrue(Commands.runOnce(() -> System.out.println("Lock toggle")));
-        
-        operator(OIConstants.kKeyboard_fire)
-            .onTrue(Commands.either(
-                Commands.parallel(
-                    transfer.toggleTransferCommand(),
-                    indexer.toggleIndexer()
-                ),
-                new AutoFire(intake, indexer, turret, shooter, hood, () -> drivetrain.getStateCopy().Speeds, () -> drivetrain.getStateCopy().Pose, lookup),
-                () -> manualControl
-            ));
+            .onTrue(Commands.runOnce(() -> System.out.println("this will toggle lock mode!")));
+
+        operator(OIConstants.kKeyboard_lockModeLeft)
+            .whileTrue(Commands.runOnce(() -> lockModeCommand.setLockState(LockState.LEFT), turret, shooter, hood));
+
+        operator(OIConstants.kKeyboard_lockModeCenter)
+            .whileTrue(Commands.runOnce(() -> lockModeCommand.setLockState(LockState.CENTER), turret, shooter, hood));
+
+        operator(OIConstants.kKeyboard_lockModeRight)
+            .whileTrue(Commands.runOnce(() -> lockModeCommand.setLockState(LockState.RIGHT), turret, shooter, hood));
+
+        operator(OIConstants.kKeyboard_lockModeTrenchLeft)
+            .whileTrue(Commands.runOnce(() -> lockModeCommand.setLockState(LockState.TRENCHLEFT), turret, shooter, hood));
+
+        operator(OIConstants.kKeyboard_lockModeTrenchRight)
+            .whileTrue(Commands.runOnce(() -> lockModeCommand.setLockState(LockState.TRENCHRIGHT), turret, shooter, hood));
 
         operator(OIConstants.kKeyboard_climbUp)
             .onTrue(climb.climbUp());
@@ -279,20 +279,6 @@ public class RobotContainer {
 
         operator(OIConstants.kKeyboard_climbDown)
             .onTrue(climb.climbDown());
-        
-        operator(OIConstants.kKeyboard_shooterSpeedUp)
-            .onTrue(Commands.runOnce(() -> {
-                if (manualControl) {
-                    shooter.increaseSpeed();
-                }
-            }));
-
-        operator(OIConstants.kKeyboard_shooterSpeedDown)
-            .onTrue(Commands.runOnce(() -> {
-                if (manualControl) {
-                    shooter.decreaseSpeed();
-                }
-            }));
 
         operator(OIConstants.kKeyboard_intakeDeploy)
             .onTrue(hinge.hingeDown())
@@ -301,35 +287,6 @@ public class RobotContainer {
         operator(OIConstants.kKeyboard_intakeRetract)
             .onTrue(hinge.hingeUp())
             .onFalse(hinge.hingeStopCommand());
-        
-        operator(OIConstants.kKeyboard_hoodUp)
-            .onTrue(Commands.either(
-                Commands.runOnce(() -> { hood.runHood(); System.out.println("MANUAL!!! WOO"); }),
-                Commands.none(),
-                () -> manualControl
-            ));
-
-        operator(OIConstants.kKeyboard_hoodDown)
-            .onTrue(Commands.either(
-                Commands.runOnce(() -> hood.runHoodReverse()),
-                Commands.none(),
-                () -> manualControl
-            ));
-
-
-        operator(OIConstants.kKeyboard_turretLeft)
-            .onTrue(Commands.either(
-                turret.turretNeg(),
-                Commands.none(),
-                () -> manualControl
-            ));
-
-        operator(OIConstants.kKeyboard_turretRight)
-            .onTrue(Commands.either(
-                turret.turretPos(),
-                Commands.none(),
-                () -> manualControl
-            ));
     }
 
     public JoystickButton operator(int keyCode) {

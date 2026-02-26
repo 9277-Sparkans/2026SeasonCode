@@ -17,7 +17,7 @@ public class Limelight
     static boolean isBlue = false;
 
     public void periodic() {
-        System.out.println("angle is " + GetAngle());
+        // System.out.println("angle is " + GetAngle());
     }
     
     public static double GetTx()

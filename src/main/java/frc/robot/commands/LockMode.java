@@ -12,7 +12,8 @@ public class LockMode extends Command {
         CENTER,
         RIGHT,
         TRENCHLEFT,
-        TRENCHRIGHT
+        TRENCHRIGHT,
+        NEUTRAL
     }
 
     Turret turret;
@@ -33,6 +34,7 @@ public class LockMode extends Command {
         tgtRpm = 0;
         tgtAngleHood = 0.0;
         tgtAngleTurret = 0.0;
+        targetLockState = LockState.NEUTRAL;
     }
 
     public void setLockState(LockState input) {
@@ -74,12 +76,17 @@ public class LockMode extends Command {
                 tgtRpm = LockModeConstants.kRPMTrenchRight;
                 tgtAngleTurret = LockModeConstants.kTurretTrenchRight;
                 break;
+            case NEUTRAL:
+                tgtAngleHood = 0.0;
+                tgtRpm = 0.0;
+                tgtAngleTurret = 0.0;
+                break;
         }
 
         shooter.targetVel = ((int)(tgtRpm));
         hood.targetHoodAngle = (tgtAngleHood);
         turret.target = (tgtAngleTurret);
-        System.out.println("lcokmodeworkysyipee");
+        // System.out.println("lcokmodeworkysyipee");
 
     }
 

@@ -64,7 +64,7 @@ public class Hinge extends SubsystemBase{
     
     @Override
     public void periodic() {
-        System.out.println("hingePos is " + getPosition());
+        // System.out.println("hingePos is " + getPosition());
     }
 
     public double getPosition() {

@@ -247,7 +247,7 @@ public class Constants {
 
     public static class ClimbConstants
     {
-        public static final int kClimbMotorID = 37;
+        public static final int kClimbMotorID = 18;
 
         public static final double kClimbMaxVelocity = 90; // rps
         public static final double kClimbMaxAcceleration = 30; // rps^2
@@ -310,6 +310,11 @@ public class Constants {
 
     public static final class LimelightConstants {
         public static final String limelightName = "limelight-a";
+    }
+
+    public static final class CanBusConstants {
+        // setting the canivore
+        public static final String kCANivore = "DriveTrain";
     }
 
     public static final class LockModeConstants

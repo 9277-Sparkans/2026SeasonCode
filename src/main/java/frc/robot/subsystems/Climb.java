@@ -25,7 +25,8 @@ public class Climb extends SubsystemBase {
 
 
     public Climb() {
-        climbMotor = new TalonFX(Constants.ClimbConstants.kClimbMotorID);
+        // making the climb use the canivore
+        climbMotor = new TalonFX(Constants.ClimbConstants.kClimbMotorID, Constants.CanBusConstants.kCANivore);
         climbConfig = new TalonFXConfiguration();
 
         /* PID */

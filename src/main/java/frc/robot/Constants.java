@@ -247,14 +247,14 @@ public class Constants {
 
     public static class ClimbConstants
     {
-        public static final int kClimbMotorID = 37;
+        public static final int kClimbMotorID = 37; //37
 
         public static final double kClimbMaxVelocity = 90; // rps
         public static final double kClimbMaxAcceleration = 30; // rps^2
         public static final int kClimbCurrent_Limit = 120;   
         public static final double kClimb_Speed = 0.3; 
 
-        public static final double kClimb_kS = 0.01;
+        public static final double kClimb_kS = 0.05;
         public static final double kClimb_kV = 0.12;
         public static final double kClimb_kA = 0.01;
         public static final double kClimb_kP = 10;

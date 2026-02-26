@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 public class Climb extends SubsystemBase {
     private final TalonFX climbMotor;
     private final TalonFXConfiguration climbConfig;
-    MotionMagicVoltage m_request = new MotionMagicVoltage(5).withSlot(0);
+    MotionMagicVoltage m_request = new MotionMagicVoltage(0.0).withSlot(0);
 
     private ClimbState climbState;
 

@@ -222,7 +222,7 @@ public class Constants {
         public static final double intakeMaxVoltage = 5; // can change if not needed
         public static final double intakeMaxAcceleration = 200;
         public static final double intakeMaxVelocity = 500; // rps
-        public static final double intakeSpeed = 100.0; //rps max 66.6 rps
+        public static final double intakeSpeed = 120.0; //rps max 66.6 rps
     }
 
     public static class HingeConstants {
@@ -251,7 +251,7 @@ public class Constants {
 
         public static final double kClimbMaxVelocity = 90; // rps
         public static final double kClimbMaxAcceleration = 30; // rps^2
-        public static final int kClimbCurrent_Limit = 80;   
+        public static final int kClimbCurrent_Limit = 120;   
         public static final double kClimb_Speed = 0.3; 
 
         public static final double kClimb_kS = 0.01;
@@ -263,7 +263,7 @@ public class Constants {
         public static final double kClimb_kG = 0.12;
 
         public static final int kClimbUp = 80;
-        public static final int kClimbDown = 5;
+        public static final int kClimbDown = 0;
         public static final int kClimbHang = 60;
 
         public static final double kClimbGearRatio = 6.0 / 1.0;

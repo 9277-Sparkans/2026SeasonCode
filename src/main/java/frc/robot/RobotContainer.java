@@ -147,18 +147,18 @@ public class RobotContainer {
         joystick.start().and(joystick.povLeft()).whileTrue(shooter.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
         // CLIMB button controls
-        // joystick.y().onTrue(climb.climbUp());
-        // joystick.y().onFalse(climb.stopCommand());
-        // joystick.x().onTrue(climb.climbHang());
-        // joystick.x().onFalse(climb.stopCommand());
-        // joystick.a().onTrue(climb.climbDown());
-        // joystick.a().onFalse(climb.stopCommand());
-
-        joystick.a().onTrue(climb.runClimbCommand());
-        joystick.a().onFalse(climb.stopCommand());
-        
-        joystick.y().onTrue(climb.runClimbNegCommand());
+        joystick.y().onTrue(climb.climbUp());
         joystick.y().onFalse(climb.stopCommand());
+        joystick.x().onTrue(climb.climbHang());
+        joystick.x().onFalse(climb.stopCommand());
+        joystick.a().onTrue(climb.climbDown());
+        joystick.a().onFalse(climb.stopCommand());
+
+        // joystick.a().onTrue(climb.runClimbCommand());
+        // joystick.a().onFalse(climb.stopCommand());
+        
+        // joystick.y().onTrue(climb.runClimbNegCommand());
+        // joystick.y().onFalse(climb.stopCommand());
         
         // HOOD button controls
         joystick.povUp().whileTrue(Commands.runOnce(() -> hood.moveHoodToAngle(5)));
@@ -180,8 +180,6 @@ public class RobotContainer {
         // joystick.x().whileTrue(new TurretTracking((turret)));
         // joystick.x().onFalse(Commands.runOnce(() -> turret.stop(), turret));
 
-        // joystick.x().whileTrue(new LockMode(turret, shooter, hood));
-        joystick.x().onTrue(Commands.runOnce(() -> lockModeCommand.setLockState(LockMode.LockState.TRENCHLEFT), turret, hood, shooter));
 
         // SHOOTER button controls
         joystick.leftBumper().onTrue(Commands.runOnce(() -> shooter.decreaseSpeed()));
@@ -197,17 +195,17 @@ public class RobotContainer {
 
 
         // INTAKE button controls
-        joystick.y()
-            .whileTrue(
-                intake.intakeCommand())
-            .onFalse(
-                intake.stopRollerCommand());
+        // joystick.y()
+        //     .whileTrue(
+        //         intake.intakeCommand())
+        //     .onFalse(
+        //         intake.stopRollerCommand());
 
-        joystick.a()
-            .whileTrue(
-                intake.outtakeCommand())
-            .onFalse(
-                intake.stopRollerCommand());
+        // joystick.a()
+        //     .whileTrue(
+        //         intake.outtakeCommand())
+        //     .onFalse(
+        //         intake.stopRollerCommand());
 
 
         // HINGE button controls

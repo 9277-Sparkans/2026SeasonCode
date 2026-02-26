@@ -73,10 +73,12 @@ public class Indexer extends SubsystemBase {
   public void spin()
   {
     indexerMotor.set(IndexerConstants.kIndexerSpeed);
+    indexerOn = true;
   }
 
   public void stop() {
     indexerMotor.set(0);
+    indexerOn = false;
   }
 
   public void setVel() {

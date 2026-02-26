@@ -2,7 +2,6 @@ package frc.robot.commands;
 
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Intake;
@@ -28,7 +27,6 @@ public class AutoFire extends Command
 
     Supplier<ChassisSpeeds> speedsSupplier;
     Supplier<Pose2d> poseSupplier;
-    Supplier<Rotation2d> rotationSupplier;
     Lookup lookup;
 
     public AutoFire(Intake intake, Indexer indexer, Turret turret, Shooter shooter, Hood hood,
@@ -79,23 +77,27 @@ public class AutoFire extends Command
 
         // Get optimal shot
         double[] optimal = lookup.FindOptimalVals(targetDistance, transformedVelocityX, transformedVelocityY, shooterRPM, hoodAngle);
-        double optimalError = optimal[0];
-        double optimalTurretAngle = Utils.wrapAngle(targetDirectionDeg - rotation.getDegrees() - optimal[1]);
-        double optimalShooterRPM = optimal[2];
-        double optimalHoodAngle = optimal[3];
+        double optimalTurretAngle = Utils.wrapAngle(rotation.getDegrees() - targetDirectionDeg + optimal[0]);
+        double optimalShooterRPM = optimal[1];
+        double optimalHoodAngle = optimal[2];
+        double optimalError = optimal[3];
 
         turret.target = optimalTurretAngle;
-        // shooter.targetVel = optimalShooterRPM;
-        // hood.targetHoodAngle = optimalHoodAngle;
+        turret.defaultCommand();
+        shooter.targetVel = optimalShooterRPM;
+        shooter.setVel();
+        hood.targetHoodAngle = optimalHoodAngle;
 
+        // Debug Data
+        SmartDashboard.putNumber("AutoFire/HoodAngle", hoodAngle);
         SmartDashboard.putNumber("AutoFire/TargetDistance", targetDistance);
         SmartDashboard.putNumber("AutoFire/TargetDirection", targetDirectionDeg);
         SmartDashboard.putNumber("AutoFire/TransformedVelocityX", transformedVelocityX);
         SmartDashboard.putNumber("AutoFire/TransformedVelocityY", transformedVelocityY);
-        SmartDashboard.putNumber("AutoFire/optimalError", optimalError);
         SmartDashboard.putNumber("AutoFire/OptimalTurretAngle", optimalTurretAngle);
         SmartDashboard.putNumber("AutoFire/OptimalShooterRPM", optimalShooterRPM);
         SmartDashboard.putNumber("AutoFire/OptimalHoodAngle", optimalHoodAngle);
+        SmartDashboard.putNumber("AutoFire/OptimalError", optimalError);
 
         // Only start shooting if ready
         if (optimalError < Constants.ShooterConstants.maxShotError) {

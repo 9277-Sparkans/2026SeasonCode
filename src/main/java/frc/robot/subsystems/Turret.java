@@ -20,7 +20,7 @@ public class Turret extends SubsystemBase {
   private final TalonFXConfiguration turretMotorConfig;
   public double turretOffset = 0.0;
 
-  public double target;
+  public double target = 0.0;
 
   final MotionMagicVoltage m_request = new MotionMagicVoltage(0.0);
 
@@ -63,8 +63,6 @@ public class Turret extends SubsystemBase {
     turretMotor.getConfigurator().apply(turretMotorConfig);
 
     Telemetry.telemeterizeMotorWithPID("Turret", turretMotor, (108.0 / 15.0));
-
-    target = 0.0;
   }
 
   @Override

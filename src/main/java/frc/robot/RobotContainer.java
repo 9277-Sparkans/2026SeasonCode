@@ -170,8 +170,8 @@ public class RobotContainer {
         // CLIMB button controls
         joystick.y().onTrue(climb.climbUp());
         joystick.y().onFalse(climb.stopCommand());
-        joystick.x().onTrue(climb.climbHang());
-        joystick.x().onFalse(climb.stopCommand());
+        // joystick.x().onTrue(climb.climbHang());
+        // joystick.x().onFalse(climb.stopCommand());
         joystick.a().onTrue(climb.climbDown());
         joystick.a().onFalse(climb.stopCommand());
 

@@ -45,25 +45,22 @@ public class Constants {
         // 87777877ui00o831.00
         // NOTE: IDs here are 1-indexed as opposed to the keyboard firmware's 0-indexing
         // Add one to your ID or else you'll be binding to a completely different button
-        public static final int kKeyboard_modeToggle = 14;
+        public static final int kKeyboard_modeToggle = 5;
+        public static final int kKeyboard_trackToggle = 3;
 
-        public static final int kKeyboard_lockModeToggle = 8;
+        public static final int kKeyboard_lockModeToggle = 2;
+        public static final int kKeyboard_lockModeLeft = 11;
+        public static final int kKeyboard_lockModeRight = 12;
+        public static final int kKeyboard_lockModeCenter = 13;
+        public static final int kKeyboard_lockModeTrenchLeft = 8;
+        public static final int kKeyboard_lockModeTrenchRight = 15;
 
-        public static final int kKeyboard_climbUp = 6;
-        public static final int kKeyboard_climbDown = 10;
-        public static final int kKeyboard_climbHang = 11;
+        public static final int kKeyboard_climbUp = 7;
+        public static final int kKeyboard_climbDown = 9;
+        public static final int kKeyboard_climbHang = 7;
         
-        public static final int kKeyboard_fire = 15;
-        public static final int kKeyboard_shooterSpeedUp = 7;
-        public static final int kKeyboard_shooterSpeedDown = 8;
-
-        public static final int kKeyboard_intakeDeploy = 12;
-        public static final int kKeyboard_intakeRetract = 13;
-
-        public static final int kKeyboard_hoodUp = 2;
-        public static final int kKeyboard_hoodDown = 4;
-        public static final int kKeyboard_turretLeft = 3;
-        public static final int kKeyboard_turretRight = 5;
+        public static final int kKeyboard_intakeDeploy = 16;
+        public static final int kKeyboard_intakeRetract = 6;
 
         // Triggers [CONTROLLER ONLY]
         public static final int kController_leftBumper = 5;

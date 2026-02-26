@@ -244,19 +244,19 @@ public class RobotContainer {
             .onTrue(Commands.runOnce(() -> System.out.println("this will toggle lock mode!")));
 
         operator(OIConstants.kKeyboard_lockModeLeft)
-            .onTrue(Commands.runOnce(() -> lockModeCommand.setLockState(LockState.LEFT)));
+            .whileTrue(Commands.runOnce(() -> lockModeCommand.setLockState(LockState.LEFT), turret, shooter, hood));
 
         operator(OIConstants.kKeyboard_lockModeCenter)
-            .onTrue(Commands.runOnce(() -> lockModeCommand.setLockState(LockState.CENTER)));
+            .whileTrue(Commands.runOnce(() -> lockModeCommand.setLockState(LockState.CENTER), turret, shooter, hood));
 
         operator(OIConstants.kKeyboard_lockModeRight)
-            .onTrue(Commands.runOnce(() -> lockModeCommand.setLockState(LockState.RIGHT)));
+            .whileTrue(Commands.runOnce(() -> lockModeCommand.setLockState(LockState.RIGHT), turret, shooter, hood));
 
         operator(OIConstants.kKeyboard_lockModeTrenchLeft)
-            .onTrue(Commands.runOnce(() -> lockModeCommand.setLockState(LockState.TRENCHLEFT)));
+            .whileTrue(Commands.runOnce(() -> lockModeCommand.setLockState(LockState.TRENCHLEFT), turret, shooter, hood));
 
         operator(OIConstants.kKeyboard_lockModeTrenchRight)
-            .onTrue(Commands.runOnce(() -> lockModeCommand.setLockState(LockState.TRENCHRIGHT)));
+            .whileTrue(Commands.runOnce(() -> lockModeCommand.setLockState(LockState.TRENCHRIGHT), turret, shooter, hood));
 
         operator(OIConstants.kKeyboard_climbUp)
             .onTrue(climb.climbUp());

@@ -6,7 +6,7 @@ public class Constants {
         public static final boolean manipulatorsEnabled = true;
         public static final boolean autoControlsEnabled = true;
         
-        public static final ControlTypes controlType = ControlTypes.DRIVER_STICKS;
+        public static final ControlTypes controlType = ControlTypes.DRIVER_CONTROLLER;
         public static enum ControlTypes {
             DEV,
             DRIVER_STICKS,
@@ -50,8 +50,8 @@ public class Constants {
 
         public static final int kKeyboard_lockModeToggle = 2;
         public static final int kKeyboard_lockModeLeft = 11;
-        public static final int kKeyboard_lockModeRight = 12;
-        public static final int kKeyboard_lockModeCenter = 13;
+        public static final int kKeyboard_lockModeRight = 13;
+        public static final int kKeyboard_lockModeCenter = 12;
         public static final int kKeyboard_lockModeTrenchLeft = 8;
         public static final int kKeyboard_lockModeTrenchRight = 15;
 

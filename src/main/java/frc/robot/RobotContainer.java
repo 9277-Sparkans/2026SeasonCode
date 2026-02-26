@@ -137,6 +137,8 @@ public class RobotContainer {
     
         // reset the field-centric heading on left bumper press
         joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        // joystick.().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+
 
         joystick.start().and(joystick.povUp()).whileTrue(shooter.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
         joystick.start().and(joystick.povDown()).whileTrue(shooter.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
@@ -226,7 +228,7 @@ public class RobotContainer {
 
         // for flight sticks controls, go to this https://gpadtester.com/ and put the button id +1 (so button 1 would actually be button 2 on here)
         // rotateStick.button(3).whileTrue(AutoAlignCommand.getAutoAlignCommand(drivetrain));
-        // translateStick.button(2).toggleOnTrue(new TurretTracking(turret));
+        translateStick.button(2).toggleOnTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
     }
 
     private void configureOperatorConsole() {

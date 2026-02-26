@@ -6,7 +6,7 @@ public class Constants {
         public static final boolean manipulatorsEnabled = true;
         public static final boolean autoControlsEnabled = true;
         
-        public static final ControlTypes controlType = ControlTypes.DRIVER_CONTROLLER;
+        public static final ControlTypes controlType = ControlTypes.DRIVER_STICKS;
         public static enum ControlTypes {
             DEV,
             DRIVER_STICKS,

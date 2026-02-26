@@ -39,6 +39,7 @@ import frc.robot.Utils.Lookup;
 import frc.robot.commands.AutoFire;
 import frc.robot.commands.LockMode;
 import frc.robot.commands.TurretTracking;
+import frc.robot.commands.LockMode.LockState;
 import frc.robot.subsystems.Transfer;
 import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Hinge;
@@ -240,17 +241,22 @@ public class RobotContainer {
             .onTrue(Commands.runOnce(() -> manualControl = !manualControl));
 
         operator(OIConstants.kKeyboard_lockModeToggle)
-            .onTrue(Commands.runOnce(() -> lockModeCommand.setLockState(LockMode.LockState.TRENCHLEFT)));
-        
-        operator(OIConstants.kKeyboard_fire)
-            .onTrue(Commands.either(
-                Commands.parallel(
-                    transfer.toggleTransferCommand(),
-                    indexer.toggleIndexer()
-                ),
-                autoFireCommand,
-                () -> manualControl
-            ));
+            .onTrue(Commands.runOnce(() -> System.out.println("this will toggle lock mode!")));
+
+        operator(OIConstants.kKeyboard_lockModeLeft)
+            .onTrue(Commands.runOnce(() -> lockModeCommand.setLockState(LockState.LEFT)));
+
+        operator(OIConstants.kKeyboard_lockModeCenter)
+            .onTrue(Commands.runOnce(() -> lockModeCommand.setLockState(LockState.CENTER)));
+
+        operator(OIConstants.kKeyboard_lockModeRight)
+            .onTrue(Commands.runOnce(() -> lockModeCommand.setLockState(LockState.RIGHT)));
+
+        operator(OIConstants.kKeyboard_lockModeTrenchLeft)
+            .onTrue(Commands.runOnce(() -> lockModeCommand.setLockState(LockState.TRENCHLEFT)));
+
+        operator(OIConstants.kKeyboard_lockModeTrenchRight)
+            .onTrue(Commands.runOnce(() -> lockModeCommand.setLockState(LockState.TRENCHRIGHT)));
 
         operator(OIConstants.kKeyboard_climbUp)
             .onTrue(climb.climbUp());
@@ -260,20 +266,6 @@ public class RobotContainer {
 
         operator(OIConstants.kKeyboard_climbDown)
             .onTrue(climb.climbDown());
-        
-        operator(OIConstants.kKeyboard_shooterSpeedUp)
-            .onTrue(Commands.runOnce(() -> {
-                if (manualControl) {
-                    shooter.increaseSpeed();
-                }
-            }));
-
-        operator(OIConstants.kKeyboard_shooterSpeedDown)
-            .onTrue(Commands.runOnce(() -> {
-                if (manualControl) {
-                    shooter.decreaseSpeed();
-                }
-            }));
 
         operator(OIConstants.kKeyboard_intakeDeploy)
             .onTrue(hinge.hingeDown())
@@ -282,35 +274,6 @@ public class RobotContainer {
         operator(OIConstants.kKeyboard_intakeRetract)
             .onTrue(hinge.hingeUp())
             .onFalse(hinge.hingeStopCommand());
-        
-        operator(OIConstants.kKeyboard_hoodUp)
-            .onTrue(Commands.either(
-                Commands.runOnce(() -> { hood.runHood(); System.out.println("MANUAL!!! WOO"); }),
-                Commands.none(),
-                () -> manualControl
-            ));
-
-        operator(OIConstants.kKeyboard_hoodDown)
-            .onTrue(Commands.either(
-                Commands.runOnce(() -> hood.runHoodReverse()),
-                Commands.none(),
-                () -> manualControl
-            ));
-
-
-        operator(OIConstants.kKeyboard_turretLeft)
-            .onTrue(Commands.either(
-                turret.turretNeg(),
-                Commands.none(),
-                () -> manualControl
-            ));
-
-        operator(OIConstants.kKeyboard_turretRight)
-            .onTrue(Commands.either(
-                turret.turretPos(),
-                Commands.none(),
-                () -> manualControl
-            ));
     }
 
     public JoystickButton operator(int keyCode) {

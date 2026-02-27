@@ -7,31 +7,37 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Start 3"
+            "pathName": "Start 1.3"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.5
+            "waitTime": 1.5
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": null
+            "pathName": "Neutral Zone2 1.3"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 7.0
+            "waitTime": 5.0
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "NZ Return 2C"
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "S3",
+  "folder": "S1",
   "choreoAuto": false
 }

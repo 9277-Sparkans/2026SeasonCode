@@ -7,31 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Start 3"
+            "pathName": "Start 2.2"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.5
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": null
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 7.0
+            "waitTime": 1.0
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "S3",
+  "folder": "S2",
   "choreoAuto": false
 }

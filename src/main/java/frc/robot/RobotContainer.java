@@ -137,26 +137,27 @@ public class RobotContainer {
                                 Commands.sequence(
                                                 climb.climbUp(),
                                                 AutoAlignCommand.getAutoAlignCommand(drivetrain),
-                                                Commands.waitSeconds(1.5), // Temporary wait before hanging, tune as
-                                                                           // needed
+                                                Commands.waitSeconds(1.5), // Tune: time for hang arm to settle before
+                                                                           // hanging
                                                 climb.climbHang(),
-                                                Commands.waitSeconds(1.5), // Wait for hang to stabilize
+                                                Commands.waitSeconds(1.5), // Tune: time for robot to stabilize on bar
                                                 Commands.race(
                                                                 new LockMode(turret, shooter, hood).withLockState(
                                                                                 LockMode.LockState.CENTER),
                                                                 Commands.sequence(
-                                                                                Commands.waitSeconds(1.0), // Allow time
+                                                                                Commands.waitSeconds(1.0), // Tune: time
                                                                                                            // for
-                                                                                                           // targets to
-                                                                                                           // reach
+                                                                                                           // shooter/turret/hood
+                                                                                                           // to reach
                                                                                                            // setpoints
                                                                                 Commands.parallel(
-                                                                                                transfer.toggleTransferCommand(),
-                                                                                                indexer.toggleIndexer()),
-                                                                                Commands.waitSeconds(2.0) // Keep lock
-                                                                                                          // mode active
-                                                                                                          // while
-                                                                                                          // shooting
+                                                                                                transfer.runTransferCommand(),
+                                                                                                indexer.runIndexerCommand()),
+                                                                                Commands.waitSeconds(2.0) // Tune:
+                                                                                                          // duration to
+                                                                                                          // feed balls
+                                                                                                          // into
+                                                                                                          // shooter
                                                                 ))));
                 rotateStick.button(1).onTrue(climb.climbUp());
 

@@ -88,9 +88,8 @@ public class LockMode extends Command {
 
     @Override
     public void end(boolean interrupted) {
+        shooter.targetVel = 0;
         // hood.stopHood();
-        // shooter.targetVel = 0;
-        // shooter.fireAtRpm();
     }
 
     @Override

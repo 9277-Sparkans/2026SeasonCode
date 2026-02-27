@@ -9,13 +9,10 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Telemetry;
 import frc.robot.Constants.TransferConstants;;
 
-
-public class Transfer extends SubsystemBase
-{
+public class Transfer extends SubsystemBase {
     private final TalonFX transferMotor;
     private final TalonFXConfiguration transferMotorConfig;
     final VelocityVoltage m_request = new VelocityVoltage(0).withSlot(0);
-
 
     public boolean transferOn = false;
 
@@ -42,7 +39,6 @@ public class Transfer extends SubsystemBase
         Telemetry.telemeterizeMotor("Transfer", transferMotor);
     }
 
-    
     @Override
     public void periodic() {
         // activateTransfer();
@@ -50,6 +46,11 @@ public class Transfer extends SubsystemBase
 
     public Command toggleTransferCommand() {
         return Commands.runOnce(() -> toggleTransfer());
+    }
+
+    /** Reliably runs the transfer for the duration of the command, then stops. */
+    public Command runTransferCommand() {
+        return Commands.startEnd(() -> activateTransfer(), () -> stop(), this);
     }
 
     public void toggleTransfer() {
@@ -62,10 +63,9 @@ public class Transfer extends SubsystemBase
         }
     }
 
-
-    public void activateTransfer()
-    {
-        double tgt = (TransferConstants.kTargetTransferRps / TransferConstants.kTransferGearRatio); // convert to rpm at motor   
+    public void activateTransfer() {
+        double tgt = (TransferConstants.kTargetTransferRps / TransferConstants.kTransferGearRatio); // convert to rpm at
+                                                                                                    // motor
         transferMotor.setControl(m_request.withVelocity(tgt));
     }
 

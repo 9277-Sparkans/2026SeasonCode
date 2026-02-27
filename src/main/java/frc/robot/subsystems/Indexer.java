@@ -61,6 +61,11 @@ public class Indexer extends SubsystemBase {
     return Commands.runOnce(() -> toggle());
   }
 
+  /** Reliably runs the indexer for the duration of the command, then stops. */
+  public Command runIndexerCommand() {
+    return Commands.startEnd(() -> setVel(), () -> stop(), this);
+  }
+
   public void toggle() {
     indexerOn = !indexerOn;
     if (indexerOn) {

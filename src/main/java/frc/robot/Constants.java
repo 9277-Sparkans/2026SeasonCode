@@ -258,7 +258,7 @@ public class Constants {
         public static final int kClimbCurrent_Limit = 80;
         public static final double kClimb_Speed = 0.3;
 
-        public static final double kClimb_kS = 0.01;
+        public static final double kClimb_kS = 0.05;
         public static final double kClimb_kV = 0.12;
         public static final double kClimb_kA = 0.01;
         public static final double kClimb_kP = 10;
@@ -331,6 +331,11 @@ public class Constants {
                 HUB_X, HUB_Y, 1.4); // 1.4m height approx
         public static final edu.wpi.first.math.geometry.Translation3d HUB_RED = new edu.wpi.first.math.geometry.Translation3d(
                 16.541 - HUB_X, HUB_Y, 1.4);
+    }
+
+    public static final class CanBusConstants {
+        // setting the canivore
+        public static final String kCANivore = "DriveTrain";
     }
 
     public static final class LockModeConstants {

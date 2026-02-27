@@ -130,7 +130,8 @@ public class RobotContainer {
 
                 // run proper trench path on right bumper based on current pose
                 // joystick buttons for sticks mode
-                translateStick.button(4).whileTrue(AutoAlignCommand.getTrenchCommand(drivetrain));
+                translateStick.button(4).whileTrue(AutoAlignCommand.getAutoAlignCommand(drivetrain));
+                translateStick.button(2).onTrue(shooter.shooterStop());
 
                 // Climb up, autoalign, climb hang, lock mode center and shoot
                 rotateStick.button(4).onTrue(
@@ -195,6 +196,7 @@ public class RobotContainer {
                 // new FuelChaseCommand(
                 // 25, camera0.getCamera(), drivetrain, // Change to the camera that will
                 // // chase fuel once
+
                 // // we get the fuel pose
                 // // calculations working!!
                 // drivetrain::getPose3d, VisionConstants.robotToCamera0),

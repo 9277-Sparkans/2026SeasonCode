@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 public class AutoFire extends Command 
 {
-    Intake intake;
     Indexer indexer;
     Turret turret;
     Shooter shooter;
@@ -31,15 +30,14 @@ public class AutoFire extends Command
     Supplier<Rotation2d> rotationSupplier;
     Lookup lookup;
 
-    public AutoFire(Intake intake, Indexer indexer, Turret turret, Shooter shooter, Hood hood,
+    public AutoFire(Indexer indexer, Turret turret, Shooter shooter, Hood hood,
                     Supplier<ChassisSpeeds> speedsSupplier, Supplier<Pose2d> poseSupplier, Lookup lookup) {
-        this.intake = intake;
         this.indexer = indexer;
         this.turret = turret;
         this.shooter = shooter;
         this.hood = hood;
 
-        addRequirements(intake, indexer, turret, shooter, hood);
+        addRequirements(indexer, turret, shooter, hood);
 
         this.speedsSupplier = speedsSupplier;
         this.poseSupplier = poseSupplier;
@@ -80,13 +78,14 @@ public class AutoFire extends Command
         // Get optimal shot
         double[] optimal = lookup.FindOptimalVals(targetDistance, transformedVelocityX, transformedVelocityY, shooterRPM, hoodAngle);
         double optimalError = optimal[0];
-        double optimalTurretAngle = Utils.wrapAngle(targetDirectionDeg - rotation.getDegrees() - optimal[1]);
+        double optimalTurretAngle = Utils.wrapAngle(rotation.getDegrees() - targetDirectionDeg + optimal[1]);
         double optimalShooterRPM = optimal[2];
         double optimalHoodAngle = optimal[3];
 
         turret.target = optimalTurretAngle;
-        // shooter.targetVel = optimalShooterRPM;
-        // hood.targetHoodAngle = optimalHoodAngle;
+        turret.defaultCommand();
+        shooter.targetVel = optimalShooterRPM;
+        hood.targetHoodAngle = optimalHoodAngle;
 
         SmartDashboard.putNumber("AutoFire/TargetDistance", targetDistance);
         SmartDashboard.putNumber("AutoFire/TargetDirection", targetDirectionDeg);

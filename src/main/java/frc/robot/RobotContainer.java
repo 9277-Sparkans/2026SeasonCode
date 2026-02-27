@@ -239,7 +239,7 @@ public class RobotContainer {
         
         // Indexer button controls
         joystick.b().onTrue(indexer.toggleIndexer()); 
-        joystick.x().whileTrue(new AutoFire(intake, indexer, turret, shooter, hood, () -> drivetrain.getStateCopy().Speeds, () -> drivetrain.getStateCopy().Pose, lookup));
+        joystick.x().whileTrue(new AutoFire(indexer, turret, shooter, hood, () -> drivetrain.getStateCopy().Speeds, () -> drivetrain.getStateCopy().Pose, lookup));
 
         configureOperatorConsole();
 
@@ -260,16 +260,6 @@ public class RobotContainer {
 
         operator(OIConstants.kKeyboard_lockModeToggle)
             .onTrue(Commands.runOnce(() -> System.out.println("Lock toggle")));
-        
-        operator(OIConstants.kKeyboard_fire)
-            .onTrue(Commands.either(
-                Commands.parallel(
-                    transfer.toggleTransferCommand(),
-                    indexer.toggleIndexer()
-                ),
-                new AutoFire(intake, indexer, turret, shooter, hood, () -> drivetrain.getStateCopy().Speeds, () -> drivetrain.getStateCopy().Pose, lookup),
-                () -> manualControl
-            ));
 
         operator(OIConstants.kKeyboard_climbUp)
             .onTrue(climb.climbUp());

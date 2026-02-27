@@ -192,10 +192,9 @@ public class Constants {
         public static final double maxShotError = 1.0; // The maximum allowed error for a shot to occur
         
         // Weights of each value when calculating an optimal shot, higher value means higher priority to minimize
-        public static final double botXVelocityWeight = 1.0;
-        public static final double botYVelocityWeight = 1.0;
-        public static final double shooterRPMWeight = 1.0;
-        public static final double hoodAngleWeight = 1.0;
+        public static final double botVelocityWeight = 1.0;
+        public static final double shooterRPMWeight = 0.0;
+        public static final double hoodAngleWeight = 0.0;
     }
 
     public static class HoodConstants

@@ -128,8 +128,8 @@ public class Utils {
                 double normalizedRowShooterRPM = (row[2] - Constants.ShooterConstants.kMinRPM) / shooterRPMRange;
                 double normalizedRowAngle = (row[3] - Constants.HoodConstants.kMinimumAngle) / hoodAngleRange;
 
-                double weight = Constants.ShooterConstants.botXVelocityWeight * (normalizedRowBotXVelocity - normalizedCurrentXVelocity)  * (normalizedRowBotXVelocity - normalizedCurrentXVelocity)
-                              + Constants.ShooterConstants.botYVelocityWeight * (normalizedRowBotYVelocity - normalizedCurrentYVelocity) * (normalizedRowBotYVelocity - normalizedCurrentYVelocity)
+                double weight = Constants.ShooterConstants.botVelocityWeight * (normalizedRowBotXVelocity - normalizedCurrentXVelocity)  * (normalizedRowBotXVelocity - normalizedCurrentXVelocity)
+                              + Constants.ShooterConstants.botVelocityWeight * (normalizedRowBotYVelocity - normalizedCurrentYVelocity) * (normalizedRowBotYVelocity - normalizedCurrentYVelocity)
                               + Constants.ShooterConstants.shooterRPMWeight * (normalizedRowShooterRPM - normalizedCurrentShooterRPM) * (normalizedRowShooterRPM - normalizedCurrentShooterRPM)
                               + Constants.ShooterConstants.hoodAngleWeight * (normalizedRowAngle - normalizedCurrentHoodAngle) * (normalizedRowAngle - normalizedCurrentHoodAngle);
                 if (weight < minimumWeight) {
@@ -138,7 +138,7 @@ public class Utils {
                 }
             }
 
-            double optimalWeight = minimumWeight / (Constants.ShooterConstants.botXVelocityWeight + Constants.ShooterConstants.botYVelocityWeight + Constants.ShooterConstants.shooterRPMWeight + Constants.ShooterConstants.hoodAngleWeight);
+            double optimalWeight = minimumWeight / (2.0 * Constants.ShooterConstants.botVelocityWeight + Constants.ShooterConstants.shooterRPMWeight + Constants.ShooterConstants.hoodAngleWeight);
             double optimalTurretOffset = hits.get(minimumI)[1];
             double optimalShooterRPM = vals.get(minimumI)[2];
             double optimalHoodAngle = vals.get(minimumI)[3];

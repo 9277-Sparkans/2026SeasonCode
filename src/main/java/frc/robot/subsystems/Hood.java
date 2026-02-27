@@ -126,7 +126,7 @@ public class Hood extends SubsystemBase {
   }
 
   public Command moveToTargetAngle() {
-    return Commands.runOnce(() -> moveHoodToAngle(5.0), this);
+    return Commands.runOnce(() -> moveHoodToAngle(targetHoodAngle), this);
   }
 
   @Override

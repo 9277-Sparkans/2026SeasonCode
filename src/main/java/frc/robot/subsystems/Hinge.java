@@ -18,7 +18,7 @@ public class Hinge extends SubsystemBase{
     private final TalonFX hinge;
     private final TalonFXConfiguration hingeConfig;
 
-    MotionMagicVoltage m_request = new MotionMagicVoltage(0.0).withSlot(0);
+    MotionMagicVoltage m_request = new MotionMagicVoltage(-150.0).withSlot(0);
 
     double target;
 
@@ -69,7 +69,7 @@ public class Hinge extends SubsystemBase{
     
     @Override
     public void periodic() {
-        // System.out.println("hingePos is " + getPosition());
+        System.out.println("hingePos is " + getPosition());
     }
 
     public double getPosition() {
@@ -82,12 +82,12 @@ public class Hinge extends SubsystemBase{
         setState(state);
         switch (state) {
             case UP:
-                // hinge.setControl(m_request.withPosition(degToRotations(0.0)));
-                target = 0.0;
+                hinge.setControl(m_request.withPosition(degToRotations(-150.0)));
+                // target = 0.0;
                 break;
              case DOWN:
-                // hinge.setControl(m_request.withPosition(degToRotations(100.0)));
-                target = 110.0;
+                hinge.setControl(m_request.withPosition(degToRotations(0.0)));
+                // target = 110.0;
                 break;
 
         }
@@ -125,13 +125,13 @@ public class Hinge extends SubsystemBase{
         });
     }
 
-    public void defaultCommand() {
-    // System.out.println("target is " + target);
-    hinge.setControl(m_request.withPosition(degToRotations(target)));
-  }
+//     public void defaultCommand() {
+//     // System.out.println("target is " + target);
+//     hinge.setControl(m_request.withPosition(degToRotations(target)));
+//   }
 
-    public Command initDefaultCommand(Hinge hinge) {
-        return Commands.runOnce(() -> defaultCommand(), this);
-    }
+    // public Command initDefaultCommand(Hinge hinge) {
+    //     return Commands.runOnce(() -> defaultCommand(), this);
+    // }
 
 }

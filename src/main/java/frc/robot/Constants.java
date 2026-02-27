@@ -227,7 +227,7 @@ public class Constants {
 
     public static class HingeConstants {
 
-        public static final int kHingeMotorId = 39;
+        public static final int kHingeMotorId = 39; //39
 
         public static final double hinge_kS = 0.24;        
         public static final double hinge_kP = 10.0;
@@ -235,12 +235,12 @@ public class Constants {
         public static final double hinge_kD = 0.1;
         public static final double hinge_kV = 0.12;
         public static final double hinge_kG = 0.7; //0.25
-        public static final double hingeMaxAcceleration = 10;
-        public static final double hingeMaxVelocity = 20; // rps
-        public static final double kHingeCurrentLimit = 80;
+        public static final double hingeMaxAcceleration = 20.0;
+        public static final double hingeMaxVelocity = 20.0; // rps
+        public static final double kHingeCurrentLimit = 100;
 
         public static final int hingeCountsPerRevolution = 2048; // for kraken x60
-        public static final double hingeGearRatio = 12.0 / 24.0;
+        public static final double hingeGearRatio = 2.0 / 1.0;
 
         public static final double hingeMaxDeg = 50.0; //-100.0;
     }
@@ -256,8 +256,8 @@ public class Constants {
 
         public static final double kClimb_kS = 0.05;
         public static final double kClimb_kV = 0.12;
-        public static final double kClimb_kA = 0.01;
-        public static final double kClimb_kP = 10;
+        public static final double kClimb_kA = 0.05;
+        public static final double kClimb_kP = 9.0;
         public static final double kClimb_kI = 0;
         public static final double kClimb_kD = 0.1;
         public static final double kClimb_kG = 0.12;

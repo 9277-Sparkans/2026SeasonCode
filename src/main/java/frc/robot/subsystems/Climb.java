@@ -33,6 +33,8 @@ public class Climb extends SubsystemBase {
         climbMotor = new TalonFX(Constants.ClimbConstants.kClimbMotorID, Constants.CanBusConstants.kCANivore);
         climbConfig = new TalonFXConfiguration();
 
+        climbMotor.setPosition(0.0);
+
         /* PID */
         climbConfig.Slot0.kP = ClimbConstants.kClimb_kP;
         climbConfig.Slot0.kI = ClimbConstants.kClimb_kI;

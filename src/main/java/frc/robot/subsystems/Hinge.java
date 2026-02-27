@@ -37,6 +37,8 @@ public class Hinge extends SubsystemBase{
         hinge = new TalonFX(Constants.HingeConstants.kHingeMotorId);
 		hingeConfig = new TalonFXConfiguration();
 
+        hinge.setPosition(0.0);
+        
         hingeConfig.CurrentLimits.StatorCurrentLimit = HingeConstants.kHingeCurrentLimit;
         hingeConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
@@ -82,11 +84,11 @@ public class Hinge extends SubsystemBase{
         setState(state);
         switch (state) {
             case UP:
-                hinge.setControl(m_request.withPosition(degToRotations(-150.0)));
+                hinge.setControl(m_request.withPosition(degToRotations(0.0)));
                 // target = 0.0;
                 break;
              case DOWN:
-                hinge.setControl(m_request.withPosition(degToRotations(0.0)));
+                hinge.setControl(m_request.withPosition(degToRotations(150.0)));
                 // target = 110.0;
                 break;
 

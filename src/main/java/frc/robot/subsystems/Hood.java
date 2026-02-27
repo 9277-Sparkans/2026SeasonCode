@@ -62,6 +62,8 @@ public class Hood extends SubsystemBase {
     hoodCurrent.StatorCurrentLimitEnable = true;
     hoodMotor.getConfigurator().apply(hoodCurrent);
 
+    hoodMotor.setPosition(0.0);
+
     // PID + Gravity
     hoodMotorConfiguration.Slot0.kG = HoodConstants.hood_kG;
     hoodMotorConfiguration.Slot0.kS = HoodConstants.hood_kS;

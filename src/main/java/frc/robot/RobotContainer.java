@@ -234,7 +234,7 @@ public class RobotContainer {
         
         // Indexer button controls
         joystick.b().onTrue(indexer.toggleIndexer()); 
-        joystick.x().whileTrue(new AutoFire(intake, indexer, turret, shooter, hood, () -> drivetrain.getStateCopy().Speeds, () -> drivetrain.getStateCopy().Pose, lookup));
+        joystick.x().whileTrue(new AutoFire(indexer, turret, shooter, hood, () -> drivetrain.getStateCopy().Speeds, () -> drivetrain.getStateCopy().Pose, lookup));
 
         configureOperatorConsole();
 

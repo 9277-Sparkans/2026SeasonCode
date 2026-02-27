@@ -4,7 +4,6 @@ import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Indexer;
-import frc.robot.subsystems.Intake;
 import frc.robot.Constants;
 import frc.robot.Utils;
 import frc.robot.Utils.Lookup;
@@ -19,7 +18,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 public class AutoFire extends Command 
 {
-    Intake intake;
     Indexer indexer;
     Turret turret;
     Shooter shooter;
@@ -29,15 +27,14 @@ public class AutoFire extends Command
     Supplier<Pose2d> poseSupplier;
     Lookup lookup;
 
-    public AutoFire(Intake intake, Indexer indexer, Turret turret, Shooter shooter, Hood hood,
+    public AutoFire(Indexer indexer, Turret turret, Shooter shooter, Hood hood,
                     Supplier<ChassisSpeeds> speedsSupplier, Supplier<Pose2d> poseSupplier, Lookup lookup) {
-        this.intake = intake;
         this.indexer = indexer;
         this.turret = turret;
         this.shooter = shooter;
         this.hood = hood;
 
-        addRequirements(intake, indexer, turret, shooter, hood);
+        addRequirements(indexer, turret, shooter, hood);
 
         this.speedsSupplier = speedsSupplier;
         this.poseSupplier = poseSupplier;

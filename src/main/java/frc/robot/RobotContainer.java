@@ -85,6 +85,7 @@ public class RobotContainer {
     public RobotContainer() {
 
         turret.setDefaultCommand(turret.initDefaultCommand(turret));
+        hinge.setDefaultCommand(hinge.initDefaultCommand(hinge));
 
         NamedCommands.registerCommand("testNamedCommand", Commands.runOnce(() -> System.out.println("this named command works")));
 
@@ -147,12 +148,12 @@ public class RobotContainer {
         joystick.start().and(joystick.povLeft()).whileTrue(shooter.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
         // CLIMB button controls
-        joystick.y().onTrue(climb.climbUp());
-        joystick.y().onFalse(climb.stopCommand());
-        joystick.x().onTrue(climb.climbHang());
-        joystick.x().onFalse(climb.stopCommand());
-        joystick.a().onTrue(climb.climbDown());
-        joystick.a().onFalse(climb.stopCommand());
+        // joystick.y().onTrue(climb.climbUp());
+        // joystick.y().onFalse(climb.stopCommand());
+        // joystick.x().onTrue(climb.climbHang());
+        // joystick.x().onFalse(climb.stopCommand());
+        // joystick.a().onTrue(climb.climbDown());
+        // joystick.a().onFalse(climb.stopCommand());
 
         // joystick.a().onTrue(climb.runClimbCommand());
         // joystick.a().onFalse(climb.stopCommand());
@@ -180,6 +181,7 @@ public class RobotContainer {
         // joystick.x().whileTrue(new TurretTracking((turret)));
         // joystick.x().onFalse(Commands.runOnce(() -> turret.stop(), turret));
 
+        joystick.x().whileTrue(Commands.runOnce(() -> lockModeCommand.setLockState(LockState.TRENCHLEFT), turret, shooter, hood));
 
         // SHOOTER button controls
         joystick.leftBumper().onTrue(Commands.runOnce(() -> shooter.decreaseSpeed()));
@@ -195,17 +197,17 @@ public class RobotContainer {
 
 
         // INTAKE button controls
-        // joystick.y()
-        //     .whileTrue(
-        //         intake.intakeCommand())
-        //     .onFalse(
-        //         intake.stopRollerCommand());
+        joystick.y()
+            .whileTrue(
+                intake.intakeCommand())
+            .onFalse(
+                intake.stopRollerCommand());
 
-        // joystick.a()
-        //     .whileTrue(
-        //         intake.outtakeCommand())
-        //     .onFalse(
-        //         intake.stopRollerCommand());
+        joystick.a()
+            .whileTrue(
+                intake.outtakeCommand())
+            .onFalse(
+                intake.stopRollerCommand());
 
 
         // HINGE button controls
@@ -228,6 +230,13 @@ public class RobotContainer {
         // for flight sticks controls, go to this https://gpadtester.com/ and put the button id +1 (so button 1 would actually be button 2 on here)
         // rotateStick.button(3).whileTrue(AutoAlignCommand.getAutoAlignCommand(drivetrain));
         translateStick.button(2).toggleOnTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        translateStick.button(1).onTrue(Commands.runOnce(() -> transfer.toggleTransfer()));
+        translateStick.button(1).onTrue(indexer.toggleIndexer()); 
+        rotateStick.button(1).onTrue(intake.outtakeCommand()); 
+        rotateStick.button(1).onFalse(intake.stopRollerCommand()); 
+        rotateStick.button(2).onFalse(intake.stopRollerCommand()); 
+        rotateStick.button(2).onTrue(intake.intakeCommand()); 
+
     }
 
     private void configureOperatorConsole() {

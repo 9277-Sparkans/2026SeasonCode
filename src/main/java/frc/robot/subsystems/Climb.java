@@ -17,6 +17,10 @@ public class Climb extends SubsystemBase {
 
     private ClimbState climbState;
 
+    private double inchesToRotations(double inches){
+		return (inches / 0.1) * Constants.ClimbConstants.kClimbGearRatio;
+	}
+
     public enum ClimbState {
         DOWN,
         UP,

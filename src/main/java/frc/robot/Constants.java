@@ -220,9 +220,9 @@ public class Constants {
         public static final double intake_kD = 0.0;
 
         public static final double intakeMaxVoltage = 5; // can change if not needed
-        public static final double intakeMaxAcceleration = 200;
+        public static final double intakeMaxAcceleration = 500;
         public static final double intakeMaxVelocity = 500; // rps
-        public static final double intakeSpeed = 120.0; //rps max 66.6 rps
+        public static final double intakeSpeed = 300.0; //rps max 66.6 rps
     }
 
     public static class HingeConstants {
@@ -240,7 +240,7 @@ public class Constants {
         public static final double kHingeCurrentLimit = 80;
 
         public static final int hingeCountsPerRevolution = 2048; // for kraken x60
-        public static final double hingeGearRatio = 45.0 / 1.0;
+        public static final double hingeGearRatio = 12.0 / 24.0;
 
         public static final double hingeMaxDeg = 50.0; //-100.0;
     }
@@ -262,9 +262,9 @@ public class Constants {
         public static final double kClimb_kD = 0.1;
         public static final double kClimb_kG = 0.12;
 
-        public static final int kClimbUp = 130;
-        public static final int kClimbDown = 5;
-        public static final int kClimbHang = 80;
+        public static final int kClimbUp = 80;
+        public static final int kClimbDown = 0;
+        public static final int kClimbHang = 20;
 
         public static final double kClimbGearRatio = 6.0 / 1.0;
     }

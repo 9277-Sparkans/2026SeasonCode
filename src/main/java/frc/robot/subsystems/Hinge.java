@@ -1,6 +1,7 @@
 package frc.robot.subsystems;
 import frc.robot.Constants;
 import frc.robot.Constants.HingeConstants;
+import frc.robot.Constants.TurretConstants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -18,6 +19,8 @@ public class Hinge extends SubsystemBase{
     private final TalonFXConfiguration hingeConfig;
 
     MotionMagicVoltage m_request = new MotionMagicVoltage(0.0).withSlot(0);
+
+    double target;
 
     private double degToRotations(double degrees){
 		return (degrees / 360.0) * Constants.HingeConstants.hingeGearRatio;
@@ -51,6 +54,8 @@ public class Hinge extends SubsystemBase{
 
         hinge.getConfigurator().apply(hingeConfig);
 
+        target = 0.0;
+
     }
 
     public void setState(HingeState state) {
@@ -77,10 +82,12 @@ public class Hinge extends SubsystemBase{
         setState(state);
         switch (state) {
             case UP:
-                hinge.setControl(m_request.withPosition(degToRotations(-200.0)));
+                // hinge.setControl(m_request.withPosition(degToRotations(0.0)));
+                target = 0.0;
                 break;
              case DOWN:
-                hinge.setControl(m_request.withPosition(degToRotations(-100.0)));
+                // hinge.setControl(m_request.withPosition(degToRotations(100.0)));
+                target = 110.0;
                 break;
 
         }
@@ -116,6 +123,15 @@ public class Hinge extends SubsystemBase{
         return Commands.runOnce(() -> {
             hinge.set(0.0);
         });
+    }
+
+    public void defaultCommand() {
+    // System.out.println("target is " + target);
+    hinge.setControl(m_request.withPosition(degToRotations(target)));
+  }
+
+    public Command initDefaultCommand(Hinge hinge) {
+        return Commands.runOnce(() -> defaultCommand(), this);
     }
 
 }

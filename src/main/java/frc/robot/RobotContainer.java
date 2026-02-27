@@ -151,26 +151,8 @@ public class RobotContainer {
                                                 AutoAlignCommand.getAutoAlignCommand(drivetrain),
                                                 Commands.waitSeconds(1.5), // Tune: time for hang arm to settle before
                                                                            // hanging
-                                                climb.climbHang(),
-                                                Commands.waitSeconds(1.5), // Tune: time for robot to stabilize on bar
-                                                Commands.race(
-                                                                new LockMode(turret, shooter, hood).withLockState(
-                                                                                LockMode.LockState.CENTER),
-                                                                Commands.sequence(
-                                                                                Commands.waitSeconds(1.0), // Tune: time
-                                                                                                           // for
-                                                                                                           // shooter/turret/hood
-                                                                                                           // to reach
-                                                                                                           // setpoints
-                                                                                Commands.parallel(
-                                                                                                transfer.runTransferCommand(),
-                                                                                                indexer.runIndexerCommand()),
-                                                                                Commands.waitSeconds(2.0) // Tune:
-                                                                                                          // duration to
-                                                                                                          // feed balls
-                                                                                                          // into
-                                                                                                          // shooter
-                                                                ))));
+                                                climb.climbDown()));
+
                 rotateStick.button(1).onTrue(climb.climbUp());
                 rotateStick.button(2).onTrue(climb.climbDown());
 

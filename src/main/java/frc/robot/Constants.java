@@ -188,7 +188,7 @@ public class Constants {
         public static final double shooter_kA = 0.0038935;
 
         public static final String lookupTablePath = Filesystem.getDeployDirectory().getPath() + "/ShooterLookupTable/shooter-lookup.csv"; // Generated with github.com/DanielR723/shooter
-        public static final double autoshootDistanceRange = 0.2649855; // Range of distances to check to choose the best shot (Least hood rotation and flywheel RPM change)
+        public static final double autoshootDistanceRange = 0.05; // Range of distances to check to choose the best shot (Least hood rotation and flywheel RPM change)
         public static final double maxShotError = 1.0; // The maximum allowed error for a shot to occur
         
         // Weights of each value when calculating an optimal shot, higher value means higher priority to minimize

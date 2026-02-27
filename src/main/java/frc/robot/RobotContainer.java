@@ -14,6 +14,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -54,6 +55,7 @@ public class RobotContainer {
         private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
         private final Telemetry logger = new Telemetry(MaxSpeed);
+        private final SendableChooser<Command> autoChooser = new SendableChooser<>();
 
         public final CommandXboxController joystick = new CommandXboxController(OIConstants.kOperatorControllerPort);
         public final CommandJoystick translateStick = new CommandJoystick(OIConstants.kDriverTranslateStickPort);
@@ -93,6 +95,15 @@ public class RobotContainer {
         public RobotContainer() {
                 NamedCommands.registerCommand("testNamedCommand",
                                 Commands.runOnce(() -> System.out.println("this named command works")));
+
+                // Auto chooser
+                autoChooser.setDefaultOption("Do Nothing", Commands.none());
+                autoChooser.addOption("S1 DPR + Climb (S1.1-S-DPR-C)", AutoAlignCommand.getS1DPR_C(drivetrain));
+                autoChooser.addOption("S1 DPR (S1.1-S-DPR)", AutoAlignCommand.getS1DPR(drivetrain));
+                autoChooser.addOption("S2 Depost (S2.DP)", AutoAlignCommand.getS2DP(drivetrain));
+                autoChooser.addOption("S2 Human Player (S2.HP)", AutoAlignCommand.getS2HP(drivetrain));
+                autoChooser.addOption("S3 Human Player (S3.HP)", AutoAlignCommand.getS3HP(drivetrain));
+                SmartDashboard.putData("Auto Chooser", autoChooser);
 
                 SmartDashboard.putData("Git Info", new Sendable() {
                         @Override
@@ -161,8 +172,6 @@ public class RobotContainer {
                                                                                                           // shooter
                                                                 ))));
                 rotateStick.button(1).onTrue(climb.climbUp());
-
-                rotateStick.button(1).onTrue(climb.climbUp());
                 rotateStick.button(2).onTrue(climb.climbDown());
 
                 rotateStick.button(3).toggleOnTrue(new TurretTracking(turret, () -> drivetrain.getStateCopy().Pose));
@@ -192,14 +201,6 @@ public class RobotContainer {
         }
 
         public Command getAutonomousCommand() {
-                return new TurretTracking(turret, () -> drivetrain.getStateCopy().Pose);
-                // new FuelChaseCommand(
-                // 25, camera0.getCamera(), drivetrain, // Change to the camera that will
-                // // chase fuel once
-
-                // // we get the fuel pose
-                // // calculations working!!
-                // drivetrain::getPose3d, VisionConstants.robotToCamera0),
-                // new TurretTracking(turret, () -> drivetrain.getStateCopy().Pose));
+                return autoChooser.getSelected();
         }
 }

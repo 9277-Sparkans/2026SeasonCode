@@ -12,27 +12,52 @@ import org.littletonrobotics.junction.Logger;
 
 public class AutoAlignCommand {
 
+    // Shared pathfinding constraints for all auto-align commands
+    private static final PathConstraints CONSTRAINTS = new PathConstraints(
+            3.0, 3.0,
+            Units.degreesToRadians(540), Units.degreesToRadians(720));
+
+    // -------------------------------------------------------------------------
+    // Auto routines (from PathPlanner .auto files)
+    // -------------------------------------------------------------------------
+
+    /** S1 → Shoot → Depost → Return cycle, with climb at the end. */
+    public static Command getS1DPR_C(CommandSwerveDrivetrain drivetrain) {
+        return buildAuto("S1.1-S-DPR-C", drivetrain);
+    }
+
+    /** S1 → Shoot → Depost → Return cycle, no climb. */
+    public static Command getS1DPR(CommandSwerveDrivetrain drivetrain) {
+        return buildAuto("S1.1-S-DPR", drivetrain);
+    }
+
+    /** S2 start → Depost. */
+    public static Command getS2DP(CommandSwerveDrivetrain drivetrain) {
+        return buildAuto("S2.DP", drivetrain);
+    }
+
+    /** S2 start → Human Player station. */
+    public static Command getS2HP(CommandSwerveDrivetrain drivetrain) {
+        return buildAuto("S2.HP", drivetrain);
+    }
+
+    /** S3 start → Human Player station. */
+    public static Command getS3HP(CommandSwerveDrivetrain drivetrain) {
+        return buildAuto("S3.HP", drivetrain);
+    }
+
+    // -------------------------------------------------------------------------
+    // Pathfind-then-follow helpers (teleop use)
+    // -------------------------------------------------------------------------
+
     /**
-     * Creates a command that pathfinds to the "Start 2" path and then follows it.
-     * 
-     * @param drivetrain The drivetrain subsystem to use for pathfinding and
-     *                   following.
-     * @return A command that represents the pathfinding and following sequence.
+     * Pathfinds to the start of "climbtest" then follows it.
+     * Wired to the Y button in RobotContainer.
      */
     public static Command getAutoAlignCommand(CommandSwerveDrivetrain drivetrain) {
         try {
-            // Load the "Start 2" path from the deploy directory
             PathPlannerPath path = PathPlannerPath.fromPathFile("climbtest");
-
-            // Define pathfinding constraints (max velocity, max acceleration, max angular
-            // velocity, max angular acceleration)
-            // Using reasonable defaults matching last year's or common defaults
-            PathConstraints constraints = new PathConstraints(
-                    3.0, 3.0,
-                    Units.degreesToRadians(540), Units.degreesToRadians(720));
-
-            // Generate the pathfinding then following command
-            Command autoAlign = AutoBuilder.pathfindThenFollowPath(path, constraints);
+            Command autoAlign = AutoBuilder.pathfindThenFollowPath(path, CONSTRAINTS);
 
             return autoAlign
                     .beforeStarting(() -> {
@@ -49,7 +74,6 @@ public class AutoAlignCommand {
                         Logger.recordOutput("AutoAlign/Active", false);
                     });
         } catch (Exception e) {
-            // Handle cases where the path might not be found or other errors
             System.err.println("!!! AUTO ALIGN ERROR: " + e.getMessage() + " !!!");
             return Commands.print("!!! AUTO ALIGN ERROR: " + e.getMessage() + " !!!");
         }
@@ -57,11 +81,7 @@ public class AutoAlignCommand {
 
     /**
      * Determines whether to run the "TrenchF" or "TrenchB" path based on the
-     * robot's pose.
-     * Starts pathfinding then follows the path, with constraints and logging.
-     *
-     * @param drivetrain The drivetrain subsystem
-     * @return A command that decides which path to load and run
+     * robot's pose. Starts pathfinding then follows the path.
      */
     public static Command getTrenchCommand(CommandSwerveDrivetrain drivetrain) {
         return Commands.defer(() -> {
@@ -71,16 +91,12 @@ public class AutoAlignCommand {
 
             try {
                 PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
-                PathConstraints constraints = new PathConstraints(
-                        3.0, 3.0,
-                        Units.degreesToRadians(540), Units.degreesToRadians(720));
-
-                Command trenchAlign = AutoBuilder.pathfindThenFollowPath(path, constraints);
+                Command trenchAlign = AutoBuilder.pathfindThenFollowPath(path, CONSTRAINTS);
 
                 return trenchAlign
                         .beforeStarting(() -> {
-                            System.out
-                                    .println("TrenchAuto: Starting at Pose: " + currentPose + " running: " + pathName);
+                            System.out.println(
+                                    "TrenchAuto: Starting at Pose: " + currentPose + " running: " + pathName);
                             Logger.recordOutput("TrenchAuto/Active", true);
                             Logger.recordOutput("TrenchAuto/StartPose", currentPose);
                         })
@@ -96,5 +112,40 @@ public class AutoAlignCommand {
                 return Commands.print("!!! TRENCH AUTO ERROR: " + e.getMessage() + " !!!");
             }
         }, java.util.Set.of());
+    }
+
+    // -------------------------------------------------------------------------
+    // Internal helpers
+    // -------------------------------------------------------------------------
+
+    /**
+     * Builds a full autonomous routine from a PathPlanner .auto file.
+     * Wraps the AutoBuilder command with standard logging.
+     *
+     * @param autoName   The name of the .auto file (without extension).
+     * @param drivetrain The drivetrain for logging start pose.
+     * @return The auto command, or a print command on failure.
+     */
+    private static Command buildAuto(String autoName, CommandSwerveDrivetrain drivetrain) {
+        try {
+            Command auto = AutoBuilder.buildAuto(autoName);
+            return auto
+                    .beforeStarting(() -> {
+                        var pose = drivetrain.getStateCopy().Pose;
+                        System.out.println("Auto [" + autoName + "]: Starting at Pose: " + pose);
+                        Logger.recordOutput("Auto/ActiveRoutine", autoName);
+                        Logger.recordOutput("Auto/StartPose", pose);
+                    })
+                    .andThen(() -> System.out.println("Auto [" + autoName + "]: Finished!"))
+                    .finallyDo((interrupted) -> {
+                        if (interrupted) {
+                            System.out.println("Auto [" + autoName + "]: Interrupted!");
+                        }
+                        Logger.recordOutput("Auto/ActiveRoutine", "none");
+                    });
+        } catch (Exception e) {
+            System.err.println("!!! AUTO BUILD ERROR [" + autoName + "]: " + e.getMessage() + " !!!");
+            return Commands.print("!!! AUTO BUILD ERROR [" + autoName + "]: " + e.getMessage() + " !!!");
+        }
     }
 }

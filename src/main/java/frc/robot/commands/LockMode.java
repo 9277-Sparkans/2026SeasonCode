@@ -32,10 +32,13 @@ public class LockMode extends Command {
     }
     
     @Override
-    public void initialize() {}
+    public void initialize() {
+
+    }
 
     @Override
     public void execute() {
+        
         double tgtRpm = 0.0;
         double tgtAngleHood = 0.0;
         double tgtAngleTurret = 0.0;

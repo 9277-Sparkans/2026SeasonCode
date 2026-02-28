@@ -116,6 +116,7 @@ public class RobotContainer {
                             Commands.runOnce(() -> System.out.println("this named command works")));
 
         turret.setDefaultCommand(turret.initDefaultCommand(turret));
+        hood.setDefaultCommand(hood.initDefaultCommand(hood));
         // hinge.setDefaultCommand(hinge.initDefaultCommand(hinge));
 
         NamedCommands.registerCommand("testNamedCommand",
@@ -290,19 +291,19 @@ public class RobotContainer {
                 .onTrue(Commands.runOnce(() -> System.out.println("this will toggle lock mode!")));
 
         operator(OIConstants.kKeyboard_lockModeLeft)
-                .onTrue(new LockMode(turret, shooter, hood, LockState.LEFT));
+                .whileTrue(new LockMode(turret, shooter, hood, LockState.LEFT));
 
         operator(OIConstants.kKeyboard_lockModeCenter)
-                .onTrue(new LockMode(turret, shooter, hood, LockState.CENTER));
+                .whileTrue(new LockMode(turret, shooter, hood, LockState.CENTER));
 
         operator(OIConstants.kKeyboard_lockModeRight)
-                .onTrue(new LockMode(turret, shooter, hood, LockState.RIGHT));
+                .whileTrue(new LockMode(turret, shooter, hood, LockState.RIGHT));
 
         operator(OIConstants.kKeyboard_lockModeTrenchLeft)
-                .onTrue(new LockMode(turret, shooter, hood, LockState.TRENCHLEFT));
+                .whileTrue(new LockMode(turret, shooter, hood, LockState.TRENCHLEFT));
 
         operator(OIConstants.kKeyboard_lockModeTrenchRight)
-                .onTrue(new LockMode(turret, shooter, hood, LockState.TRENCHRIGHT));
+                .whileTrue(new LockMode(turret, shooter, hood, LockState.TRENCHRIGHT));
 
         operator(OIConstants.kKeyboard_climbUp)
                 .onTrue(climb.climbUp());

@@ -28,7 +28,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import frc.robot.Constants;
 import frc.robot.Telemetry;
 import frc.robot.Utils;
 import frc.robot.Constants.HoodConstants;
@@ -126,16 +125,14 @@ public class Hood extends SubsystemBase {
       )
     );
 
-    this.setDefaultCommand(moveToTargetAngle());
   }
 
-  public Command moveToTargetAngle() {
+  public Command initDefaultCommand(Hood hood) {
     return Commands.runOnce(() -> moveHoodToAngle(targetHoodAngle), this);
   }
 
   @Override
   public void periodic() {
-    // System.out.println(hoodMotor.getPosition().getValueAsDouble());
     // hoodMotor.set(0.0);
   }
 
@@ -148,10 +145,7 @@ public class Hood extends SubsystemBase {
     // double motorTarget = hoodRotationsToMotor(hoodRotations);
     // clampTarget();
 
-    // System.out.println("target: " + targetHoodPosition);
-    // System.out.println("idk man constant: " + HoodConstants.kIdkManConstant);
     // convertedHoodPos = HoodConstants.kIdkManConstant * targetHoodPosition;
-    // System.out.println("theoretical absolute position: " + convertedHoodPos);
     hoodMotor.setControl(request.withPosition(targetHoodPosition));
   }
 
@@ -163,8 +157,6 @@ public class Hood extends SubsystemBase {
     // double position = HoodConstants.kMinimumEncoderPos + (hoodEncoderRange * positionRatio);
 
     targetHoodPosition = -((degrees / (7168.0/12321.0)) / 360.0) * HoodConstants.kGearRatio;
-    // System.out.println("target angle to hood: " + targetHoodPosition);
-    // System.out.println("target degrees to hood: " + degrees);
 
     // clampTarget();
     moveHoodMotionMagic();

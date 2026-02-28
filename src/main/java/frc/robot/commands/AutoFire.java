@@ -5,7 +5,6 @@ import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
-import frc.robot.Limelight;
 import frc.robot.Utils.Lookup;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -43,12 +42,6 @@ public class AutoFire extends Command
     @Override
     public void execute()
     {
-        double distance = Limelight.GetDistance();
-
-        double[] output = lookup.FindOptimalVals(distance);
-        
-        tgtRpm = output[0];
-        tgtAngle = output[1];
 
         // shooter.setTgtRpm((int)(tgtRpm));
         // hood.moveHoodToAngle(Angle.ofBaseUnits(tgtAngle, Degrees));

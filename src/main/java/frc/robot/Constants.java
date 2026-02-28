@@ -121,8 +121,8 @@ public class Constants {
         public static double turret_kD = 0.25;
 
 
-        public static double kMaximumAngle = 60.0;
-        public static double kMinimumAngle = -60.0;
+        public static double kMaximumAngle = 70.0;
+        public static double kMinimumAngle = -70.0;
         
         public static double kGearRatio = 105.0 / 18.0;
     }
@@ -130,7 +130,7 @@ public class Constants {
     public static class ShooterConstants {
         public static final int kShooterMotorId = 33; //33
 
-        public static final int kShooterCurrentLimit = 50;
+        public static final int kShooterCurrentLimit = 80;
         public static final double kShooterGearRatio = 36.0 / 30.0;
 
         public static final double kShooterMaxVoltage = 5;// kraken x44 max voltage
@@ -234,7 +234,7 @@ public class Constants {
         public static final double hinge_kI = 0.0;
         public static final double hinge_kD = 0.1;
         public static final double hinge_kV = 0.12;
-        public static final double hinge_kG = 0.7; //0.25
+        public static final double hinge_kG = 2.5; //0.25
         public static final double hingeMaxAcceleration = 20.0;
         public static final double hingeMaxVelocity = 5.0; // rps
         public static final double kHingeCurrentLimit = 120;

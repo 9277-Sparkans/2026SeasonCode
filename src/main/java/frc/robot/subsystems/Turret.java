@@ -119,7 +119,15 @@ public class Turret extends SubsystemBase {
 
   public void defaultCommand() {
     // System.out.println("target is " + target);
-    turretMotor.setControl(m_request.withPosition(target / 360.0 * TurretConstants.kGearRatio));
+    if (target > TurretConstants.kMaximumAngle) {
+      turretMotor.setControl(m_request.withPosition(TurretConstants.kMaximumAngle / 360.0 * TurretConstants.kGearRatio));
+    }
+    if (target < TurretConstants.kMinimumAngle) {
+      turretMotor.setControl(m_request.withPosition(TurretConstants.kMinimumAngle / 360.0 * TurretConstants.kGearRatio));
+    }
+    else {
+      turretMotor.setControl(m_request.withPosition(target / 360.0 * TurretConstants.kGearRatio));
+    }
   }
 
   public Command initDefaultCommand(Turret turret) {

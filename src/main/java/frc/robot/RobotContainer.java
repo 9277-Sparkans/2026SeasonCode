@@ -82,10 +82,10 @@ public class RobotContainer {
             ? new frc.robot.Vision.VisionIOPhotonVisionSim(VisionConstants.camera2Name, VisionConstants.robotToCamera2)
             : new VisionIOPhotonVision(VisionConstants.camera2Name, VisionConstants.robotToCamera2);
 
-    public final Vision vision = new Vision(
-            (Vision.VisionConsumer) drivetrain::addVisionMeasurement,
-            (Supplier<Pose2d>) (() -> drivetrain.getStateCopy().Pose),
-            camera0, camera1, camera2);
+    // public final Vision vision = new Vision(
+    //         (Vision.VisionConsumer) drivetrain::addVisionMeasurement,
+    //         (Supplier<Pose2d>) (() -> drivetrain.getStateCopy().Pose),
+    //         camera0, camera1, camera2);
 
     private final Shooter shooter = new Shooter();
     public final Intake intake = new Intake();
@@ -162,10 +162,10 @@ public class RobotContainer {
         joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
         // joystick.().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-        joystick.start().and(joystick.povUp()).whileTrue(hood.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-        joystick.start().and(joystick.povDown()).whileTrue(hood.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-        joystick.start().and(joystick.povRight()).whileTrue(hood.sysIdDynamic(SysIdRoutine.Direction.kForward));
-        joystick.start().and(joystick.povLeft()).whileTrue(hood.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        joystick.start().and(joystick.povUp()).whileTrue(shooter.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        joystick.start().and(joystick.povDown()).whileTrue(shooter.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        joystick.start().and(joystick.povRight()).whileTrue(shooter.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        joystick.start().and(joystick.povLeft()).whileTrue(shooter.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
         // CLIMB button controls
         // joystick.y().onTrue(climb.climbUp());
@@ -203,7 +203,7 @@ public class RobotContainer {
         // joystick.x().onFalse(Commands.runOnce(() -> turret.stop(), turret));
 
         joystick.x().whileTrue(
-                Commands.runOnce(() -> lockModeCommand.setLockState(LockState.TRENCHLEFT), turret, shooter, hood));
+                Commands.runOnce(() -> lockModeCommand.setLockState(LockState.NEUTRAL), turret, shooter, hood));
 
         // SHOOTER button controls
         joystick.leftBumper().onTrue(Commands.runOnce(() -> shooter.decreaseSpeed()));

@@ -13,19 +13,37 @@
         {
           "type": "wait",
           "data": {
-            "waitTime": 0.5
+            "waitTime": 8.0
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": null
+            "pathName": "HP Shoot2.2"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 7.0
+            "waitTime": 1.5
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "HP Return1.2"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 4.0
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "HP Shoot2.2"
           }
         }
       ]

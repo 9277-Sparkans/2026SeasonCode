@@ -45,6 +45,12 @@
           "data": {
             "pathName": "Shoot 1.1"
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Climb 1.1"
+          }
         }
       ]
     }

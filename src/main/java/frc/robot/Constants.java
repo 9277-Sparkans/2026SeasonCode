@@ -358,12 +358,14 @@ public class Constants {
     }
 
     public static class FieldConstants {
-        public static final double HUB_X = 4.625594; // meters
-        public static final double HUB_Y = 4.034536; // meters
+        public static final double BLUE_HUB_X = 4.625594; // meters
+        public static final double BLUE_HUB_Y = 4.034536; // meters
+        public static final double RED_HUB_X = 123123.0; // meters 
+        public static final double RED_HUB_Y = 123123.0; // meters
         public static final edu.wpi.first.math.geometry.Translation3d HUB_BLUE = new edu.wpi.first.math.geometry.Translation3d(
-                HUB_X, HUB_Y, 1.4); // 1.4m height approx
+                BLUE_HUB_X, BLUE_HUB_Y, 1.4); // 1.4m height approx
         public static final edu.wpi.first.math.geometry.Translation3d HUB_RED = new edu.wpi.first.math.geometry.Translation3d(
-                16.541 - HUB_X, HUB_Y, 1.4);
+                RED_HUB_X, RED_HUB_Y, 1.4);
     }
 
     public static final class CanBusConstants {

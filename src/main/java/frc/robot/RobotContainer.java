@@ -100,7 +100,7 @@ public class RobotContainer {
     public final Transfer transfer = new Transfer();
     public final Indexer indexer = new Indexer();
     public final Hinge hinge = new Hinge();
-    public final LockMode lockModeCommand = new LockMode(turret, shooter, hood);
+    // public final LockMode lockModeCommand = new LockMode(turret, shooter, hood);
 
     public boolean manualControl = false;
 
@@ -290,23 +290,19 @@ public class RobotContainer {
                 .onTrue(Commands.runOnce(() -> System.out.println("this will toggle lock mode!")));
 
         operator(OIConstants.kKeyboard_lockModeLeft)
-                .whileTrue(Commands.runOnce(() -> lockModeCommand.setLockState(LockState.LEFT), turret, shooter, hood));
+                .onTrue(new LockMode(turret, shooter, hood, LockState.LEFT));
 
         operator(OIConstants.kKeyboard_lockModeCenter)
-                .whileTrue(
-                        Commands.runOnce(() -> lockModeCommand.setLockState(LockState.CENTER), turret, shooter, hood));
+                .onTrue(new LockMode(turret, shooter, hood, LockState.CENTER));
 
         operator(OIConstants.kKeyboard_lockModeRight)
-                .whileTrue(
-                        Commands.runOnce(() -> lockModeCommand.setLockState(LockState.RIGHT), turret, shooter, hood));
+                .onTrue(new LockMode(turret, shooter, hood, LockState.RIGHT));
 
         operator(OIConstants.kKeyboard_lockModeTrenchLeft)
-                .whileTrue(Commands.runOnce(() -> lockModeCommand.setLockState(LockState.TRENCHLEFT), turret, shooter,
-                        hood));
+                .onTrue(new LockMode(turret, shooter, hood, LockState.TRENCHLEFT));
 
         operator(OIConstants.kKeyboard_lockModeTrenchRight)
-                .whileTrue(Commands.runOnce(() -> lockModeCommand.setLockState(LockState.TRENCHRIGHT), turret, shooter,
-                        hood));
+                .onTrue(new LockMode(turret, shooter, hood, LockState.TRENCHRIGHT));
 
         operator(OIConstants.kKeyboard_climbUp)
                 .onTrue(climb.climbUp());

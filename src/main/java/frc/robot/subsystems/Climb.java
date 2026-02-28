@@ -68,7 +68,7 @@ public class Climb extends SubsystemBase {
 
     @Override
     public void periodic() {
-        System.out.println("climbPos is " + getPosition());
+        // System.out.println("climbPos is " + getPosition());
     }
 
     // state for climb up

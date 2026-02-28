@@ -99,7 +99,7 @@ public class Climb extends SubsystemBase {
         return Commands.runOnce(() -> {
             // climbMotor.setControl(m_request.withPosition(ClimbConstants.kClimbDown));
             states(ClimbState.DOWN);
-            System.out.println("climb works");
+            // System.out.println("climb works");
         });
     }
 

@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 public class AutoFire extends Command 
 {
+    Indexer indexer;
     Turret turret;
     Shooter shooter;
     Hood hood;
@@ -29,8 +30,9 @@ public class AutoFire extends Command
     Supplier<Rotation2d> rotationSupplier;
     Lookup lookup;
 
-    public AutoFire(Turret turret, Shooter shooter, Hood hood,
+    public AutoFire(Indexer indexer, Turret turret, Shooter shooter, Hood hood,
                     Supplier<ChassisSpeeds> speedsSupplier, Supplier<Pose2d> poseSupplier, Lookup lookup) {
+        this.indexer = indexer;
         this.turret = turret;
         this.shooter = shooter;
         this.hood = hood;
@@ -77,12 +79,17 @@ public class AutoFire extends Command
         double[] optimal = lookup.FindOptimalVals(targetDistance, transformedVelocityX, transformedVelocityY, shooterRPM, hoodAngle);
         double optimalError = optimal[0];
         double optimalTurretAngle = Utils.wrapAngle(rotation.getDegrees() - targetDirectionDeg + optimal[1]);
-        double optimalShooterRPM = optimal[2];
+        double optimalShooterRPM = optimal[2] - Constants.ShooterConstants.rpmOffset * Math.pow(targetDistance, Constants.ShooterConstants.distancePower);
         double optimalHoodAngle = optimal[3];
 
+        // turret.target = optimalTurretAngle;
+        // shooter.targetVel = optimalShooterRPM;
+        // hood.targetHoodAngle = optimalHoodAngle;
+
         turret.target = optimalTurretAngle;
+        turret.defaultCommand();
         shooter.targetVel = optimalShooterRPM;
-        hood.targetHoodAngle = optimalHoodAngle;
+        hood.moveHoodToAngle(optimalHoodAngle);
 
         SmartDashboard.putNumber("AutoFire/TargetDistance", targetDistance);
         SmartDashboard.putNumber("AutoFire/TargetDirection", targetDirectionDeg);
@@ -95,17 +102,16 @@ public class AutoFire extends Command
 
         // Only start shooting if ready
         if (optimalError < Constants.ShooterConstants.maxShotError) {
-            // indexer.spin();
+            indexer.spin();
         } else {
-            // indexer.stop();
+            indexer.stop();
         }
     }
 
     @Override
     public void end(boolean interrupted)
     {
-        // intake.stop();
-        // indexer.stop();
+        indexer.stop();
     }
 
     @Override

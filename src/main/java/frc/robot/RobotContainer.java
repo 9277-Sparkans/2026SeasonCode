@@ -13,6 +13,7 @@ import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -23,7 +24,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.Vision.Vision;
@@ -48,11 +48,15 @@ import frc.robot.commands.LockMode.LockState;
 import frc.robot.subsystems.Transfer;
 import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Hinge;
+import frc.robot.Vision.Vision;
+import frc.robot.Vision.VisionIOPhotonVision;
+import edu.wpi.first.math.geometry.Pose2d;
+import java.util.function.Supplier;
+import frc.robot.Vision.VisionConstants;
 
 public class RobotContainer {
-    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
-    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second
-                                                                                      // max angular velocity
+    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -73,36 +77,43 @@ public class RobotContainer {
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
     private final VisionIOPhotonVision camera0 = edu.wpi.first.wpilibj.RobotBase.isSimulation()
-            ? new frc.robot.Vision.VisionIOPhotonVisionSim(VisionConstants.camera0Name, VisionConstants.robotToCamera0)
-            : new VisionIOPhotonVision(VisionConstants.camera0Name, VisionConstants.robotToCamera0);
+                    ? new frc.robot.Vision.VisionIOPhotonVisionSim(VisionConstants.camera0Name,
+                                    VisionConstants.robotToCamera0)
+                    : new VisionIOPhotonVision(VisionConstants.camera0Name,
+                                    VisionConstants.robotToCamera0);
     private final VisionIOPhotonVision camera1 = edu.wpi.first.wpilibj.RobotBase.isSimulation()
-            ? new frc.robot.Vision.VisionIOPhotonVisionSim(VisionConstants.camera1Name, VisionConstants.robotToCamera1)
-            : new VisionIOPhotonVision(VisionConstants.camera1Name, VisionConstants.robotToCamera1);
+                    ? new frc.robot.Vision.VisionIOPhotonVisionSim(VisionConstants.camera1Name,
+                                    VisionConstants.robotToCamera1)
+                    : new VisionIOPhotonVision(VisionConstants.camera1Name,
+                                    VisionConstants.robotToCamera1);
     private final VisionIOPhotonVision camera2 = edu.wpi.first.wpilibj.RobotBase.isSimulation()
-            ? new frc.robot.Vision.VisionIOPhotonVisionSim(VisionConstants.camera2Name, VisionConstants.robotToCamera2)
-            : new VisionIOPhotonVision(VisionConstants.camera2Name, VisionConstants.robotToCamera2);
-
-    public final Vision vision = new Vision(
-            (Vision.VisionConsumer) drivetrain::addVisionMeasurement,
-            (Supplier<Pose2d>) (() -> drivetrain.getStateCopy().Pose),
-            camera0, camera1, camera2);
-
-    private final Shooter shooter = new Shooter();
-    public final Intake intake = new Intake();
+                    ? new frc.robot.Vision.VisionIOPhotonVisionSim(VisionConstants.camera2Name,
+                                    VisionConstants.robotToCamera2)
+                    : new VisionIOPhotonVision(VisionConstants.camera2Name,
+                                        VisionConstants.robotToCamera2);
+                                        
     public final Turret turret = new Turret();
-    public final Transfer transfer = new Transfer();
-    public final Hood hood = new Hood();
     public final Climb climb = new Climb();
+    public final Shooter shooter = new Shooter();
+    public final Hood hood = new Hood();
+    public final Intake intake = new Intake();
+    public final Transfer transfer = new Transfer();
     public final Indexer indexer = new Indexer();
     public final Hinge hinge = new Hinge();
-
-    public final Lookup lookup = Utils.createLookup(hood, shooter);
-    public final AutoFire autoFireCommand = new AutoFire(turret, transfer, shooter, hood, intake, lookup);
     public final LockMode lockModeCommand = new LockMode(turret, shooter, hood);
 
     public boolean manualControl = false;
 
+    public final Vision vision = new Vision(
+                    (Vision.VisionConsumer) drivetrain::addVisionMeasurement,
+                    (Supplier<Pose2d>) (() -> drivetrain.getStateCopy().Pose),
+                    camera0, camera1, camera2);
+
+    public final Lookup lookup = Utils.createLookup();
+
     public RobotContainer() {
+            NamedCommands.registerCommand("testNamedCommand",
+                            Commands.runOnce(() -> System.out.println("this named command works")));
 
         turret.setDefaultCommand(turret.initDefaultCommand(turret));
         // hinge.setDefaultCommand(hinge.initDefaultCommand(hinge));
@@ -202,8 +213,8 @@ public class RobotContainer {
         // joystick.x().whileTrue(new TurretTracking((turret)));
         // joystick.x().onFalse(Commands.runOnce(() -> turret.stop(), turret));
 
-        joystick.x().whileTrue(
-                Commands.runOnce(() -> lockModeCommand.setLockState(LockState.TRENCHLEFT), turret, shooter, hood));
+        // joystick.x().whileTrue(
+        //         Commands.runOnce(() -> lockModeCommand.setLockState(LockState.TRENCHLEFT), turret, shooter, hood));
 
         // SHOOTER button controls
         joystick.leftBumper().onTrue(Commands.runOnce(() -> shooter.decreaseSpeed()));
@@ -240,6 +251,9 @@ public class RobotContainer {
         // Indexer button controls
         joystick.b().onTrue(indexer.toggleIndexer());
 
+        // Autofire
+        joystick.x().whileTrue(new AutoFire(indexer, turret, shooter, hood, () -> drivetrain.getStateCopy().Speeds, () -> drivetrain.getStateCopy().Pose, lookup));
+
         configureOperatorConsole();
 
         drivetrain.registerTelemetry(logger::telemeterize);
@@ -247,13 +261,20 @@ public class RobotContainer {
         // for flight sticks controls, go to this https://gpadtester.com/ and put the
         // button id +1 (so button 1 would actually be button 2 on here)
         // rotateStick.button(3).whileTrue(AutoAlignCommand.getAutoAlignCommand(drivetrain));
-        translateStick.button(2).toggleOnTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-        translateStick.button(1).onTrue(Commands.runOnce(() -> transfer.toggleTransfer()));
-        translateStick.button(1).onTrue(indexer.toggleIndexer());
-        rotateStick.button(1).onTrue(intake.outtakeCommand());
-        rotateStick.button(1).onFalse(intake.stopRollerCommand());
-        rotateStick.button(2).onFalse(intake.stopRollerCommand());
-        rotateStick.button(2).onTrue(intake.intakeCommand());
+
+        // translateStick.button(2).toggleOnTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        // translateStick.button(1).onTrue(Commands.runOnce(() -> transfer.toggleTransfer()));
+        // translateStick.button(1).onTrue(indexer.toggleIndexer());
+        // rotateStick.button(1).onTrue(intake.outtakeCommand());
+        // rotateStick.button(1).onFalse(intake.stopRollerCommand());
+        // rotateStick.button(2).onFalse(intake.stopRollerCommand());
+        // rotateStick.button(2).onTrue(intake.intakeCommand());
+
+        // Autofire testing bindss
+        translateStick.button(1).whileTrue(new AutoFire(indexer, turret, shooter, hood, () -> drivetrain.getStateCopy().Speeds, () -> drivetrain.getStateCopy().Pose, lookup));
+        translateStick.button(3).onTrue(Commands.runOnce(() -> {indexer.spin();}));
+        translateStick.button(3).onFalse(Commands.runOnce(() -> {indexer.stop();}));
+        translateStick.button(4).onTrue(transfer.toggleTransferCommand());
 
     }
 

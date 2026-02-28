@@ -15,8 +15,10 @@ package frc.robot.Vision;
 
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import org.littletonrobotics.junction.AutoLog;
 
 public interface VisionIO {
+	@AutoLog
 	class VisionIOInputs {
 		public boolean connected = false;
 		public TargetObservation latestTargetObservation = new TargetObservation(new Rotation2d(), new Rotation2d());

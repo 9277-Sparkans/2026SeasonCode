@@ -25,6 +25,7 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.wpilibj.Alert;
 import edu.wpi.first.wpilibj.Alert.AlertType;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import org.littletonrobotics.junction.Logger;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.function.Supplier;
@@ -33,7 +34,7 @@ public class Vision extends SubsystemBase {
         private final VisionConsumer consumer;
         private final Supplier<Pose2d> poseSupplier;
         private final VisionIO[] io;
-        private final VisionIO.VisionIOInputs[] inputs;
+        private final frc.robot.generated.VisionIOInputsAutoLogged[] inputs;
         private final Alert[] disconnectedAlerts;
         public boolean visionHasTarget = false;
         private Pose3d latestVisionPose = new Pose3d();
@@ -67,9 +68,9 @@ public class Vision extends SubsystemBase {
                 this.io = io;
 
                 // Initialize inputs
-                this.inputs = new VisionIO.VisionIOInputs[io.length];
+                this.inputs = new frc.robot.generated.VisionIOInputsAutoLogged[io.length];
                 for (int i = 0; i < inputs.length; i++) {
-                        inputs[i] = new VisionIO.VisionIOInputs();
+                        inputs[i] = new frc.robot.generated.VisionIOInputsAutoLogged();
                 }
 
                 // Initialize disconnected alerts
@@ -95,6 +96,7 @@ public class Vision extends SubsystemBase {
         public void periodic() {
                 for (int i = 0; i < io.length; i++) {
                         io[i].updateInputs(inputs[i], poseSupplier.get());
+                        Logger.processInputs("Vision/Camera" + Integer.toString(i), inputs[i]);
                 }
 
                 // Initialize logging values
@@ -205,6 +207,16 @@ public class Vision extends SubsystemBase {
                                                 VecBuilder.fill(linearStdDev, linearStdDev, angularStdDev));
                         }
 
+                        // Log camera metadata
+                        Logger.recordOutput("Vision/Camera" + cameraIndex + "/TagPoses",
+                                        tagPoses.toArray(new Pose3d[0]));
+                        Logger.recordOutput("Vision/Camera" + cameraIndex + "/RobotPoses",
+                                        robotPoses.toArray(new Pose3d[0]));
+                        Logger.recordOutput("Vision/Camera" + cameraIndex + "/RobotPosesAccepted",
+                                        robotPosesAccepted.toArray(new Pose3d[0]));
+                        Logger.recordOutput("Vision/Camera" + cameraIndex + "/RobotPosesRejected",
+                                        robotPosesRejected.toArray(new Pose3d[0]));
+
                         allTagPoses.addAll(tagPoses);
                         allRobotPoses.addAll(robotPoses);
                         allRobotPosesAccepted.addAll(robotPosesAccepted);
@@ -215,10 +227,20 @@ public class Vision extends SubsystemBase {
                 // Vision/Summary/RobotPoses)
                 latestRobotPoses = allRobotPoses.toArray(new Pose3d[0]);
 
+                // Log summary data
+                Logger.recordOutput("Vision/Summary/TagPoses", allTagPoses.toArray(new Pose3d[0]));
+                Logger.recordOutput("Vision/Summary/RobotPoses", allRobotPoses.toArray(new Pose3d[0]));
+                Logger.recordOutput("Vision/Summary/RobotPosesAccepted", allRobotPosesAccepted.toArray(new Pose3d[0]));
+                Logger.recordOutput("Vision/Summary/RobotPosesRejected", allRobotPosesRejected.toArray(new Pose3d[0]));
+
                 // Update latest vision pose if we found an accepted observation this cycle
                 if (bestPose != null) {
                         latestVisionPose = bestPose;
                 }
+                Logger.recordOutput("Vision/BestVisionPose", latestVisionPose);
+                Logger.recordOutput("Vision/Debug/AcceptedCount", totalAccepted);
+                Logger.recordOutput("Vision/Debug/RejectedCount", totalRejected);
+                Logger.recordOutput("Vision/Debug/RejectionReasons", rejectionLog.toString());
         }
 
         @FunctionalInterface

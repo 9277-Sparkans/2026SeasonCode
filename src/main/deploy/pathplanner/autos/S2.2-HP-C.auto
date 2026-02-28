@@ -7,19 +7,19 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Start 2.1.2"
+            "pathName": "Start 2.2"
           }
         },
         {
           "type": "wait",
           "data": {
-            "waitTime": 5.0
+            "waitTime": 8.0
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Shoot 2.1.2"
+            "pathName": "HP Shoot2.2"
           }
         },
         {
@@ -31,7 +31,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "DepostReturn 1.1"
+            "pathName": "HP Return1.2"
           }
         },
         {
@@ -43,13 +43,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Shoot 1.1"
+            "pathName": "HP Shoot2.2"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Climb 1.1"
+            "pathName": "Climb 2.2"
           }
         }
       ]

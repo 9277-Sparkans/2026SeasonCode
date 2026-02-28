@@ -19,38 +19,28 @@ public class LockMode extends Command {
     Turret turret;
     Shooter shooter;
     Hood hood;
-    double tgtRpm;
-    double tgtAngleHood;
-    double tgtAngleTurret;
-    LockState targetLockState;
+    LockState lockState;
 
-    public LockMode(Turret turret, Shooter shooter, Hood hood) {
+    public LockMode(Turret turret, Shooter shooter, Hood hood, LockState lockState) {
         this.turret = turret;
         this.shooter = shooter;
         this.hood = hood;
 
         addRequirements(shooter, hood, turret);
 
-        tgtRpm = 0;
-        tgtAngleHood = 0.0;
-        tgtAngleTurret = 0.0;
-        targetLockState = LockState.NEUTRAL;
-    }
-
-    public void setLockState(LockState input) {
-        targetLockState = input;
+        this.lockState = lockState;
     }
     
     @Override
-    public void initialize() {
-        tgtRpm = 0.0;
-        tgtAngleHood = 0.0;
-        tgtAngleTurret = 0.0;
-    }
+    public void initialize() {}
 
     @Override
     public void execute() {
-        switch (targetLockState) {
+        double tgtRpm = 0.0;
+        double tgtAngleHood = 0.0;
+        double tgtAngleTurret = 0.0;
+
+        switch (lockState) {
             case LEFT:
                 tgtAngleHood = LockModeConstants.kHoodLeft;
                 tgtRpm = LockModeConstants.kRPMLeft;

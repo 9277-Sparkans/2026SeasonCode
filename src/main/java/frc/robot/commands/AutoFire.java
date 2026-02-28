@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 public class AutoFire extends Command 
 {
-    Indexer indexer;
     Turret turret;
     Shooter shooter;
     Hood hood;
@@ -30,14 +29,13 @@ public class AutoFire extends Command
     Supplier<Rotation2d> rotationSupplier;
     Lookup lookup;
 
-    public AutoFire(Indexer indexer, Turret turret, Shooter shooter, Hood hood,
+    public AutoFire(Turret turret, Shooter shooter, Hood hood,
                     Supplier<ChassisSpeeds> speedsSupplier, Supplier<Pose2d> poseSupplier, Lookup lookup) {
-        this.indexer = indexer;
         this.turret = turret;
         this.shooter = shooter;
         this.hood = hood;
 
-        addRequirements(indexer, turret, shooter, hood);
+        addRequirements(turret, shooter, hood);
 
         this.speedsSupplier = speedsSupplier;
         this.poseSupplier = poseSupplier;

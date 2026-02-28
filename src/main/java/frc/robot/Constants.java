@@ -39,10 +39,10 @@ public class Constants {
     public static final class OIConstants {
 
         // Ports
-        public static final int kDriverControllerPort = 4;
-        public static final int kOperatorControllerPort = 4;
-        public static final int kDriverTranslateStickPort = 0;
-        public static final int kDriverRotateStickPort = 1;
+        public static final int kDriverControllerPort = 0;
+        public static final int kOperatorControllerPort = 1;
+        public static final int kDriverTranslateStickPort = 2;
+        public static final int kDriverRotateStickPort = 3;
         public static final int kBackupOperatorControllerPort = 4;
         public static final double kDeadband = 0.04;
 
@@ -185,8 +185,8 @@ public class Constants {
         public static final double shooter_kA = 0.0038935;
 
         public static final String lookupTablePath = Filesystem.getDeployDirectory().getPath() + "/ShooterLookupTable/shooter-lookup.csv"; // Generated with github.com/DanielR723/shooter
-        public static final double autoshootDistanceRange = 0.05; // Range of distances to check to choose the best shot (Least hood rotation and flywheel RPM change)
-        public static final double maxShotError = 0.1; // The maximum allowed error for a shot to occur
+        public static final double autoshootDistanceRange = 0.1; // Range of distances to check to choose the best shot (Least hood rotation and flywheel RPM change)
+        public static final double maxShotError = 1.0; // The maximum allowed error for a shot to occur
         
         // Weights of each value when calculating an optimal shot, higher value means higher priority to minimize
         public static final double botVelocityWeight = 1.0;

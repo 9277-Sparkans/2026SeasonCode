@@ -259,23 +259,23 @@ public class RobotContainer {
         // button id +1 (so button 1 would actually be button 2 on here)
         // rotateStick.button(3).whileTrue(AutoAlignCommand.getAutoAlignCommand(drivetrain));
 
-        // translateStick.button(2).toggleOnTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-        // translateStick.button(1).onTrue(Commands.runOnce(() -> transfer.toggleTransfer()));
-        // translateStick.button(1).onTrue(indexer.toggleIndexer());
-        // rotateStick.button(1).onTrue(intake.outtakeCommand());
-        // rotateStick.button(1).onFalse(intake.stopRollerCommand());
-        // rotateStick.button(2).onFalse(intake.stopRollerCommand());
-        // rotateStick.button(2).onTrue(intake.intakeCommand());
-
-        // Autofire testing bindss
-        translateStick.button(1).whileTrue(new AutoFire(indexer, turret, shooter, hood, () -> drivetrain.getStateCopy().Speeds, () -> drivetrain.getStateCopy().Pose, lookup));
-        translateStick.button(3).onTrue(Commands.runOnce(() -> indexer.spin()));
-        translateStick.button(3).onFalse(Commands.runOnce(() -> indexer.stop()));
-        translateStick.button(4).onTrue(transfer.toggleTransferCommand());
+        translateStick.button(2).toggleOnTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        translateStick.button(1).onTrue(Commands.runOnce(() -> transfer.toggleTransfer()));
+        translateStick.button(1).onTrue(indexer.toggleIndexer());
         rotateStick.button(1).onTrue(intake.outtakeCommand());
         rotateStick.button(1).onFalse(intake.stopRollerCommand());
-        rotateStick.button(2).onTrue(intake.intakeCommand());
         rotateStick.button(2).onFalse(intake.stopRollerCommand());
+        rotateStick.button(2).onTrue(intake.intakeCommand());
+
+        // Autofire testing bindss
+        // translateStick.button(1).whileTrue(new AutoFire(indexer, turret, shooter, hood, () -> drivetrain.getStateCopy().Speeds, () -> drivetrain.getStateCopy().Pose, lookup));
+        // translateStick.button(3).onTrue(Commands.runOnce(() -> indexer.spin()));
+        // translateStick.button(3).onFalse(Commands.runOnce(() -> indexer.stop()));
+        // translateStick.button(4).onTrue(transfer.toggleTransferCommand());
+        // rotateStick.button(1).onTrue(intake.outtakeCommand());
+        // rotateStick.button(1).onFalse(intake.stopRollerCommand());
+        // rotateStick.button(2).onTrue(intake.intakeCommand());
+        // rotateStick.button(2).onFalse(intake.stopRollerCommand());
     }
 
     private void configureOperatorConsole() {

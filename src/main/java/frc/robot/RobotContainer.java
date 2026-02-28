@@ -239,7 +239,14 @@ public class RobotContainer {
         
         // Indexer button controls
         joystick.b().onTrue(indexer.toggleIndexer()); 
+
+        // Autofire
         joystick.x().whileTrue(new AutoFire(indexer, turret, shooter, hood, () -> drivetrain.getStateCopy().Speeds, () -> drivetrain.getStateCopy().Pose, lookup));
+
+        translateStick.button(1).whileTrue(new AutoFire(indexer, turret, shooter, hood, () -> drivetrain.getStateCopy().Speeds, () -> drivetrain.getStateCopy().Pose, lookup));
+        translateStick.button(3).onTrue(Commands.runOnce(() -> {indexer.spin();}));
+        translateStick.button(3).onFalse(Commands.runOnce(() -> {indexer.stop();}));
+        translateStick.button(4).onTrue(transfer.toggleTransferCommand());
 
         configureOperatorConsole();
 

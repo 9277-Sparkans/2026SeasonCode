@@ -45,7 +45,7 @@ public class Transfer extends SubsystemBase
     
     @Override
     public void periodic() {
-        activateTransfer();
+        // activateTransfer();
     }
 
     public Command toggleTransferCommand() {
@@ -54,7 +54,6 @@ public class Transfer extends SubsystemBase
 
     public void toggleTransfer() {
         transferOn = !transferOn;
-
         if (transferOn) {
             activateTransfer();
         } else {

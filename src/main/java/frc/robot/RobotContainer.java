@@ -260,6 +260,7 @@ public class RobotContainer {
         // button id +1 (so button 1 would actually be button 2 on here)
         // rotateStick.button(3).whileTrue(AutoAlignCommand.getAutoAlignCommand(drivetrain));
 
+        // DRIVER PREFERENCE
         translateStick.button(2).toggleOnTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
         translateStick.button(1).onTrue(Commands.runOnce(() -> transfer.toggleTransfer()));
         translateStick.button(1).onTrue(indexer.toggleIndexer());

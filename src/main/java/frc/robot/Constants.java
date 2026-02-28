@@ -25,7 +25,7 @@ public class Constants {
 
         // change between DRIVER_CONTROLLER and DRIVER_STICKS for controller and sticks,
         // erm i guess
-        public static final ControlTypes controlType = ControlTypes.DRIVER_CONTROLLER;
+        public static final ControlTypes controlType = ControlTypes.DRIVER_STICKS;
 
         public static enum ControlTypes {
             DEV,
@@ -39,10 +39,11 @@ public class Constants {
     public static final class OIConstants {
 
         // Ports
-        public static final int kDriverControllerPort = 0;
+        public static final int kDriverControllerPort = 4;
+
         public static final int kOperatorControllerPort = 1;
-        public static final int kDriverTranslateStickPort = 2;
-        public static final int kDriverRotateStickPort = 3;
+        public static final int kDriverTranslateStickPort = 0;
+        public static final int kDriverRotateStickPort = 2;
         public static final int kBackupOperatorControllerPort = 4;
         public static final double kDeadband = 0.04;
 
@@ -186,11 +187,14 @@ public class Constants {
 
         public static final String lookupTablePath = Filesystem.getDeployDirectory().getPath() + "/ShooterLookupTable/shooter-lookup.csv"; // Generated with github.com/DanielR723/shooter
         public static final double autoshootDistanceRange = 0.1; // Range of distances to check to choose the best shot (Least hood rotation and flywheel RPM change)
-        public static final double maxShotError = 1.0; // The maximum allowed error for a shot to occur
+        public static final double maxShotError = 0.001; // The maximum allowed error for a shot to occur
+
+        public static final double distancePower = 1.4; // Bad
+        public static final double rpmOffset = 50.0; // Bad
         
         // Weights of each value when calculating an optimal shot, higher value means higher priority to minimize
         public static final double botVelocityWeight = 1.0;
-        public static final double shooterRPMWeight = 0.0;
+        public static final double shooterRPMWeight = 0.2;
         public static final double hoodAngleWeight = 0.0;
     }
 
@@ -249,7 +253,7 @@ public class Constants {
         public static final double intakeMaxVoltage = 5; // can change if not needed
         public static final double intakeMaxAcceleration = 500;
         public static final double intakeMaxVelocity = 500; // rps
-        public static final double intakeSpeed = 300.0; //rps max 66.6 rps
+        public static final double intakeSpeed = 400.0; //rps max 66.6 rps
     }
 
     public static class HingeConstants {

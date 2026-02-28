@@ -18,7 +18,7 @@ public class Hinge extends SubsystemBase{
     private final TalonFX hinge;
     private final TalonFXConfiguration hingeConfig;
 
-    MotionMagicVoltage m_request = new MotionMagicVoltage(-150.0).withSlot(0);
+    MotionMagicVoltage m_request = new MotionMagicVoltage(0.0).withSlot(0);
 
     double target;
 
@@ -38,7 +38,7 @@ public class Hinge extends SubsystemBase{
 		hingeConfig = new TalonFXConfiguration();
 
         hinge.setPosition(0.0);
-        
+
         hingeConfig.CurrentLimits.StatorCurrentLimit = HingeConstants.kHingeCurrentLimit;
         hingeConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
@@ -88,7 +88,7 @@ public class Hinge extends SubsystemBase{
                 // target = 0.0;
                 break;
              case DOWN:
-                hinge.setControl(m_request.withPosition(degToRotations(150.0)));
+                hinge.setControl(m_request.withPosition(degToRotations(140.0)));
                 // target = 110.0;
                 break;
 

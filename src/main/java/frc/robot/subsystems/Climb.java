@@ -61,6 +61,16 @@ public class Climb extends SubsystemBase {
         return climbState;
     }
 
+    public double getPosition () {
+        double position = climbMotor.getPosition().getValueAsDouble();
+        return position;
+    }
+
+    @Override
+    public void periodic() {
+        System.out.println("climbPos is " + getPosition());
+    }
+
     // state for climb up
     public void states(ClimbState state) {
         switch (state) {

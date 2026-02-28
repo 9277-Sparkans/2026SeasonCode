@@ -86,7 +86,6 @@ public class LockMode extends Command {
         shooter.targetVel = ((int)(tgtRpm));
         hood.targetHoodAngle = (tgtAngleHood);
         turret.target = (tgtAngleTurret);
-        // System.out.println("lcokmodeworkysyipee");
 
     }
 

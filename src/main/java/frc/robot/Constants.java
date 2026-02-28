@@ -262,7 +262,7 @@ public class Constants {
         public static final double kClimb_kD = 0.1;
         public static final double kClimb_kG = 0.12;
 
-        public static final int kClimbUp = 80;
+        public static final int kClimbUp = 90;
         public static final int kClimbDown = 0;
         public static final int kClimbHang = 20;
 

@@ -26,6 +26,11 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.Vision.Vision;
+import frc.robot.Vision.VisionConstants;
+import frc.robot.Vision.VisionIOPhotonVision;
+import edu.wpi.first.math.geometry.Pose2d;
+import java.util.function.Supplier;
 
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Shooter;
@@ -44,10 +49,10 @@ import frc.robot.subsystems.Transfer;
 import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Hinge;
 
-
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
-    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
+    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second
+                                                                                      // max angular velocity
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -67,6 +72,21 @@ public class RobotContainer {
 
     public final CommandSwerveDrivetrain drivetrain = TunerConstants.createDrivetrain();
 
+    private final VisionIOPhotonVision camera0 = edu.wpi.first.wpilibj.RobotBase.isSimulation()
+            ? new frc.robot.Vision.VisionIOPhotonVisionSim(VisionConstants.camera0Name, VisionConstants.robotToCamera0)
+            : new VisionIOPhotonVision(VisionConstants.camera0Name, VisionConstants.robotToCamera0);
+    private final VisionIOPhotonVision camera1 = edu.wpi.first.wpilibj.RobotBase.isSimulation()
+            ? new frc.robot.Vision.VisionIOPhotonVisionSim(VisionConstants.camera1Name, VisionConstants.robotToCamera1)
+            : new VisionIOPhotonVision(VisionConstants.camera1Name, VisionConstants.robotToCamera1);
+    private final VisionIOPhotonVision camera2 = edu.wpi.first.wpilibj.RobotBase.isSimulation()
+            ? new frc.robot.Vision.VisionIOPhotonVisionSim(VisionConstants.camera2Name, VisionConstants.robotToCamera2)
+            : new VisionIOPhotonVision(VisionConstants.camera2Name, VisionConstants.robotToCamera2);
+
+    public final Vision vision = new Vision(
+            (Vision.VisionConsumer) drivetrain::addVisionMeasurement,
+            (Supplier<Pose2d>) (() -> drivetrain.getStateCopy().Pose),
+            camera0, camera1, camera2);
+
     private final Shooter shooter = new Shooter();
     public final Intake intake = new Intake();
     public final Turret turret = new Turret();
@@ -79,7 +99,7 @@ public class RobotContainer {
     public final Lookup lookup = Utils.createLookup(hood, shooter);
     public final AutoFire autoFireCommand = new AutoFire(turret, transfer, shooter, hood, intake, lookup);
     public final LockMode lockModeCommand = new LockMode(turret, shooter, hood);
-    
+
     public boolean manualControl = false;
 
     public RobotContainer() {
@@ -87,7 +107,8 @@ public class RobotContainer {
         turret.setDefaultCommand(turret.initDefaultCommand(turret));
         // hinge.setDefaultCommand(hinge.initDefaultCommand(hinge));
 
-        NamedCommands.registerCommand("testNamedCommand", Commands.runOnce(() -> System.out.println("this named command works")));
+        NamedCommands.registerCommand("testNamedCommand",
+                Commands.runOnce(() -> System.out.println("this named command works")));
 
         SmartDashboard.putData("Git Info", new Sendable() {
             @SuppressWarnings("removal")
@@ -96,7 +117,8 @@ public class RobotContainer {
                 builder.addStringProperty("Branch", () -> BuildConstants.GIT_BRANCH, null);
                 builder.addStringProperty("Commit", () -> BuildConstants.GIT_SHA, null);
                 builder.addStringProperty("Date of commit", () -> BuildConstants.GIT_DATE, null);
-                builder.addStringProperty("Uncommitted changes", () -> new Boolean(BuildConstants.DIRTY > 0).toString(), null);
+                builder.addStringProperty("Uncommitted changes", () -> new Boolean(BuildConstants.DIRTY > 0).toString(),
+                        null);
             }
         });
 
@@ -107,7 +129,7 @@ public class RobotContainer {
         // Note that X is defined as forward according to WPILib convention,
         // and Y is defined as to the left according to WPILib convention.
         drivetrain.setDefaultCommand(
-            drivetrain.applyRequest(() -> {
+                drivetrain.applyRequest(() -> {
                     double x, y, rot;
                     if (QuickAccessConstants.controlType == ControlTypes.DRIVER_STICKS) {
                         x = -translateStick.getRawAxis(1);
@@ -127,20 +149,18 @@ public class RobotContainer {
         // neutral mode is applied to the drive motors while disabled.
         final var idle = new SwerveRequest.Idle();
         RobotModeTriggers.disabled().whileTrue(
-            drivetrain.applyRequest(() -> idle).ignoringDisable(true)
-        );
-        
+                drivetrain.applyRequest(() -> idle).ignoringDisable(true));
+
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
         // joystick.start().and(joystick.povUp()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
         // joystick.start().and(joystick.povDown()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
         // joystick.start().and(joystick.povRight()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
         // joystick.start().and(joystick.povLeft()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
-    
+
         // reset the field-centric heading on left bumper press
         joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
         // joystick.().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-
 
         joystick.start().and(joystick.povUp()).whileTrue(hood.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
         joystick.start().and(joystick.povDown()).whileTrue(hood.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
@@ -157,20 +177,21 @@ public class RobotContainer {
 
         // joystick.a().onTrue(climb.runClimbCommand());
         // joystick.a().onFalse(climb.stopCommand());
-        
+
         // joystick.y().onTrue(climb.runClimbNegCommand());
         // joystick.y().onFalse(climb.stopCommand());
-        
+
         // HOOD button controls
         // joystick.povUp().whileTrue(Commands.runOnce(() -> hood.moveHoodToAngle(5)));
-        // joystick.povUp().whileTrue(Commands.runOnce(() -> hood.moveHoodToAngle(hood.targetHoodAngle)));
-        // joystick.povUp().onTrue(Commands.runOnce(() -> hood.moveHoodToAngle(Angle.ofBaseUnits(hood.targetHoodAngle, Degree))));
-     
+        // joystick.povUp().whileTrue(Commands.runOnce(() ->
+        // hood.moveHoodToAngle(hood.targetHoodAngle)));
+        // joystick.povUp().onTrue(Commands.runOnce(() ->
+        // hood.moveHoodToAngle(Angle.ofBaseUnits(hood.targetHoodAngle, Degree))));
+
         // joystick.povUp().onTrue(Commands.runOnce(() -> hood.runHood()));
         // joystick.povDown().onTrue(Commands.runOnce(() -> hood.runHoodReverse()));
         // joystick.povUp().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
         // joystick.povDown().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
-
 
         // TURRET button controls
         joystick.rightTrigger().whileTrue(turret.turretPos());
@@ -181,112 +202,113 @@ public class RobotContainer {
         // joystick.x().whileTrue(new TurretTracking((turret)));
         // joystick.x().onFalse(Commands.runOnce(() -> turret.stop(), turret));
 
-        joystick.x().whileTrue(Commands.runOnce(() -> lockModeCommand.setLockState(LockState.TRENCHLEFT), turret, shooter, hood));
+        joystick.x().whileTrue(
+                Commands.runOnce(() -> lockModeCommand.setLockState(LockState.TRENCHLEFT), turret, shooter, hood));
 
         // SHOOTER button controls
         joystick.leftBumper().onTrue(Commands.runOnce(() -> shooter.decreaseSpeed()));
         joystick.rightBumper().onTrue(Commands.runOnce(() -> shooter.increaseSpeed()));
 
-
         // joystick.x().onTrue(shooter.shootCmd());
         // joystick.x().whileTrue(Commands.runOnce(() -> autoFireCommand.execute()));
-
 
         // TRANSFER button controls
         joystick.b().onTrue(Commands.runOnce(() -> transfer.toggleTransfer()));
 
-
         // INTAKE button controls
         joystick.y()
-            .whileTrue(
-                intake.intakeCommand())
-            .onFalse(
-                intake.stopRollerCommand());
+                .whileTrue(
+                        intake.intakeCommand())
+                .onFalse(
+                        intake.stopRollerCommand());
 
         joystick.a()
-            .whileTrue(
-                intake.outtakeCommand())
-            .onFalse(
-                intake.stopRollerCommand());
-
+                .whileTrue(
+                        intake.outtakeCommand())
+                .onFalse(
+                        intake.stopRollerCommand());
 
         // HINGE button controls
         // joystick.povRight()
-        //     .onTrue(hinge.hingeUp())
-        //     .onFalse(hinge.hingeStopCommand());
+        // .onTrue(hinge.hingeUp())
+        // .onFalse(hinge.hingeStopCommand());
 
         // joystick.povLeft()
-        //     .onTrue(hinge.hingeDown())
-        //     .onFalse(hinge.hingeStopCommand());
-        
-        
+        // .onTrue(hinge.hingeDown())
+        // .onFalse(hinge.hingeStopCommand());
+
         // Indexer button controls
-        joystick.b().onTrue(indexer.toggleIndexer()); 
+        joystick.b().onTrue(indexer.toggleIndexer());
 
         configureOperatorConsole();
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
-        // for flight sticks controls, go to this https://gpadtester.com/ and put the button id +1 (so button 1 would actually be button 2 on here)
+        // for flight sticks controls, go to this https://gpadtester.com/ and put the
+        // button id +1 (so button 1 would actually be button 2 on here)
         // rotateStick.button(3).whileTrue(AutoAlignCommand.getAutoAlignCommand(drivetrain));
         translateStick.button(2).toggleOnTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
         translateStick.button(1).onTrue(Commands.runOnce(() -> transfer.toggleTransfer()));
-        translateStick.button(1).onTrue(indexer.toggleIndexer()); 
-        rotateStick.button(1).onTrue(intake.outtakeCommand()); 
-        rotateStick.button(1).onFalse(intake.stopRollerCommand()); 
-        rotateStick.button(2).onFalse(intake.stopRollerCommand()); 
-        rotateStick.button(2).onTrue(intake.intakeCommand()); 
+        translateStick.button(1).onTrue(indexer.toggleIndexer());
+        rotateStick.button(1).onTrue(intake.outtakeCommand());
+        rotateStick.button(1).onFalse(intake.stopRollerCommand());
+        rotateStick.button(2).onFalse(intake.stopRollerCommand());
+        rotateStick.button(2).onTrue(intake.intakeCommand());
 
     }
 
     private void configureOperatorConsole() {
         // Operator
         operator(1)
-            .onTrue(Commands.runOnce(() -> hood.moveHoodToAngle(hood.targetHoodAngle)));
+                .onTrue(Commands.runOnce(() -> hood.moveHoodToAngle(hood.targetHoodAngle)));
 
         operator(OIConstants.kKeyboard_modeToggle)
-            .onTrue(Commands.runOnce(() -> manualControl = !manualControl));
+                .onTrue(Commands.runOnce(() -> manualControl = !manualControl));
 
         operator(OIConstants.kKeyboard_lockModeToggle)
-            .onTrue(Commands.runOnce(() -> System.out.println("this will toggle lock mode!")));
+                .onTrue(Commands.runOnce(() -> System.out.println("this will toggle lock mode!")));
 
         operator(OIConstants.kKeyboard_lockModeLeft)
-            .whileTrue(Commands.runOnce(() -> lockModeCommand.setLockState(LockState.LEFT), turret, shooter, hood));
+                .whileTrue(Commands.runOnce(() -> lockModeCommand.setLockState(LockState.LEFT), turret, shooter, hood));
 
         operator(OIConstants.kKeyboard_lockModeCenter)
-            .whileTrue(Commands.runOnce(() -> lockModeCommand.setLockState(LockState.CENTER), turret, shooter, hood));
+                .whileTrue(
+                        Commands.runOnce(() -> lockModeCommand.setLockState(LockState.CENTER), turret, shooter, hood));
 
         operator(OIConstants.kKeyboard_lockModeRight)
-            .whileTrue(Commands.runOnce(() -> lockModeCommand.setLockState(LockState.RIGHT), turret, shooter, hood));
+                .whileTrue(
+                        Commands.runOnce(() -> lockModeCommand.setLockState(LockState.RIGHT), turret, shooter, hood));
 
         operator(OIConstants.kKeyboard_lockModeTrenchLeft)
-            .whileTrue(Commands.runOnce(() -> lockModeCommand.setLockState(LockState.TRENCHLEFT), turret, shooter, hood));
+                .whileTrue(Commands.runOnce(() -> lockModeCommand.setLockState(LockState.TRENCHLEFT), turret, shooter,
+                        hood));
 
         operator(OIConstants.kKeyboard_lockModeTrenchRight)
-            .whileTrue(Commands.runOnce(() -> lockModeCommand.setLockState(LockState.TRENCHRIGHT), turret, shooter, hood));
+                .whileTrue(Commands.runOnce(() -> lockModeCommand.setLockState(LockState.TRENCHRIGHT), turret, shooter,
+                        hood));
 
         operator(OIConstants.kKeyboard_climbUp)
-            .onTrue(climb.climbUp());
+                .onTrue(climb.climbUp());
 
         operator(OIConstants.kKeyboard_climbHang)
-            .onTrue(climb.climbHang());
+                .onTrue(climb.climbHang());
 
         operator(OIConstants.kKeyboard_climbDown)
-            .onTrue(climb.climbDown());
+                .onTrue(climb.climbDown());
 
         operator(OIConstants.kKeyboard_intakeDeploy)
-            .onTrue(hinge.hingeDown())
-            .onFalse(hinge.hingeStopCommand());
+                .onTrue(hinge.hingeDown())
+                .onFalse(hinge.hingeStopCommand());
 
         operator(OIConstants.kKeyboard_intakeRetract)
-            .onTrue(hinge.hingeUp())
-            .onFalse(hinge.hingeStopCommand());
+                .onTrue(hinge.hingeUp())
+                .onFalse(hinge.hingeStopCommand());
     }
 
     public JoystickButton operator(int keyCode) {
         if (OPERATOR_JOYSTICK_DEBUG) {
             new JoystickButton(operatorJoystick, keyCode)
-                .onTrue(Commands.runOnce(() -> System.out.println("Pressed operator keycode " + keyCode)));
+                    .onTrue(Commands.runOnce(() -> System.out.println("Pressed operator keycode " + keyCode)));
         }
         return new JoystickButton(operatorJoystick, keyCode);
     }

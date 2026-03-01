@@ -13,7 +13,8 @@ public class LockMode extends Command {
         RIGHT,
         TRENCHLEFT,
         TRENCHRIGHT,
-        NEUTRAL
+        NEUTRAL,
+        LOCK
     }
 
     Turret turret;
@@ -38,7 +39,7 @@ public class LockMode extends Command {
 
     @Override
     public void execute() {
-        
+
         double tgtRpm = 0.0;
         double tgtAngleHood = 0.0;
         double tgtAngleTurret = 0.0;
@@ -72,6 +73,11 @@ public class LockMode extends Command {
             case NEUTRAL:
                 tgtAngleHood = 0.0;
                 tgtRpm = 0.0;
+                tgtAngleTurret = 0.0;
+                break;
+            case LOCK:
+                tgtAngleHood = 8.0;
+                tgtRpm = 3800.0;
                 tgtAngleTurret = 0.0;
                 break;
         }

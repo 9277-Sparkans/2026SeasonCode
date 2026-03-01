@@ -20,10 +20,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 
 public class AutoFire extends Command 
 {
-    public enum TargetHub {
-        BLUE_HUB,
-        RED_HUB
-    }
+    // public enum TargetHub {
+    //     BLUE_HUB,
+    //     RED_HUB
+    // }
 
     Indexer indexer;
     Turret turret;
@@ -34,10 +34,10 @@ public class AutoFire extends Command
     Supplier<Pose2d> poseSupplier;
     Supplier<Rotation2d> rotationSupplier;
     Lookup lookup;
-    TargetHub targetHub;
+    // TargetHub targetHub;
 
     public AutoFire(Indexer indexer, Turret turret, Shooter shooter, Hood hood,
-                    Supplier<ChassisSpeeds> speedsSupplier, Supplier<Pose2d> poseSupplier, Lookup lookup, TargetHub targetHub) {
+            Supplier<ChassisSpeeds> speedsSupplier, Supplier<Pose2d> poseSupplier, Lookup lookup) { //, TargetHub targetHub) {
         this.indexer = indexer;
         this.turret = turret;
         this.shooter = shooter;
@@ -67,12 +67,12 @@ public class AutoFire extends Command
         double posY = pose.getY() + rotation.getSin() * Constants.HoodConstants.hoodOffset;
 
         // Get coordinates to target
-        double hubX = targetHub == TargetHub.BLUE_HUB ? Constants.FieldConstants.BLUE_HUB_X : Constants.FieldConstants.RED_HUB_X;
-        double hubY = targetHub == TargetHub.BLUE_HUB ? Constants.FieldConstants.BLUE_HUB_Y : Constants.FieldConstants.RED_HUB_Y;
+        // double hubX = targetHub == TargetHub.BLUE_HUB  ? Constants.FieldConstants.BLUE_HUB_X : Constants.FieldConstants.RED_HUB_X;
+        // double hubY = targetHub == TargetHub.BLUE_HUB ? Constants.FieldConstants.BLUE_HUB_Y : Constants.FieldConstants.RED_HUB_Y;
         
         // Calculate target vector
-        double offsetX = hubX - posX;
-        double offsetY = hubY - posY;
+        double offsetX = Constants.FieldConstants.HUB_X - posX; //hubX
+        double offsetY = Constants.FieldConstants.HUB_Y - posY; //hubY
 
         double targetDirectionRad = Math.atan2(offsetY, offsetX);
         double targetDirectionDeg = targetDirectionRad * 180 / Math.PI;
@@ -96,6 +96,8 @@ public class AutoFire extends Command
         // shooter.targetVel = optimalShooterRPM;
         // hood.targetHoodAngle = optimalHoodAngle;
 
+        System.out.println(optimalTurretAngle);
+
         turret.target = optimalTurretAngle;
         turret.defaultCommand();
         shooter.targetVel = optimalShooterRPM;
@@ -112,7 +114,7 @@ public class AutoFire extends Command
 
         // Only start shooting if ready
         if (optimalError < Constants.ShooterConstants.maxShotError) {
-            indexer.spin();
+            indexer.setVel();
         } else {
             indexer.stop();
         }

@@ -25,7 +25,7 @@ public class Constants {
 
         // change between DRIVER_CONTROLLER and DRIVER_STICKS for controller and sticks,
         // erm i guess
-        public static final ControlTypes controlType = ControlTypes.DRIVER_CONTROLLER;
+        public static final ControlTypes controlType = ControlTypes.DRIVER_STICKS;
 
         public static enum ControlTypes {
             DEV,
@@ -39,11 +39,11 @@ public class Constants {
     public static final class OIConstants {
 
         // Ports
-        public static final int kDriverControllerPort = 4;
+        public static final int kDriverControllerPort = 0;
 
-        public static final int kOperatorControllerPort = 0;
-        public static final int kDriverTranslateStickPort = 1;
-        public static final int kDriverRotateStickPort = 2;
+        public static final int kOperatorControllerPort = 2;
+        public static final int kDriverTranslateStickPort = 0;
+        public static final int kDriverRotateStickPort = 1;
         public static final int kBackupOperatorControllerPort = 3;
         public static final double kDeadband = 0.04;
 
@@ -253,7 +253,7 @@ public class Constants {
         public static final double intakeMaxVoltage = 5; // can change if not needed
         public static final double intakeMaxAcceleration = 500;
         public static final double intakeMaxVelocity = 500; // rps
-        public static final double intakeSpeed = 400.0; //rps max 66.6 rps
+        public static final double intakeSpeed = 175.0; //rps max 66.6 rps 400.0 
     }
 
     public static class HingeConstants {
@@ -271,11 +271,11 @@ public class Constants {
         public static final double hinge_kV = 0.12;
         public static final double hinge_kG = 2.5; //0.25
         public static final double hingeMaxAcceleration = 20.0;
-        public static final double hingeMaxVelocity = 5.0; // rps
+        public static final double hingeMaxVelocity = 60.0; // rps
         public static final double kHingeCurrentLimit = 120;
 
         public static final int hingeCountsPerRevolution = 2048; // for kraken x60
-        public static final double hingeGearRatio = 8.0 / 1.0;
+        public static final double hingeGearRatio = 45.0 / 1.0; //carter: 8:1 tyler: 45:1
 
         public static final double hingeMaxDeg = 50.0; //-100.0;
     }
@@ -358,14 +358,16 @@ public class Constants {
     }
 
     public static class FieldConstants {
-        public static final double BLUE_HUB_X = 4.625594; // meters
-        public static final double BLUE_HUB_Y = 4.034536; // meters
-        public static final double RED_HUB_X = 123123.0; // meters 
-        public static final double RED_HUB_Y = 123123.0; // meters
+        public static final double HUB_X = 4.625594; // meters
+        public static final double HUB_Y = 4.034536; // meters
+        // public static final double BLUE_HUB_X = 4.625594; // meters
+        // public static final double BLUE_HUB_Y = 4.034536; // meters
+        // public static final double RED_HUB_X = 11.915521; // meters 
+        // public static final double RED_HUB_Y = 4.034536; // meters
         public static final edu.wpi.first.math.geometry.Translation3d HUB_BLUE = new edu.wpi.first.math.geometry.Translation3d(
-                BLUE_HUB_X, BLUE_HUB_Y, 1.4); // 1.4m height approx
+                HUB_X, HUB_Y, 1.4); // 1.4m height approx
         public static final edu.wpi.first.math.geometry.Translation3d HUB_RED = new edu.wpi.first.math.geometry.Translation3d(
-                RED_HUB_X, RED_HUB_Y, 1.4);
+                16.541 - HUB_X, HUB_Y, 1.4);
     }
 
     public static final class CanBusConstants {

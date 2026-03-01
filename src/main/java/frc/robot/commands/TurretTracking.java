@@ -66,8 +66,8 @@ public class TurretTracking extends Command {
 
     // Target position (Hub)
     Translation2d target = new Translation2d(
-        frc.robot.Constants.FieldConstants.BLUE_HUB_X,
-        frc.robot.Constants.FieldConstants.BLUE_HUB_Y);
+        frc.robot.Constants.FieldConstants.HUB_X,
+        frc.robot.Constants.FieldConstants.HUB_Y);
 
     // Direction from turret to hub
     Translation2d direction = target.minus(turretTranslation);

@@ -44,7 +44,7 @@ import frc.robot.Utils.Lookup;
 import frc.robot.commands.AutoFire;
 import frc.robot.commands.LockMode;
 import frc.robot.commands.TurretTracking;
-// import frc.robot.commands.AutoFire.TargetHub;
+import frc.robot.commands.AutoFire.TargetHub;
 import frc.robot.commands.LockMode.LockState;
 import frc.robot.subsystems.Transfer;
 import frc.robot.subsystems.Climb;
@@ -270,7 +270,7 @@ public class RobotContainer {
         // rotateStick.button(2).onTrue(intake.intakeCommand());
 
         // Autofire testing bindss
-        translateStick.button(OIConstants.kSticks_trigger).whileTrue(new AutoFire(indexer, turret, shooter, hood, () -> drivetrain.getStateCopy().Speeds, () -> drivetrain.getStateCopy().Pose, lookup));
+        translateStick.button(OIConstants.kSticks_trigger).whileTrue(new AutoFire(indexer, turret, shooter, hood, () -> drivetrain.getStateCopy().Speeds, () -> drivetrain.getStateCopy().Pose, lookup, TargetHub.BLUE_HUB));
         translateStick.button(OIConstants.kSticks_leftHandle).onTrue(Commands.runOnce(() -> indexer.spin()));
         translateStick.button(OIConstants.kSticks_leftHandle).onFalse(Commands.runOnce(() -> indexer.stop()));
         translateStick.button(OIConstants.kSticks_rightHandle).onTrue(transfer.toggleTransferCommand());

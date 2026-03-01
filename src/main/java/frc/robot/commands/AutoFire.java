@@ -48,6 +48,7 @@ public class AutoFire extends Command
         this.speedsSupplier = speedsSupplier;
         this.poseSupplier = poseSupplier;
         this.lookup = lookup;
+        this.targetHub = targetHub;
     }
 
     

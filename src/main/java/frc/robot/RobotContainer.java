@@ -12,6 +12,8 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.util.sendable.Sendable;
@@ -24,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.RobotModeTriggers;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.Vision.Vision;
@@ -166,19 +169,19 @@ public class RobotContainer {
 
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
-        // joystick.start().and(joystick.povUp()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        // joystick.start().and(joystick.povDown()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        // joystick.start().and(joystick.povRight()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        // joystick.start().and(joystick.povLeft()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        joystick.start().and(joystick.povUp()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+        joystick.start().and(joystick.povDown()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+        joystick.start().and(joystick.povRight()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+        joystick.start().and(joystick.povLeft()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // reset the field-centric heading on left bumper press
         joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
         // joystick.().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-        joystick.start().and(joystick.povUp()).whileTrue(shooter.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-        joystick.start().and(joystick.povDown()).whileTrue(shooter.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-        joystick.start().and(joystick.povRight()).whileTrue(shooter.sysIdDynamic(SysIdRoutine.Direction.kForward));
-        joystick.start().and(joystick.povLeft()).whileTrue(shooter.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+        // joystick.start().and(joystick.povUp()).whileTrue(shooter.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+        // joystick.start().and(joystick.povDown()).whileTrue(shooter.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+        // joystick.start().and(joystick.povRight()).whileTrue(shooter.sysIdDynamic(SysIdRoutine.Direction.kForward));
+        // joystick.start().and(joystick.povLeft()).whileTrue(shooter.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
         // CLIMB button controls
         // joystick.y().onTrue(climb.climbUp());
@@ -270,7 +273,7 @@ public class RobotContainer {
         // rotateStick.button(2).onTrue(intake.intakeCommand());
 
         // Autofire testing bindss
-        translateStick.button(OIConstants.kSticks_trigger).whileTrue(new AutoFire(indexer, turret, shooter, hood, () -> drivetrain.getStateCopy().Speeds, () -> drivetrain.getStateCopy().Pose, lookup, TargetHub.BLUE_HUB));
+        translateStick.button(OIConstants.kSticks_trigger).whileTrue(new AutoFire(indexer, turret, shooter, hood, () -> drivetrain.getStateCopy().Speeds, () -> drivetrain.getStateCopy().Pose, lookup, DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red ? TargetHub.RED_HUB : TargetHub.BLUE_HUB));
         translateStick.button(OIConstants.kSticks_leftHandle).onTrue(Commands.runOnce(() -> indexer.spin()));
         translateStick.button(OIConstants.kSticks_leftHandle).onFalse(Commands.runOnce(() -> indexer.stop()));
         translateStick.button(OIConstants.kSticks_rightHandle).onTrue(transfer.toggleTransferCommand());
@@ -289,7 +292,7 @@ public class RobotContainer {
                 .onTrue(Commands.runOnce(() -> manualControl = !manualControl));
 
         operator(OIConstants.kKeyboard_lockModeToggle)
-                .onTrue(new LockMode(turret, shooter, hood, LockState.LOCK));
+                .whileTrue(new LockMode(turret, shooter, hood, LockState.LOCK));
 
         operator(OIConstants.kKeyboard_lockModeLeft)
                 .whileTrue(new LockMode(turret, shooter, hood, LockState.LEFT));

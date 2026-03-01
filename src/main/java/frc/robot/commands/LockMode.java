@@ -76,9 +76,9 @@ public class LockMode extends Command {
                 tgtAngleTurret = 0.0;
                 break;
             case LOCK:
-                tgtAngleHood = 8.0;
-                tgtRpm = 3800.0;
-                tgtAngleTurret = 0.0;
+                tgtAngleHood = LockModeConstants.kHoodLock;
+                tgtRpm = LockModeConstants.kRPMLock;
+                tgtAngleTurret = LockModeConstants.kTurretLock;
                 break;
         }
 

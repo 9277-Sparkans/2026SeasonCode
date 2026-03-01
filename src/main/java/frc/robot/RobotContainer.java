@@ -116,8 +116,19 @@ public class RobotContainer {
     public final Lookup lookup = Utils.createLookup();
 
     public RobotContainer() {
-            NamedCommands.registerCommand("testNamedCommand",
-                            Commands.runOnce(() -> System.out.println("this named command works")));
+        NamedCommands.registerCommand("testNamedCommand",
+                Commands.runOnce(() -> System.out.println("this named command works")));
+        NamedCommands.registerCommand("intake",
+                intake.intakeCommand());
+        NamedCommands.registerCommand("climbUp",
+                climb.climbUp());
+        NamedCommands.registerCommand("climbHang",
+                climb.climbHang());
+        NamedCommands.registerCommand("autofire",
+                (new AutoFire(indexer, turret, shooter, hood, () -> drivetrain.getStateCopy().Speeds, () -> drivetrain.getStateCopy().Pose, lookup, DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red ? TargetHub.RED_HUB : TargetHub.BLUE_HUB)));
+        NamedCommands.registerCommand("hingeDown",
+                hinge.hingeDown());
+        
 
         turret.setDefaultCommand(turret.initDefaultCommand(turret));
         hood.setDefaultCommand(hood.initDefaultCommand(hood));

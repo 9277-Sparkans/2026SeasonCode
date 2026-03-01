@@ -223,7 +223,7 @@ public class Constants {
         public static final double intakeMaxVoltage = 4; // can change if not needed
         public static final double intakeMaxAcceleration = 5;
         public static final double intakeMaxVelocity = 100; // rps
-        public static final double intakeSpeed = 50.0; // rps
+        public static final double intakeSpeed = 150.0; // rps
     }
 
     public static class HingeConstants {
@@ -266,7 +266,7 @@ public class Constants {
         public static final double kClimb_kD = 0.1;
         public static final double kClimb_kG = 0.12;
 
-        public static final int kClimbUp = 80;
+        public static final int kClimbUp = 105;
         public static final int kClimbDown = 0;
         public static final int kClimbHang = 20;
 
@@ -353,6 +353,7 @@ public class Constants {
         public static final int kRPMRight = 4450;
         public static final double kHoodRight = 5.0;
         public static final double kTurretRight = -44.0;
+
 
         // TRENCH LEFT
         public static final int kRPMTrenchLeft = 4350;

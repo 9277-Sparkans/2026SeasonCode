@@ -80,6 +80,6 @@
     }
   },
   "resetOdom": true,
-  "folder": "S1",
+  "folder": null,
   "choreoAuto": false
 }

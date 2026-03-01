@@ -4,10 +4,12 @@
   "holonomicMode": true,
   "pathFolders": [
     "Auto Align",
+    "joel",
     "Projections"
   ],
   "autoFolders": [
     "Auto Align",
+    "New Folder",
     "Projections"
   ],
   "defaultMaxVel": 3.5,

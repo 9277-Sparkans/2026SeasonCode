@@ -10,6 +10,7 @@ import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.util.sendable.Sendable;
@@ -103,6 +104,7 @@ public class RobotContainer {
                 autoChooser.addOption("S2 Depost (S2.DP)", AutoAlignCommand.getS2DP(drivetrain));
                 autoChooser.addOption("S2 Human Player (S2.HP)", AutoAlignCommand.getS2HP(drivetrain));
                 autoChooser.addOption("S3 Human Player (S3.HP)", AutoAlignCommand.getS3HP(drivetrain));
+                
                 SmartDashboard.putData("Auto Chooser", autoChooser);
 
                 SmartDashboard.putData("Git Info", new Sendable() {
@@ -183,6 +185,7 @@ public class RobotContainer {
         }
 
         public Command getAutonomousCommand() {
-                return autoChooser.getSelected();
+                // return autoChooser.getSelected();
+                return new PathPlannerAuto("joeleftauto");
         }
 }

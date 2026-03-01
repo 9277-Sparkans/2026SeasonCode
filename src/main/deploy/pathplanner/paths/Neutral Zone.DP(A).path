@@ -74,7 +74,7 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 4.5,
+    "maxVelocity": 3.5,
     "maxAcceleration": 4.5,
     "maxAngularVelocity": 1000.0,
     "maxAngularAcceleration": 2831.0,
@@ -86,7 +86,7 @@
     "rotation": 90.0
   },
   "reversed": false,
-  "folder": "Archive",
+  "folder": null,
   "idealStartingState": {
     "velocity": 0,
     "rotation": -45.0

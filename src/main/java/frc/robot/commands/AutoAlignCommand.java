@@ -56,7 +56,7 @@ public class AutoAlignCommand {
      */
     public static Command getAutoAlignCommand(CommandSwerveDrivetrain drivetrain) {
         try {
-            PathPlannerPath path = PathPlannerPath.fromPathFile("climbtest");
+            PathPlannerPath path = PathPlannerPath.fromPathFile("joelclimb");
             Command autoAlign = AutoBuilder.pathfindThenFollowPath(path, CONSTRAINTS);
 
             return autoAlign

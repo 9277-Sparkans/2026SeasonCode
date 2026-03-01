@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Start 2.2"
+            "pathName": "NZ 2.3.1.1"
           }
         },
         {
@@ -19,13 +19,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "HP Shoot2.2"
+            "pathName": "NZReturn Climb 2.3.1.1 "
           }
         }
       ]
     }
   },
   "resetOdom": true,
-  "folder": "S2",
+  "folder": null,
   "choreoAuto": false
 }

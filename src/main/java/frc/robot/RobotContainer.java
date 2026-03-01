@@ -11,6 +11,7 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -18,6 +19,7 @@ import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -58,6 +60,18 @@ import edu.wpi.first.math.geometry.Pose2d;
 import java.util.function.Supplier;
 import frc.robot.Vision.VisionConstants;
 
+import frc.robot.commands.TurretTracking;
+import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.Climb;
+import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Hood;
+import frc.robot.subsystems.Indexer;
+import frc.robot.subsystems.Transfer;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Hinge;
+import frc.robot.commands.AutoAlignCommand;
+import frc.robot.commands.LockMode;
+
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
     private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
@@ -70,6 +84,7 @@ public class RobotContainer {
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
+        private final SendableChooser<Command> autoChooser = new SendableChooser<>();
 
     public final CommandXboxController joystick = new CommandXboxController(OIConstants.kDriverControllerPort);
     public final CommandJoystick translateStick = new CommandJoystick(OIConstants.kDriverTranslateStickPort);
@@ -136,6 +151,17 @@ public class RobotContainer {
 
         NamedCommands.registerCommand("testNamedCommand",
                 Commands.runOnce(() -> System.out.println("this named command works")));
+
+                // auto chooser
+                autoChooser.setDefaultOption("No auto", Commands.none());
+                // jeet autos, add final autos in later
+                // autoChooser.addOption("S1 DPR + Climb (S1.1-S-DPR-C)", AutoAlignCommand.getS1DPR_C(drivetrain));
+                // autoChooser.addOption("S1 DPR (S1.1-S-DPR)", AutoAlignCommand.getS1DPR(drivetrain));
+                // autoChooser.addOption("S2 Depost (S2.DP)", AutoAlignCommand.getS2DP(drivetrain));
+                // autoChooser.addOption("S2 Human Player (S2.HP)", AutoAlignCommand.getS2HP(drivetrain));
+                // autoChooser.addOption("S3 Human Player (S3.HP)", AutoAlignCommand.getS3HP(drivetrain));
+                
+                SmartDashboard.putData("Auto Chooser", autoChooser);
 
         SmartDashboard.putData("Git Info", new Sendable() {
             @SuppressWarnings("removal")
@@ -346,8 +372,8 @@ public class RobotContainer {
         return new JoystickButton(operatorJoystick, keyCode);
     }
 
-    public Command getAutonomousCommand() {
-        return new PathPlannerAuto("testAuto");
-    }
-
+        public Command getAutonomousCommand() {
+                // return autoChooser.getSelected();
+                return new PathPlannerAuto("joeleftauto");
+        }
 }

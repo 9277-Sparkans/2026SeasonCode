@@ -1,4 +1,5 @@
 package frc.robot.subsystems;
+
 import frc.robot.Constants;
 import frc.robot.Constants.HingeConstants;
 import frc.robot.Constants.TurretConstants;
@@ -8,11 +9,12 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 
-public class Hinge extends SubsystemBase{
+public class Hinge extends SubsystemBase {
 
     private final TalonFX hinge;
     private final TalonFXConfiguration hingeConfig;
@@ -21,10 +23,10 @@ public class Hinge extends SubsystemBase{
 
     double target;
 
-    private double degToRotations(double degrees){
-		return (degrees / 360.0) * Constants.HingeConstants.hingeGearRatio;
-	}
-    
+    private double degToRotations(double degrees) {
+        return (degrees / 360.0) * Constants.HingeConstants.hingeGearRatio;
+    }
+
     public enum HingeState {
         UP,
         DOWN
@@ -34,19 +36,19 @@ public class Hinge extends SubsystemBase{
 
     public Hinge() {
         hinge = new TalonFX(Constants.HingeConstants.kHingeMotorId);
-		hingeConfig = new TalonFXConfiguration();
+        hingeConfig = new TalonFXConfiguration();
 
         hinge.setPosition(0.0);
 
         hingeConfig.CurrentLimits.StatorCurrentLimit = HingeConstants.kHingeCurrentLimit;
         hingeConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
-		hingeConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        hingeConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
         hingeConfig.Slot0.kP = Constants.HingeConstants.hinge_kP;
-		hingeConfig.Slot0.kI = Constants.HingeConstants.hinge_kI;
-		hingeConfig.Slot0.kD = Constants.HingeConstants.hinge_kD; 
-		hingeConfig.Slot0.kV = Constants.HingeConstants.hinge_kV;
+        hingeConfig.Slot0.kI = Constants.HingeConstants.hinge_kI;
+        hingeConfig.Slot0.kD = Constants.HingeConstants.hinge_kD;
+        hingeConfig.Slot0.kV = Constants.HingeConstants.hinge_kV;
         hingeConfig.Slot0.kS = Constants.HingeConstants.hinge_kS;
         hingeConfig.Slot0.kG = Constants.HingeConstants.hinge_kG;
 
@@ -80,6 +82,7 @@ public class Hinge extends SubsystemBase{
 
     // state for climb up
     public void states(HingeState state) {
+        setState(state);
         setState(state);
         switch (state) {
             case UP:

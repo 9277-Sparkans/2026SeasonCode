@@ -29,6 +29,22 @@ public class PathCommands {
     }
 
     /**
+     * Creates a command to follow a Choreo trajectory.
+     * 
+     * @param pathName The name of the Choreo trajectory file (without .traj
+     *                 extension).
+     * @return A command that follows the trajectory.
+     */
+    public static Command followChoreoPath(String pathName) {
+        try {
+            PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory(pathName);
+            return AutoBuilder.followPath(path);
+        } catch (Exception e) {
+            return Commands.print("Failed to load Choreo path: " + pathName + " - " + e.getMessage());
+        }
+    }
+
+    /**
      * Creates a command to pathfind to a specific pose and then follow a path.
      * Useful for starting from an arbitrary position.
      * 
@@ -41,6 +57,22 @@ public class PathCommands {
             return AutoBuilder.pathfindThenFollowPath(path, null);
         } catch (Exception e) {
             return Commands.print("Failed to load path: " + pathName + " - " + e.getMessage());
+        }
+    }
+
+    /**
+     * Creates a command to pathfind to a Choreo trajectory and then follow it.
+     * 
+     * @param pathName The name of the Choreo trajectory file.
+     * @return A command that pathfinds to the start of the trajectory, then follows
+     *         it.
+     */
+    public static Command pathfindThenFollowChoreoPath(String pathName) {
+        try {
+            PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory(pathName);
+            return AutoBuilder.pathfindThenFollowPath(path, null);
+        } catch (Exception e) {
+            return Commands.print("Failed to load Choreo path: " + pathName + " - " + e.getMessage());
         }
     }
 

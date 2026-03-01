@@ -5,6 +5,11 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Hood;
 import frc.robot.Constants.LockModeConstants;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Hood;
+import frc.robot.Constants.LockModeConstants;
+import edu.wpi.first.wpilibj2.command.Command;
 
 public class LockMode extends Command {
     public enum LockState {
@@ -27,6 +32,7 @@ public class LockMode extends Command {
         this.shooter = shooter;
         this.hood = hood;
 
+        addRequirements(shooter, hood, turret);
         addRequirements(shooter, hood, turret);
 
         this.lockState = lockState;
@@ -100,3 +106,4 @@ public class LockMode extends Command {
         return false;
     }
 }
+

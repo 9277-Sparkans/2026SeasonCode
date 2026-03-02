@@ -322,13 +322,13 @@ public class RobotContainer {
                 // DRIVER PREFERENCE
                 translateStick.button(OIConstants.kRightSticks_leftGrid_bottomLeft)
                                 .toggleOnTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-                // translateStick.button(1).onTrue(Commands.runOnce(() ->
-                // transfer.toggleTransfer()));
-                // translateStick.button(1).onTrue(indexer.toggleIndexer());
-                // rotateStick.button(1).onTrue(intake.outtakeCommand());
-                // rotateStick.button(1).onFalse(intake.stopRollerCommand());
-                // rotateStick.button(2).onFalse(intake.stopRollerCommand());
-                // rotateStick.button(2).onTrue(intake.intakeCommand());
+                translateStick.button(1).onTrue(Commands.runOnce(() ->
+                transfer.toggleTransfer()));
+                translateStick.button(1).onTrue(indexer.toggleIndexer());
+                rotateStick.button(1).onTrue(intake.outtakeCommand());
+                rotateStick.button(1).onFalse(intake.stopRollerCommand());
+                rotateStick.button(2).onFalse(intake.stopRollerCommand());
+                rotateStick.button(2).onTrue(intake.intakeCommand());
 
                 // Autofire testing bindss
                 translateStick.button(OIConstants.kSticks_trigger)

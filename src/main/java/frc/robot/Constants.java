@@ -25,7 +25,7 @@ public class Constants {
 
         // change between DRIVER_CONTROLLER and DRIVER_STICKS for controller and sticks,
         // erm i guess
-        public static final ControlTypes controlType = ControlTypes.DRIVER_STICKS;
+        public static final ControlTypes controlType = ControlTypes.DRIVER_CONTROLLER;
 
         public static enum ControlTypes {
             DEV,
@@ -39,12 +39,12 @@ public class Constants {
     public static final class OIConstants {
 
         // Ports
-        public static final int kDriverControllerPort = 4;
+        public static final int kDriverControllerPort = 0;
 
-        public static final int kOperatorControllerPort = 2;
-        public static final int kDriverTranslateStickPort = 0;
-        public static final int kDriverRotateStickPort = 1;
-        public static final int kBackupOperatorControllerPort = 3;
+        public static final int kOperatorControllerPort = 1;
+        public static final int kDriverTranslateStickPort = 2;
+        public static final int kDriverRotateStickPort = 3;
+        public static final int kBackupOperatorControllerPort = 4;
         public static final double kDeadband = 0.04;
 
         // Joysticks

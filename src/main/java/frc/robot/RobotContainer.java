@@ -396,6 +396,6 @@ public class RobotContainer {
 
         public Command getAutonomousCommand() {
                 // return autoChooser.getSelected();
-                return new PathPlannerAuto("joel");
+                return new PathPlannerAuto("depotest");
         }
 }

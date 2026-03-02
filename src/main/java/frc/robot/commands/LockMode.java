@@ -88,10 +88,14 @@ public class LockMode extends Command {
                 break;
         }
 
-        shooter.targetVel = ((int)(tgtRpm));
-        hood.targetHoodAngle = (tgtAngleHood);
-        turret.target = (tgtAngleTurret);
+        turret.target = tgtAngleTurret;
+        turret.defaultCommand();
+        shooter.targetVel = tgtRpm;
+        hood.moveHoodToAngle(tgtAngleHood);
 
+        // shooter.targetVel = ((int)(tgtRpm));
+        // hood.targetHoodAngle = (tgtAngleHood);
+        // turret.target = (tgtAngleTurret);
     }
 
     @Override

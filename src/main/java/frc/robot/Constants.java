@@ -39,7 +39,7 @@ public class Constants {
     public static final class OIConstants {
 
         // Ports
-        public static final int kDriverControllerPort = 0;
+        public static final int kDriverControllerPort = 4;
 
         public static final int kOperatorControllerPort = 2;
         public static final int kDriverTranslateStickPort = 0;
@@ -175,6 +175,8 @@ public class Constants {
         public static final int kMinRPM = 0;
         public static final int kMaxRPM = 6000;
 
+        public static double kMinOperationalRPM = 3000;
+
         public static final int kMinFlywheelRPM = 2400;
         public static final int kMaxFlywheelRPM = 7200;
 
@@ -189,8 +191,10 @@ public class Constants {
         public static final double autoshootDistanceRange = 0.1; // Range of distances to check to choose the best shot (Least hood rotation and flywheel RPM change)
         public static final double maxShotError = 0.001; // The maximum allowed error for a shot to occur
 
-        public static final double distancePower = 1.4; // Bad
-        public static final double rpmOffset = 50.0; // Bad
+        // Tuning constants for autofire
+        public static final double rpmOffset = 50.0;
+        public static final double distancePower = 1.4;
+        public static final double speedPower = 1.0;
         
         // Weights of each value when calculating an optimal shot, higher value means higher priority to minimize
         public static final double botVelocityWeight = 1.0;

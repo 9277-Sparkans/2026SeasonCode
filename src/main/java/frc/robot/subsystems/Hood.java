@@ -155,6 +155,7 @@ public class Hood extends SubsystemBase {
   @Override
   public void periodic() {
     // hoodMotor.set(0.0);
+    moveHoodToAngle(targetHoodAngle);
   }
 
   public double getPosition() {

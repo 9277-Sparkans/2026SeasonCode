@@ -9,6 +9,7 @@ import frc.robot.subsystems.Intake;
 import frc.robot.Constants;
 import frc.robot.Utils;
 import frc.robot.Utils.Lookup;
+import frc.robot.generated.TunerConstants;
 
 import java.util.function.Supplier;
 
@@ -81,6 +82,7 @@ public class AutoFire extends Command
 
         double shooterRPM = shooter.getMotorRPM();
         double hoodAngle = hood.getPosition();
+        double turretAngle = turret.getTurretAngle();
 
         // Transform standard x-y velocity such that i^ is towards the shooter, j^ is 90 deg left from top-down
         double transformedVelocityX = speeds.vxMetersPerSecond * Math.cos(targetDirectionRad) + speeds.vyMetersPerSecond * Math.sin(targetDirectionRad);
@@ -88,21 +90,39 @@ public class AutoFire extends Command
 
         // Get optimal shot
         double[] optimal = lookup.FindOptimalVals(targetDistance, transformedVelocityX, transformedVelocityY, shooterRPM, hoodAngle);
-        double optimalError = optimal[0];
+        // double optimalError = optimal[0];
         double optimalTurretAngle = Utils.wrapAngle(rotation.getDegrees() - targetDirectionDeg + optimal[1]);
-        double optimalShooterRPM = optimal[2] - Constants.ShooterConstants.rpmOffset * Math.pow(targetDistance, Constants.ShooterConstants.distancePower);
+        
+        double stillOffset = Constants.ShooterConstants.rpmOffset * Math.pow(targetDistance, Constants.ShooterConstants.distancePower);
+        double speedOffset = Math.pow(Math.sqrt(speeds.vxMetersPerSecond * speeds.vxMetersPerSecond + speeds.vyMetersPerSecond * speeds.vyMetersPerSecond) / TunerConstants.kSpeedAt12Volts.magnitude(), Constants.ShooterConstants.speedPower);
+        double optimalShooterRPM = optimal[2] - stillOffset * (1.0 - speedOffset);
+        
         double optimalHoodAngle = optimal[3];
 
-        // turret.target = optimalTurretAngle;
-        // shooter.targetVel = optimalShooterRPM;
-        // hood.targetHoodAngle = optimalHoodAngle;
-
-        System.out.println(optimalTurretAngle);
-
         turret.target = optimalTurretAngle;
-        turret.defaultCommand();
         shooter.targetVel = optimalShooterRPM;
-        hood.moveHoodToAngle(optimalHoodAngle);
+        hood.targetHoodAngle = optimalHoodAngle;
+
+        // Calculate Error
+        double botSpeedRange = 2.0 * TunerConstants.kSpeedAt12Volts.magnitude();
+        double shooterRPMRange = (double)(Constants.ShooterConstants.kMaxRPM - Constants.ShooterConstants.kMinOperationalRPM);
+        double hoodAngleRange = Constants.HoodConstants.kMaximumAngle - Constants.HoodConstants.kMinimumAngle;
+        double turretAngleRange = 180.0;
+
+        double normalizedCurrentXVelocity= speeds.vxMetersPerSecond / botSpeedRange;
+        double normalizedCurrentYVelocity = speeds.vyMetersPerSecond / botSpeedRange;
+        double normalizedCurrentShooterRPM = (shooterRPM - Constants.ShooterConstants.kMinRPM) / shooterRPMRange;
+        double normalizedCurrentHoodAngle = (hoodAngle - Constants.HoodConstants.kMinimumAngle) / hoodAngleRange;
+        double normalizedCurrentTurretAngle = turretAngle / turretAngleRange;
+
+        double normalizedRowShooterRPM = (optimalShooterRPM - Constants.ShooterConstants.kMinRPM) / shooterRPMRange;
+        double normalizedRowAngle = (optimalHoodAngle - Constants.HoodConstants.kMinimumAngle) / hoodAngleRange;
+        double normalizedTurretAngle = optimalTurretAngle / turretAngleRange;
+
+        double weight = (normalizedRowShooterRPM - normalizedCurrentShooterRPM) * (normalizedRowShooterRPM - normalizedCurrentShooterRPM)
+                      + (normalizedRowAngle - normalizedCurrentHoodAngle) * (normalizedRowAngle - normalizedCurrentHoodAngle)
+                      + (normalizedTurretAngle - normalizedCurrentTurretAngle) * (normalizedTurretAngle - normalizedCurrentTurretAngle);
+        double optimalError = weight / 3.0;
 
         SmartDashboard.putNumber("AutoFire/TargetDistance", targetDistance);
         SmartDashboard.putNumber("AutoFire/TargetDirection", targetDirectionDeg);

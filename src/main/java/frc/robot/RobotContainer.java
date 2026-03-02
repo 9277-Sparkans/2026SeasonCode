@@ -338,12 +338,12 @@ public class RobotContainer {
                                                 DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red
                                                                 ? TargetHub.RED_HUB
                                                                 : TargetHub.BLUE_HUB));
-                translateStick.button(OIConstants.kSticks_leftHandle).onTrue(Commands.runOnce(() -> indexer.spin()));
-                translateStick.button(OIConstants.kSticks_leftHandle).onFalse(Commands.runOnce(() -> indexer.stop()));
                 translateStick.button(OIConstants.kSticks_rightHandle).onTrue(transfer.toggleTransferCommand());
-                rotateStick.button(OIConstants.kSticks_trigger).onTrue(intake.outtakeCommand());
+                translateStick.button(OIConstants.kSticks_centerHandle).onTrue(Commands.runOnce(() -> indexer.spin()));
+                translateStick.button(OIConstants.kSticks_centerHandle).onFalse(Commands.runOnce(() -> indexer.stop()));
+                rotateStick.button(OIConstants.kSticks_trigger).onTrue(intake.intakeCommand());
                 rotateStick.button(OIConstants.kSticks_trigger).onFalse(intake.stopRollerCommand());
-                rotateStick.button(OIConstants.kSticks_centerHandle).onTrue(intake.intakeCommand());
+                rotateStick.button(OIConstants.kSticks_centerHandle).onTrue(intake.outtakeCommand());
                 rotateStick.button(OIConstants.kSticks_centerHandle).onFalse(intake.stopRollerCommand());
         }
 

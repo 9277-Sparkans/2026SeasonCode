@@ -109,7 +109,7 @@ public class Utils {
 
             // Helper values
             double botSpeedRange = 2.0 * TunerConstants.kSpeedAt12Volts.magnitude();
-            double shooterRPMRange = (double)(Constants.ShooterConstants.kMaxRPM - Constants.ShooterConstants.kMinRPM);
+            double shooterRPMRange = (double)(Constants.ShooterConstants.kMaxRPM - Constants.ShooterConstants.kMinOperationalRPM);
             double hoodAngleRange = Constants.HoodConstants.kMaximumAngle - Constants.HoodConstants.kMinimumAngle;
 
             double normalizedCurrentXVelocity= velocityX / botSpeedRange;

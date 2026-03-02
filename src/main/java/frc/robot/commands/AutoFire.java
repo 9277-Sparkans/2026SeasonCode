@@ -145,6 +145,9 @@ public class AutoFire extends Command
     public void end(boolean interrupted)
     {
         indexer.stop();
+        shooter.stop();
+        turret.stop();
+        hood.stopHoodCmd();
     }
 
     @Override

@@ -155,7 +155,7 @@ public class Hood extends SubsystemBase {
   @Override
   public void periodic() {
     // hoodMotor.set(0.0);
-    moveHoodToAngle(targetHoodAngle);
+    // moveHoodToAngle(targetHoodAngle);
   }
 
   public double getPosition() {
@@ -202,16 +202,18 @@ public class Hood extends SubsystemBase {
 
   public void runHood() {
     // targetHoodPosition += HoodConstants.kHoodSpeed;
-    targetHoodPosition = 0.4;
-    hoodMotor.set(HoodConstants.kHoodSpeed);
+    // targetHoodPosition = 0.4;
+    targetHoodAngle += 1.0;
+    // hoodMotor.set(HoodConstants.kHoodSpeed);
     // moveHoodMotionMagic();
   }
 
 
   public void runHoodReverse() {
     // targetHoodPosition -= HoodConstants.kHoodSpeed;
-    hoodMotor.set(-HoodConstants.kHoodSpeed);
+    // hoodMotor.set(-HoodConstants.kHoodSpeed);
     // moveHoodMotionMagic();
+    targetHoodAngle -= 1.0;
   }
 
   public Command sysIdQuasistatic ( SysIdRoutine . Direction direction ) {

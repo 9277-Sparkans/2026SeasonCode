@@ -120,6 +120,7 @@ public class RobotContainer {
         public final Transfer transfer = new Transfer();
         public final Indexer indexer = new Indexer();
         public final Hinge hinge = new Hinge();
+        public final AutoFire autoFireCommand;
         // public final LockMode lockModeCommand = new LockMode(turret, shooter, hood);
 
         public boolean manualControl = false;
@@ -132,6 +133,13 @@ public class RobotContainer {
         public final Lookup lookup = Utils.createLookup();
 
         public RobotContainer() {
+                autoFireCommand = new AutoFire(indexer, turret, shooter, hood,
+                                                () -> drivetrain.getStateCopy().Speeds,
+                                                () -> drivetrain.getStateCopy().Pose, lookup,
+                                                DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red
+                                                                ? TargetHub.RED_HUB
+                                                                : TargetHub.BLUE_HUB);
+
                 NamedCommands.registerCommand("testNamedCommand",
                                 Commands.runOnce(() -> System.out.println("this named command works")));
                 NamedCommands.registerCommand("intake",
@@ -141,23 +149,15 @@ public class RobotContainer {
                 NamedCommands.registerCommand("climbHang",
                                 climb.climbHang());
                 NamedCommands.registerCommand("autofire",
-                                (new AutoFire(indexer, turret, shooter, hood, () -> drivetrain.getStateCopy().Speeds,
-                                                () -> drivetrain.getStateCopy().Pose, lookup,
-                                                DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red
-                                                                ? TargetHub.RED_HUB
-                                                                : TargetHub.BLUE_HUB)));
+                                autoFireCommand.withTimeout(5.0));
                 NamedCommands.registerCommand("hingeDown",
                                 hinge.hingeDown());
                 NamedCommands.registerCommand("hingeUp",
                                 hinge.hingeUp());
+                NamedCommands.registerCommand("index",
+                                Commands.runOnce(() -> indexer.setVel()));
                 NamedCommands.registerCommand("kicker",
                                 Commands.runOnce(() -> transfer.toggleTransfer()));
-                NamedCommands.registerCommand("stopFire",
-                                Commands.runOnce(() -> {
-                                        shooter.stop();
-                                        turret.stop();
-                                        hood.stopHoodCmd();
-                                }));
 
 
                 turret.setDefaultCommand(turret.initDefaultCommand(turret));
@@ -265,10 +265,10 @@ public class RobotContainer {
                 // joystick.povDown().onFalse(Commands.runOnce(() -> hood.stopHoodCmd()));
 
                 // TURRET button controls
-                joystick.rightTrigger().whileTrue(turret.turretPos());
-                joystick.leftTrigger().whileTrue(turret.turretNeg());
-                joystick.leftTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
-                joystick.rightTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
+                // joystick.rightTrigger().whileTrue(turret.turretPos());
+                // joystick.leftTrigger().whileTrue(turret.turretNeg());
+                // joystick.leftTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
+                // joystick.rightTrigger().onFalse(Commands.runOnce(() -> turret.stop()));
 
                 // joystick.x().whileTrue(new TurretTracking((turret)));
                 // joystick.x().onFalse(Commands.runOnce(() -> turret.stop(), turret));
@@ -332,12 +332,7 @@ public class RobotContainer {
 
                 // Autofire testing bindss
                 translateStick.button(OIConstants.kSticks_trigger)
-                                .whileTrue(new AutoFire(indexer, turret, shooter, hood,
-                                                () -> drivetrain.getStateCopy().Speeds,
-                                                () -> drivetrain.getStateCopy().Pose, lookup,
-                                                DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red
-                                                                ? TargetHub.RED_HUB
-                                                                : TargetHub.BLUE_HUB));
+                                .whileTrue(autoFireCommand);
                 translateStick.button(OIConstants.kSticks_rightHandle).onTrue(transfer.toggleTransferCommand());
                 translateStick.button(OIConstants.kSticks_centerHandle).onTrue(Commands.runOnce(() -> indexer.spin()));
                 translateStick.button(OIConstants.kSticks_centerHandle).onFalse(Commands.runOnce(() -> indexer.stop()));
@@ -345,6 +340,18 @@ public class RobotContainer {
                 rotateStick.button(OIConstants.kSticks_trigger).onFalse(intake.stopRollerCommand());
                 rotateStick.button(OIConstants.kSticks_centerHandle).onTrue(intake.outtakeCommand());
                 rotateStick.button(OIConstants.kSticks_centerHandle).onFalse(intake.stopRollerCommand());
+                
+                rotateStick.button(OIConstants.kLeftSticks_leftGrid_topLeft).onTrue(
+                    Commands.either(
+                        turret.turretPos(),
+                            Commands.runOnce(() -> {}),
+                            () -> manualControl));
+                rotateStick.button(OIConstants.kLeftSticks_leftGrid_topMid).onTrue(turret.turretNeg());
+                rotateStick.button(OIConstants.kLeftSticks_rightGrid_topRight).onTrue(Commands.runOnce(() -> hood.runHood()));
+                rotateStick.button(OIConstants.kLeftSticks_rightGrid_topMid).onTrue(Commands.runOnce(() -> hood.runHoodReverse()));
+                rotateStick.button(OIConstants.kLeftSticks_rightGrid_topLeft).onTrue(AutoAlignCommand.getTrenchCommand(drivetrain));
+        
+
         }
 
         private void configureOperatorConsole() {
@@ -392,16 +399,16 @@ public class RobotContainer {
         }
 
         public JoystickButton operator(int keyCode) {
-                if (OPERATOR_JOYSTICK_DEBUG) {
-                        new JoystickButton(operatorJoystick, keyCode)
-                                        .onTrue(Commands.runOnce(() -> System.out
-                                                        .println("Pressed operator keycode " + keyCode)));
+            if (OPERATOR_JOYSTICK_DEBUG) {
+                new JoystickButton(operatorJoystick, keyCode)
+                    .onTrue(Commands.runOnce(() -> System.out
+                        .println("Pressed operator keycode " + keyCode)));
                 }
                 return new JoystickButton(operatorJoystick, keyCode);
         }
 
         public Command getAutonomousCommand() {
                 // return autoChooser.getSelected();
-                return new PathPlannerAuto("testneutralchoreo");
+                return new PathPlannerAuto("climb");
         }
 }

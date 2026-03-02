@@ -4,12 +4,12 @@
     {
       "anchor": {
         "x": 2.5631893151187684,
-        "y": 4.63
+        "y": 4.71
       },
       "prevControl": null,
       "nextControl": {
         "x": 2.1198622761155783,
-        "y": 4.63
+        "y": 4.71
       },
       "isLocked": false,
       "linkedName": "startleftclimb"
@@ -17,11 +17,11 @@
     {
       "anchor": {
         "x": 1.08,
-        "y": 4.63
+        "y": 4.71
       },
       "prevControl": {
         "x": 1.6711388557348608,
-        "y": 4.63
+        "y": 4.71
       },
       "nextControl": null,
       "isLocked": false,

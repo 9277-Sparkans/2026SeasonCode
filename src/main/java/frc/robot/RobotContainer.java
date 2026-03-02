@@ -143,6 +143,8 @@ public class RobotContainer {
                 (new AutoFire(indexer, turret, shooter, hood, () -> drivetrain.getStateCopy().Speeds, () -> drivetrain.getStateCopy().Pose, lookup, DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red ? TargetHub.RED_HUB : TargetHub.BLUE_HUB)));
         NamedCommands.registerCommand("hingeDown",
                 hinge.hingeDown());
+        NamedCommands.registerCommand("kicker",
+                Commands.runOnce(() -> transfer.toggleTransfer()));
         
 
         turret.setDefaultCommand(turret.initDefaultCommand(turret));
@@ -374,6 +376,6 @@ public class RobotContainer {
 
         public Command getAutonomousCommand() {
                 // return autoChooser.getSelected();
-                return new PathPlannerAuto("joeleftauto");
+                return new PathPlannerAuto("joel");
         }
 }

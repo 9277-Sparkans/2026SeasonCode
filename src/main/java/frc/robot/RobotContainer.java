@@ -150,13 +150,17 @@ public class RobotContainer {
                                 hinge.hingeDown());
                 NamedCommands.registerCommand("kicker",
                                 Commands.runOnce(() -> transfer.toggleTransfer()));
+                NamedCommands.registerCommand("stopFire",
+                                Commands.runOnce(() -> {
+                                        shooter.stop();
+                                        turret.stop();
+                                        hood.stopHoodCmd();
+                                }));
+
 
                 turret.setDefaultCommand(turret.initDefaultCommand(turret));
                 hood.setDefaultCommand(hood.initDefaultCommand(hood));
                 hinge.setDefaultCommand(hinge.initDefaultCommand(hinge));
-
-                NamedCommands.registerCommand("testNamedCommand",
-                                Commands.runOnce(() -> System.out.println("this named command works")));
 
                 // auto chooser
                 autoChooser.setDefaultOption("No auto", Commands.none());
@@ -396,6 +400,6 @@ public class RobotContainer {
 
         public Command getAutonomousCommand() {
                 // return autoChooser.getSelected();
-                return new PathPlannerAuto("depotest");
+                return new PathPlannerAuto("start1depotchoreo");
         }
 }

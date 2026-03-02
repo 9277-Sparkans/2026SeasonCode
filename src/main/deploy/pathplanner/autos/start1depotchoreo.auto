@@ -23,9 +23,21 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "autofire"
+          }
+        },
+        {
           "type": "wait",
           "data": {
             "waitTime": 3.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "stopFire"
           }
         },
         {

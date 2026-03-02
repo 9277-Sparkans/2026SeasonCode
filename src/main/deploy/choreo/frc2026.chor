@@ -1,5 +1,5 @@
 {
- "name":"frcauto2026",
+ "name":"frc2026",
  "version":2,
  "type":"Swerve",
  "variables":{
@@ -9,22 +9,22 @@
  "config":{
   "frontLeft":{
    "x":{
-    "exp":"11 in",
-    "val":0.2794
+    "exp":"10.88 in",
+    "val":0.276352
    },
    "y":{
-    "exp":"11 in",
-    "val":0.2794
+    "exp":"10.88 in",
+    "val":0.276352
    }
   },
   "backLeft":{
    "x":{
-    "exp":"-11 in",
-    "val":-0.2794
+    "exp":"-10.88 in",
+    "val":-0.276352
    },
    "y":{
-    "exp":"11 in",
-    "val":0.2794
+    "exp":"10.88 in",
+    "val":0.276352
    }
   },
   "mass":{
@@ -32,24 +32,24 @@
    "val":59.193804285000006
   },
   "inertia":{
-   "exp":"6 kg m ^ 2",
-   "val":6.0
+   "exp":"16.21 kg m ^ 2",
+   "val":16.21
   },
   "gearing":{
-   "exp":"6.5",
-   "val":6.5
+   "exp":"6.746",
+   "val":6.746
   },
   "radius":{
    "exp":"2 in",
    "val":0.0508
   },
   "vmax":{
-   "exp":"6000 RPM",
-   "val":628.3185307179587
+   "exp":"4800 RPM",
+   "val":502.6548245743669
   },
   "tmax":{
-   "exp":"1.2 N * m",
-   "val":1.2
+   "exp":"1.163 N * m",
+   "val":1.163
   },
   "cof":{
    "exp":"1.5",
@@ -57,16 +57,16 @@
   },
   "bumper":{
    "front":{
-    "exp":"16 in",
-    "val":0.4064
+    "exp":"16.8 in",
+    "val":0.42672
    },
    "side":{
-    "exp":"16 in",
-    "val":0.4064
+    "exp":"16.8 in",
+    "val":0.42672
    },
    "back":{
-    "exp":"16 in",
-    "val":0.4064
+    "exp":"25.5 in",
+    "val":0.6476999999999999
    }
   },
   "differentialTrackWidth":{
@@ -76,7 +76,7 @@
  },
  "generationFeatures":[],
  "codegen":{
-  "root":"Users/joelamaldas/Coding/frc/2026SeasonCode/src/main/java/frc/robot/choreo",
+  "root":"",
   "genVars":true,
   "genTrajData":true,
   "useChoreoLib":false

@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.095,
-        "y": 5.965
+        "x": 5.954616519174042,
+        "y": 0.646002949852508
       },
       "prevControl": null,
       "nextControl": {
-        "x": 0.8450020663073592,
-        "y": 5.966016439575171
+        "x": 6.559886591387697,
+        "y": 0.6499713719142113
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "trenchne"
     },
     {
       "anchor": {
-        "x": 1.095,
-        "y": 5.965
+        "x": 3.3467430441898522,
+        "y": 0.646002949852508
       },
       "prevControl": {
-        "x": 1.344999626607295,
-        "y": 5.965432083571795
+        "x": 2.791250545287772,
+        "y": 0.6497276771392456
       },
       "nextControl": null,
       "isLocked": false,
@@ -48,7 +48,7 @@
   "folder": null,
   "idealStartingState": {
     "velocity": 0,
-    "rotation": -38.954
+    "rotation": 0.0
   },
   "useDefaultConstraints": true
 }

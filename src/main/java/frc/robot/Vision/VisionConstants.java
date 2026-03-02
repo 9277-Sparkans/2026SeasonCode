@@ -71,7 +71,7 @@ public class VisionConstants {
         // Standard deviation baselines, for 1 meter distance and 1 tag
         // (Adjusted automatically based on distance and # of tags)
         public static double linearStdDevBaseline = 0.5; // Meters (was 0.5)
-        public static double angularStdDevBaseline = 2.0; // Radians (was 2.0). Highly trusts IMU gyro.
+        public static double angularStdDevBaseline = 1.5; // Radians (was 2.0). Highly trusts IMU gyro.
 
         // Standard deviation multipliers for each camera
         // (Adjust to trust some cameras more than others)

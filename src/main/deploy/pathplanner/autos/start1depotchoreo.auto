@@ -5,6 +5,12 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "hingeDown"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "depot"
@@ -17,15 +23,21 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "kicker"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "shoot"
           }
         },
         {
-          "type": "wait",
+          "type": "named",
           "data": {
-            "waitTime": 3.0
+            "name": "hingeUp"
           }
         },
         {

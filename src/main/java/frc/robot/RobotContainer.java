@@ -148,15 +148,21 @@ public class RobotContainer {
                                                                 : TargetHub.BLUE_HUB)));
                 NamedCommands.registerCommand("hingeDown",
                                 hinge.hingeDown());
+                NamedCommands.registerCommand("hingeUp",
+                                hinge.hingeUp());
                 NamedCommands.registerCommand("kicker",
                                 Commands.runOnce(() -> transfer.toggleTransfer()));
+                NamedCommands.registerCommand("stopFire",
+                                Commands.runOnce(() -> {
+                                        shooter.stop();
+                                        turret.stop();
+                                        hood.stopHoodCmd();
+                                }));
+
 
                 turret.setDefaultCommand(turret.initDefaultCommand(turret));
                 hood.setDefaultCommand(hood.initDefaultCommand(hood));
                 hinge.setDefaultCommand(hinge.initDefaultCommand(hinge));
-
-                NamedCommands.registerCommand("testNamedCommand",
-                                Commands.runOnce(() -> System.out.println("this named command works")));
 
                 // auto chooser
                 autoChooser.setDefaultOption("No auto", Commands.none());
@@ -272,8 +278,8 @@ public class RobotContainer {
                 // turret, shooter, hood));
 
                 // SHOOTER button controls
-                joystick.leftBumper().onTrue(Commands.runOnce(() -> shooter.decreaseSpeed()));
-                joystick.rightBumper().onTrue(Commands.runOnce(() -> shooter.increaseSpeed()));
+                // joystick.leftBumper().onTrue(Commands.runOnce(() -> shooter.decreaseSpeed()));
+                // joystick.rightBumper().onTrue(Commands.runOnce(() -> shooter.increaseSpeed()));
 
                 // joystick.x().onTrue(shooter.shootCmd());
                 // joystick.x().whileTrue(Commands.runOnce(() -> autoFireCommand.execute()));

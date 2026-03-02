@@ -102,11 +102,13 @@ public class Turret extends SubsystemBase {
   }
 
   public void spinPositive() {
-    turretMotor.set(TurretConstants.turret_speed);
+    // turretMotor.set(TurretConstants.turret_speed);
+    target += 10.0;
   }
 
   public void spinNegative() {
     turretMotor.set(-TurretConstants.turret_speed);
+    target -= 10.0;
   }
 
   public void turretMoveTgt(){

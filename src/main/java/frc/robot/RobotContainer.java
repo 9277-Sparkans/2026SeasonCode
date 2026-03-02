@@ -148,6 +148,8 @@ public class RobotContainer {
                                                                 : TargetHub.BLUE_HUB)));
                 NamedCommands.registerCommand("hingeDown",
                                 hinge.hingeDown());
+                NamedCommands.registerCommand("hingeUp",
+                                hinge.hingeUp());
                 NamedCommands.registerCommand("kicker",
                                 Commands.runOnce(() -> transfer.toggleTransfer()));
                 NamedCommands.registerCommand("stopFire",
@@ -276,8 +278,8 @@ public class RobotContainer {
                 // turret, shooter, hood));
 
                 // SHOOTER button controls
-                joystick.leftBumper().onTrue(Commands.runOnce(() -> shooter.decreaseSpeed()));
-                joystick.rightBumper().onTrue(Commands.runOnce(() -> shooter.increaseSpeed()));
+                // joystick.leftBumper().onTrue(Commands.runOnce(() -> shooter.decreaseSpeed()));
+                // joystick.rightBumper().onTrue(Commands.runOnce(() -> shooter.increaseSpeed()));
 
                 // joystick.x().onTrue(shooter.shootCmd());
                 // joystick.x().whileTrue(Commands.runOnce(() -> autoFireCommand.execute()));

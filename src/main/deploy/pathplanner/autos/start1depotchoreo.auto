@@ -5,6 +5,12 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "hingeDown"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "depot"
@@ -17,6 +23,12 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "kicker"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "shoot"
@@ -25,19 +37,7 @@
         {
           "type": "named",
           "data": {
-            "name": "autofire"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 3.0
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "stopFire"
+            "name": "hingeUp"
           }
         },
         {

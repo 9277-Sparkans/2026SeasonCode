@@ -322,29 +322,29 @@ public class RobotContainer {
                 // DRIVER PREFERENCE
                 translateStick.button(OIConstants.kRightSticks_leftGrid_bottomLeft)
                                 .toggleOnTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-                // translateStick.button(1).onTrue(Commands.runOnce(() ->
-                // transfer.toggleTransfer()));
-                // translateStick.button(1).onTrue(indexer.toggleIndexer());
-                // rotateStick.button(1).onTrue(intake.outtakeCommand());
-                // rotateStick.button(1).onFalse(intake.stopRollerCommand());
-                // rotateStick.button(2).onFalse(intake.stopRollerCommand());
-                // rotateStick.button(2).onTrue(intake.intakeCommand());
+                translateStick.button(1).onTrue(Commands.runOnce(() ->
+                transfer.toggleTransfer()));
+                translateStick.button(1).onTrue(indexer.toggleIndexer());
+                rotateStick.button(1).onTrue(intake.outtakeCommand());
+                rotateStick.button(1).onFalse(intake.stopRollerCommand());
+                rotateStick.button(2).onFalse(intake.stopRollerCommand());
+                rotateStick.button(2).onTrue(intake.intakeCommand());
 
                 // Autofire testing bindss
-                translateStick.button(OIConstants.kSticks_trigger)
-                                .whileTrue(new AutoFire(indexer, turret, shooter, hood,
-                                                () -> drivetrain.getStateCopy().Speeds,
-                                                () -> drivetrain.getStateCopy().Pose, lookup,
-                                                DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red
-                                                                ? TargetHub.RED_HUB
-                                                                : TargetHub.BLUE_HUB));
-                translateStick.button(OIConstants.kSticks_rightHandle).onTrue(transfer.toggleTransferCommand());
-                translateStick.button(OIConstants.kSticks_centerHandle).onTrue(Commands.runOnce(() -> indexer.spin()));
-                translateStick.button(OIConstants.kSticks_centerHandle).onFalse(Commands.runOnce(() -> indexer.stop()));
-                rotateStick.button(OIConstants.kSticks_trigger).onTrue(intake.intakeCommand());
-                rotateStick.button(OIConstants.kSticks_trigger).onFalse(intake.stopRollerCommand());
-                rotateStick.button(OIConstants.kSticks_centerHandle).onTrue(intake.outtakeCommand());
-                rotateStick.button(OIConstants.kSticks_centerHandle).onFalse(intake.stopRollerCommand());
+                // translateStick.button(OIConstants.kSticks_trigger)
+                //                 .whileTrue(new AutoFire(indexer, turret, shooter, hood,
+                //                                 () -> drivetrain.getStateCopy().Speeds,
+                //                                 () -> drivetrain.getStateCopy().Pose, lookup,
+                //                                 DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red
+                //                                                 ? TargetHub.RED_HUB
+                //                                                 : TargetHub.BLUE_HUB));
+                // translateStick.button(OIConstants.kSticks_rightHandle).onTrue(transfer.toggleTransferCommand());
+                // translateStick.button(OIConstants.kSticks_centerHandle).onTrue(Commands.runOnce(() -> indexer.spin()));
+                // translateStick.button(OIConstants.kSticks_centerHandle).onFalse(Commands.runOnce(() -> indexer.stop()));
+                // rotateStick.button(OIConstants.kSticks_trigger).onTrue(intake.intakeCommand());
+                // rotateStick.button(OIConstants.kSticks_trigger).onFalse(intake.stopRollerCommand());
+                // rotateStick.button(OIConstants.kSticks_centerHandle).onTrue(intake.outtakeCommand());
+                // rotateStick.button(OIConstants.kSticks_centerHandle).onFalse(intake.stopRollerCommand());
         }
 
         private void configureOperatorConsole() {

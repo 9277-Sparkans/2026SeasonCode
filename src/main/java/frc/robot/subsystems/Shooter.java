@@ -112,8 +112,6 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     setVel();
-    // System.out.println(targetVel);
-    // This method will be called once per scheduler run
   }
 
   public Command shooterSpin() {

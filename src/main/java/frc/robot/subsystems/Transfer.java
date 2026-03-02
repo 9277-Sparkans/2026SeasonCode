@@ -59,8 +59,7 @@ public class Transfer extends SubsystemBase {
     }
 
     public void activateTransfer() {
-        double tgt = (TransferConstants.kTargetTransferRps / TransferConstants.kTransferGearRatio); // convert to rpm at
-                                                                                                    // motor
+        double tgt = (TransferConstants.kTargetTransferRps / TransferConstants.kTransferGearRatio); // convert to rpm at motor
         transferMotor.setControl(m_request.withVelocity(tgt));
     }
 

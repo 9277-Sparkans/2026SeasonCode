@@ -111,18 +111,6 @@ public class Hinge extends SubsystemBase {
         });
     }
 
-    // public Command hingeToggle() {
-    //     return Commands.runOnce(() -> {
-    //         if (hingeState == HingeState.DOWN) {
-    //             hingeState = HingeState.UP;
-    //         } else {
-    //             hingeState = HingeState.DOWN;
-    //         }
-
-    //         states(hingeState);
-    //     });
-    // }
-
     public Command hingeStopCommand() {
         return Commands.runOnce(() -> {
             hinge.set(0.0);

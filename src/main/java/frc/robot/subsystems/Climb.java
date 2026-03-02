@@ -28,8 +28,6 @@ public class Climb extends SubsystemBase {
         DOWN,
         UP,
         HANG,
-        STOP,
-        MANUAL
     }
 
     public Climb() {
@@ -105,52 +103,11 @@ public class Climb extends SubsystemBase {
     }
 
     public Command climbDown() {
-        return Commands.runOnce(() -> {
-            // climbMotor.setControl(m_request.withPosition(ClimbConstants.kClimbDown));
-            states(ClimbState.DOWN);
-            // System.out.println("climb works");
-        });
+        return Commands.runOnce(() -> setState(ClimbState.DOWN), this);
     }
 
     public Command climbHang() {
         return Commands.runOnce(() -> setState(ClimbState.HANG), this);
     }
 
-    public Command stopCommand() {
-        return Commands.runOnce(() -> setState(ClimbState.STOP), this);
-    }
-
-    public Command runClimbCommand() {
-        return Commands.startEnd(
-                () -> {
-                    setState(ClimbState.MANUAL);
-                    climbMotor.set(0.5);
-                },
-                () -> setState(ClimbState.STOP),
-                this);
-    }
-
-    public void runClimb() {
-        setState(ClimbState.MANUAL);
-        climbMotor.set(0.5);
-    }
-
-    public Command runClimbNegCommand() {
-        return Commands.startEnd(
-                () -> {
-                    setState(ClimbState.MANUAL);
-                    climbMotor.set(-0.5);
-                },
-                () -> setState(ClimbState.STOP),
-                this);
-    }
-
-    public void runClimbNeg() {
-        setState(ClimbState.MANUAL);
-        climbMotor.set(-0.5);
-    }
-
-    public void stop() {
-        setState(ClimbState.STOP);
-    }
 }

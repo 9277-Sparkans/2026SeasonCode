@@ -14,8 +14,8 @@
  },
  "params":{
   "waypoints":[
-    {"x":{"exp":"shootendnew.x", "val":2.325366497039795}, "y":{"exp":"shootendnew.y", "val":5.078240871429443}, "heading":{"exp":"shootendnew.heading", "val":-0.4883343540145481}, "intervals":48, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
-    {"x":{"exp":"climblefstart.x", "val":1.553833484649657}, "y":{"exp":"climblefstart.y", "val":4.71}, "heading":{"exp":"climblefstart.heading", "val":3.141592653589793}, "intervals":40, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false}],
+    {"x":{"exp":"S1Shoot.x", "val":2.325366497039795}, "y":{"exp":"S1Shoot.y", "val":5.078240871429443}, "heading":{"exp":"S1Shoot.heading", "val":-0.4883343540145481}, "intervals":48, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
+    {"x":{"exp":"climbleftstart.x", "val":1.553833484649657}, "y":{"exp":"climbleftstart.y", "val":4.71}, "heading":{"exp":"climbleftstart.heading", "val":3.141592653589793}, "intervals":40, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false}],
   "constraints":[
     {"from":"first", "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true},
     {"from":"last", "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true},

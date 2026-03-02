@@ -16,7 +16,7 @@
  },
  "params":{
   "waypoints":[
-    {"x":{"exp":"3.5765647888183594 m", "val":3.5765647888183594}, "y":{"exp":"7.398008823394775 m", "val":7.398008823394775}, "heading":{"exp":"0 deg", "val":0.0}, "intervals":15, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
+    {"x":{"exp":"S1.x", "val":3.5765647888183594}, "y":{"exp":"S1.y", "val":7.398008823394775}, "heading":{"exp":"S1.heading", "val":0.0}, "intervals":15, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
     {"x":{"exp":"2.797212839126587 m", "val":2.797212839126587}, "y":{"exp":"6.339504241943359 m", "val":6.339504241943359}, "heading":{"exp":"0 deg", "val":0.0}, "intervals":11, "split":false, "fixTranslation":true, "fixHeading":false, "overrideIntervals":false},
     {"x":{"exp":"2.1506941318511963 m", "val":2.1506941318511963}, "y":{"exp":"5.9444098472595215 m", "val":5.9444098472595215}, "heading":{"exp":"depot.heading", "val":0.0}, "intervals":27, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
     {"x":{"exp":"intake.x", "val":0.9369903802871704}, "y":{"exp":"intake.y", "val":5.939385414123535}, "heading":{"exp":"intake.heading", "val":0.0}, "intervals":40, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false}],

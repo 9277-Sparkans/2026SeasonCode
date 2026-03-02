@@ -1,0 +1,43 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "neutraltestforus"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "neutralintaketeststart1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "neutraltoshoot1test"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "transitionpath"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "climb"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": true
+}

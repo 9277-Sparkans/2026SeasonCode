@@ -5,9 +5,12 @@ import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.Constants.FieldConstants;
 import org.littletonrobotics.junction.Logger;
 
 public class AutoAlignCommand {
@@ -17,28 +20,26 @@ public class AutoAlignCommand {
             3.0, 3.0,
             Units.degreesToRadians(540), Units.degreesToRadians(720));
 
-
-// jeet autos
+    // jeet autos
     // public static Command getS1DPR_C(CommandSwerveDrivetrain drivetrain) {
-    //     return buildAuto("S1.1-S-DPR-C", drivetrain);
+    // return buildAuto("S1.1-S-DPR-C", drivetrain);
     // }
 
     // public static Command getS1DPR(CommandSwerveDrivetrain drivetrain) {
-    //     return buildAuto("S1.1-S-DPR", drivetrain);
+    // return buildAuto("S1.1-S-DPR", drivetrain);
     // }
 
     // public static Command getS2DP(CommandSwerveDrivetrain drivetrain) {
-    //     return buildAuto("S2.DP", drivetrain);
+    // return buildAuto("S2.DP", drivetrain);
     // }
 
     // public static Command getS2HP(CommandSwerveDrivetrain drivetrain) {
-    //     return buildAuto("S2.HP", drivetrain);
+    // return buildAuto("S2.HP", drivetrain);
     // }
 
     // public static Command getS3HP(CommandSwerveDrivetrain drivetrain) {
-    //     return buildAuto("S3.HP", drivetrain);
+    // return buildAuto("S3.HP", drivetrain);
     // }
-
 
     // auto align (pathfind then follow path)
     public static Command getAutoAlignCommand(CommandSwerveDrivetrain drivetrain) {
@@ -66,12 +67,25 @@ public class AutoAlignCommand {
         }
     }
 
-// trench forward or back
+    // trench forward or back
     public static Command getTrenchCommand(CommandSwerveDrivetrain drivetrain) {
         return Commands.defer(() -> {
             var currentPose = drivetrain.getStateCopy().Pose;
-            boolean goingForward = currentPose.getX() < 8.27;
-            String pathName = goingForward ? "TrenchF" : "TrenchB";
+
+            // Use hub pose as reference: aligned with both trenches on each axis
+            boolean isRed = DriverStation.getAlliance()
+                    .orElse(Alliance.Blue) == Alliance.Red;
+            double hubX = isRed ? FieldConstants.RED_HUB_X
+                    : FieldConstants.BLUE_HUB_X;
+            double hubY = isRed ? FieldConstants.RED_HUB_Y
+                    : FieldConstants.BLUE_HUB_Y;
+
+            boolean goingForward = currentPose.getX() < hubX; // neutral-zone side of hub → drive forward into trench
+            boolean rightTrench = currentPose.getY() <= hubY; // below hub Y → right trench
+
+            String side = rightTrench ? "R" : "L";
+            String direction = goingForward ? "F" : "B";
+            String pathName = "Trench" + direction + side; // e.g. TrenchFR, TrenchBL
 
             try {
                 PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
@@ -83,6 +97,7 @@ public class AutoAlignCommand {
                                     "TrenchAuto: Starting at Pose: " + currentPose + " running: " + pathName);
                             Logger.recordOutput("TrenchAuto/Active", true);
                             Logger.recordOutput("TrenchAuto/StartPose", currentPose);
+                            Logger.recordOutput("TrenchAuto/Path", pathName);
                         })
                         .andThen(() -> System.out.println("TrenchAuto: Command finished!"))
                         .finallyDo((interrupted) -> {
@@ -98,7 +113,7 @@ public class AutoAlignCommand {
         }, java.util.Set.of());
     }
 
-// autobuilder
+    // autobuilder
     private static Command buildAuto(String autoName, CommandSwerveDrivetrain drivetrain) {
         try {
             Command auto = AutoBuilder.buildAuto(autoName);

@@ -11,15 +11,15 @@
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "depot"
+            "name": "intake"
           }
         },
         {
-          "type": "wait",
+          "type": "path",
           "data": {
-            "waitTime": 2.0
+            "pathName": "depot"
           }
         },
         {
@@ -37,7 +37,25 @@
         {
           "type": "named",
           "data": {
+            "name": "index"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autofire"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "hingeUp"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "climbUp"
           }
         },
         {
@@ -50,6 +68,12 @@
           "type": "path",
           "data": {
             "pathName": "climb"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "climbHang"
           }
         }
       ]

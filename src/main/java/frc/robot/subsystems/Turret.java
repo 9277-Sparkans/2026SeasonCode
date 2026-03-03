@@ -70,6 +70,7 @@ public class Turret extends SubsystemBase {
 
   @Override
   public void periodic() {
+    defaultCommand();
   }
 
   public double getPosition() {

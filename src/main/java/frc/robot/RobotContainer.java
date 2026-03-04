@@ -374,12 +374,15 @@ public class RobotContainer {
 
                 //kicker
                 translateStick.button(OIConstants.kSticks_centerHandle).onTrue(transfer.toggleTransferCommand());
+                
 
                 //outpost autoalign
-                // translateStick.button(OIConstants.kSticks_leftHandle).onTrue(AutoAlignCommand.getOutpostCommand(drivetrain));
+                translateStick.button(OIConstants.kSticks_leftHandle).onTrue(AutoAlignCommand.getOutpostCommand(drivetrain));
 
                 //trench autoalign
                 translateStick.button(OIConstants.kSticks_rightHandle).onTrue(AutoAlignCommand.getTrenchCommand(drivetrain));
+
+                
         }
 
         

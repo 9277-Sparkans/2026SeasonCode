@@ -63,6 +63,26 @@ public class AutoAlignCommand {
     // Logger.recordOutput("AutoAlign/Active", false);
     // });
 
+    // outpost autoalign
+    public static Command getOutpostCommand(CommandSwerveDrivetrain drivetrain) {
+        try {
+            PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory("shoot3tooutpost");
+            Command outpostAlign = AutoBuilder.pathfindThenFollowPath(path, CONSTRAINTS);
+
+            return outpostAlign
+                    .beforeStarting(() -> {
+                        var pose = drivetrain.getStateCopy().Pose;
+                        Logger.recordOutput("OutpostAuto/Active", true);
+                        Logger.recordOutput("OutpostAuto/StartPose", pose);
+                    })
+                    .finallyDo((interrupted) -> {
+                        Logger.recordOutput("OutpostAuto/Active", false);
+                    });
+        } catch (Exception e) {
+            return Commands.none();
+        }
+    }
+
     // auto align for climb
     public static Command getAutoClimbCommand(CommandSwerveDrivetrain drivetrain) {
         return Commands.defer(() -> {

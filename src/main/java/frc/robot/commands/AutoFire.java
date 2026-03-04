@@ -15,6 +15,7 @@ import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -56,6 +57,46 @@ public class AutoFire extends Command
     @Override
     public void initialize() {}
 
+    public Translation2d SelectPosition(Pose2d robotPose)
+    {
+        Translation2d target;
+
+        // right hand dump
+        if (robotPose.getY() < frc.robot.Constants.FieldConstants.BLUE_HUB_Y &&
+            robotPose.getX() > frc.robot.Constants.FieldConstants.BLUE_HUB_X)
+        {
+            target = targetHub == TargetHub.BLUE_HUB ? 
+            new Translation2d(frc.robot.Constants.FieldConstants.BLUE_RIGHT_SIDE_X, 
+            frc.robot.Constants.FieldConstants.BLUE_RIGHT_SIDE_Y) : 
+            new Translation2d(frc.robot.Constants.FieldConstants.RED_RIGHT_SIDE_X, 
+            frc.robot.Constants.FieldConstants.RED_RIGHT_SIDE_Y);
+        }
+        // left hand dump
+        else if (robotPose.getY() > frc.robot.Constants.FieldConstants.BLUE_HUB_Y &&
+                robotPose.getX() > frc.robot.Constants.FieldConstants.BLUE_HUB_X)
+        {
+            target = targetHub == TargetHub.BLUE_HUB ? 
+            new Translation2d(frc.robot.Constants.FieldConstants.BLUE_LEFT_SIDE_X, 
+            frc.robot.Constants.FieldConstants.BLUE_LEFT_SIDE_Y) : 
+            new Translation2d(frc.robot.Constants.FieldConstants.RED_LEFT_SIDE_X, 
+            frc.robot.Constants.FieldConstants.RED_LEFT_SIDE_Y);
+        }
+        // goal shots
+        else if (robotPose.getX() > frc.robot.Constants.FieldConstants.RED_HUB_X
+        && targetHub == TargetHub.RED_HUB)
+        {
+            target = new Translation2d(frc.robot.Constants.FieldConstants.RED_HUB_X, 
+            frc.robot.Constants.FieldConstants.RED_HUB_Y); 
+        }
+        else 
+        {
+            target = new Translation2d(frc.robot.Constants.FieldConstants.BLUE_HUB_X, 
+            frc.robot.Constants.FieldConstants.BLUE_HUB_Y); 
+        }
+
+        return target;
+    }
+
     @Override
     public void execute()
     {
@@ -69,9 +110,15 @@ public class AutoFire extends Command
         double posY = pose.getY() + rotation.getSin() * Constants.HoodConstants.hoodOffset;
 
         // Get coordinates to target
-        double hubX = targetHub == TargetHub.BLUE_HUB  ? Constants.FieldConstants.BLUE_HUB_X : Constants.FieldConstants.RED_HUB_X;
-        double hubY = targetHub == TargetHub.BLUE_HUB ? Constants.FieldConstants.BLUE_HUB_Y : Constants.FieldConstants.RED_HUB_Y;
+        // double hubX = targetHub == TargetHub.BLUE_HUB  ? Constants.FieldConstants.BLUE_HUB_X : Constants.FieldConstants.RED_HUB_X;
+        // double hubY = targetHub == TargetHub.BLUE_HUB ? Constants.FieldConstants.BLUE_HUB_Y : Constants.FieldConstants.RED_HUB_Y;
         
+        // idk if this works but it looks like it does
+        Translation2d targetPos = SelectPosition(pose);
+
+        double hubX = targetPos.getX();
+        double hubY = targetPos.getY();
+
         // Calculate target vector
         double offsetX = hubX - posX;
         double offsetY = hubY - posY;

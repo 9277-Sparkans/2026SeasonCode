@@ -6,6 +6,8 @@ package frc.robot.commands;
 
 import java.util.function.Supplier;
 
+import javax.lang.model.util.ElementScanner14;
+
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -47,6 +49,55 @@ public class TurretTracking extends Command {
   public void initialize() {
   }
 
+  public Translation2d GetTgt(Pose3d robotPose, boolean isBlue)
+  {
+    Translation2d target;
+
+    // right hand dump
+    if (robotPose.getY() < frc.robot.Constants.FieldConstants.BLUE_HUB_Y &&
+        robotPose.getX() > frc.robot.Constants.FieldConstants.BLUE_HUB_X)
+    {
+      if (isBlue) 
+      { 
+        target = new Translation2d(frc.robot.Constants.FieldConstants.BLUE_RIGHT_SIDE_X, 
+        frc.robot.Constants.FieldConstants.BLUE_RIGHT_SIDE_Y); 
+      }
+      else 
+      { 
+        target = new Translation2d(frc.robot.Constants.FieldConstants.RED_RIGHT_SIDE_X, 
+        frc.robot.Constants.FieldConstants.RED_RIGHT_SIDE_Y); 
+      }
+    }
+    // left hand dump
+    else if (robotPose.getY() > frc.robot.Constants.FieldConstants.BLUE_HUB_Y &&
+            robotPose.getX() > frc.robot.Constants.FieldConstants.BLUE_HUB_X)
+    {
+      if (isBlue) 
+      { 
+        target = new Translation2d(frc.robot.Constants.FieldConstants.BLUE_LEFT_SIDE_X, 
+        frc.robot.Constants.FieldConstants.BLUE_LEFT_SIDE_Y); 
+      }
+      else 
+      { 
+        target = new Translation2d(frc.robot.Constants.FieldConstants.RED_LEFT_SIDE_X, 
+        frc.robot.Constants.FieldConstants.RED_LEFT_SIDE_Y); 
+      }
+    }
+    // goal shots
+    else if (robotPose.getX() > frc.robot.Constants.FieldConstants.RED_HUB_X)
+    {
+      target = new Translation2d(frc.robot.Constants.FieldConstants.RED_HUB_X, 
+      frc.robot.Constants.FieldConstants.RED_HUB_Y); 
+    }
+    else 
+    {
+      target = new Translation2d(frc.robot.Constants.FieldConstants.BLUE_HUB_X, 
+      frc.robot.Constants.FieldConstants.BLUE_HUB_Y); 
+    }
+
+    return target;
+  }
+
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
@@ -62,6 +113,9 @@ public class TurretTracking extends Command {
     Translation2d turretTranslation = robotPose2d.getTranslation()
         .plus(TurretConstants.ROBOT_TO_TURRET_TRANSFORM.getTranslation().toTranslation2d()
             .rotateBy(robotPose2d.getRotation()));
+
+    // please add alliance for this oniichan
+    // targetPositions tgt = GetEnumPos(robotPose, true);
 
     // Target position (Hub)
     Translation2d target = new Translation2d(

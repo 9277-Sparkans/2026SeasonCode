@@ -362,10 +362,24 @@ public class Constants {
     }
 
     public static class FieldConstants {
+        // auto fire hub positions
         public static final double BLUE_HUB_X = 4.625594; // meters
         public static final double BLUE_HUB_Y = 4.034536; // meters
         public static final double RED_HUB_X = 11.915394; // meters 
         public static final double RED_HUB_Y = 4.034536; // meters
+        
+        // blue hub dumping
+        public static final double BLUE_LEFT_SIDE_X = 0; // meters
+        public static final double BLUE_LEFT_SIDE_Y = 6; // meters
+        public static final double BLUE_RIGHT_SIDE_X = 0; // meters
+        public static final double BLUE_RIGHT_SIDE_Y = 2; // meters
+
+        // red hub dumping
+        public static final double RED_LEFT_SIDE_X = 15; // meters
+        public static final double RED_LEFT_SIDE_Y = 6; // meters
+        public static final double RED_RIGHT_SIDE_X = 15; // meters
+        public static final double RED_RIGHT_SIDE_Y = 2; // meters
+
         public static final edu.wpi.first.math.geometry.Translation3d HUB_BLUE = new edu.wpi.first.math.geometry.Translation3d(
                 BLUE_HUB_X, BLUE_HUB_Y, 1.4); // 1.4m height approx
         public static final edu.wpi.first.math.geometry.Translation3d HUB_RED = new edu.wpi.first.math.geometry.Translation3d(

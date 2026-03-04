@@ -10,6 +10,8 @@
       "nextControl": {
         "x": 3.060378190088423,
         "y": 0.6492916677060515
+        "x": 3.060378190088423,
+        "y": 0.6492916677060515
       },
       "isLocked": false,
       "linkedName": null
@@ -43,8 +45,10 @@
   "goalEndState": {
     "velocity": 0,
     "rotation": -1.1691393279074351
+    "rotation": -1.1691393279074351
   },
   "reversed": false,
+  "folder": "S3",
   "folder": "S3",
   "idealStartingState": {
     "velocity": 0,

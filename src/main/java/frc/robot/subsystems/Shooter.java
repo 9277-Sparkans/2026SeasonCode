@@ -8,6 +8,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import edu.wpi.first.units.measure.Voltage;
@@ -23,6 +24,7 @@ import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.ShooterConstants;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -34,6 +36,7 @@ public class Shooter extends SubsystemBase {
 
   final MotionMagicVelocityVoltage m_request = new MotionMagicVelocityVoltage(0);
 
+
   private final VoltageOut sysIdControl = new VoltageOut(0);
   private final SysIdRoutine sysIdRoutine;
 
@@ -42,7 +45,7 @@ public class Shooter extends SubsystemBase {
   /** Creates a new Shooter. */
   public Shooter() {
     shooterMotor = new TalonFX(ShooterConstants.kShooterMotorId);
-    shooterMotorConfig = new TalonFXConfiguration(); 
+    shooterMotorConfig = new TalonFXConfiguration();
     shooterMotor.setPosition(0);
 
 
@@ -62,6 +65,8 @@ public class Shooter extends SubsystemBase {
 
 
     shooterMotorConfig.MotionMagic.MotionMagicAcceleration = ShooterConstants.kShooterMaxAcceleration;
+    shooterMotorConfig.MotionMagic.MotionMagicCruiseVelocity = 200.0;
+
     shooterMotorConfig.MotionMagic.MotionMagicCruiseVelocity = 200.0;
 
     shooterMotorConfig.MotionMagic.MotionMagicJerk = ShooterConstants.kShooterMaxJerk;
@@ -107,8 +112,6 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     setVel();
-    // System.out.println(targetVel);
-    // This method will be called once per scheduler run
   }
 
   public Command shooterSpin() {

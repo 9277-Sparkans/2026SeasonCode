@@ -1,0 +1,16 @@
+mass: 130.5 lbs
+MOI: 16.21 kg m^2
+robot center to bumper front: 16.8 in
+robot center to fully extended intake: 25.5 in
+robot center to bumper side: 16.8 in
+
+wheel radius: 2 in
+wheel cof: 1.5 in
+motor rev/wheel rev: 6.746
+motor max speed: 4800 rpm
+motor max torque: 1.163 N * m
+
+Front module x: 10.88 in
+Front left y: 10.88 in
+Back module x: -10.88 in
+Back left y: 10.88 in

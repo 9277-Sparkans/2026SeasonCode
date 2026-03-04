@@ -7,6 +7,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.NeutralOut;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 
@@ -24,13 +27,13 @@ public class Climb extends SubsystemBase {
     public enum ClimbState {
         DOWN,
         UP,
-        HANG
+        HANG,
     }
-
 
     public Climb() {
         // making the climb use the canivore
         climbMotor = new TalonFX(Constants.ClimbConstants.kClimbMotorID, Constants.CanBusConstants.kCANivore);
+        // making the climb use the canivore
         climbConfig = new TalonFXConfiguration();
 
         climbMotor.setPosition(0.0);
@@ -46,9 +49,12 @@ public class Climb extends SubsystemBase {
         climbConfig.CurrentLimits.StatorCurrentLimit = ClimbConstants.kClimbCurrent_Limit;
         climbConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
-        /* Default Motion Magic (UP profile) */
+        /* Motion Magic */
         climbConfig.MotionMagic.MotionMagicCruiseVelocity = 100;
         climbConfig.MotionMagic.MotionMagicAcceleration = 100;
+
+        /* Brake on neutral */
+        climbConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
         climbMotor.getConfigurator().apply(climbConfig);
     }
@@ -84,54 +90,24 @@ public class Climb extends SubsystemBase {
                 climbMotor.setControl(m_request.withPosition(ClimbConstants.kClimbHang));
                 break;
         }
+
+        SmartDashboard.putString("Climb/State", climbState.name());
+        SmartDashboard.putNumber("Climb/Position", climbMotor.getPosition().getValueAsDouble());
+        SmartDashboard.putNumber("Climb/Velocity", climbMotor.getVelocity().getValueAsDouble());
     }
 
     /* ================= COMMANDS ================= */
 
     public Command climbUp() {
-        return Commands.runOnce(() -> {
-            // climbMotor.setControl(m_request.withPosition(ClimbConstants.kClimbUp));
-            states(ClimbState.UP);
-        });
+        return Commands.runOnce(() -> setState(ClimbState.UP), this);
     }
 
     public Command climbDown() {
-        return Commands.runOnce(() -> {
-            // climbMotor.setControl(m_request.withPosition(ClimbConstants.kClimbDown));
-            states(ClimbState.DOWN);
-            // System.out.println("climb works");
-        });
+        return Commands.runOnce(() -> setState(ClimbState.DOWN), this);
     }
 
     public Command climbHang() {
-        return Commands.runOnce(() -> {
-            // climbMotor.setControl(m_request.withPosition(ClimbConstants.kClimbHang));
-            states(ClimbState.HANG);
-        });
+        return Commands.runOnce(() -> setState(ClimbState.HANG), this);
     }
 
-    public Command stopCommand() {
-        return Commands.runOnce(() -> stop()) ;
-    }
-
-    public Command runClimbCommand() {
-        return Commands.runOnce(() -> runClimb());
-    }
-
-    public void runClimb() {
-        // System.out.println("climb position: " + climbMotor.getPosition());
-        climbMotor.set(0.5);
-    }
-
-    public Command runClimbNegCommand() {
-        return Commands.runOnce(() -> runClimbNeg());
-    }
-
-    public void runClimbNeg() {
-        climbMotor.set(-0.5);
-    }
-
-    public void stop(){
-        climbMotor.set(0);
-    }
 }

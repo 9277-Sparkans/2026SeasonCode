@@ -25,7 +25,7 @@ public class Constants {
 
         // change between DRIVER_CONTROLLER and DRIVER_STICKS for controller and sticks,
         // erm i guess
-        public static final ControlTypes controlType = ControlTypes.DRIVER_STICKS;
+        public static final ControlTypes controlType = ControlTypes.DRIVER_CONTROLLER;
 
         public static enum ControlTypes {
             DEV,
@@ -41,11 +41,11 @@ public class Constants {
         // Ports
         public static final int kDriverControllerPort = 0;
 
-        public static final int kOperatorControllerPort = 2;
-        public static final int kDriverTranslateStickPort = 0;
-        public static final int kDriverRotateStickPort = 1;
-        public static final int kBackupOperatorControllerPort = 3;
-        public static final double kDeadband = 0.04;
+        public static final int kOperatorControllerPort = 1;
+        public static final int kDriverTranslateStickPort = 2;
+        public static final int kDriverRotateStickPort = 3;
+        public static final int kBackupOperatorControllerPort = 4;
+        public static final double kDeadband = 0.02;
 
         // Joysticks
         public static final int kDriverYAxis = 1;
@@ -175,6 +175,8 @@ public class Constants {
         public static final int kMinRPM = 0;
         public static final int kMaxRPM = 6000;
 
+        public static double kMinOperationalRPM = 3000;
+
         public static final int kMinFlywheelRPM = 2400;
         public static final int kMaxFlywheelRPM = 7200;
 
@@ -189,8 +191,10 @@ public class Constants {
         public static final double autoshootDistanceRange = 0.1; // Range of distances to check to choose the best shot (Least hood rotation and flywheel RPM change)
         public static final double maxShotError = 0.001; // The maximum allowed error for a shot to occur
 
-        public static final double distancePower = 1.4; // Bad
-        public static final double rpmOffset = 50.0; // Bad
+        // Tuning constants for autofire
+        public static final double rpmOffset = 50.0;
+        public static final double distancePower = 1.4;
+        public static final double speedPower = 1.0;
         
         // Weights of each value when calculating an optimal shot, higher value means higher priority to minimize
         public static final double botVelocityWeight = 1.0;
@@ -253,7 +257,7 @@ public class Constants {
         public static final double intakeMaxVoltage = 5; // can change if not needed
         public static final double intakeMaxAcceleration = 500;
         public static final double intakeMaxVelocity = 500; // rps
-        public static final double intakeSpeed = 175.0; //rps max 66.6 rps 400.0 
+        public static final double intakeSpeed = 150.0; //rps max 66.6 rps 400.0 
     }
 
     public static class HingeConstants {
@@ -297,7 +301,7 @@ public class Constants {
         public static final double kClimb_kD = 0.1;
         public static final double kClimb_kG = 0.12;
 
-        public static final int kClimbUp = 90;
+        public static final int kClimbUp = 105;
         public static final int kClimbDown = 0;
         public static final int kClimbHang = 20;
 
@@ -399,5 +403,10 @@ public class Constants {
         public static final int kRPMTrenchRight = 4350;
         public static final double kHoodTrenchRight = 6.0;
         public static final double kTurretTrenchRight = -62.0;
+
+        //LOCK
+        public static final int kRPMLock = 3700;
+        public static final double kHoodLock = 6.0;
+        public static final double kTurretLock = 0.0;
     }
 }

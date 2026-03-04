@@ -1,0 +1,73 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "hingeDown"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "neutraltestforus"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "neutralintaketeststart1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "kicker"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "neutraltoshoot1test"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "backtodepotS1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "shoot"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "transitionpath"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ClimbL"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": true
+}

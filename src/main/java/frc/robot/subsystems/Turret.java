@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Telemetry;
 import frc.robot.Constants.TurretConstants;
 import frc.robot.Constants;
+import frc.robot.Constants;
 
 public class Turret extends SubsystemBase {
 
@@ -69,6 +70,7 @@ public class Turret extends SubsystemBase {
 
   @Override
   public void periodic() {
+    defaultCommand();
   }
 
   public double getPosition() {
@@ -101,11 +103,13 @@ public class Turret extends SubsystemBase {
   }
 
   public void spinPositive() {
-    turretMotor.set(TurretConstants.turret_speed);
+    // turretMotor.set(TurretConstants.turret_speed);
+    target += 10.0;
   }
 
   public void spinNegative() {
     turretMotor.set(-TurretConstants.turret_speed);
+    target -= 10.0;
   }
 
   public void turretMoveTgt(){

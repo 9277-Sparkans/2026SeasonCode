@@ -20,6 +20,22 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+
+import static edu.wpi.first.units.Units.Rotations;
+import static edu.wpi.first.units.Units.RotationsPerSecond;
+import static edu.wpi.first.units.Units.Second;
+import static edu.wpi.first.units.Units.Seconds;
+import static edu.wpi.first.units.Units.Volts;
+
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.hardware.CANcoder;
+import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.units.measure.Voltage;
 import edu.wpi.first.util.sendable.Sendable;
@@ -47,6 +63,8 @@ public class Hood extends SubsystemBase {
   private final VoltageOut sysIdControl = new VoltageOut(0);
   private final SysIdRoutine sysIdRoutine;
 
+
+
   /** Creates a new Hood. */
   public Hood() {
     hoodMotor = new TalonFX(HoodConstants.kHoodMotorId);
@@ -54,12 +72,14 @@ public class Hood extends SubsystemBase {
     hoodMotorConfiguration = new TalonFXConfiguration();
 
     // hoodMotor.setPosition(hoodEncoder.getAbsolutePosition().getValueAsDouble());
+    // hoodMotor.setPosition(hoodEncoder.getAbsolutePosition().getValueAsDouble());
 
     // Current limiting
     CurrentLimitsConfigs hoodCurrent = new CurrentLimitsConfigs();
     hoodCurrent.StatorCurrentLimit = HoodConstants.kHoodCurrentLimit;
     hoodCurrent.StatorCurrentLimitEnable = true;
     hoodMotor.getConfigurator().apply(hoodCurrent);
+    
 
     hoodMotor.setPosition(0.0);
 
@@ -79,6 +99,7 @@ public class Hood extends SubsystemBase {
     hoodMotorConfiguration.MotionMagic.MotionMagicAcceleration = HoodConstants.hood_maxAcceleration;
     hoodMotorConfiguration.MotionMagic.MotionMagicCruiseVelocity = HoodConstants.hood_maxVelocity;
 
+    hoodMotor.getConfigurator().apply(hoodMotorConfiguration);
     hoodMotor.getConfigurator().apply(hoodMotorConfiguration);
 
     // hoodMotorConfiguration.Feedback.FeedbackRemoteSensorID = hoodEncoder.getDeviceID();
@@ -134,6 +155,7 @@ public class Hood extends SubsystemBase {
   @Override
   public void periodic() {
     // hoodMotor.set(0.0);
+    // moveHoodToAngle(targetHoodAngle);
   }
 
   public double getPosition() {
@@ -180,16 +202,18 @@ public class Hood extends SubsystemBase {
 
   public void runHood() {
     // targetHoodPosition += HoodConstants.kHoodSpeed;
-    targetHoodPosition = 0.4;
-    hoodMotor.set(HoodConstants.kHoodSpeed);
+    // targetHoodPosition = 0.4;
+    targetHoodAngle += 1.0;
+    // hoodMotor.set(HoodConstants.kHoodSpeed);
     // moveHoodMotionMagic();
   }
 
 
   public void runHoodReverse() {
     // targetHoodPosition -= HoodConstants.kHoodSpeed;
-    hoodMotor.set(-HoodConstants.kHoodSpeed);
+    // hoodMotor.set(-HoodConstants.kHoodSpeed);
     // moveHoodMotionMagic();
+    targetHoodAngle -= 1.0;
   }
 
   public Command sysIdQuasistatic ( SysIdRoutine . Direction direction ) {

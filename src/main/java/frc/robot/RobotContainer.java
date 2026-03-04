@@ -322,6 +322,12 @@ public class RobotContainer {
 
 
 
+
+
+
+
+
+
                 // ---------- FLIGHT STICK DRIVER PREFERENCE (DO NOT CHANGE) ---------- //
 
                 //intake
@@ -333,7 +339,7 @@ public class RobotContainer {
                 rotateStick.button(OIConstants.kSticks_centerHandle).onFalse(intake.stopRollerCommand());
 
                 //climb autoalign
-                // rotateStick.button(OIConstants.kSticks_leftHandle).whileTrue(AutoAlignCommand.getClimbCommand(drivetrain));
+                rotateStick.button(OIConstants.kSticks_leftHandle).whileTrue(AutoAlignCommand.getAutoClimbCommand(drivetrain));
 
                 //boost
                 rotateStick.button(OIConstants.kSticks_rightHandle).whileTrue(Commands.runOnce(() -> driveTrainVelocityPercent = 1.0));
@@ -375,6 +381,8 @@ public class RobotContainer {
                 //trench autoalign
                 translateStick.button(OIConstants.kSticks_rightHandle).onTrue(AutoAlignCommand.getTrenchCommand(drivetrain));
         }
+
+        
 
         private void configureOperatorConsole() {
                 // Operator

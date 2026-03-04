@@ -12,7 +12,10 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
@@ -105,6 +108,8 @@ public class RobotContainer {
 
     public boolean manualControl = false;
 
+    public final Timer teleopTimer = new Timer();
+
     public final Vision vision = new Vision(
                     (Vision.VisionConsumer) drivetrain::addVisionMeasurement,
                     (Supplier<Pose2d>) (() -> drivetrain.getStateCopy().Pose),
@@ -136,6 +141,10 @@ public class RobotContainer {
         });
 
         configureBindings();
+    }
+
+    public void startTeleop() {
+        teleopTimer.start();
     }
 
     private void configureBindings() {
@@ -270,7 +279,17 @@ public class RobotContainer {
         // rotateStick.button(2).onTrue(intake.intakeCommand());
 
         // Autofire testing bindss
-        translateStick.button(OIConstants.kSticks_trigger).whileTrue(new AutoFire(indexer, turret, shooter, hood, () -> drivetrain.getStateCopy().Speeds, () -> drivetrain.getStateCopy().Pose, lookup, TargetHub.BLUE_HUB));
+        translateStick.button(OIConstants.kSticks_trigger).whileTrue(
+            new AutoFire(
+                indexer,
+                turret,
+                shooter,
+                hood,
+                () -> drivetrain.getStateCopy().Speeds,
+                () -> drivetrain.getStateCopy().Pose,
+                lookup,
+                DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red ? TargetHub.RED_HUB : TargetHub.BLUE_HUB
+            ));
         translateStick.button(OIConstants.kSticks_leftHandle).onTrue(Commands.runOnce(() -> indexer.spin()));
         translateStick.button(OIConstants.kSticks_leftHandle).onFalse(Commands.runOnce(() -> indexer.stop()));
         translateStick.button(OIConstants.kSticks_rightHandle).onTrue(transfer.toggleTransferCommand());
@@ -333,7 +352,7 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        return new PathPlannerAuto("testAuto");
+        return new PathPlannerAuto("S3.HP-S");
     }
 
 }

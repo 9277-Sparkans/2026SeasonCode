@@ -42,73 +42,89 @@ public class AutoAlignCommand {
     // }
 
     // auto align (pathfind then follow path)
-    public static Command getAutoAlignCommand(CommandSwerveDrivetrain drivetrain) {
-        try {
-            PathPlannerPath path = PathPlannerPath.fromPathFile("joelclimb");
-            Command autoAlign = AutoBuilder.pathfindThenFollowPath(path, CONSTRAINTS);
+    // public static Command getAutoAlignCommand(CommandSwerveDrivetrain drivetrain)
+    // {
+    // try {
+    // PathPlannerPath path = PathPlannerPath.fromPathFile("joelclimb");
+    // Command autoAlign = AutoBuilder.pathfindThenFollowPath(path, CONSTRAINTS);
 
-            return autoAlign
-                    .beforeStarting(() -> {
-                        var pose = drivetrain.getStateCopy().Pose;
-                        System.out.println("AutoAlign: Starting at Pose: " + pose);
-                        Logger.recordOutput("AutoAlign/Active", true);
-                        Logger.recordOutput("AutoAlign/StartPose", pose);
-                    })
-                    .andThen(() -> System.out.println("AutoAlign: Command finished!"))
-                    .finallyDo((interrupted) -> {
-                        if (interrupted) {
-                            System.out.println("AutoAlign: Command interrupted!");
-                        }
-                        Logger.recordOutput("AutoAlign/Active", false);
-                    });
-        } catch (Exception e) {
-            System.err.println("!!! AUTO ALIGN ERROR: " + e.getMessage() + " !!!");
-            return Commands.print("!!! AUTO ALIGN ERROR: " + e.getMessage() + " !!!");
-        }
+    // return autoAlign
+    // .beforeStarting(() -> {
+    // var pose = drivetrain.getStateCopy().Pose;
+    // System.out.println("AutoAlign: Starting at Pose: " + pose);
+    // Logger.recordOutput("AutoAlign/Active", true);
+    // Logger.recordOutput("AutoAlign/StartPose", pose);
+    // })
+    // .andThen(() -> System.out.println("AutoAlign: Command finished!"))
+    // .finallyDo((interrupted) -> {
+    // if (interrupted) {
+    // System.out.println("AutoAlign: Command interrupted!");
+    // }
+    // Logger.recordOutput("AutoAlign/Active", false);
+    // });
+
+    // auto align for climb
+    public static Command getAutoClimbCommand(CommandSwerveDrivetrain drivetrain) {
+        return Commands.defer(() -> {
+            var currentPose = drivetrain.getStateCopy().Pose;
+            boolean isLeft = currentPose.getY() > FieldConstants.BLUE_HUB_Y;
+            String pathName = isLeft ? "ClimbL" : "ClimbR";
+
+            try {
+                PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory(pathName);
+                Command climbAlign = AutoBuilder.pathfindThenFollowPath(path, CONSTRAINTS);
+
+                return climbAlign
+                        .beforeStarting(() -> {
+                            Logger.recordOutput("ClimbAuto/Active", true);
+                            Logger.recordOutput("ClimbAuto/StartPose", currentPose);
+                            Logger.recordOutput("ClimbAuto/Path", pathName);
+                        })
+                        .finallyDo((interrupted) -> {
+                            Logger.recordOutput("ClimbAuto/Active", false);
+                        });
+            } catch (Exception e) {
+                return Commands.none();
+            }
+        }, java.util.Set.of());
     }
 
     // trench forward or back
     public static Command getTrenchCommand(CommandSwerveDrivetrain drivetrain) {
         return Commands.defer(() -> {
             var currentPose = drivetrain.getStateCopy().Pose;
+            boolean isRed = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red;
 
-            // Use hub pose as reference: aligned with both trenches on each axis
-            boolean isRed = DriverStation.getAlliance()
-                    .orElse(Alliance.Blue) == Alliance.Red;
-            double hubX = isRed ? FieldConstants.RED_HUB_X
-                    : FieldConstants.BLUE_HUB_X;
-            double hubY = isRed ? FieldConstants.RED_HUB_Y
-                    : FieldConstants.BLUE_HUB_Y;
+            // checks if in front or behind hub based on alliance side
+            boolean allianceSide;
+            if (isRed) {
+                allianceSide = currentPose.getX() > FieldConstants.RED_HUB_X;
+            } else {
+                allianceSide = currentPose.getX() < FieldConstants.BLUE_HUB_X;
+            }
 
-            boolean goingForward = currentPose.getX() < hubX; // neutral-zone side of hub → drive forward into trench
-            boolean rightTrench = currentPose.getY() <= hubY; // below hub Y → right trench
+            boolean goingForward = allianceSide;
+            boolean rightTrench = currentPose.getY() <= FieldConstants.BLUE_HUB_Y;
 
             String side = rightTrench ? "R" : "L";
             String direction = goingForward ? "F" : "B";
-            String pathName = "Trench" + direction + side; // e.g. TrenchFR, TrenchBL
+            String pathName = "Trench" + direction + side;
 
             try {
-                PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
+                PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory(pathName);
                 Command trenchAlign = AutoBuilder.pathfindThenFollowPath(path, CONSTRAINTS);
 
                 return trenchAlign
                         .beforeStarting(() -> {
-                            System.out.println(
-                                    "TrenchAuto: Starting at Pose: " + currentPose + " running: " + pathName);
                             Logger.recordOutput("TrenchAuto/Active", true);
                             Logger.recordOutput("TrenchAuto/StartPose", currentPose);
                             Logger.recordOutput("TrenchAuto/Path", pathName);
                         })
-                        .andThen(() -> System.out.println("TrenchAuto: Command finished!"))
                         .finallyDo((interrupted) -> {
-                            if (interrupted) {
-                                System.out.println("TrenchAuto: Command interrupted!");
-                            }
                             Logger.recordOutput("TrenchAuto/Active", false);
                         });
             } catch (Exception e) {
-                System.err.println("!!! TRENCH AUTO ERROR: " + e.getMessage() + " !!!");
-                return Commands.print("!!! TRENCH AUTO ERROR: " + e.getMessage() + " !!!");
+                return Commands.none();
             }
         }, java.util.Set.of());
     }
@@ -120,20 +136,14 @@ public class AutoAlignCommand {
             return auto
                     .beforeStarting(() -> {
                         var pose = drivetrain.getStateCopy().Pose;
-                        System.out.println("Auto [" + autoName + "]: Starting at Pose: " + pose);
                         Logger.recordOutput("Auto/ActiveRoutine", autoName);
                         Logger.recordOutput("Auto/StartPose", pose);
                     })
-                    .andThen(() -> System.out.println("Auto [" + autoName + "]: Finished!"))
                     .finallyDo((interrupted) -> {
-                        if (interrupted) {
-                            System.out.println("Auto [" + autoName + "]: Interrupted!");
-                        }
                         Logger.recordOutput("Auto/ActiveRoutine", "none");
                     });
         } catch (Exception e) {
-            System.err.println("!!! AUTO BUILD ERROR [" + autoName + "]: " + e.getMessage() + " !!!");
-            return Commands.print("!!! AUTO BUILD ERROR [" + autoName + "]: " + e.getMessage() + " !!!");
+            return Commands.none();
         }
     }
 }

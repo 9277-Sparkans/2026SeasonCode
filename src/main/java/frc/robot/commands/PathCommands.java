@@ -24,7 +24,7 @@ public class PathCommands {
             PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
             return AutoBuilder.followPath(path);
         } catch (Exception e) {
-            return Commands.print("Failed to load path: " + pathName + " - " + e.getMessage());
+            return Commands.none();
         }
     }
 
@@ -40,7 +40,7 @@ public class PathCommands {
             PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory(pathName);
             return AutoBuilder.followPath(path);
         } catch (Exception e) {
-            return Commands.print("Failed to load Choreo path: " + pathName + " - " + e.getMessage());
+            return Commands.none();
         }
     }
 
@@ -56,7 +56,7 @@ public class PathCommands {
             PathPlannerPath path = PathPlannerPath.fromPathFile(pathName);
             return AutoBuilder.pathfindThenFollowPath(path, null);
         } catch (Exception e) {
-            return Commands.print("Failed to load path: " + pathName + " - " + e.getMessage());
+            return Commands.none();
         }
     }
 
@@ -72,7 +72,7 @@ public class PathCommands {
             PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory(pathName);
             return AutoBuilder.pathfindThenFollowPath(path, null);
         } catch (Exception e) {
-            return Commands.print("Failed to load Choreo path: " + pathName + " - " + e.getMessage());
+            return Commands.none();
         }
     }
 

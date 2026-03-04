@@ -324,7 +324,7 @@ public class RobotContainer {
                 // DRIVER PREFERENCE
                 translateStick.button(OIConstants.kRightSticks_leftGrid_bottomLeft)
                                 .toggleOnTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-                translateStick.button(1).onTrue(Commands.runOnce(() ->
+                translateStick.button(1).onTrue(Commands.runOnce(() -> 
                 transfer.toggleTransfer()));
                 translateStick.button(1).onTrue(indexer.toggleIndexer());
                 rotateStick.button(1).onTrue(intake.outtakeCommand());
@@ -342,17 +342,17 @@ public class RobotContainer {
                 rotateStick.button(OIConstants.kSticks_trigger).onFalse(intake.stopRollerCommand());
                 rotateStick.button(OIConstants.kSticks_centerHandle).onTrue(intake.outtakeCommand());
                 rotateStick.button(OIConstants.kSticks_centerHandle).onFalse(intake.stopRollerCommand());
-                
+
                 rotateStick.button(OIConstants.kLeftSticks_leftGrid_topLeft).onTrue(
-                    Commands.either(
-                        turret.turretPos(),
-                            Commands.runOnce(() -> {}),
-                            () -> manualControl));
+                        Commands.either(
+                                                turret.turretPos(),
+                                                Commands.runOnce(() -> {}),
+                                                () -> manualControl));
                 rotateStick.button(OIConstants.kLeftSticks_leftGrid_topMid).onTrue(turret.turretNeg());
                 rotateStick.button(OIConstants.kLeftSticks_rightGrid_topRight).onTrue(Commands.runOnce(() -> hood.runHood()));
                 rotateStick.button(OIConstants.kLeftSticks_rightGrid_topMid).onTrue(Commands.runOnce(() -> hood.runHoodReverse()));
                 rotateStick.button(OIConstants.kLeftSticks_rightGrid_topLeft).onTrue(AutoAlignCommand.getTrenchCommand(drivetrain));
-        
+
 
         }
 
@@ -401,10 +401,10 @@ public class RobotContainer {
         }
 
         public JoystickButton operator(int keyCode) {
-            if (OPERATOR_JOYSTICK_DEBUG) {
-                new JoystickButton(operatorJoystick, keyCode)
-                    .onTrue(Commands.runOnce(() -> System.out
-                        .println("Pressed operator keycode " + keyCode)));
+                if (OPERATOR_JOYSTICK_DEBUG) {
+                        new JoystickButton(operatorJoystick, keyCode)
+                                        .onTrue(Commands.runOnce(() -> System.out
+                                                        .println("Pressed operator keycode " + keyCode)));
                 }
                 return new JoystickButton(operatorJoystick, keyCode);
         }

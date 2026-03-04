@@ -45,7 +45,7 @@ public class Constants {
         public static final int kDriverTranslateStickPort = 2;
         public static final int kDriverRotateStickPort = 3;
         public static final int kBackupOperatorControllerPort = 4;
-        public static final double kDeadband = 0.04;
+        public static final double kDeadband = 0.02;
 
         // Joysticks
         public static final int kDriverYAxis = 1;

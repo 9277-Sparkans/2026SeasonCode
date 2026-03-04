@@ -75,6 +75,7 @@ import frc.robot.commands.LockMode;
 public class RobotContainer {
         private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
         private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
+        private double driveTrainVelocityPercent = 0.5;
 
         /* Setting up bindings for necessary control of the swerve drive platform */
         private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -140,8 +141,6 @@ public class RobotContainer {
                                                                 ? TargetHub.RED_HUB
                                                                 : TargetHub.BLUE_HUB);
 
-                NamedCommands.registerCommand("testNamedCommand",
-                                Commands.runOnce(() -> System.out.println("this named command works")));
                 NamedCommands.registerCommand("intake",
                                 intake.intakeCommand());
                 NamedCommands.registerCommand("climbUp",
@@ -149,7 +148,7 @@ public class RobotContainer {
                 NamedCommands.registerCommand("climbHang",
                                 climb.climbHang());
                 NamedCommands.registerCommand("autofire",
-                                autoFireCommand.withTimeout(5.0));
+                                autoFireCommand.withTimeout(3.0));
                 NamedCommands.registerCommand("hingeDown",
                                 hinge.hingeDown());
                 NamedCommands.registerCommand("hingeUp",
@@ -211,9 +210,9 @@ public class RobotContainer {
                                                 y = -joystick.getLeftX();
                                                 rot = -joystick.getRightX();
                                         }
-                                        return drive.withVelocityX(x * MaxSpeed * 0.5)
-                                                        .withVelocityY(y * MaxSpeed * 0.5)
-                                                        .withRotationalRate(rot * MaxAngularRate * 0.5);
+                                        return drive.withVelocityX(x * MaxSpeed * driveTrainVelocityPercent)
+                                                        .withVelocityY(y * MaxSpeed * driveTrainVelocityPercent)
+                                                        .withRotationalRate(rot * MaxAngularRate * driveTrainVelocityPercent);
                                 }));
 
                 // Idle while the robot is disabled. This ensures the configured
@@ -319,39 +318,60 @@ public class RobotContainer {
                 // button id +1 (so button 1 would actually be button 2 on here)
                 // rotateStick.button(3).whileTrue(AutoAlignCommand.getAutoAlignCommand(drivetrain));
 
-                // DRIVER PREFERENCE
-                translateStick.button(OIConstants.kRightSticks_leftGrid_bottomLeft)
-                                .toggleOnTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
-                translateStick.button(1).onTrue(Commands.runOnce(() ->
-                transfer.toggleTransfer()));
-                translateStick.button(1).onTrue(indexer.toggleIndexer());
-                rotateStick.button(1).onTrue(intake.outtakeCommand());
-                rotateStick.button(1).onFalse(intake.stopRollerCommand());
-                rotateStick.button(2).onFalse(intake.stopRollerCommand());
-                rotateStick.button(2).onTrue(intake.intakeCommand());
 
-                // Autofire testing bindss
-                translateStick.button(OIConstants.kSticks_trigger)
-                                .whileTrue(autoFireCommand);
-                translateStick.button(OIConstants.kSticks_rightHandle).onTrue(transfer.toggleTransferCommand());
-                translateStick.button(OIConstants.kSticks_centerHandle).onTrue(Commands.runOnce(() -> indexer.spin()));
-                translateStick.button(OIConstants.kSticks_centerHandle).onFalse(Commands.runOnce(() -> indexer.stop()));
+
+                // ---------- FLIGHT STICK DRIVER PREFERENCE (DO NOT CHANGE) ---------- //
+
+                //intake
                 rotateStick.button(OIConstants.kSticks_trigger).onTrue(intake.intakeCommand());
                 rotateStick.button(OIConstants.kSticks_trigger).onFalse(intake.stopRollerCommand());
+                
+                //outtake
                 rotateStick.button(OIConstants.kSticks_centerHandle).onTrue(intake.outtakeCommand());
                 rotateStick.button(OIConstants.kSticks_centerHandle).onFalse(intake.stopRollerCommand());
-                
-                rotateStick.button(OIConstants.kLeftSticks_leftGrid_topLeft).onTrue(
-                    Commands.either(
-                        turret.turretPos(),
-                            Commands.runOnce(() -> {}),
-                            () -> manualControl));
-                rotateStick.button(OIConstants.kLeftSticks_leftGrid_topMid).onTrue(turret.turretNeg());
-                rotateStick.button(OIConstants.kLeftSticks_rightGrid_topRight).onTrue(Commands.runOnce(() -> hood.runHood()));
-                rotateStick.button(OIConstants.kLeftSticks_rightGrid_topMid).onTrue(Commands.runOnce(() -> hood.runHoodReverse()));
-                rotateStick.button(OIConstants.kLeftSticks_rightGrid_topLeft).onTrue(AutoAlignCommand.getTrenchCommand(drivetrain));
-        
 
+                //climb autoalign
+                // rotateStick.button(OIConstants.kSticks_leftHandle).whileTrue(AutoAlignCommand.getClimbCommand(drivetrain));
+
+                //boost
+                rotateStick.button(OIConstants.kSticks_rightHandle).whileTrue(Commands.runOnce(() -> driveTrainVelocityPercent = 1.0));
+                rotateStick.button(OIConstants.kSticks_rightHandle).onFalse(Commands.runOnce(() -> driveTrainVelocityPercent = 0.5));
+
+                //shooter up down
+                // rotateStick.button(OIConstants.povUp).onTrue(Commands.either(
+                //     Commands.runOnce(() -> shooter.increaseSpeed()),
+                //         Commands.runOnce(() -> {}),
+                //         () -> manualControl));
+                // rotateStick.button(OIConstants.povDown).onTrue(Commands.either(
+                //     Commands.runOnce(() -> shooter.decreaseSpeed()),
+                //         Commands.runOnce(() -> {}),
+                //         () -> manualControl));
+                                
+                //turret left right
+                // rotateStick.button(OIConstants.povRight).onTrue(Commands.either(
+                //     turret.turretPos(),
+                //         Commands.runOnce(() -> {}),
+                //         () -> manualControl));
+                // rotateStick.button(OIConstants.povLeftt).onTrue(Commands.either(
+                //     turret.turretNeg(),
+                //         Commands.runOnce(() -> {}),
+                //         () -> manualControl));
+                
+                //GYRO RESET
+                translateStick.button(OIConstants.kRightSticks_leftGrid_bottomLeft)
+                    .toggleOnTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+                
+                //autofire
+                translateStick.button(OIConstants.kSticks_trigger).whileTrue(autoFireCommand);
+
+                //kicker
+                translateStick.button(OIConstants.kSticks_centerHandle).onTrue(transfer.toggleTransferCommand());
+
+                //outpost autoalign
+                // translateStick.button(OIConstants.kSticks_leftHandle).onTrue(AutoAlignCommand.getOutpostCommand(drivetrain));
+
+                //trench autoalign
+                translateStick.button(OIConstants.kSticks_rightHandle).onTrue(AutoAlignCommand.getTrenchCommand(drivetrain));
         }
 
         private void configureOperatorConsole() {

@@ -7,43 +7,61 @@
         {
           "type": "path",
           "data": {
-            "pathName": "start1neutralzone"
+            "pathName": "neutralzonestart3"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "neutralintakestart1"
+            "pathName": "neutralintakestart3"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.3
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "neutraltoshootstart1"
+            "pathName": "neutraltoshoots3"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 3.0
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "backtodepotS1"
+            "pathName": "shoot3tooutpost"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 2.0
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "shoot"
+            "pathName": "outposttoshoot3"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 3.0
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "transitionpath"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "climb"
+            "pathName": "shoot3toneutral"
           }
         }
       ]

@@ -299,6 +299,8 @@ public class RobotContainer {
                                 .onFalse(
                                                 intake.stopRollerCommand());
 
+                joystick.y().whileTrue(AutoAlignCommand.getTrenchCommand(drivetrain));
+
                 // HINGE button controls
                 // joystick.povRight()
                 // .onTrue(hinge.hingeUp())
@@ -429,6 +431,6 @@ public class RobotContainer {
 
         public Command getAutonomousCommand() {
                 // return autoChooser.getSelected();
-                return new PathPlannerAuto("climb");
+                return new PathPlannerAuto("s1climb");
         }
 }

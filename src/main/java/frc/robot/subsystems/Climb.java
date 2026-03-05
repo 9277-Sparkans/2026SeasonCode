@@ -98,6 +98,18 @@ public class Climb extends SubsystemBase {
 
     /* ================= COMMANDS ================= */
 
+    public void climbUpper() {
+        setState(ClimbState.UP);
+    }
+
+    public void climbDowner() {
+        setState(ClimbState.DOWN);
+    }
+
+    public void climbHanger() {
+        setState(ClimbState.HANG);
+    }
+
     public Command climbUp() {
         return Commands.runOnce(() -> setState(ClimbState.UP), this);
     }

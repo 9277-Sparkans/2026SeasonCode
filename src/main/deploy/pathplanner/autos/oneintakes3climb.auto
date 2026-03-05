@@ -1,0 +1,97 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "neutralzonestart3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "hingeDown"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "neutralintakestart3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "intake"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 0.3
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "neutraltoshoots3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "kicker"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autofire"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "hingeUp"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 3.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "climbUp"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "shoot3toclimb"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ClimbR"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "climbHang"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": true
+}

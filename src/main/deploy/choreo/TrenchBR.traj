@@ -13,7 +13,7 @@
  },
  "params":{
   "waypoints":[
-    {"x":{"exp":"s3behindtrench.x", "val":6.359855651855469}, "y":{"exp":"s3behindtrench.y", "val":0.6044813990592957}, "heading":{"exp":"s3behindtrench.heading", "val":0.0}, "intervals":23, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
+    {"x":{"exp":"s3behindtrench.x", "val":6.359855651855469}, "y":{"exp":"s3behindtrench.y", "val":0.6044813990592957}, "heading":{"exp":"s3behindtrench.heading", "val":0.0}, "intervals":25, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
     {"x":{"exp":"S3.x", "val":3.5512595176696777}, "y":{"exp":"S3.y", "val":0.5895537734031677}, "heading":{"exp":"S3.heading", "val":0.0}, "intervals":23, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false}],
   "constraints":[
     {"from":"first", "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true},

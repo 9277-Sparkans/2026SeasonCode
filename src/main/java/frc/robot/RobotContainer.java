@@ -143,10 +143,14 @@ public class RobotContainer {
 
                 NamedCommands.registerCommand("intake",
                                 intake.intakeCommand());
+                // NamedCommands.registerCommand("climbUp",
+                //                 climb.climbUp());
+                // NamedCommands.registerCommand("climbHang",
+                //                 climb.climbHang());
                 NamedCommands.registerCommand("climbUp",
-                                climb.climbUp());
+                                Commands.runOnce(() -> climb.climbUpper()));
                 NamedCommands.registerCommand("climbHang",
-                                climb.climbHang());
+                                Commands.runOnce(() -> climb.climbHanger()));
                 NamedCommands.registerCommand("autofire",
                                 autoFireCommand.withTimeout(3.0));
                 NamedCommands.registerCommand("hingeDown",

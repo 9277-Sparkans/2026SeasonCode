@@ -446,6 +446,6 @@ public class RobotContainer {
 
         public Command getAutonomousCommand() {
                 // return autoChooser.getSelected();
-                return new PathPlannerAuto("s2noclimb");
+                return new PathPlannerAuto("henockauto");
         }
 }

@@ -147,10 +147,14 @@ public class RobotContainer {
 
                 NamedCommands.registerCommand("intake",
                                 intake.intakeCommand());
+                // NamedCommands.registerCommand("climbUp",
+                //                 climb.climbUp());
+                // NamedCommands.registerCommand("climbHang",
+                //                 climb.climbHang());
                 NamedCommands.registerCommand("climbUp",
-                                climb.climbUp());
+                                Commands.runOnce(() -> climb.climbUpper()));
                 NamedCommands.registerCommand("climbHang",
-                                climb.climbHang());
+                                Commands.runOnce(() -> climb.climbHanger()));
                 NamedCommands.registerCommand("autofire",
                                 autoFireCommand.withTimeout(3.0));
                 NamedCommands.registerCommand("hingeDown",
@@ -397,10 +401,10 @@ public class RobotContainer {
                 
 
                 //outpost autoalign
-                translateStick.button(OIConstants.kSticks_leftHandle).onTrue(AutoAlignCommand.getOutpostCommand(drivetrain));
+                translateStick.button(OIConstants.kSticks_leftHandle).whileTrue(AutoAlignCommand.getOutpostCommand(drivetrain));
 
                 //trench autoalign
-                translateStick.button(OIConstants.kSticks_rightHandle).onTrue(AutoAlignCommand.getTrenchCommand(drivetrain));
+                translateStick.button(OIConstants.kSticks_rightHandle).whileTrue(AutoAlignCommand.getTrenchCommand(drivetrain));
 
                 
         }
@@ -462,6 +466,6 @@ public class RobotContainer {
 
         public Command getAutonomousCommand() {
                 // return autoChooser.getSelected();
-                return new PathPlannerAuto("s1climb");
+                return new PathPlannerAuto("s2noclimb");
         }
 }

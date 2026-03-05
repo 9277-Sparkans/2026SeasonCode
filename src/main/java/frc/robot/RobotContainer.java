@@ -16,6 +16,7 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
@@ -38,6 +39,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import java.util.function.Supplier;
 
 import frc.robot.subsystems.Turret;
+import frc.robot.util.AllianceShifts;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
@@ -126,6 +128,8 @@ public class RobotContainer {
 
         public boolean manualControl = false;
 
+        public final Timer teleopTimer = new Timer();
+
         public final Vision vision = new Vision(
                         (Vision.VisionConsumer) drivetrain::addVisionMeasurement,
                         (Supplier<Pose2d>) (() -> drivetrain.getStateCopy().Pose),
@@ -143,10 +147,14 @@ public class RobotContainer {
 
                 NamedCommands.registerCommand("intake",
                                 intake.intakeCommand());
+                // NamedCommands.registerCommand("climbUp",
+                //                 climb.climbUp());
+                // NamedCommands.registerCommand("climbHang",
+                //                 climb.climbHang());
                 NamedCommands.registerCommand("climbUp",
-                                climb.climbUp());
+                                Commands.runOnce(() -> climb.climbUpper()));
                 NamedCommands.registerCommand("climbHang",
-                                climb.climbHang());
+                                Commands.runOnce(() -> climb.climbHanger()));
                 NamedCommands.registerCommand("autofire",
                                 autoFireCommand.withTimeout(3.0));
                 NamedCommands.registerCommand("hingeDown",
@@ -193,6 +201,22 @@ public class RobotContainer {
                 });
 
                 configureBindings();
+        }
+
+        public void startTeleop() {
+                teleopTimer.start();
+        }
+
+        public void teleopPeriodic() {
+                if (teleopTimer.get() >= 140) teleopTimer.stop();
+                
+                SmartDashboard.putNumber("Shifts/Match Time", teleopTimer.get());
+                SmartDashboard.putString(
+                        "Shifts/Remaining Shift Time",
+                        String.format("%.1f", Math.max(AllianceShifts.getRemainingShiftTime(teleopTimer), 0.0)));
+                SmartDashboard.putBoolean("Shifts/Shift Active", AllianceShifts.areWeActive(teleopTimer));
+                SmartDashboard.putString(
+                        "Shifts/Game State", AllianceShifts.getCurrentShift(teleopTimer).toString());
         }
 
         private void configureBindings() {
@@ -377,10 +401,10 @@ public class RobotContainer {
                 
 
                 //outpost autoalign
-                translateStick.button(OIConstants.kSticks_leftHandle).onTrue(AutoAlignCommand.getOutpostCommand(drivetrain));
+                translateStick.button(OIConstants.kSticks_leftHandle).whileTrue(AutoAlignCommand.getOutpostCommand(drivetrain));
 
                 //trench autoalign
-                translateStick.button(OIConstants.kSticks_rightHandle).onTrue(AutoAlignCommand.getTrenchCommand(drivetrain));
+                translateStick.button(OIConstants.kSticks_rightHandle).whileTrue(AutoAlignCommand.getTrenchCommand(drivetrain));
 
                 
         }
@@ -442,6 +466,6 @@ public class RobotContainer {
 
         public Command getAutonomousCommand() {
                 // return autoChooser.getSelected();
-                return new PathPlannerAuto("s1climb");
+                return new PathPlannerAuto("s2noclimb");
         }
 }

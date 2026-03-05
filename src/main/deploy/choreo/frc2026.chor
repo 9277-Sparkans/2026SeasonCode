@@ -117,6 +117,20 @@
      "val":0.0
     }
    },
+   "hopperfullneutralleft":{
+    "x":{
+     "exp":"S1NZI.x",
+     "val":7.77174711227417
+    },
+    "y":{
+     "exp":"4.723222923278815 m",
+     "val":4.723222923278815
+    },
+    "heading":{
+     "exp":"S1NZI.heading",
+     "val":1.5707963267948966
+    }
+   },
    "intake":{
     "x":{
      "exp":"0.9369903802871704 m",
@@ -129,6 +143,34 @@
     "heading":{
      "exp":"depot.heading",
      "val":0.0
+    }
+   },
+   "neutralcloseintake":{
+    "x":{
+     "exp":"6.460224628448486 m",
+     "val":6.460224628448486
+    },
+    "y":{
+     "exp":"5.12007999420166 m",
+     "val":5.12007999420166
+    },
+    "heading":{
+     "exp":"neutraltestforus.heading",
+     "val":1.5707963267948966
+    }
+   },
+   "neutralcloseintakeend":{
+    "x":{
+     "exp":"neutralcloseintake.x",
+     "val":6.460224628448486
+    },
+    "y":{
+     "exp":"4.620079994201662 m",
+     "val":4.620079994201662
+    },
+    "heading":{
+     "exp":"neutralcloseintake.heading",
+     "val":1.5707963267948966
     }
    },
    "neutralintakeend":{

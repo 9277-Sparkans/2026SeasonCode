@@ -5,33 +5,39 @@
     "data": {
       "commands": [
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "hingeDown"
+            "pathName": "start1neutralzone"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "neutraltestforus"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "intake"
+            "pathName": "neutralintakestart1"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": null
+            "pathName": "neutraltoshootstart1"
           }
         },
         {
-          "type": "named",
+          "type": "wait",
           "data": {
-            "name": "kicker"
+            "waitTime": 3.0
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "shoot1tocloseneutral"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "neutralcloseintake"
           }
         },
         {
@@ -41,15 +47,9 @@
           }
         },
         {
-          "type": "path",
+          "type": "wait",
           "data": {
-            "pathName": "backtodepotS1"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "shoot"
+            "waitTime": 3.0
           }
         },
         {

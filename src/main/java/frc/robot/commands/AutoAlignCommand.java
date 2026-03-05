@@ -4,6 +4,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.path.PathPlannerPath;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
@@ -11,6 +12,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.Constants.FieldConstants;
+
+import java.util.Set;
+
 import org.littletonrobotics.junction.Logger;
 
 public class AutoAlignCommand {
@@ -83,71 +87,61 @@ public class AutoAlignCommand {
         }
     }
 
-    // auto align for climb
-    public static Command getAutoClimbCommand(CommandSwerveDrivetrain drivetrain) {
-        return Commands.defer(() -> {
-            var currentPose = drivetrain.getStateCopy().Pose;
-            boolean isLeft = currentPose.getY() > FieldConstants.BLUE_HUB_Y;
-            String pathName = isLeft ? "ClimbL" : "ClimbR";
+ // ─── shared helper ───────────────────────────────────────────────────────────
 
-            try {
-                PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory(pathName);
-                Command climbAlign = AutoBuilder.pathfindThenFollowPath(path, CONSTRAINTS);
-
-                return climbAlign
-                        .beforeStarting(() -> {
-                            Logger.recordOutput("ClimbAuto/Active", true);
-                            Logger.recordOutput("ClimbAuto/StartPose", currentPose);
-                            Logger.recordOutput("ClimbAuto/Path", pathName);
-                        })
-                        .finallyDo((interrupted) -> {
-                            Logger.recordOutput("ClimbAuto/Active", false);
-                        });
-            } catch (Exception e) {
-                return Commands.none();
-            }
-        }, java.util.Set.of());
+private static Command buildPathCommand(String logPrefix, String pathName, Pose2d startPose) {
+    try {
+        PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory(pathName);
+        return AutoBuilder.pathfindThenFollowPath(path, CONSTRAINTS)
+                .beforeStarting(() -> {
+                    Logger.recordOutput(logPrefix + "/Active", true);
+                    Logger.recordOutput(logPrefix + "/StartPose", startPose);
+                    Logger.recordOutput(logPrefix + "/Path", pathName);
+                })
+                .finallyDo(interrupted -> Logger.recordOutput(logPrefix + "/Active", false));
+    } catch (Exception e) {
+        return Commands.none();
     }
+}
 
-    // trench forward or back
-    public static Command getTrenchCommand(CommandSwerveDrivetrain drivetrain) {
-        return Commands.defer(() -> {
-            var currentPose = drivetrain.getStateCopy().Pose;
-            boolean isRed = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red;
+// ─── auto climb ──────────────────────────────────────────────────────────────
 
-            // checks if in front or behind hub based on alliance side
-            boolean allianceSide;
-            if (isRed) {
-                allianceSide = currentPose.getX() > FieldConstants.RED_HUB_X;
-            } else {
-                allianceSide = currentPose.getX() < FieldConstants.BLUE_HUB_X;
-            }
+public static Command getAutoClimbCommand(CommandSwerveDrivetrain drivetrain) {
+    return Commands.defer(() -> {
+        var pose = drivetrain.getStateCopy().Pose;
+        boolean isRed = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red;
 
-            boolean goingForward = allianceSide;
-            boolean rightTrench = currentPose.getY() <= FieldConstants.BLUE_HUB_Y;
+        boolean isLeft = isRed
+                ? pose.getY() < FieldConstants.RED_HUB_Y
+                : pose.getY() > FieldConstants.BLUE_HUB_Y;
 
-            String side = rightTrench ? "R" : "L";
-            String direction = goingForward ? "F" : "B";
-            String pathName = "Trench" + direction + side;
+        String pathName = isLeft ? "ClimbL" : "ClimbR";
+        return buildPathCommand("ClimbAuto", pathName, pose);
+    }, Set.of());
+}
 
-            try {
-                PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory(pathName);
-                Command trenchAlign = AutoBuilder.pathfindThenFollowPath(path, CONSTRAINTS);
+// ─── trench ──────────────────────────────────────────────────────────────────
 
-                return trenchAlign
-                        .beforeStarting(() -> {
-                            Logger.recordOutput("TrenchAuto/Active", true);
-                            Logger.recordOutput("TrenchAuto/StartPose", currentPose);
-                            Logger.recordOutput("TrenchAuto/Path", pathName);
-                        })
-                        .finallyDo((interrupted) -> {
-                            Logger.recordOutput("TrenchAuto/Active", false);
-                        });
-            } catch (Exception e) {
-                return Commands.none();
-            }
-        }, java.util.Set.of());
-    }
+public static Command getTrenchCommand(CommandSwerveDrivetrain drivetrain) {
+    return Commands.defer(() -> {
+        var pose = drivetrain.getStateCopy().Pose;
+        boolean isRed = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red;
+
+        boolean goingForward = isRed
+                ? pose.getX() > FieldConstants.RED_HUB_X
+                : pose.getX() < FieldConstants.BLUE_HUB_X;
+
+        boolean rightTrench = isRed
+                ? pose.getY() >= FieldConstants.RED_HUB_Y
+                : pose.getY() <= FieldConstants.BLUE_HUB_Y;
+
+        String pathName = "Trench"
+                + (goingForward ? "F" : "B")
+                + (rightTrench ? "R" : "L");
+
+        return buildPathCommand("TrenchAuto", pathName, pose);
+    }, Set.of());
+}
 
     // autobuilder
     private static Command buildAuto(String autoName, CommandSwerveDrivetrain drivetrain) {

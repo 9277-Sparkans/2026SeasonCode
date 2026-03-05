@@ -22,7 +22,7 @@ public class AllianceShifts {
     public static Alliance getAutoWinner() {
         String gameData = DriverStation.getGameSpecificMessage();
         if (gameData.length() > 0) {
-            switch (gameData.charAt(0)) {
+            switch (gameData.toUpperCase().charAt(0)) {
                 case 'B':
                     return Alliance.Blue;
                 case 'R':

@@ -82,7 +82,12 @@ public class Robot extends LoggedRobot {
       m_autonomousCommand.cancel();
     }
 
-    timer.start();
+    m_robotContainer.startTeleop();
+  }
+
+  @Override
+  public void teleopPeriodic() {
+    m_robotContainer.teleopPeriodic();
   }
 
   @Override

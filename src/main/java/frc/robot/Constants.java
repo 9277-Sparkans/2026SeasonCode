@@ -25,7 +25,7 @@ public class Constants {
 
         // change between DRIVER_CONTROLLER and DRIVER_STICKS for controller and sticks,
         // erm i guess
-        public static final ControlTypes controlType = ControlTypes.DRIVER_CONTROLLER;
+        public static final ControlTypes controlType = ControlTypes.DRIVER_STICKS;
 
         public static enum ControlTypes {
             DEV,

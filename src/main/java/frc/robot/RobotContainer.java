@@ -77,7 +77,7 @@ import frc.robot.commands.LockMode;
 public class RobotContainer {
         private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
         private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
-        private double driveTrainVelocityPercent = 0.5;
+        private double driveTrainVelocityPercent = 0.4;
 
         /* Setting up bindings for necessary control of the swerve drive platform */
         private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -367,7 +367,7 @@ public class RobotContainer {
 
                 //boost
                 rotateStick.button(OIConstants.kSticks_rightHandle).whileTrue(Commands.runOnce(() -> driveTrainVelocityPercent = 1.0));
-                rotateStick.button(OIConstants.kSticks_rightHandle).onFalse(Commands.runOnce(() -> driveTrainVelocityPercent = 0.5));
+                rotateStick.button(OIConstants.kSticks_rightHandle).onFalse(Commands.runOnce(() -> driveTrainVelocityPercent = 0.4));
 
                 //shooter up down
                 // rotateStick.button(OIConstants.povUp).onTrue(Commands.either(

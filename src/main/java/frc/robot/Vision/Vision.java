@@ -40,6 +40,8 @@ public class Vision extends SubsystemBase {
         private Pose3d latestVisionPose = new Pose3d();
         private Pose3d[] latestRobotPoses = new Pose3d[0];
 
+        public boolean enableVision = true;
+
         /**
          * Get all robot poses from the latest cycle (same as Vision/Summary/RobotPoses
          * in NT).
@@ -98,6 +100,7 @@ public class Vision extends SubsystemBase {
                         io[i].updateInputs(inputs[i], poseSupplier.get());
                         Logger.processInputs("Vision/Camera" + Integer.toString(i), inputs[i]);
                 }
+                if (!enableVision) return;
 
                 // Initialize logging values
                 List<Pose3d> allTagPoses = new LinkedList<>();

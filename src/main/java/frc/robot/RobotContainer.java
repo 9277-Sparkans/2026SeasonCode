@@ -394,6 +394,8 @@ public class RobotContainer {
                 //GYRO RESET
                 translateStick.button(OIConstants.kRightSticks_leftGrid_bottomLeft)
                     .toggleOnTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+                translateStick.button(OIConstants.kRightSticks_leftGrid_bottomLeft)
+                    .toggleOnTrue(Commands.runOnce(() -> vision.enableVision = false));    
                 
                 //autofire
                 // translateStick.button(OIConstants.kSticks_trigger).whileTrue(autoFireCommand);

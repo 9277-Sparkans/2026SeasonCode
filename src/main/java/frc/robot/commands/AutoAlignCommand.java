@@ -21,7 +21,7 @@ public class AutoAlignCommand {
 
     // pathfind constraints
     private static final PathConstraints CONSTRAINTS = new PathConstraints(
-            3.0, 3.0,
+            4.0, 4.0,
             Units.degreesToRadians(540), Units.degreesToRadians(720));
 
     // jeet autos

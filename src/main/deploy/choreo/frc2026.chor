@@ -173,6 +173,20 @@
      "val":1.5707963267948966
     }
    },
+   "neutralends3":{
+    "x":{
+     "exp":"7.763760089874268 m",
+     "val":7.763760089874268
+    },
+    "y":{
+     "exp":"3.177039861679077 m",
+     "val":3.177039861679077
+    },
+    "heading":{
+     "exp":"s3neutralintakend.heading",
+     "val":-1.5707963267948966
+    }
+   },
    "neutralintakeend":{
     "x":{
      "exp":"S1NZI.x",

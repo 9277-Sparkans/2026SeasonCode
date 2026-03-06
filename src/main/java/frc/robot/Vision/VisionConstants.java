@@ -49,13 +49,13 @@ public class VisionConstants {
         // front left camera: 317.54mm front, 324.226mm left, 178 mm up, and yaw 30
         // degrees in, pitch 20 degrees up.
         public static Transform3d robotToCamera0 = new Transform3d(
-                        0.31754, 0.324226, 0.178,
+                        0.328, 0.323, 0.178,
                         new Rotation3d(0.0, Units.degreesToRadians(-20), Units.degreesToRadians(-30)));
 
         // front right camera: 317.54mm front, 324.226mm right, 178 mm up, and yaw 30
         // degrees in, pitch 20 degrees up.
         public static Transform3d robotToCamera1 = new Transform3d(
-                        0.31754, -0.324226, 0.178,
+                        0.328, -0.323, 0.178,
                         new Rotation3d(0.0, Units.degreesToRadians(-20), Units.degreesToRadians(30)));
 
         // back left camera: 317.54mm back, 324.226mm left, 170mm up, and yaw 30 degrees

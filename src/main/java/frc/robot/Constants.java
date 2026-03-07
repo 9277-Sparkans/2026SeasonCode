@@ -189,7 +189,7 @@ public class Constants {
 
         public static final String lookupTablePath = Filesystem.getDeployDirectory().getPath() + "/ShooterLookupTable/shooter-lookup.csv"; // Generated with github.com/DanielR723/shooter
         public static final double autoshootDistanceRange = 0.1; // Range of distances to check to choose the best shot (Least hood rotation and flywheel RPM change)
-        public static final double maxShotError = 1.0; // The maximum allowed error for a shot to occur
+        public static final double maxShotError = 0.01; // The maximum allowed error for a shot to occur
 
         // Tuning constants for autofire
         public static final double rpmOffset = 50.0;
@@ -303,7 +303,7 @@ public class Constants {
 
         public static final int kClimbUp = 108;
         public static final int kClimbDown = 0;
-        public static final int kClimbHang = 20;
+        public static final int kClimbHang = 10;
 
         public static final double kClimbGearRatio = 6.0 / 1.0;
     }

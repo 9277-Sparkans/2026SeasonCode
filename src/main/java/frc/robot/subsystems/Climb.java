@@ -131,6 +131,7 @@ import frc.robot.Constants.ClimbConstants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -171,6 +172,8 @@ public class Climb extends SubsystemBase {
 
         climbConfig.CurrentLimits.StatorCurrentLimit = ClimbConstants.kClimbCurrent_Limit;
         climbConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+        climbConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+
 
         /* Default Motion Magic (UP profile) */
         climbConfig.MotionMagic.MotionMagicCruiseVelocity = 100;

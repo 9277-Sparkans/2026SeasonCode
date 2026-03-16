@@ -4,6 +4,9 @@ import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Hood;
 import frc.robot.Constants.LockModeConstants;
+
+import java.util.function.BooleanSupplier;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Shooter;
@@ -26,16 +29,17 @@ public class LockMode extends Command {
     Shooter shooter;
     Hood hood;
     LockState lockState;
+    BooleanSupplier callback;
 
-    public LockMode(Turret turret, Shooter shooter, Hood hood, LockState lockState) {
+    public LockMode(Turret turret, Shooter shooter, Hood hood, LockState lockState, BooleanSupplier callback) {
         this.turret = turret;
         this.shooter = shooter;
         this.hood = hood;
 
         addRequirements(shooter, hood, turret);
-        addRequirements(shooter, hood, turret);
 
         this.lockState = lockState;
+        this.callback = callback;
     }
     
     @Override
@@ -45,7 +49,7 @@ public class LockMode extends Command {
 
     @Override
     public void execute() {
-
+        this.callback.getAsBoolean(); // calls the callback
         double tgtRpm = 0.0;
         double tgtAngleHood = 0.0;
         double tgtAngleTurret = 0.0;

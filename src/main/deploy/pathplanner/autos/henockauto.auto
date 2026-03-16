@@ -1,0 +1,91 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "hingeDown"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "start1neutralzone"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "intake"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "neutralintakestart1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "kicker"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "neutraltoshootstart1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "autofire"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "hingeUp"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 3.0
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "climbUp"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "transitionpath"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ClimbL"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "climbHang"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": true
+}

@@ -77,7 +77,7 @@ import frc.robot.commands.LockMode;
 public class RobotContainer {
         private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
         private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
-        private double driveTrainVelocityPercent = 0.5;
+        private double driveTrainVelocityPercent = 0.4;
 
         /* Setting up bindings for necessary control of the swerve drive platform */
         private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -127,6 +127,7 @@ public class RobotContainer {
         // public final LockMode lockModeCommand = new LockMode(turret, shooter, hood);
 
         public boolean manualControl = false;
+        public boolean lockmode = false;
 
         public final Timer teleopTimer = new Timer();
 
@@ -152,11 +153,11 @@ public class RobotContainer {
                 // NamedCommands.registerCommand("climbHang",
                 //                 climb.climbHang());
                 NamedCommands.registerCommand("climbUp",
-                                Commands.runOnce(() -> climb.climbUpper()));
+                                Commands.runOnce(() -> climb.climbUp()));
                 NamedCommands.registerCommand("climbHang",
-                                Commands.runOnce(() -> climb.climbHanger()));
+                                Commands.runOnce(() -> climb.climbHang()));
                 NamedCommands.registerCommand("autofire",
-                                autoFireCommand.withTimeout(3.0));
+                                autoFireCommand);
                 NamedCommands.registerCommand("hingeDown",
                                 hinge.hingeDown());
                 NamedCommands.registerCommand("hingeUp",
@@ -367,7 +368,7 @@ public class RobotContainer {
 
                 //boost
                 rotateStick.button(OIConstants.kSticks_rightHandle).whileTrue(Commands.runOnce(() -> driveTrainVelocityPercent = 1.0));
-                rotateStick.button(OIConstants.kSticks_rightHandle).onFalse(Commands.runOnce(() -> driveTrainVelocityPercent = 0.5));
+                rotateStick.button(OIConstants.kSticks_rightHandle).onFalse(Commands.runOnce(() -> driveTrainVelocityPercent = 0.4));
 
                 //shooter up down
                 // rotateStick.button(OIConstants.povUp).onTrue(Commands.either(
@@ -394,7 +395,12 @@ public class RobotContainer {
                     .toggleOnTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
                 
                 //autofire
-                translateStick.button(OIConstants.kSticks_trigger).whileTrue(autoFireCommand);
+                // translateStick.button(OIConstants.kSticks_trigger).whileTrue(autoFireCommand);
+
+                translateStick.button(OIConstants.kSticks_trigger).whileTrue(Commands.either(
+                    autoFireCommand,
+                        Commands.runOnce(() -> indexer.setVel()),
+                        () -> !lockmode));
 
                 //kicker
                 translateStick.button(OIConstants.kSticks_centerHandle).onTrue(transfer.toggleTransferCommand());
@@ -406,6 +412,8 @@ public class RobotContainer {
                 //trench autoalign
                 translateStick.button(OIConstants.kSticks_rightHandle).whileTrue(AutoAlignCommand.getTrenchCommand(drivetrain));
 
+                //spindexer
+                translateStick.button(OIConstants.kLeftSticks_leftGrid_bottomLeft).whileTrue(Commands.runOnce(() -> indexer.setVel()));
                 
         }
 
@@ -420,22 +428,22 @@ public class RobotContainer {
                                 .onTrue(Commands.runOnce(() -> manualControl = !manualControl));
 
                 operator(OIConstants.kKeyboard_lockModeToggle)
-                                .whileTrue(new LockMode(turret, shooter, hood, LockState.LOCK));
+                                .whileTrue(new LockMode(turret, shooter, hood, LockState.LOCK, () -> { lockmode = true; return true; }));
 
                 operator(OIConstants.kKeyboard_lockModeLeft)
-                                .whileTrue(new LockMode(turret, shooter, hood, LockState.LEFT));
+                                .whileTrue(new LockMode(turret, shooter, hood, LockState.LEFT, () -> { lockmode = true; return true; }));
 
                 operator(OIConstants.kKeyboard_lockModeCenter)
-                                .whileTrue(new LockMode(turret, shooter, hood, LockState.CENTER));
+                                .whileTrue(new LockMode(turret, shooter, hood, LockState.CENTER, () -> { lockmode = true; return true; }));
 
                 operator(OIConstants.kKeyboard_lockModeRight)
-                                .whileTrue(new LockMode(turret, shooter, hood, LockState.RIGHT));
+                                .whileTrue(new LockMode(turret, shooter, hood, LockState.RIGHT, () -> { lockmode = true; return true; }));
 
                 operator(OIConstants.kKeyboard_lockModeTrenchLeft)
-                                .whileTrue(new LockMode(turret, shooter, hood, LockState.TRENCHLEFT));
+                                .whileTrue(new LockMode(turret, shooter, hood, LockState.TRENCHLEFT, () -> { lockmode = true; return true; }));
 
                 operator(OIConstants.kKeyboard_lockModeTrenchRight)
-                                .whileTrue(new LockMode(turret, shooter, hood, LockState.TRENCHRIGHT));
+                                .whileTrue(new LockMode(turret, shooter, hood, LockState.TRENCHRIGHT, () -> { lockmode = true; return true; }));
 
                 operator(OIConstants.kKeyboard_climbUp)
                                 .onTrue(climb.climbUp());
@@ -466,6 +474,6 @@ public class RobotContainer {
 
         public Command getAutonomousCommand() {
                 // return autoChooser.getSelected();
-                return new PathPlannerAuto("s2noclimb");
+                return new PathPlannerAuto("henockauto");
         }
 }

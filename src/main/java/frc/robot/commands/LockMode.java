@@ -29,9 +29,8 @@ public class LockMode extends Command {
     Shooter shooter;
     Hood hood;
     LockState lockState;
-    BooleanSupplier callback;
 
-    public LockMode(Turret turret, Shooter shooter, Hood hood, LockState lockState, BooleanSupplier callback) {
+    public LockMode(Turret turret, Shooter shooter, Hood hood, LockState lockState) {
         this.turret = turret;
         this.shooter = shooter;
         this.hood = hood;
@@ -39,7 +38,6 @@ public class LockMode extends Command {
         addRequirements(shooter, hood, turret);
 
         this.lockState = lockState;
-        this.callback = callback;
     }
     
     @Override
@@ -49,7 +47,6 @@ public class LockMode extends Command {
 
     @Override
     public void execute() {
-        this.callback.getAsBoolean(); // calls the callback
         double tgtRpm = 0.0;
         double tgtAngleHood = 0.0;
         double tgtAngleTurret = 0.0;

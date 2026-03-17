@@ -21,7 +21,7 @@ public class AutoAlignCommand {
 
     // pathfind constraints
     private static final PathConstraints CONSTRAINTS = new PathConstraints(
-            3.0, 3.0,
+            5.5, 5.5,
             Units.degreesToRadians(540), Units.degreesToRadians(720));
 
     // jeet autos
@@ -87,61 +87,83 @@ public class AutoAlignCommand {
         }
     }
 
- // ─── shared helper ───────────────────────────────────────────────────────────
+    // ─── shared helper ───────────────────────────────────────────────────────────
 
-private static Command buildPathCommand(String logPrefix, String pathName, Pose2d startPose) {
-    try {
-        PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory(pathName);
-        return AutoBuilder.pathfindThenFollowPath(path, CONSTRAINTS)
-                .beforeStarting(() -> {
-                    Logger.recordOutput(logPrefix + "/Active", true);
-                    Logger.recordOutput(logPrefix + "/StartPose", startPose);
-                    Logger.recordOutput(logPrefix + "/Path", pathName);
-                })
-                .finallyDo(interrupted -> Logger.recordOutput(logPrefix + "/Active", false));
-    } catch (Exception e) {
-        return Commands.none();
+    private static Command buildPathCommand(String logPrefix, String pathName, Pose2d startPose) {
+        try {
+            PathPlannerPath path = PathPlannerPath.fromChoreoTrajectory(pathName);
+            return AutoBuilder.pathfindThenFollowPath(path, CONSTRAINTS)
+                    .beforeStarting(() -> {
+                        Logger.recordOutput(logPrefix + "/Active", true);
+                        Logger.recordOutput(logPrefix + "/StartPose", startPose);
+                        Logger.recordOutput(logPrefix + "/Path", pathName);
+                    })
+                    .finallyDo(interrupted -> Logger.recordOutput(logPrefix + "/Active", false));
+        } catch (Exception e) {
+            return Commands.none();
+        }
     }
-}
 
-// ─── auto climb ──────────────────────────────────────────────────────────────
+    // ─── auto climb ──────────────────────────────────────────────────────────────
 
-public static Command getAutoClimbCommand(CommandSwerveDrivetrain drivetrain) {
-    return Commands.defer(() -> {
-        var pose = drivetrain.getStateCopy().Pose;
-        boolean isRed = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red;
+    public static Command getAutoClimbCommand(CommandSwerveDrivetrain drivetrain) {
+        return Commands.defer(() -> {
+            var pose = drivetrain.getStateCopy().Pose;
+            boolean isRed = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red;
 
-        boolean isLeft = isRed
-                ? pose.getY() < FieldConstants.RED_HUB_Y
-                : pose.getY() > FieldConstants.BLUE_HUB_Y;
+            boolean isLeft = isRed
+                    ? pose.getY() < FieldConstants.RED_HUB_Y
+                    : pose.getY() > FieldConstants.BLUE_HUB_Y;
 
-        String pathName = isLeft ? "ClimbL" : "ClimbR";
-        return buildPathCommand("ClimbAuto", pathName, pose);
-    }, Set.of());
-}
+            String pathName = isLeft ? "ClimbL" : "ClimbR";
+            return buildPathCommand("ClimbAuto", pathName, pose);
+        }, Set.of());
+    }
 
-// ─── trench ──────────────────────────────────────────────────────────────────
+    // ─── trench ──────────────────────────────────────────────────────────────────
 
-public static Command getTrenchCommand(CommandSwerveDrivetrain drivetrain) {
-    return Commands.defer(() -> {
-        var pose = drivetrain.getStateCopy().Pose;
-        boolean isRed = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red;
+    public static Command getTrenchCommand(CommandSwerveDrivetrain drivetrain) {
+        return Commands.defer(() -> {
+            var pose = drivetrain.getStateCopy().Pose;
+            boolean isRed = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red;
 
-        boolean goingForward = isRed
-                ? pose.getX() > FieldConstants.RED_HUB_X
-                : pose.getX() < FieldConstants.BLUE_HUB_X;
+            boolean goingForward = isRed
+                    ? pose.getX() > FieldConstants.RED_HUB_X
+                    : pose.getX() < FieldConstants.BLUE_HUB_X;
 
-        boolean rightTrench = isRed
-                ? pose.getY() >= FieldConstants.RED_HUB_Y
-                : pose.getY() <= FieldConstants.BLUE_HUB_Y;
+            boolean rightTrench = isRed
+                    ? pose.getY() >= FieldConstants.RED_HUB_Y
+                    : pose.getY() <= FieldConstants.BLUE_HUB_Y;
 
-        String pathName = "Trench"
-                + (goingForward ? "F" : "B")
-                + (rightTrench ? "R" : "L");
+            Pose2d targetPose;
+            if (goingForward) { // F
+                if (rightTrench) { // R
+                    targetPose = new Pose2d(7.03864860534668, 1.0326759815216064,
+                            new edu.wpi.first.math.geometry.Rotation2d());
+                } else { // L
+                    targetPose = new Pose2d(7.03864860534668, 7.142057418823242,
+                            new edu.wpi.first.math.geometry.Rotation2d());
+                }
+            } else { // B
+                if (rightTrench) { // R
+                    targetPose = new Pose2d(2.642042398452759, 0.7739725112915039,
+                            new edu.wpi.first.math.geometry.Rotation2d());
+                } else { // L
+                    targetPose = new Pose2d(2.642042398452759, 7.311770915985107,
+                            new edu.wpi.first.math.geometry.Rotation2d());
+                }
+            }
 
-        return buildPathCommand("TrenchAuto", pathName, pose);
-    }, Set.of());
-}
+            return AutoBuilder.pathfindToPoseFlipped(targetPose, CONSTRAINTS)
+                    .beforeStarting(() -> {
+                        Logger.recordOutput("TrenchAuto/Active", true);
+                        Logger.recordOutput("TrenchAuto/TargetPose", targetPose);
+                    })
+                    .finallyDo((interrupted) -> {
+                        Logger.recordOutput("TrenchAuto/Active", false);
+                    });
+        }, Set.of());
+    }
 
     // autobuilder
     private static Command buildAuto(String autoName, CommandSwerveDrivetrain drivetrain) {

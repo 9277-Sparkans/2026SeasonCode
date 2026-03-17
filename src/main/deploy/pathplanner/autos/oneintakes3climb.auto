@@ -5,6 +5,12 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "hingeDown"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "neutralzonestart3"
@@ -13,7 +19,7 @@
         {
           "type": "named",
           "data": {
-            "name": "hingeDown"
+            "name": "intake"
           }
         },
         {
@@ -25,7 +31,7 @@
         {
           "type": "named",
           "data": {
-            "name": "intake"
+            "name": "kicker"
           }
         },
         {
@@ -43,19 +49,13 @@
         {
           "type": "named",
           "data": {
-            "name": "kicker"
+            "name": "hingeUp"
           }
         },
         {
           "type": "named",
           "data": {
             "name": "autofire"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "hingeUp"
           }
         },
         {

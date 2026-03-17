@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandJoystick;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -77,7 +78,7 @@ import frc.robot.commands.LockMode;
 public class RobotContainer {
         private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
         private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
-        private double driveTrainVelocityPercent = 0.4;
+        private double driveTrainVelocityPercent = 0.55;
 
         /* Setting up bindings for necessary control of the swerve drive platform */
         private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -157,7 +158,7 @@ public class RobotContainer {
                 NamedCommands.registerCommand("climbHang",
                                 Commands.runOnce(() -> climb.climbHang()));
                 NamedCommands.registerCommand("autofire",
-                                autoFireCommand);
+                        autoFireCommand);
                 NamedCommands.registerCommand("hingeDown",
                                 hinge.hingeDown());
                 NamedCommands.registerCommand("hingeUp",
@@ -368,7 +369,7 @@ public class RobotContainer {
 
                 //boost
                 rotateStick.button(OIConstants.kSticks_rightHandle).whileTrue(Commands.runOnce(() -> driveTrainVelocityPercent = 1.0));
-                rotateStick.button(OIConstants.kSticks_rightHandle).onFalse(Commands.runOnce(() -> driveTrainVelocityPercent = 0.4));
+                rotateStick.button(OIConstants.kSticks_rightHandle).onFalse(Commands.runOnce(() -> driveTrainVelocityPercent = 0.55));
 
                 //shooter up down
                 // rotateStick.button(OIConstants.povUp).onTrue(Commands.either(
@@ -393,6 +394,8 @@ public class RobotContainer {
                 //GYRO RESET
                 translateStick.button(OIConstants.kRightSticks_leftGrid_bottomLeft)
                     .toggleOnTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+                translateStick.button(OIConstants.kRightSticks_leftGrid_bottomLeft)
+                    .toggleOnTrue(Commands.runOnce(() -> vision.enableVision = false));    
                 
                 //autofire
                 // translateStick.button(OIConstants.kSticks_trigger).whileTrue(autoFireCommand);
@@ -401,9 +404,11 @@ public class RobotContainer {
                     autoFireCommand,
                         Commands.runOnce(() -> indexer.setVel()),
                         () -> !lockmode));
+                translateStick.button(OIConstants.kSticks_trigger).onFalse(indexer.indexerStop());
 
                 //kicker
-                translateStick.button(OIConstants.kSticks_centerHandle).onTrue(transfer.toggleTransferCommand());
+                translateStick.button(OIConstants.kSticks_centerHandle).whileTrue(Commands.runOnce(() -> transfer.activateTransfer()));
+                translateStick.button(OIConstants.kSticks_centerHandle).onFalse(Commands.runOnce(() -> transfer.stop()));
                 
 
                 //outpost autoalign
@@ -427,23 +432,26 @@ public class RobotContainer {
                 operator(OIConstants.kKeyboard_modeToggle)
                                 .onTrue(Commands.runOnce(() -> manualControl = !manualControl));
 
+                operator(OIConstants.kKeyboard_trackToggle)
+                                .onTrue(Commands.runOnce(() -> lockmode = !lockmode));
+
                 operator(OIConstants.kKeyboard_lockModeToggle)
-                                .whileTrue(new LockMode(turret, shooter, hood, LockState.LOCK, () -> { lockmode = true; return true; }));
+                                .whileTrue(new LockMode(turret, shooter, hood, LockState.LOCK));
 
                 operator(OIConstants.kKeyboard_lockModeLeft)
-                                .whileTrue(new LockMode(turret, shooter, hood, LockState.LEFT, () -> { lockmode = true; return true; }));
+                                .whileTrue(new LockMode(turret, shooter, hood, LockState.LEFT));
 
                 operator(OIConstants.kKeyboard_lockModeCenter)
-                                .whileTrue(new LockMode(turret, shooter, hood, LockState.CENTER, () -> { lockmode = true; return true; }));
+                                .whileTrue(new LockMode(turret, shooter, hood, LockState.CENTER));
 
                 operator(OIConstants.kKeyboard_lockModeRight)
-                                .whileTrue(new LockMode(turret, shooter, hood, LockState.RIGHT, () -> { lockmode = true; return true; }));
+                                .whileTrue(new LockMode(turret, shooter, hood, LockState.RIGHT));
 
                 operator(OIConstants.kKeyboard_lockModeTrenchLeft)
-                                .whileTrue(new LockMode(turret, shooter, hood, LockState.TRENCHLEFT, () -> { lockmode = true; return true; }));
+                                .whileTrue(new LockMode(turret, shooter, hood, LockState.TRENCHLEFT));
 
                 operator(OIConstants.kKeyboard_lockModeTrenchRight)
-                                .whileTrue(new LockMode(turret, shooter, hood, LockState.TRENCHRIGHT, () -> { lockmode = true; return true; }));
+                                .whileTrue(new LockMode(turret, shooter, hood, LockState.TRENCHRIGHT));
 
                 operator(OIConstants.kKeyboard_climbUp)
                                 .onTrue(climb.climbUp());

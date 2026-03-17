@@ -43,13 +43,13 @@
         {
           "type": "named",
           "data": {
-            "name": "autofire"
+            "name": "hingeUp"
           }
         },
         {
           "type": "named",
           "data": {
-            "name": "hingeUp"
+            "name": "autofire"
           }
         },
         {

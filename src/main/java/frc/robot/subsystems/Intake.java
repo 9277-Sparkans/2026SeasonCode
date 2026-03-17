@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 import frc.robot.Constants;
+import frc.robot.Constants.HingeConstants;
 import frc.robot.Constants.IntakeConstants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -21,9 +22,15 @@ public class Intake extends SubsystemBase {
 		intakeMotorConfig.CurrentLimits.StatorCurrentLimit = IntakeConstants.kIntakeCurrentLimit;
         intakeMotorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
+		// intakeMotorConfig.CurrentLimits.SupplyCurrentLimit = 80.0;
+        // intakeMotorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+
 		intakeMotorConfig.Slot0.kP = Constants.IntakeConstants.intake_kP;
 		intakeMotorConfig.Slot0.kI = Constants.IntakeConstants.intake_kI;
 		intakeMotorConfig.Slot0.kD = Constants.IntakeConstants.intake_kD;
+		intakeMotorConfig.Slot0.kV = Constants.IntakeConstants.intake_kV;
+		intakeMotorConfig.Slot0.kA = Constants.IntakeConstants.intake_kA;
+		intakeMotorConfig.Slot0.kS = Constants.IntakeConstants.intake_kS;
 
 		intakeMotorConfig.MotionMagic.MotionMagicAcceleration = IntakeConstants.intakeMaxAcceleration;
 		intakeMotorConfig.MotionMagic.MotionMagicCruiseVelocity = IntakeConstants.intakeMaxVelocity;

@@ -255,9 +255,9 @@ public class Constants {
         public static final double intake_kD = 0.0;
 
         public static final double intakeMaxVoltage = 5; // can change if not needed
-        public static final double intakeMaxAcceleration = 500;
+        public static final double intakeMaxAcceleration = 100;
         public static final double intakeMaxVelocity = 500; // rps
-        public static final double intakeSpeed = 150.0; //rps max 66.6 rps 400.0 
+        public static final double intakeSpeed = 30.0; //rps max 66.6 rps 400.0 
     }
 
     public static class HingeConstants {
@@ -275,7 +275,7 @@ public class Constants {
         public static final double hinge_kV = 0.12;
         public static final double hinge_kG = 2.5; //0.25
         public static final double hingeMaxAcceleration = 20.0;
-        public static final double hingeMaxVelocity = 60.0; // rps
+        public static final double hingeMaxVelocity = 100.0; // rps
         public static final double kHingeCurrentLimit = 120;
 
         public static final int hingeCountsPerRevolution = 2048; // for kraken x60
@@ -313,8 +313,8 @@ public class Constants {
         public static final int transferID = 31; // change later 31
 
         public static final double transferMaxVoltage = 4; // can change if not needed
-        public static final double transferMaxAcceleration = 40;
-        public static final double transferMaxVelocity = 100; // rps
+        public static final double transferMaxAcceleration = 40.0;
+        public static final double transferMaxVelocity = 100.0; // rps
         public static final int kTransferCurrent_Limit = 80;
         public static final double kTransferGearRatio = 30.0 / 24.0;
 
@@ -346,7 +346,7 @@ public class Constants {
         public static final double kIndexerMaxVoltage = 5;// kraken x44 max voltage
         public static final double kIndexerCurrentLimit = 100;
         public static final int kIndexerMotorId = 35; // 35
-        public static final double kIndexerSpeed = 60.0; //rps
+        public static final double kIndexerSpeed = 30.0; //rps 60 before
         public static final double kIndexerGearRatio = 12.0 / 15.0;
         public static final double indexerSpeed = 30.0; // rps
 
@@ -357,8 +357,8 @@ public class Constants {
         public static final double kIndexer_kP = 0.030667; //1.0;
         public static final double kIndexer_kI = 0.01; //0.005; 
         public static final double kIndexer_kD = 0.0; //0.05;
-        public static final double kIndexerMaxAcceleration = 400;
-        public static final double kIndexerMaxJerk = 4000;
+        public static final double kIndexerMaxAcceleration = 150;
+        public static final double kIndexerMaxJerk = 500;
     }
 
     public static class FieldConstants {

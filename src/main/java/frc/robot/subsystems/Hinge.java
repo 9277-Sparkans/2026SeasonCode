@@ -83,14 +83,13 @@ public class Hinge extends SubsystemBase {
     // state for climb up
     public void states(HingeState state) {
         setState(state);
-        setState(state);
         switch (state) {
             case UP:
                 hinge.setControl(m_request.withPosition(degToRotations(0.0)));
                 // target = 0.0;
                 break;
              case DOWN:
-                hinge.setControl(m_request.withPosition(degToRotations(100.0)));
+                hinge.setControl(m_request.withPosition(degToRotations(85.0)));
                 // target = 140.0;
                 break;
 

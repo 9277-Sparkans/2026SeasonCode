@@ -46,23 +46,29 @@ public class VisionConstants {
 
         // Robot to camera transforms (Units: Meters and Radians)
 
-        // front left camera: 317.54mm front, 324.226mm left, 178 mm up, and yaw 30
+        // front left camera: 328.5mm front, 308mm left, 205 mm up, and yaw 30
         // degrees in, pitch 20 degrees up.
         public static Transform3d robotToCamera0 = new Transform3d(
-                        0.31754, 0.324226, 0.178,
+                        0.3285, 0.308, 0.205,
                         new Rotation3d(0.0, Units.degreesToRadians(-20), Units.degreesToRadians(-30)));
 
-        // front right camera: 317.54mm front, 324.226mm right, 178 mm up, and yaw 30
+        // front right camera: 382.5mm front, 308mm right, 205 mm up, and yaw 30
         // degrees in, pitch 20 degrees up.
         public static Transform3d robotToCamera1 = new Transform3d(
-                        0.31754, -0.324226, 0.178,
+                        0.382.5, -0.308, 0.205,
                         new Rotation3d(0.0, Units.degreesToRadians(-20), Units.degreesToRadians(30)));
 
-        // back left camera: 317.54mm back, 324.226mm left, 170mm up, and yaw 30 degrees
+        // back left camera: 324.7mm back, 324.7mm left, 205mm up, and yaw 45 degrees
         // out, pitch 20 degrees up.
         public static Transform3d robotToCamera2 = new Transform3d(
-                        -0.31754, 0.324226, 0.17,
-                        new Rotation3d(0.0, Units.degreesToRadians(-20), Units.degreesToRadians(150)));
+                        -0.324.7, 0.3247, 0.205,
+                        new Rotation3d(0.0, Units.degreesToRadians(-20), Units.degreesToRadians(135)));
+
+        // back right camera: 324.7 back, 324.7mm right, 205mm up, and yaw 45 degrees
+        // out, pitch 20 degrees up.
+        // public static Transform3d robotToCamera2 = new Transform3d(
+                        // -0.324.7, -0.324.7, 0.205,
+                        // new Rotation3d(0.0, Units.degreesToRadians(-20), Units.degreesToRadians(225)));
 
         // Basic filtering thresholds
         public static double maxAmbiguity = 0.2;

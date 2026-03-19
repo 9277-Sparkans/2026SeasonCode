@@ -301,11 +301,11 @@ public class Constants {
         public static final double kClimb_kD = 0.1;
         public static final double kClimb_kG = 0.12;
 
-        public static final int kClimbUp = 108;
+        public static final int kClimbUp = 175;
         public static final int kClimbDown = 0;
         public static final int kClimbHang = 10;
 
-        public static final double kClimbGearRatio = 6.0 / 1.0;
+        public static final double kClimbGearRatio = 10.0 / 1.0;
     }
 
     public static class TransferConstants

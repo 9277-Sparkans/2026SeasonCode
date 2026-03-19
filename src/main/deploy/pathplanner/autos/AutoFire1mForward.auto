@@ -5,27 +5,15 @@
     "data": {
       "commands": [
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": null
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 0.5
+            "name": "autofire"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "HumanPlayer(S3)"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 7.0
+            "pathName": "1 meter forward"
           }
         }
       ]

@@ -93,8 +93,7 @@ public class Turret extends SubsystemBase {
 
 
   public double getTurretAngle() {
-    double position = getTurretCurrent(); // turns
-    return position * 360;
+    return getPosition();
   }
 
   public double getVelocity() {
@@ -126,7 +125,7 @@ public class Turret extends SubsystemBase {
     if (target > TurretConstants.kMaximumAngle) {
       turretMotor.setControl(m_request.withPosition(TurretConstants.kMaximumAngle / 360.0 * TurretConstants.kGearRatio));
     }
-    if (target < TurretConstants.kMinimumAngle) {
+    else if (target < TurretConstants.kMinimumAngle) {
       turretMotor.setControl(m_request.withPosition(TurretConstants.kMinimumAngle / 360.0 * TurretConstants.kGearRatio));
     }
     else {

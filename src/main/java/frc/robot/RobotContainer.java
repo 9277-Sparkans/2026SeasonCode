@@ -16,6 +16,7 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.util.sendable.Sendable;
@@ -41,6 +42,7 @@ import java.util.function.Supplier;
 
 import frc.robot.subsystems.Turret;
 import frc.robot.util.AllianceShifts;
+import frc.robot.util.FuelSim;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
@@ -138,14 +140,22 @@ public class RobotContainer {
                         camera0, camera1, camera2);
 
         public final Lookup lookup = Utils.createLookup();
+        private FuelSim fuelSim;
 
         public RobotContainer() {
+                if (RobotBase.isSimulation()) {
+                        configureFuelSim();
+                }
                 autoFireCommand = new AutoFire(indexer, turret, shooter, hood,
                                                 () -> drivetrain.getStateCopy().Speeds,
                                                 () -> drivetrain.getStateCopy().Pose, lookup,
                                                 DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red
                                                                 ? TargetHub.RED_HUB
                                                                 : TargetHub.BLUE_HUB);
+
+                if (RobotBase.isSimulation()) {
+                        autoFireCommand.setFuelSim(fuelSim);
+                }
 
                 NamedCommands.registerCommand("intake",
                                 intake.intakeCommand());
@@ -483,5 +493,33 @@ public class RobotContainer {
         public Command getAutonomousCommand() {
                 // return autoChooser.getSelected();
                 return new PathPlannerAuto("henockauto");
+        }
+
+        private void configureFuelSim() {
+                fuelSim = new FuelSim();
+                // Register robot with its dimensions (from Constants)
+                fuelSim.registerRobot(
+                                Constants.RobotDimensions.FULL_WIDTH,
+                                Constants.RobotDimensions.FULL_LENGTH,
+                                Constants.RobotDimensions.BUMPER_HEIGHT,
+                                () -> drivetrain.getStateCopy().Pose,
+                                () -> drivetrain.getStateCopy().Speeds // Field-relative speeds
+                );
+
+                // Register intake region - DISABLED FOR UNLIMITED FUEL TESTING
+                // fuelSim.registerIntake(
+                //                 0.3, 0.7, -0.4, 0.4, // bounding box relative to robot center
+                //                 () -> intake.isIntaking() && intake.canIntake(), // active when intaking and NOT full
+                //                 () -> intake.addFuel()); // increment fuel count when a ball is picked up
+
+                fuelSim.setLoggingFrequency(100.0);
+                fuelSim.spawnStartingFuel();
+                fuelSim.start();
+        }
+
+        public void updateSim() {
+                if (fuelSim != null) {
+                        fuelSim.updateSim();
+                }
         }
 }

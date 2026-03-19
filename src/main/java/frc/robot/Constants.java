@@ -143,8 +143,8 @@ public class Constants {
         public static double turret_kI = 0.07;
         public static double turret_kD = 0.25;
 
-        public static double kMaximumAngle = 70.0;
-        public static double kMinimumAngle = -70.0;
+        public static double kMaximumAngle = 167.0;
+        public static double kMinimumAngle = -167.0;
         
         public static double kGearRatio = 105.0 / 18.0;
 
@@ -179,6 +179,7 @@ public class Constants {
 
         public static final int kMinFlywheelRPM = 2400;
         public static final int kMaxFlywheelRPM = 7200;
+        public static final double kFlywheelRadius = edu.wpi.first.math.util.Units.inchesToMeters(1.75);
 
         public static final double shooter_kS = 0.17909;
         public static final double shooter_kP = 0.018595;
@@ -359,6 +360,12 @@ public class Constants {
         public static final double kIndexer_kD = 0.0; //0.05;
         public static final double kIndexerMaxAcceleration = 150;
         public static final double kIndexerMaxJerk = 500;
+    }
+
+    public static class RobotDimensions {
+        public static final double FULL_WIDTH = 0.838;
+        public static final double FULL_LENGTH = 0.838;
+        public static final double BUMPER_HEIGHT = 0.19; 
     }
 
     public static class FieldConstants {

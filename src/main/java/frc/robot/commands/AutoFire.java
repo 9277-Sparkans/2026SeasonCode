@@ -1,23 +1,33 @@
 package frc.robot.commands;
 
 import frc.robot.subsystems.Turret;
+import frc.robot.util.FuelSim;
 import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Indexer;
-import frc.robot.subsystems.Intake;
 import frc.robot.Constants;
 import frc.robot.Utils;
 import frc.robot.Utils.Lookup;
 import frc.robot.generated.TunerConstants;
 
+import java.util.ArrayList;
 import java.util.function.Supplier;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.util.Units;
+import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.networktables.StructArrayPublisher;
+import edu.wpi.first.wpilibj.RobotBase;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+
+import static edu.wpi.first.units.Units.*;
 
 public class AutoFire extends Command 
 {
@@ -26,16 +36,23 @@ public class AutoFire extends Command
         RED_HUB
     }
 
-    Indexer indexer;
-    Turret turret;
-    Shooter shooter;
-    Hood hood;
+    private final Indexer indexer;
+    private final Turret turret;
+    private final Shooter shooter;
+    private final Hood hood;
 
     Supplier<ChassisSpeeds> speedsSupplier;
     Supplier<Pose2d> poseSupplier;
-    Supplier<Rotation2d> rotationSupplier;
     Lookup lookup;
     TargetHub targetHub;
+
+    private FuelSim fuelSim;
+    private final Timer launchCooldown = new Timer();
+    private static final double LAUNCH_COOLDOWN_SEC = 0.2;
+
+    private final StructArrayPublisher<Pose3d> trajectoryPublisher = NetworkTableInstance.getDefault()
+            .getStructArrayTopic("AutoFire/Trajectory", Pose3d.struct)
+            .publish();
 
     public AutoFire(Indexer indexer, Turret turret, Shooter shooter, Hood hood,
             Supplier<ChassisSpeeds> speedsSupplier, Supplier<Pose2d> poseSupplier, Lookup lookup, TargetHub targetHub) {
@@ -44,7 +61,7 @@ public class AutoFire extends Command
         this.shooter = shooter;
         this.hood = hood;
 
-        addRequirements(turret, shooter, hood);
+        addRequirements(turret, shooter, hood, indexer);
 
         this.speedsSupplier = speedsSupplier;
         this.poseSupplier = poseSupplier;
@@ -52,9 +69,14 @@ public class AutoFire extends Command
         this.targetHub = targetHub;
     }
 
-    
+    public void setFuelSim(FuelSim fuelSim) {
+        this.fuelSim = fuelSim;
+    }
+
     @Override
-    public void initialize() {}
+    public void initialize() {
+        launchCooldown.restart();
+    }
 
     @Override
     public void execute()
@@ -84,7 +106,15 @@ public class AutoFire extends Command
         double hoodAngle = hood.getPosition();
         double turretAngle = turret.getTurretAngle();
 
-        // Transform standard x-y velocity such that i^ is towards the shooter, j^ is 90 deg left from top-down
+        if (RobotBase.isSimulation()) {
+            // Check if motors are spun up/aligned enough for a realistic launch 
+            // but we still use 'actual' values for the physics calculation.
+            if (shooterRPM < 100) {
+                shooterRPM = shooter.targetVel; // Fallback for initial frames
+            }
+        }
+
+        // Transform standard x-y velocity
         double transformedVelocityX = speeds.vxMetersPerSecond * Math.cos(targetDirectionRad) + speeds.vyMetersPerSecond * Math.sin(targetDirectionRad);
         double transformedVelocityY = -speeds.vxMetersPerSecond * Math.sin(targetDirectionRad) + speeds.vyMetersPerSecond * Math.cos(targetDirectionRad);
 
@@ -92,8 +122,11 @@ public class AutoFire extends Command
         double[] optimal = lookup.FindOptimalVals(targetDistance, transformedVelocityX, transformedVelocityY, shooterRPM, hoodAngle);
         double optimalTurretAngle = Utils.wrapAngle(rotation.getDegrees() - targetDirectionDeg + optimal[1]);
         
+        optimalTurretAngle = Utils.clamp(optimalTurretAngle, Constants.TurretConstants.kMinimumAngle, Constants.TurretConstants.kMaximumAngle);
+
         double stillOffset = Constants.ShooterConstants.rpmOffset * Math.pow(targetDistance, Constants.ShooterConstants.distancePower);
-        double speedOffset = Math.pow(Math.sqrt(speeds.vxMetersPerSecond * speeds.vxMetersPerSecond + speeds.vyMetersPerSecond * speeds.vyMetersPerSecond) / TunerConstants.kSpeedAt12Volts.magnitude(), Constants.ShooterConstants.speedPower);
+        double speedNormal = Math.sqrt(speeds.vxMetersPerSecond * speeds.vxMetersPerSecond + speeds.vyMetersPerSecond * speeds.vyMetersPerSecond);
+        double speedOffset = Math.pow(speedNormal / TunerConstants.kSpeedAt12Volts.magnitude(), Constants.ShooterConstants.speedPower);
         double optimalShooterRPM = optimal[2] - stillOffset * (1.0 - speedOffset);
         
         double optimalHoodAngle = optimal[3];
@@ -102,41 +135,99 @@ public class AutoFire extends Command
         shooter.targetVel = optimalShooterRPM;
         hood.targetHoodAngle = optimalHoodAngle;
 
-        // Calculate Error
-        // double shooterRPMRange = (double)(Constants.ShooterConstants.kMaxRPM - Constants.ShooterConstants.kMinOperationalRPM);
-        // double hoodAngleRange = Constants.HoodConstants.kMaximumAngle - Constants.HoodConstants.kMinimumAngle;
-        // double turretAngleRange = 180.0;
-
-        // double normalizedCurrentShooterRPM = (shooterRPM - Constants.ShooterConstants.kMinRPM) / shooterRPMRange;
-        // double normalizedCurrentHoodAngle = (hoodAngle - Constants.HoodConstants.kMinimumAngle) / hoodAngleRange;
-        // double normalizedCurrentTurretAngle = turretAngle / turretAngleRange;
-
-        // double normalizedShooterRPM = (optimalShooterRPM - Constants.ShooterConstants.kMinRPM) / shooterRPMRange;
-        // double normalizedAngle = (optimalHoodAngle - Constants.HoodConstants.kMinimumAngle) / hoodAngleRange;
-        // double normalizedTurretAngle = optimalTurretAngle / turretAngleRange;
-
-        // double weight = (normalizedShooterRPM - normalizedCurrentShooterRPM) * (normalizedShooterRPM - normalizedCurrentShooterRPM)
-        //               + (normalizedAngle - normalizedCurrentHoodAngle) * (normalizedAngle - normalizedCurrentHoodAngle)
-        //               + (normalizedTurretAngle - normalizedCurrentTurretAngle) * (normalizedTurretAngle - normalizedCurrentTurretAngle);
-        // double optimalError = weight / 3.0;
-
         double optimalError = optimal[0];
 
         SmartDashboard.putNumber("AutoFire/TargetDistance", targetDistance);
-        SmartDashboard.putNumber("AutoFire/TargetDirection", targetDirectionDeg);
-        SmartDashboard.putNumber("AutoFire/TransformedVelocityX", transformedVelocityX);
-        SmartDashboard.putNumber("AutoFire/TransformedVelocityY", transformedVelocityY);
         SmartDashboard.putNumber("AutoFire/optimalError", optimalError);
         SmartDashboard.putNumber("AutoFire/OptimalTurretAngle", optimalTurretAngle);
+        SmartDashboard.putNumber("AutoFire/ActualTurretAngle", turretAngle);
         SmartDashboard.putNumber("AutoFire/OptimalShooterRPM", optimalShooterRPM);
+        SmartDashboard.putNumber("AutoFire/ActualShooterRPM", shooterRPM);
         SmartDashboard.putNumber("AutoFire/OptimalHoodAngle", optimalHoodAngle);
+        SmartDashboard.putNumber("AutoFire/ActualHoodAngle", hoodAngle);
 
-        // Only start shooting if ready
-        if (optimalError < Constants.ShooterConstants.maxShotError) {
+        // Calculate physics-based velocity (matches 2026SeasonCode)
+        double flywheelRPM = shooterRPM / Constants.ShooterConstants.kShooterGearRatio;
+        double flywheelRadPerSec = flywheelRPM * 2.0 * Math.PI / 60.0;
+        double surfaceVelocity = flywheelRadPerSec * Constants.ShooterConstants.kFlywheelRadius;
+        double linearVelocity = surfaceVelocity * 0.85; 
+
+        publishTrajectory(pose, speeds, linearVelocity, hoodAngle, turretAngle);
+
+        boolean readyToShoot = optimalError < Constants.ShooterConstants.maxShotError;
+
+        if (RobotBase.isSimulation()) {
+            if (fuelSim != null && launchCooldown.hasElapsed(LAUNCH_COOLDOWN_SEC)) {
+                // Unlimited fuel in sim: launch balls continuously for testing trajectory
+                fuelSim.launchFuel(
+                    MetersPerSecond.of(linearVelocity),
+                    Degrees.of(45.0 - hoodAngle), // use actual hoodAngle
+                    Degrees.of(-turretAngle),    // use actual turretAngle
+                    Constants.TurretConstants.ROBOT_TO_TURRET_TRANSFORM
+                );
+                launchCooldown.restart();
+            }
+        }
+
+        if (readyToShoot) {
             indexer.setVel();
         } else {
             indexer.stop();
         }
+    }
+
+    private void publishTrajectory(Pose2d robotPose, ChassisSpeeds fieldSpeeds, double linearVelocity, double optimalHoodAngle, double optimalTurretAngle) {
+        Pose3d launchPose = new Pose3d(robotPose).plus(Constants.TurretConstants.ROBOT_TO_TURRET_TRANSFORM);
+        
+        double simHoodAngleRad = Math.toRadians(45.0 - optimalHoodAngle);
+        double simTurretYawRad = Math.toRadians(-optimalTurretAngle);
+        
+        double horizontalVel = Math.cos(simHoodAngleRad) * linearVelocity;
+        double verticalVel = Math.sin(simHoodAngleRad) * linearVelocity;
+        
+        double xVel = horizontalVel * Math.cos(simTurretYawRad + launchPose.getRotation().getZ());
+        double yVel = horizontalVel * Math.sin(simTurretYawRad + launchPose.getRotation().getZ());
+        
+        xVel += fieldSpeeds.vxMetersPerSecond;
+        yVel += fieldSpeeds.vyMetersPerSecond;
+        
+        Translation3d pos = launchPose.getTranslation();
+        Translation3d vel = new Translation3d(xVel, yVel, verticalVel);
+        
+        double dt = 0.02; // 50 Hz prediction tick rate
+        int maxSteps = (int)(2.0 / dt); 
+        
+        ArrayList<Pose3d> trajectory = new ArrayList<>();
+        
+        // Physics constants for drag (matches 2026SeasonCode)
+        double FUEL_MASS = 0.448 * 0.45392;
+        double FUEL_RADIUS = 0.075;
+        double AIR_DENSITY = 1.2041;
+        double DRAG_COF = 0.47;
+        double FUEL_CROSS_AREA = Math.PI * FUEL_RADIUS * FUEL_RADIUS;
+        double DRAG_FORCE_FACTOR = 0.5 * AIR_DENSITY * DRAG_COF * FUEL_CROSS_AREA;
+        
+        for (int i = 0; i < maxSteps; i++) {
+            trajectory.add(new Pose3d(pos, new Rotation3d()));
+            pos = pos.plus(vel.times(dt));
+            
+            if (pos.getZ() > FUEL_RADIUS) {
+                Translation3d Fg = new Translation3d(0, 0, -9.81).times(FUEL_MASS);
+                Translation3d Fd = new Translation3d();
+                
+                double speed = vel.getNorm();
+                if (speed > 1e-6) {
+                    Fd = vel.times(-DRAG_FORCE_FACTOR * speed);
+                }
+                
+                Translation3d accel = Fg.plus(Fd).div(FUEL_MASS);
+                vel = vel.plus(accel.times(dt));
+            } else {
+                break;
+            }
+        }
+        
+        trajectoryPublisher.set(trajectory.toArray(new Pose3d[0]));
     }
 
     @Override

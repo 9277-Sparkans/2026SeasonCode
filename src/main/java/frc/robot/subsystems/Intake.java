@@ -14,6 +14,24 @@ public class Intake extends SubsystemBase {
 	private final TalonFX intakeMotor;
 	private final TalonFXConfiguration intakeMotorConfig;
   	final MotionMagicVelocityVoltage m_request = new MotionMagicVelocityVoltage(0);
+	
+	private int fuelCount = 0;
+
+	public boolean isIntaking() {
+		return intakeMotor.getVelocity().getValueAsDouble() > 10.0;
+	}
+
+	public boolean canIntake() {
+		return fuelCount < 5;
+	}
+
+	public void addFuel() {
+		fuelCount++;
+	}
+
+	public int getFuelCount() {
+		return fuelCount;
+	}
 
 	public Intake() {	
 		intakeMotor = new TalonFX(Constants.IntakeConstants.intakeMotorId);

@@ -43,6 +43,12 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void robotPeriodic() {
+    org.littletonrobotics.junction.Logger.recordOutput("FinalComponentPoses", new edu.wpi.first.math.geometry.Pose3d[] {
+      new edu.wpi.first.math.geometry.Pose3d(
+          new edu.wpi.first.math.geometry.Translation3d(0.21, 0, 0.245215),
+          new edu.wpi.first.math.geometry.Rotation3d(0, 0, Math.toRadians(-m_robotContainer.turret.target))
+        )
+    });
     // CommandScheduler.getInstance().schedule(m_robotContainer.lockModeCommand);
     CommandScheduler.getInstance().run();
   }
@@ -110,5 +116,6 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void simulationPeriodic() {
+    m_robotContainer.updateSim();
   }
 }

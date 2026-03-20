@@ -114,7 +114,7 @@ public class Hood extends SubsystemBase {
 
     hoodEncoderConfiguration.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1;
     hoodEncoderConfiguration.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
-    hoodEncoderConfiguration.MagnetSensor.MagnetOffset = -0.4765625;
+    hoodEncoderConfiguration.MagnetSensor.MagnetOffset = -0.474853516;
     hoodEncoder.getConfigurator().apply(hoodEncoderConfiguration);
 
     // hoodEncoder.setPosition(hoodEncoder.getAbsolutePosition().getValueAsDouble());
@@ -192,7 +192,7 @@ public class Hood extends SubsystemBase {
     // double positionRatio = degrees / hoodRangeDeg;
     // double position = HoodConstants.kMinimumEncoderPos + (hoodEncoderRange * positionRatio);
 
-    targetHoodPosition = -(degrees / 720.0) * HoodConstants.kGearRatio;
+    targetHoodPosition = -(degrees / 2.0) * HoodConstants.kGearRatio;
 
     // clampTarget();
     moveHoodMotionMagic();

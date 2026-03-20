@@ -276,7 +276,7 @@ public class Constants {
         public static final double kHingeCurrentLimit = 120;
 
         public static final int hingeCountsPerRevolution = 2048; // for kraken x60
-        public static final double hingeGearRatio = 45.0 / 1.0; //carter: 8:1 tyler: 45:1
+        public static final double hingeGearRatio = 96.4 / 1.0; //carter: 8:1 tyler: 45:1
 
         public static final double hingeMaxDeg = 50.0; //-100.0;
     }

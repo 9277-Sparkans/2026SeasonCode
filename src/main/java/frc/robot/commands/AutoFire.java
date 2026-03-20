@@ -39,6 +39,9 @@ public class AutoFire extends Command
     Lookup lookup;
     TargetHub targetHub;
 
+    boolean isDumping = false;
+    boolean isLeftDump = false;
+
     public AutoFire(Indexer indexer, Turret turret, Shooter shooter, Hood hood,
             Supplier<ChassisSpeeds> speedsSupplier, Supplier<Pose2d> poseSupplier, Lookup lookup) {
         this.indexer = indexer;
@@ -77,6 +80,21 @@ public class AutoFire extends Command
         double hubX = targetHub == TargetHub.BLUE_HUB  ? Constants.FieldConstants.BLUE_HUB_X : Constants.FieldConstants.RED_HUB_X;
         double hubY = targetHub == TargetHub.BLUE_HUB ? Constants.FieldConstants.BLUE_HUB_Y : Constants.FieldConstants.RED_HUB_Y;
         
+        // should we dump?!?
+        isDumping = targetHub == TargetHub.BLUE_HUB ? pose.getX() > hubX : pose.getX() < hubX;
+
+        if (isDumping) {
+            isLeftDump = pose.getY() > Constants.FieldConstants.BLUE_HUB_Y;
+
+            if (targetHub == TargetHub.BLUE_HUB) {
+                hubX = isLeftDump ? Constants.FieldConstants.BLUE_DUMP_LEFT_X : Constants.FieldConstants.BLUE_DUMP_RIGHT_X;
+                hubY = isLeftDump ? Constants.FieldConstants.BLUE_DUMP_LEFT_Y : Constants.FieldConstants.BLUE_DUMP_RIGHT_Y;
+            } else {
+                hubX = isLeftDump ? Constants.FieldConstants.RED_DUMP_LEFT_X : Constants.FieldConstants.RED_DUMP_RIGHT_X;
+                hubY = isLeftDump ? Constants.FieldConstants.RED_DUMP_LEFT_Y : Constants.FieldConstants.RED_DUMP_RIGHT_Y;
+            }
+        }
+
         // Calculate target vector
         double offsetX = hubX - posX;
         double offsetY = hubY - posY;
@@ -135,6 +153,8 @@ public class AutoFire extends Command
         SmartDashboard.putNumber("AutoFire/OptimalTurretAngle", optimalTurretAngle);
         SmartDashboard.putNumber("AutoFire/OptimalShooterRPM", optimalShooterRPM);
         SmartDashboard.putNumber("AutoFire/OptimalHoodAngle", optimalHoodAngle);
+        SmartDashboard.putBoolean("AutoFire/isDumping", isDumping);
+        SmartDashboard.putBoolean("AutoFire/isLeftDump", isLeftDump);
 
         // Only start shooting if ready
         if (optimalError < Constants.ShooterConstants.maxShotError) {

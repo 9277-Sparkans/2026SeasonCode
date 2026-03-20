@@ -366,6 +366,18 @@ public class Constants {
         public static final double BLUE_HUB_Y = 4.034536; // meters
         public static final double RED_HUB_X = 11.915394; // meters 
         public static final double RED_HUB_Y = 4.034536; // meters
+
+        // dumping
+        public static final double BLUE_DUMP_RIGHT_X = 1.7;
+        public static final double BLUE_DUMP_RIGHT_Y = 1.8;
+        public static final double BLUE_DUMP_LEFT_X = 1.7;
+        public static final double BLUE_DUMP_LEFT_Y = 6.4;
+
+        public static final double RED_DUMP_RIGHT_X = 14.840988; 
+        public static final double RED_DUMP_RIGHT_Y = 1.8;
+        public static final double RED_DUMP_LEFT_X = 14.840988;
+        public static final double RED_DUMP_LEFT_Y = 6.4;
+
         public static final edu.wpi.first.math.geometry.Translation3d HUB_BLUE = new edu.wpi.first.math.geometry.Translation3d(
                 BLUE_HUB_X, BLUE_HUB_Y, 1.4); // 1.4m height approx
         public static final edu.wpi.first.math.geometry.Translation3d HUB_RED = new edu.wpi.first.math.geometry.Translation3d(

@@ -48,6 +48,7 @@ import frc.robot.subsystems.Indexer;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.QuickAccessConstants;
 import frc.robot.Constants.QuickAccessConstants.ControlTypes;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.Utils.Lookup;
 import frc.robot.commands.AutoFire;
 import frc.robot.commands.LockMode;
@@ -79,6 +80,7 @@ public class RobotContainer {
         private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
         private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
         private double driveTrainVelocityPercent = 0.55;
+        private boolean movingConstantSpeed = false;
 
         /* Setting up bindings for necessary control of the swerve drive platform */
         private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -231,7 +233,15 @@ public class RobotContainer {
                                                 x = -translateStick.getRawAxis(1);
                                                 y = -translateStick.getRawAxis(0);
                                                 rot = -rotateStick.getRawAxis(0);
-                                        } else {
+                                        }
+                                        else if (movingConstantSpeed)
+                                        {
+                                                x = (-joystick.getLeftY() / Math.abs(joystick.getLeftY())) * ShooterConstants.autoFireDriveSpeed;
+                                                y = (-joystick.getLeftX() / Math.abs(joystick.getLeftX())) * ShooterConstants.autoFireDriveSpeed;
+                                                rot = (-joystick.getRightX() / Math.abs(joystick.getRightX())) * ShooterConstants.autoFireDriveSpeed;
+                                        } 
+                                        else 
+                                        {
                                                 x = -joystick.getLeftY();
                                                 y = -joystick.getLeftX();
                                                 rot = -joystick.getRightX();
@@ -431,8 +441,11 @@ public class RobotContainer {
 
         private void configureOperatorConsole() {
                 // Operator
-                operator(1)
-                                .onTrue(Commands.runOnce(() -> hood.moveHoodToAngle(hood.targetHoodAngle)));
+                operator(OIConstants.kKeyboard_duck)
+                        .onTrue(Commands.runOnce(() -> movingConstantSpeed = true))
+                        .onFalse(Commands.runOnce(() -> movingConstantSpeed = false));
+                // operator(1)
+                //                 .onTrue(Commands.runOnce(() -> hood.moveHoodToAngle(hood.targetHoodAngle)));
 
                 operator(OIConstants.kKeyboard_modeToggle)
                                 .onTrue(Commands.runOnce(() -> manualControl = !manualControl));

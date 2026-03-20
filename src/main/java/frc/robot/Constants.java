@@ -67,6 +67,7 @@ public class Constants {
         // 87777877ui00o831.00
         // NOTE: IDs here are 1-indexed as opposed to the keyboard firmware's 0-indexing
         // Add one to your ID or else you'll be binding to a completely different button
+        public static final int kKeyboard_duck = 1;
         public static final int kKeyboard_modeToggle = 5;
         public static final int kKeyboard_trackToggle = 3;
 
@@ -192,6 +193,7 @@ public class Constants {
         public static final double maxShotError = 0.01; // The maximum allowed error for a shot to occur
 
         // Tuning constants for autofire
+        public static final double autoFireDriveSpeed = 0.5;
         public static final double rpmOffset = 50.0;
         public static final double distancePower = 1.0;
         public static final double speedPower = 1.0;

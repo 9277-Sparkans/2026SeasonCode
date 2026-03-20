@@ -263,6 +263,7 @@ public class Constants {
     public static class HingeConstants {
 
         public static final int kHingeMotorId = 39; //39
+        public static final int kHingeEncoderId = 0;
         public static final int deploymentMaxDeg = 115;
 
         // rollers

@@ -142,10 +142,7 @@ public class RobotContainer {
         public RobotContainer() {
                 autoFireCommand = new AutoFire(indexer, turret, shooter, hood,
                                                 () -> drivetrain.getStateCopy().Speeds,
-                                                () -> drivetrain.getStateCopy().Pose, lookup,
-                                                DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red
-                                                                ? TargetHub.RED_HUB
-                                                                : TargetHub.BLUE_HUB);
+                                                () -> drivetrain.getStateCopy().Pose, lookup);
 
                 NamedCommands.registerCommand("intake",
                                 intake.intakeCommand());

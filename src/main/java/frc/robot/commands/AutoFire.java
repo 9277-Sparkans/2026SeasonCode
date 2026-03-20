@@ -151,8 +151,8 @@ public class AutoFire extends Command
         double[] virtualOptimal = lookup.FindOptimalVals(targetDistance, 0, 0, shooterRPM, hoodAngle);
         double optimalTurretAngle = Utils.wrapAngle(rotation.getDegrees() - targetDirectionDeg);
         
-        double stillOffset = Constants.ShooterConstants.rpmOffset * Math.pow(targetDistance, Constants.ShooterConstants.distancePower);
-        double optimalShooterRPM = virtualOptimal[2] - stillOffset;
+        // double stillOffset = Constants.ShooterConstants.rpmOffset * Math.pow(targetDistance, Constants.ShooterConstants.distancePower);
+        double optimalShooterRPM = virtualOptimal[2];
         double optimalHoodAngle = virtualOptimal[3];
 
         turret.target = optimalTurretAngle;

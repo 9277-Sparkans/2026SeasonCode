@@ -190,7 +190,7 @@ public class Constants {
 
         public static final String lookupTablePath = Filesystem.getDeployDirectory().getPath() + "/ShooterLookupTable/shooter-lookup.csv"; // Generated with github.com/DanielR723/shooter
         public static final double autoshootDistanceRange = 0.1; // Range of distances to check to choose the best shot (Least hood rotation and flywheel RPM change)
-        public static final double maxShotError = 0.001; // The maximum allowed error for a shot to occur
+        public static final double maxShotError = 0.12; // The maximum allowed error for a shot to occur
 
         // Tuning constants for autofire
         public static final double autoFireDriveSpeed = 0.5;

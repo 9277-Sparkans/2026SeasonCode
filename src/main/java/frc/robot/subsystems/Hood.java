@@ -162,8 +162,8 @@ public class Hood extends SubsystemBase {
   }
 
   public Command initDefaultCommand() {
-    // return Commands.runOnce(() -> moveHoodToAngle(targetHoodAngle), this);
-    return Commands.runOnce(() -> { targetHoodPosition = -2.5f * (18.f / 210.f); System.out.println("hai " + targetHoodPosition); /* moveHoodMotionMagic(); */ }, this);
+    return Commands.runOnce(() -> moveHoodToAngle(targetHoodAngle), this);
+    // return Commands.runOnce(() -> { targetHoodPosition = -2.5f * (18.f / 210.f); System.out.println("hai " + targetHoodPosition); /* moveHoodMotionMagic(); */ }, this);
   }
 
   @Override
@@ -192,7 +192,7 @@ public class Hood extends SubsystemBase {
     // double positionRatio = degrees / hoodRangeDeg;
     // double position = HoodConstants.kMinimumEncoderPos + (hoodEncoderRange * positionRatio);
 
-    targetHoodPosition = -((degrees / (7168.0/12321.0)) / 360.0) * HoodConstants.kGearRatio;
+    targetHoodPosition = -(degrees / 720.0) * HoodConstants.kGearRatio;
 
     // clampTarget();
     moveHoodMotionMagic();

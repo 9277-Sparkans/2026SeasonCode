@@ -190,7 +190,7 @@ public class Constants {
 
         public static final String lookupTablePath = Filesystem.getDeployDirectory().getPath() + "/ShooterLookupTable/shooter-lookup.csv"; // Generated with github.com/DanielR723/shooter
         public static final double autoshootDistanceRange = 0.1; // Range of distances to check to choose the best shot (Least hood rotation and flywheel RPM change)
-        public static final double maxShotError = 0.01; // The maximum allowed error for a shot to occur
+        public static final double maxShotError = 0.5; // The maximum allowed error for a shot to occur
 
         // Tuning constants for autofire
         public static final double autoFireDriveSpeed = 0.5;
@@ -245,11 +245,11 @@ public class Constants {
     public static class IntakeConstants
     {
         public static final int intakeMotorId = 38; //38
-        public static final double kIntakeGearRatio = 12.0 / 18.0;
+        public static final double kIntakeGearRatio = 2.0 / 3.0;
 
         public static final double kIntakeCurrentLimit = 80.0;
 
-        public static final double intake_kS = 0.18572;
+        public static final double intake_kS = 0.15572;
         public static final double intake_kV = 0.11754;
         public static final double intake_kA = 0.0048972;
         public static final double intake_kP = 0.030667;
@@ -259,7 +259,7 @@ public class Constants {
         public static final double intakeMaxVoltage = 5; // can change if not needed
         public static final double intakeMaxAcceleration = 100;
         public static final double intakeMaxVelocity = 500; // rps
-        public static final double intakeSpeed = 30.0; //rps max 66.6 rps 400.0 
+        public static final double intakeSpeed = 50.0; //rps max 66.6 rps 400.0 
     }
 
     public static class HingeConstants {
@@ -270,7 +270,7 @@ public class Constants {
         // rollers
         public static final int rollerID = 1;
 
-        public static final double hinge_kS = 0.24;        
+        public static final double hinge_kS = 0.314159;        
         public static final double hinge_kP = 10.0;
         public static final double hinge_kI = 0.0;
         public static final double hinge_kD = 0.1;
@@ -281,7 +281,7 @@ public class Constants {
         public static final double kHingeCurrentLimit = 120;
 
         public static final int hingeCountsPerRevolution = 2048; // for kraken x60
-        public static final double hingeGearRatio = 45.0 / 1.0; //carter: 8:1 tyler: 45:1
+        public static final double hingeGearRatio = 112.5 / 1.0; //carter: 8:1 tyler: 45:1
 
         public static final double hingeMaxDeg = 50.0; //-100.0;
     }

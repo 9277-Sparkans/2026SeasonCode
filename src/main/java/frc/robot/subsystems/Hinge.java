@@ -91,11 +91,11 @@ public class Hinge extends SubsystemBase {
                 // target = 0.0;
                 break;
              case DOWN:
-                hinge.setControl(m_request.withPosition(degToRotations(85.0)));
+                hinge.setControl(m_request.withPosition(degToRotations(100.0)));
                 // target = 140.0;
                 break;
             case AUTO_UP:
-                hinge.setControl(m_request.withPosition(degToRotations(45.0)));
+                hinge.setControl(m_request.withPosition(degToRotations(50.0)));
                 // target = 140.0;
                 break;
 

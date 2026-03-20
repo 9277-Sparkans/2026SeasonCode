@@ -229,17 +229,18 @@ public class RobotContainer {
                 drivetrain.setDefaultCommand(
                                 drivetrain.applyRequest(() -> {
                                         double x, y, rot;
-                                        if (QuickAccessConstants.controlType == ControlTypes.DRIVER_STICKS) {
+                                        if (movingConstantSpeed && QuickAccessConstants.controlType == ControlTypes.DRIVER_STICKS)
+                                        {
+                                                double maxVal = Math.max(Math.abs(-translateStick.getRawAxis(1)), Math.abs(-translateStick.getRawAxis(0)));
+                                                x = (-translateStick.getRawAxis(1) / maxVal) * ShooterConstants.autoFireDriveSpeed;
+                                                y = (-translateStick.getRawAxis(0) / maxVal) * ShooterConstants.autoFireDriveSpeed;
+                                                rot = (-rotateStick.getRawAxis(0) / Math.abs(-rotateStick.getRawAxis(0))) * MaxAngularRate / 5.0;
+                                        } 
+                                        else if (QuickAccessConstants.controlType == ControlTypes.DRIVER_STICKS) {
                                                 x = -translateStick.getRawAxis(1);
                                                 y = -translateStick.getRawAxis(0);
                                                 rot = -rotateStick.getRawAxis(0);
                                         }
-                                        else if (movingConstantSpeed)
-                                        {
-                                                x = (-joystick.getLeftY() / Math.abs(joystick.getLeftY())) * ShooterConstants.autoFireDriveSpeed;
-                                                y = (-joystick.getLeftX() / Math.abs(joystick.getLeftX())) * ShooterConstants.autoFireDriveSpeed;
-                                                rot = (-joystick.getRightX() / Math.abs(joystick.getRightX())) * ShooterConstants.autoFireDriveSpeed;
-                                        } 
                                         else 
                                         {
                                                 x = -joystick.getLeftY();
@@ -375,9 +376,9 @@ public class RobotContainer {
                 rotateStick.button(OIConstants.kSticks_centerHandle).onFalse(intake.stopRollerCommand());
 
                 // auto agitate
-                rotateStick.button(OIConstants.kSticks_leftHandle).whileTrue(Commands.sequence(
-                        hinge.hingeAutoUp(), Commands.waitSeconds(2), 
-                        hinge.hingeDown(), Commands.waitSeconds(2)));
+                // rotateStick.button(OIConstants.kSticks_leftHandle).whileTrue(Commands.sequence(
+                //         hinge.hingeAutoUp(), 
+                //         hinge.hingeDown()));
 
                 //climb autoalign
                 // rotateStick.button(OIConstants.kSticks_leftHandle).whileTrue(AutoAlignCommand.getAutoClimbCommand(drivetrain));

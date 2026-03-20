@@ -17,6 +17,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 
@@ -39,7 +41,7 @@ public class AutoFire extends Command
     TargetHub targetHub;
 
     public AutoFire(Indexer indexer, Turret turret, Shooter shooter, Hood hood,
-            Supplier<ChassisSpeeds> speedsSupplier, Supplier<Pose2d> poseSupplier, Lookup lookup, TargetHub targetHub) {
+            Supplier<ChassisSpeeds> speedsSupplier, Supplier<Pose2d> poseSupplier, Lookup lookup) {
         this.indexer = indexer;
         this.turret = turret;
         this.shooter = shooter;
@@ -50,7 +52,6 @@ public class AutoFire extends Command
         this.speedsSupplier = speedsSupplier;
         this.poseSupplier = poseSupplier;
         this.lookup = lookup;
-        this.targetHub = targetHub;
     }
 
     
@@ -100,6 +101,10 @@ public class AutoFire extends Command
     @Override
     public void execute()
     {
+        this.targetHub = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red
+                        ? TargetHub.RED_HUB
+                        : TargetHub.BLUE_HUB;
+
         // Get poses
         ChassisSpeeds speeds = speedsSupplier.get();
         Pose2d pose = poseSupplier.get();

@@ -123,27 +123,36 @@ public class AutoFire extends Command
         double offsetX = hubX - posX;
         double offsetY = hubY - posY;
 
-        double targetDirectionRad = Math.atan2(offsetY, offsetX);
-        double targetDirectionDeg = targetDirectionRad * 180 / Math.PI;
         double targetDistance = Math.sqrt(offsetX * offsetX + offsetY * offsetY);
 
         double shooterRPM = shooter.getMotorRPM();
         double hoodAngle = hood.getPosition();
-        double turretAngle = turret.getTurretAngle();
 
-        // Transform standard x-y velocity such that i^ is towards the shooter, j^ is 90 deg left from top-down
-        double transformedVelocityX = speeds.vxMetersPerSecond * Math.cos(targetDirectionRad) + speeds.vyMetersPerSecond * Math.sin(targetDirectionRad);
-        double transformedVelocityY = -speeds.vxMetersPerSecond * Math.sin(targetDirectionRad) + speeds.vyMetersPerSecond * Math.cos(targetDirectionRad);
+        // get bot centric vel
+        double transformedVelocityX = speeds.vxMetersPerSecond * rotation.getCos() + speeds.vyMetersPerSecond * rotation.getSin();
+        double transformedVelocityY = -speeds.vxMetersPerSecond * rotation.getSin() + speeds.vyMetersPerSecond * rotation.getCos();
 
-        // Get optimal shot
-        double[] optimal = lookup.FindOptimalVals(targetDistance, transformedVelocityX, transformedVelocityY, shooterRPM, hoodAngle);
+        // Get optimal static shot
+        double[] optimal = lookup.FindOptimalVals(targetDistance, 0, 0, shooterRPM, hoodAngle);
+        
+        // find virtual goal
+        double time = targetDistance / optimal[4];
+        double virtualXOffset = transformedVelocityX * time;
+        double virtualYOffset = transformedVelocityY * time;
+
+        offsetX -= virtualXOffset;
+        offsetY -= virtualYOffset;
+
+        double targetDirectionRad = Math.atan2(offsetY, offsetX);
+        double targetDirectionDeg = targetDirectionRad * 180 / Math.PI;
+        targetDistance = Math.sqrt(offsetX * offsetX + offsetY * offsetY);
+
+        double[] virtualOptimal = lookup.FindOptimalVals(targetDistance, 0, 0, shooterRPM, hoodAngle);
         double optimalTurretAngle = Utils.wrapAngle(rotation.getDegrees() - targetDirectionDeg + optimal[1]);
         
         double stillOffset = Constants.ShooterConstants.rpmOffset * Math.pow(targetDistance, Constants.ShooterConstants.distancePower);
-        double speedOffset = Math.pow(Math.sqrt(speeds.vxMetersPerSecond * speeds.vxMetersPerSecond + speeds.vyMetersPerSecond * speeds.vyMetersPerSecond) / TunerConstants.kSpeedAt12Volts.magnitude(), Constants.ShooterConstants.speedPower);
-        double optimalShooterRPM = optimal[2] - stillOffset * (1.0 - speedOffset);
-        
-        double optimalHoodAngle = optimal[3];
+        double optimalShooterRPM = virtualOptimal[2] - stillOffset;
+        double optimalHoodAngle = virtualOptimal[3];
 
         turret.target = optimalTurretAngle;
         shooter.targetVel = optimalShooterRPM;

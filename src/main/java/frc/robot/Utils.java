@@ -55,9 +55,10 @@ public class Utils {
                     double botDirection = Double.parseDouble(values[3]);
                     double shooterRPM = Double.parseDouble(values[4]);
                     double hoodAngle = Double.parseDouble(values[5]);
+                    double speed = Double.parseDouble(values[6]);
                     
                     hits.add(new double[]{landingDistance, landingDirection});
-                    vals.add(new double[]{botSpeed, botDirection, shooterRPM, hoodAngle});
+                    vals.add(new double[]{botSpeed, botDirection, shooterRPM, hoodAngle, speed});
                 }
             } catch (Exception e) {
                 System.out.println("Error forming lookup table");
@@ -142,7 +143,8 @@ public class Utils {
             double optimalTurretOffset = hits.get(minimumI)[1];
             double optimalShooterRPM = vals.get(minimumI)[2];
             double optimalHoodAngle = vals.get(minimumI)[3];
-            return new double[]{optimalWeight, optimalTurretOffset, optimalShooterRPM, optimalHoodAngle};
+            double optimalSpeed = vals.get(minimumI)[4];
+            return new double[]{optimalWeight, optimalTurretOffset, optimalShooterRPM, optimalHoodAngle, optimalSpeed};
         }
     }
 

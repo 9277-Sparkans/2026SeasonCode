@@ -137,6 +137,7 @@ public class AutoFire extends Command
         
         // find virtual goal
         double time = targetDistance / optimal[4];
+        System.out.println(time);
         double virtualXOffset = transformedVelocityX * time;
         double virtualYOffset = transformedVelocityY * time;
 

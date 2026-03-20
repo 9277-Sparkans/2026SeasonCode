@@ -337,7 +337,7 @@ public class RobotContainer {
                 // .onFalse(hinge.hingeStopCommand());
 
                 // Indexer button controls
-                joystick.b().onTrue(indexer.toggleIndexer());
+                // joystick.b().onTrue(indexer.toggleIndexer());
                 configureOperatorConsole();
 
                 drivetrain.registerTelemetry(logger::telemeterize);

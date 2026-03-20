@@ -243,7 +243,7 @@ public class Constants {
     public static class IntakeConstants
     {
         public static final int intakeMotorId = 38; //38
-        public static final double kIntakeGearRatio = 12.0 / 18.0;
+        public static final double kIntakeGearRatio = 2.0 / 3.0;
 
         public static final double kIntakeCurrentLimit = 80.0;
 
@@ -257,16 +257,13 @@ public class Constants {
         public static final double intakeMaxVoltage = 5; // can change if not needed
         public static final double intakeMaxAcceleration = 100;
         public static final double intakeMaxVelocity = 500; // rps
-        public static final double intakeSpeed = 30.0; //rps max 66.6 rps 400.0 
+        public static final double intakeSpeed = 50.0; //rps max 66.6 rps 400.0 
     }
 
     public static class HingeConstants {
 
         public static final int kHingeMotorId = 39; //39
         public static final int deploymentMaxDeg = 115;
-
-        // rollers
-        public static final int rollerID = 1;
 
         public static final double hinge_kS = 0.24;        
         public static final double hinge_kP = 10.0;

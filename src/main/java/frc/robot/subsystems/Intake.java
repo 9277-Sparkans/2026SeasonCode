@@ -65,12 +65,12 @@ public class Intake extends SubsystemBase {
 	}
 
 	public void setVel() {
-		double tgt = IntakeConstants.intakeSpeed;// / IntakeConstants.kIntakeGearRatio;
+		double tgt = IntakeConstants.intakeSpeed / IntakeConstants.kIntakeGearRatio;
 		intakeMotor.setControl(m_request.withVelocity(tgt)); //rps
   	}
 
 	public void setVelNeg() {
-		double tgt = -IntakeConstants.intakeSpeed;// / IntakeConstants.kIntakeGearRatio;
+		double tgt = -IntakeConstants.intakeSpeed / IntakeConstants.kIntakeGearRatio;
 		intakeMotor.setControl(m_request.withVelocity(tgt)); //rps
   	}
 

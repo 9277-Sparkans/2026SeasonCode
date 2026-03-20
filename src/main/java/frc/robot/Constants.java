@@ -229,7 +229,7 @@ public class Constants {
 
         public static final double maxEncoderValue = -1.258789; // test for this
 
-        public static final double kGearRatio = 210.0 / 15.0; //210.0 / 15.0;
+        public static final double kGearRatio = 18.f / 210.f; //210.0 / 15.0;
 
         public static final double kHoodCurrentLimit = 45;
 

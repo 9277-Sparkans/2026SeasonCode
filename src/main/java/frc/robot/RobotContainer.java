@@ -170,7 +170,7 @@ public class RobotContainer {
 
 
                 turret.setDefaultCommand(turret.initDefaultCommand(turret));
-                hood.setDefaultCommand(hood.initDefaultCommand(hood));
+                hood.setDefaultCommand(hood.initDefaultCommand());
                 hinge.setDefaultCommand(hinge.initDefaultCommand(hinge));
 
                 // auto chooser
@@ -190,14 +190,13 @@ public class RobotContainer {
                 SmartDashboard.putData("Auto Chooser", autoChooser);
 
                 SmartDashboard.putData("Git Info", new Sendable() {
-                        @SuppressWarnings("removal")
                         @Override
                         public void initSendable(SendableBuilder builder) {
                                 builder.addStringProperty("Branch", () -> BuildConstants.GIT_BRANCH, null);
                                 builder.addStringProperty("Commit", () -> BuildConstants.GIT_SHA, null);
                                 builder.addStringProperty("Date of commit", () -> BuildConstants.GIT_DATE, null);
                                 builder.addStringProperty("Uncommitted changes",
-                                                () -> new Boolean(BuildConstants.DIRTY > 0).toString(),
+                                                () -> Boolean.valueOf(BuildConstants.DIRTY > 0).toString(),
                                                 null);
                         }
                 });
@@ -325,7 +324,7 @@ public class RobotContainer {
                                 .onFalse(
                                                 intake.stopRollerCommand());
 
-                joystick.y().whileTrue(AutoAlignCommand.getTrenchCommand(drivetrain));
+                // joystick.y().whileTrue(AutoAlignCommand.getTrenchCommand(drivetrain));
 
                 // HINGE button controls
                 // joystick.povRight()

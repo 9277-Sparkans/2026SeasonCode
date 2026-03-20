@@ -4,6 +4,7 @@ import frc.robot.Constants;
 import frc.robot.Constants.HingeConstants;
 import frc.robot.Constants.TurretConstants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
@@ -29,7 +30,8 @@ public class Hinge extends SubsystemBase {
 
     public enum HingeState {
         UP,
-        DOWN
+        DOWN,
+        AUTO_UP
     }
 
     private HingeState hingeState;
@@ -92,6 +94,10 @@ public class Hinge extends SubsystemBase {
                 hinge.setControl(m_request.withPosition(degToRotations(85.0)));
                 // target = 140.0;
                 break;
+            case AUTO_UP:
+                hinge.setControl(m_request.withPosition(degToRotations(45.0)));
+                // target = 140.0;
+                break;
 
         }
     }
@@ -110,12 +116,19 @@ public class Hinge extends SubsystemBase {
         });
     }
 
+    public Command hingeAutoUp()
+    {
+        return Commands.runOnce(() -> {
+            states(HingeState.AUTO_UP);
+        });
+    }
+
     public Command hingeStopCommand() {
         return Commands.runOnce(() -> {
             hinge.set(0.0);
         });
     }
-
+    
     public void defaultCommand() {
     // System.out.println("target is " + target);
     // hinge.setControl(m_request.withPosition(degToRotations(target)));

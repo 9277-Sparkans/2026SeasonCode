@@ -364,8 +364,13 @@ public class RobotContainer {
                 rotateStick.button(OIConstants.kSticks_centerHandle).onTrue(intake.outtakeCommand());
                 rotateStick.button(OIConstants.kSticks_centerHandle).onFalse(intake.stopRollerCommand());
 
+                // auto agitate
+                rotateStick.button(OIConstants.kSticks_leftHandle).whileTrue(Commands.sequence(
+                        hinge.hingeAutoUp(), Commands.waitSeconds(2), 
+                        hinge.hingeDown(), Commands.waitSeconds(2)));
+
                 //climb autoalign
-                rotateStick.button(OIConstants.kSticks_leftHandle).whileTrue(AutoAlignCommand.getAutoClimbCommand(drivetrain));
+                // rotateStick.button(OIConstants.kSticks_leftHandle).whileTrue(AutoAlignCommand.getAutoClimbCommand(drivetrain));
 
                 //boost
                 rotateStick.button(OIConstants.kSticks_rightHandle).whileTrue(Commands.runOnce(() -> driveTrainVelocityPercent = 1.0));

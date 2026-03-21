@@ -432,9 +432,10 @@ public class RobotContainer {
                 translateStick.button(OIConstants.kSticks_centerHandle).whileTrue(Commands.runOnce(() -> transfer.activateTransfer()));
                 translateStick.button(OIConstants.kSticks_centerHandle).onFalse(Commands.runOnce(() -> transfer.stop()));
                 
+                translateStick.button(OIConstants.kSticks_leftHandle).whileTrue(Commands.runOnce(() -> indexer.setVel())).onFalse(indexer.indexerStop());
 
                 //outpost autoalign
-                translateStick.button(OIConstants.kSticks_leftHandle).whileTrue(AutoAlignCommand.getOutpostCommand(drivetrain));
+                // translateStick.button(OIConstants.kSticks_leftHandle).whileTrue(AutoAlignCommand.getOutpostCommand(drivetrain));
 
                 //trench autoalign
                 translateStick.button(OIConstants.kSticks_rightHandle).whileTrue(AutoAlignCommand.getTrenchCommand(drivetrain));

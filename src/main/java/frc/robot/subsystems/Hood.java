@@ -182,7 +182,7 @@ public class Hood extends SubsystemBase {
 
   public void moveHoodMotionMagic() {
     // double motorTarget = hoodRotationsToMotor(hoodRotations);
-    // clampTarget();
+    clampTarget();
 
     // convertedHoodPos = HoodConstants.kIdkManConstant * targetHoodPosition;
     hoodMotor.setControl(request.withPosition(targetHoodPosition));

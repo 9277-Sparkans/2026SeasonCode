@@ -82,7 +82,7 @@ public class AutoFire extends Command
     @Override
     public void execute()
     {
-        this.targetHub = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red
+        this.targetHub =  DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red
                         ? TargetHub.RED_HUB
                         : TargetHub.BLUE_HUB;
 

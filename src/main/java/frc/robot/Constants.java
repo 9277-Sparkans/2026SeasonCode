@@ -191,7 +191,7 @@ public class Constants {
 
         public static final String lookupTablePath = Filesystem.getDeployDirectory().getPath() + "/ShooterLookupTable/shooter-lookup.csv"; // Generated with github.com/DanielR723/shooter
         public static final double autoshootDistanceRange = 0.1; // Range of distances to check to choose the best shot (Least hood rotation and flywheel RPM change)
-        public static final double maxShotError = 0.01; // The maximum allowed error for a shot to occur
+        public static final double maxShotError = 0.001; // The maximum allowed error for a shot to occur
 
         // Tuning constants for autofire
         public static final double rpmOffset = 50.0;
@@ -387,17 +387,17 @@ public class Constants {
     public static final class LockModeConstants
     {
         //LEFT
-        public static final int kRPMLeft = 4450;
+        public static final int kRPMLeft = 4650; // 4450
         public static final double kHoodLeft = 5.0;
         public static final double kTurretLeft = 44.0;
 
         //CENTER
-        public static final int kRPMCenter = 4050;
+        public static final int kRPMCenter = 4350; // 4050
         public static final double kHoodCenter = 7.0;
         public static final double kTurretCenter = 10.0;
 
         //RIGHT
-        public static final int kRPMRight = 4450;
+        public static final int kRPMRight = 4600;
         public static final double kHoodRight = 5.0;
         public static final double kTurretRight = -44.0;
 

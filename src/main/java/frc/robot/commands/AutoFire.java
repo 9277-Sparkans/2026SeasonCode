@@ -123,8 +123,9 @@ public class AutoFire extends Command
         double transformedVelocityX = speeds.vxMetersPerSecond * Math.cos(targetDirectionRad) + speeds.vyMetersPerSecond * Math.sin(targetDirectionRad);
         double transformedVelocityY = -speeds.vxMetersPerSecond * Math.sin(targetDirectionRad) + speeds.vyMetersPerSecond * Math.cos(targetDirectionRad);
 
+        // inverted velocity
         // Get optimal shot
-        double[] optimal = lookup.FindOptimalVals(targetDistance, transformedVelocityX, transformedVelocityY, shooterRPM, hoodAngle);
+        double[] optimal = lookup.FindOptimalVals(targetDistance, -transformedVelocityX, -transformedVelocityY, shooterRPM, hoodAngle);
         double optimalTurretAngle = Utils.wrapAngle(rotation.getDegrees() - targetDirectionDeg + optimal[1]);
         
         optimalTurretAngle = Utils.clamp(optimalTurretAngle, Constants.TurretConstants.kMinimumAngle, Constants.TurretConstants.kMaximumAngle);

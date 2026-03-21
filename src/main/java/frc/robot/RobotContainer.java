@@ -382,12 +382,15 @@ public class RobotContainer {
                 rotateStick.button(OIConstants.kSticks_centerHandle).onTrue(intake.outtakeCommand());
                 rotateStick.button(OIConstants.kSticks_centerHandle).onFalse(intake.stopRollerCommand());
 
+                rotateStick.button(OIConstants.kSticks_leftHandle).onTrue(Commands.runOnce(() -> shooter.increaseSpeed()));
+                rotateStick.button(OIConstants.kSticks_rightHandle).onTrue(Commands.runOnce(() -> shooter.decreaseSpeed()));
+
                 //climb autoalign
-                rotateStick.button(OIConstants.kSticks_leftHandle).whileTrue(AutoAlignCommand.getAutoClimbCommand(drivetrain));
+                // rotateStick.button(OIConstants.kSticks_leftHandle).whileTrue(AutoAlignCommand.getAutoClimbCommand(drivetrain));
 
                 //boost
-                rotateStick.button(OIConstants.kSticks_rightHandle).whileTrue(Commands.runOnce(() -> driveTrainVelocityPercent = 1.0));
-                rotateStick.button(OIConstants.kSticks_rightHandle).onFalse(Commands.runOnce(() -> driveTrainVelocityPercent = 0.55));
+                // rotateStick.button(OIConstants.kSticks_rightHandle).whileTrue(Commands.runOnce(() -> driveTrainVelocityPercent = 1.0));
+                // rotateStick.button(OIConstants.kSticks_rightHandle).onFalse(Commands.runOnce(() -> driveTrainVelocityPercent = 0.55));
 
                 //shooter up down
                 // rotateStick.button(OIConstants.povUp).onTrue(Commands.either(
@@ -418,11 +421,14 @@ public class RobotContainer {
                 //autofire
                 // translateStick.button(OIConstants.kSticks_trigger).whileTrue(autoFireCommand);
 
-                translateStick.button(OIConstants.kSticks_trigger).whileTrue(Commands.either(
-                    autoFireCommand,
-                        Commands.runOnce(() -> indexer.setVel()),
-                        () -> !lockmode));
+                translateStick.button(OIConstants.kSticks_trigger).onTrue(indexer.indexerSpin());
                 translateStick.button(OIConstants.kSticks_trigger).onFalse(indexer.indexerStop());
+
+                // translateStick.button(OIConstants.kSticks_trigger).whileTrue(Commands.either(
+                //     autoFireCommand,
+                //         Commands.runOnce(() -> indexer.setVel()),
+                //         () -> !lockmode));
+                // translateStick.button(OIConstants.kSticks_trigger).onFalse(indexer.indexerStop());
 
                 //kicker
                 translateStick.button(OIConstants.kSticks_centerHandle).whileTrue(Commands.runOnce(() -> transfer.activateTransfer()));

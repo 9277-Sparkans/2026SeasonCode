@@ -197,7 +197,7 @@ public class Constants {
         public static final double rpmOffset = 50.0;
         public static final double distancePower = 1.0;
         public static final double speedPower = 1.0;
-        public static final double autoFireDriveSpeed = 0.5;
+        public static final double autoFireDriveSpeed = 0.25;
         
         // Weights of each value when calculating an optimal shot, higher value means higher priority to minimize
         public static final double botVelocityWeight = 1.0;

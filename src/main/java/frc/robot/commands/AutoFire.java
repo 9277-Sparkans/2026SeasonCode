@@ -138,7 +138,7 @@ public class AutoFire extends Command
 
         turret.target = optimalTurretAngle;
         shooter.targetVel = optimalShooterRPM;
-        hood.targetHoodAngle = optimalHoodAngle;
+        hood.targetHoodAngle = (10 - optimalHoodAngle);
 
         double optimalError = optimal[0];
 

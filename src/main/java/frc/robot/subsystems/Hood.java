@@ -13,13 +13,18 @@ import static edu.wpi.first.units.Units.Second;
 import static edu.wpi.first.units.Units.Seconds;
 import static edu.wpi.first.units.Units.Volts;
 
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
+import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.SensorDirectionValue;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 
@@ -52,7 +57,9 @@ import frc.robot.Constants;
 public class Hood extends SubsystemBase {
   private final TalonFX hoodMotor;
   private final CANcoder hoodEncoder;
+
   private final TalonFXConfiguration hoodMotorConfiguration;
+  private final CANcoderConfiguration hoodEncoderConfiguration;
 
   public double targetHoodPosition = -0.25d;
   public double targetHoodAngle = 0.0;
@@ -63,13 +70,14 @@ public class Hood extends SubsystemBase {
   private final VoltageOut sysIdControl = new VoltageOut(0);
   private final SysIdRoutine sysIdRoutine;
 
-
-
   /** Creates a new Hood. */
   public Hood() {
     hoodMotor = new TalonFX(HoodConstants.kHoodMotorId);
     hoodEncoder = new CANcoder(HoodConstants.kHoodEncoderId);
     hoodMotorConfiguration = new TalonFXConfiguration();
+    hoodEncoderConfiguration = new CANcoderConfiguration();
+
+    // hoodEncoder.setPosition(null)
 
     // hoodMotor.setPosition(hoodEncoder.getAbsolutePosition().getValueAsDouble());
     // hoodMotor.setPosition(hoodEncoder.getAbsolutePosition().getValueAsDouble());
@@ -81,9 +89,10 @@ public class Hood extends SubsystemBase {
     hoodMotor.getConfigurator().apply(hoodCurrent);
     
 
-    hoodMotor.setPosition(0.0);
+    // hoodMotor.setPosition(0.0);
 
     // PID + Gravity
+    hoodMotorConfiguration.ClosedLoopGeneral.ContinuousWrap = true;
     hoodMotorConfiguration.Slot0.kG = HoodConstants.hood_kG;
     hoodMotorConfiguration.Slot0.kS = HoodConstants.hood_kS;
     hoodMotorConfiguration.Slot0.kV = HoodConstants.hood_kV;
@@ -98,19 +107,26 @@ public class Hood extends SubsystemBase {
     hoodMotorConfiguration.Voltage.PeakReverseVoltage = -HoodConstants.hood_maxVoltage;
     hoodMotorConfiguration.MotionMagic.MotionMagicAcceleration = HoodConstants.hood_maxAcceleration;
     hoodMotorConfiguration.MotionMagic.MotionMagicCruiseVelocity = HoodConstants.hood_maxVelocity;
-
+    
+    hoodMotorConfiguration.Feedback.FeedbackRemoteSensorID = hoodEncoder.getDeviceID();
+    hoodMotorConfiguration.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+    hoodMotorConfiguration.Feedback.RotorToSensorRatio = 1; // 1 motor rotation per 1 encoder rotation
+    hoodMotorConfiguration.Feedback.SensorToMechanismRatio = 1;
+    
     hoodMotor.getConfigurator().apply(hoodMotorConfiguration);
-    hoodMotor.getConfigurator().apply(hoodMotorConfiguration);
 
-    // hoodMotorConfiguration.Feedback.FeedbackRemoteSensorID = hoodEncoder.getDeviceID();
-    // hoodMotorConfiguration.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
-    // hoodMotorConfiguration.Feedback.RotorToSensorRatio = 1; // 1 motor rotation per 1 encoder rotation
-    // hoodMotorConfiguration.Feedback.SensorToMechanismRatio = ;
-   
+    hoodEncoderConfiguration.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0;
+    hoodEncoderConfiguration.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
+    hoodEncoderConfiguration.MagnetSensor.MagnetOffset = -0.474853515625;
+    hoodEncoder.getConfigurator().apply(hoodEncoderConfiguration);
+
+    // hoodEncoder.setPosition(hoodEncoder.getAbsolutePosition().getValueAsDouble());
+
     SmartDashboard.putData("Hood", new Sendable() {
         @Override
         public void initSendable(SendableBuilder builder) {
             builder.addDoubleProperty("Velocity", () -> hoodMotor.getVelocity().getValueAsDouble(), null);
+            builder.addDoubleProperty("Absolute Encoder (non-absolute) Position", () -> (hoodEncoder.getPosition().getValueAsDouble()), (double val) -> hoodEncoder.setPosition(val));
             builder.addDoubleProperty("Absolute Encoder Position", () -> (hoodEncoder.getAbsolutePosition().getValueAsDouble()), (double val) -> hoodEncoder.setPosition(val));
             builder.addDoubleProperty("Motor Encoder Position", () -> (hoodMotor.getPosition().getValueAsDouble()), (double val) -> hoodMotor.setPosition(val));
             builder.addDoubleProperty("Target Hood Position", () -> targetHoodPosition, (double val) -> targetHoodPosition = val);
@@ -148,8 +164,9 @@ public class Hood extends SubsystemBase {
 
   }
 
-  public Command initDefaultCommand(Hood hood) {
+  public Command initDefaultCommand() {
     return Commands.runOnce(() -> moveHoodToAngle(targetHoodAngle), this);
+    // return Commands.runOnce(() -> { targetHoodPosition = -2.5f * (18.f / 210.f); System.out.println("hai " + targetHoodPosition); /* moveHoodMotionMagic(); */ }, this);
   }
 
   @Override
@@ -178,7 +195,7 @@ public class Hood extends SubsystemBase {
     // double positionRatio = degrees / hoodRangeDeg;
     // double position = HoodConstants.kMinimumEncoderPos + (hoodEncoderRange * positionRatio);
 
-    targetHoodPosition = -((degrees / (7168.0/12321.0)) / 360.0) * HoodConstants.kGearRatio;
+    targetHoodPosition = -(degrees / 2.0) * HoodConstants.kGearRatio;
 
     // clampTarget();
     moveHoodMotionMagic();

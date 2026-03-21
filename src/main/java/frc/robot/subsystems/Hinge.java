@@ -5,10 +5,12 @@ import frc.robot.Constants.HingeConstants;
 import frc.robot.Constants.TurretConstants;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 
 import edu.wpi.first.wpilibj2.command.Command;
@@ -18,6 +20,9 @@ public class Hinge extends SubsystemBase {
 
     private final TalonFX hinge;
     private final TalonFXConfiguration hingeConfig;
+
+    private final CANcoder hingeEncoder;
+    private final CANcoderConfiguration hingeEncoderConfig;
 
     MotionMagicVoltage m_request = new MotionMagicVoltage(0.0).withSlot(0);
 
@@ -37,6 +42,9 @@ public class Hinge extends SubsystemBase {
     public Hinge() {
         hinge = new TalonFX(Constants.HingeConstants.kHingeMotorId);
         hingeConfig = new TalonFXConfiguration();
+
+        hingeEncoder = new CANcoder(Constants.HingeConstants.kHingeEncoderId);
+        hingeEncoderConfig = new CANcoderConfiguration();
 
         hinge.setPosition(0.0);
 
@@ -58,7 +66,6 @@ public class Hinge extends SubsystemBase {
         hinge.getConfigurator().apply(hingeConfig);
 
         target = 0.0;
-
     }
 
     public void setState(HingeState state) {

@@ -85,7 +85,7 @@ public class Shooter extends SubsystemBase {
       Volts ) ) ) ;
       } ,
       ( SysIdRoutineLog log ) -> {
-        log.motor ("Shooter-Motor")
+        log.motor ("poopoo-Motor")
         .voltage ( Volts.of (shooterMotor.getMotorVoltage () .
         getValueAsDouble () ) )
         .angularPosition ( Rotations . of ( shooterMotor . getPosition () .

@@ -127,7 +127,7 @@ public class AutoFire extends Command
         double stillOffset = Constants.ShooterConstants.rpmOffset * Math.pow(targetDistance, Constants.ShooterConstants.distancePower);
         double speedNormal = Math.sqrt(speeds.vxMetersPerSecond * speeds.vxMetersPerSecond + speeds.vyMetersPerSecond * speeds.vyMetersPerSecond);
         double speedOffset = Math.pow(speedNormal / TunerConstants.kSpeedAt12Volts.magnitude(), Constants.ShooterConstants.speedPower);
-        double optimalShooterRPM = optimal[2] - stillOffset * (1.0 - speedOffset);
+        double optimalShooterRPM = optimal[2] - stillOffset * (1.0 - 0.0);
         
         double optimalHoodAngle = optimal[3];
 

@@ -49,6 +49,7 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Indexer;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.QuickAccessConstants;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.QuickAccessConstants.ControlTypes;
 import frc.robot.Utils.Lookup;
 import frc.robot.commands.AutoFire;
@@ -81,6 +82,7 @@ public class RobotContainer {
         private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
         private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
         private double driveTrainVelocityPercent = 0.55;
+        private boolean movingConstantSpeed = false;
 
         /* Setting up bindings for necessary control of the swerve drive platform */
         private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -229,6 +231,7 @@ public class RobotContainer {
                 SmartDashboard.putBoolean("Shifts/Shift Active", AllianceShifts.areWeActive(teleopTimer));
                 SmartDashboard.putString(
                         "Shifts/Game State", AllianceShifts.getCurrentShift(teleopTimer).toString());
+                // SmartDashboard.putNumber("Bot velocity magnitude", drivetrain.speeds.get);
         }
 
         private void configureBindings() {
@@ -237,11 +240,20 @@ public class RobotContainer {
                 drivetrain.setDefaultCommand(
                                 drivetrain.applyRequest(() -> {
                                         double x, y, rot;
-                                        if (QuickAccessConstants.controlType == ControlTypes.DRIVER_STICKS) {
+                                        if (movingConstantSpeed && QuickAccessConstants.controlType == ControlTypes.DRIVER_STICKS)
+                                        {
+                                                double maxVal = Math.max(Math.abs(-translateStick.getRawAxis(1)), Math.abs(-translateStick.getRawAxis(0)));
+                                                x = (-translateStick.getRawAxis(1) / maxVal) * ShooterConstants.autoFireDriveSpeed;
+                                                y = (-translateStick.getRawAxis(0) / maxVal) * ShooterConstants.autoFireDriveSpeed;
+                                                rot = -rotateStick.getRawAxis(0);
+                                        } 
+                                        else if (QuickAccessConstants.controlType == ControlTypes.DRIVER_STICKS) {
                                                 x = -translateStick.getRawAxis(1);
                                                 y = -translateStick.getRawAxis(0);
                                                 rot = -rotateStick.getRawAxis(0);
-                                        } else {
+                                        }
+                                        else 
+                                        {
                                                 x = -joystick.getLeftY();
                                                 y = -joystick.getLeftX();
                                                 rot = -joystick.getRightX();
@@ -436,9 +448,11 @@ public class RobotContainer {
 
         private void configureOperatorConsole() {
                 // Operator
-                operator(1)
-                                .onTrue(Commands.runOnce(() -> hood.moveHoodToAngle(hood.targetHoodAngle)));
-
+                // operator(1)
+                //                 .onTrue(Commands.runOnce(() -> hood.moveHoodToAngle(hood.targetHoodAngle)));
+                operator(OIConstants.kKeyboard_duck)
+                        .onTrue(Commands.runOnce(() -> movingConstantSpeed = true))
+                        .onFalse(Commands.runOnce(() -> movingConstantSpeed = false));
                 operator(OIConstants.kKeyboard_modeToggle)
                                 .onTrue(Commands.runOnce(() -> manualControl = !manualControl));
 

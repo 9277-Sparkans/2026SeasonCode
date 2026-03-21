@@ -77,6 +77,8 @@ public class Hood extends SubsystemBase {
     hoodMotorConfiguration = new TalonFXConfiguration();
     hoodEncoderConfiguration = new CANcoderConfiguration();
 
+    // hoodEncoder.setPosition(null)
+
     // hoodMotor.setPosition(hoodEncoder.getAbsolutePosition().getValueAsDouble());
     // hoodMotor.setPosition(hoodEncoder.getAbsolutePosition().getValueAsDouble());
 
@@ -90,6 +92,7 @@ public class Hood extends SubsystemBase {
     // hoodMotor.setPosition(0.0);
 
     // PID + Gravity
+    hoodMotorConfiguration.ClosedLoopGeneral.ContinuousWrap = true;
     hoodMotorConfiguration.Slot0.kG = HoodConstants.hood_kG;
     hoodMotorConfiguration.Slot0.kS = HoodConstants.hood_kS;
     hoodMotorConfiguration.Slot0.kV = HoodConstants.hood_kV;
@@ -112,9 +115,9 @@ public class Hood extends SubsystemBase {
     
     hoodMotor.getConfigurator().apply(hoodMotorConfiguration);
 
-    hoodEncoderConfiguration.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1;
+    hoodEncoderConfiguration.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0;
     hoodEncoderConfiguration.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
-    hoodEncoderConfiguration.MagnetSensor.MagnetOffset = -0.474853516;
+    hoodEncoderConfiguration.MagnetSensor.MagnetOffset = -0.474853515625;
     hoodEncoder.getConfigurator().apply(hoodEncoderConfiguration);
 
     // hoodEncoder.setPosition(hoodEncoder.getAbsolutePosition().getValueAsDouble());

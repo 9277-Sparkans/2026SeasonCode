@@ -63,7 +63,11 @@ public class AutoFire extends Command
             
 
     private final StructArrayPublisher<Pose3d> trajectoryPublisher = NetworkTableInstance.getDefault()
-            .getStructArrayTopic("AutoFire/Trajectory", Pose3d.struct)
+            .getStructArrayTopic("AutoFire/ActualTrajectory", Pose3d.struct)
+            .publish();
+
+    private final StructArrayPublisher<Pose3d> targetTrajectoryPublisher = NetworkTableInstance.getDefault()
+            .getStructArrayTopic("AutoFire/TargetTrajectory", Pose3d.struct)
             .publish();
 
     public AutoFire(Indexer indexer, Turret turret, Shooter shooter, Hood hood,
@@ -199,7 +203,15 @@ public class AutoFire extends Command
         // Ensure velocity is positive 
         if (linearVelocity < 0) linearVelocity = 0;
 
-        publishTrajectory(pose, speeds, linearVelocity, spinFactor, hoodAngle, turretAngle);
+        // Actual Trajectory
+        publishTrajectory(trajectoryPublisher, pose, speeds, linearVelocity, spinFactor, (10 - hoodAngle), turretAngle);
+
+        // Target Trajectory
+        double targetLinearVelocity = v_a * (optimalShooterRPM * optimalShooterRPM) + v_b * optimalShooterRPM + v_c;
+        double targetSpinFactor = s_a * (optimalShooterRPM * optimalShooterRPM) + s_b * optimalShooterRPM + s_c;
+        if (targetLinearVelocity < 0) targetLinearVelocity = 0;
+        
+        publishTrajectory(targetTrajectoryPublisher, pose, speeds, targetLinearVelocity, targetSpinFactor, (10 - optimalHoodAngle), optimalTurretAngle);
 
         boolean readyToShoot = optimalError < Constants.ShooterConstants.maxShotError;
 
@@ -224,11 +236,11 @@ public class AutoFire extends Command
         }
     }
 
-    private void publishTrajectory(Pose2d robotPose, ChassisSpeeds fieldSpeeds, double linearVelocity, double spin, double optimalHoodAngle, double optimalTurretAngle) {
+    private void publishTrajectory(StructArrayPublisher<Pose3d> publisher, Pose2d robotPose, ChassisSpeeds fieldSpeeds, double linearVelocity, double spin, double hoodAngle, double turretAngle) {
         Pose3d launchPose = new Pose3d(robotPose).plus(Constants.TurretConstants.ROBOT_TO_TURRET_TRANSFORM);
         
-        double simHoodAngleRad = Math.toRadians(45.0 - optimalHoodAngle);
-        double simTurretYawRad = Math.toRadians(-optimalTurretAngle);
+        double simHoodAngleRad = Math.toRadians(45.0 - hoodAngle);
+        double simTurretYawRad = Math.toRadians(-turretAngle);
         
         double horizontalVel = Math.cos(simHoodAngleRad) * linearVelocity;
         double verticalVel = Math.sin(simHoodAngleRad) * linearVelocity;
@@ -283,7 +295,7 @@ public class AutoFire extends Command
             }
         }
         
-        trajectoryPublisher.set(trajectory.toArray(new Pose3d[0]));
+        publisher.set(trajectory.toArray(new Pose3d[0]));
     }
 
     @Override

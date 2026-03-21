@@ -69,6 +69,7 @@ public class Constants {
         // Add one to your ID or else you'll be binding to a completely different button
         public static final int kKeyboard_modeToggle = 5;
         public static final int kKeyboard_trackToggle = 3;
+        public static final int kKeyboard_duck = 1;
 
         public static final int kKeyboard_lockModeToggle = 2;
         public static final int kKeyboard_lockModeLeft = 11;
@@ -157,7 +158,7 @@ public class Constants {
         public static final int kShooterMotorId = 33; //33
 
         public static final int kShooterCurrentLimit = 80;
-        public static final double kShooterGearRatio = 36.0 / 30.0;
+        public static final double kShooterGearRatio = 36.0 / 30.0; //36/ 30
 
         public static final double kShooterMaxVoltage = 5;// kraken x44 max voltage
         public static final double kShooterMaxAcceleration = 100; // rotations per second^2
@@ -190,12 +191,13 @@ public class Constants {
 
         public static final String lookupTablePath = Filesystem.getDeployDirectory().getPath() + "/ShooterLookupTable/shooter-lookup.csv"; // Generated with github.com/DanielR723/shooter
         public static final double autoshootDistanceRange = 0.1; // Range of distances to check to choose the best shot (Least hood rotation and flywheel RPM change)
-        public static final double maxShotError = 0.01; // The maximum allowed error for a shot to occur
+        public static final double maxShotError = 0.02; // The maximum allowed error for a shot to occur
 
         // Tuning constants for autofire
         public static final double rpmOffset = 50.0;
         public static final double distancePower = 1.4;
         public static final double speedPower = 1.0;
+        public static final double autoFireDriveSpeed = 0.5;
         
         // Weights of each value when calculating an optimal shot, higher value means higher priority to minimize
         public static final double botVelocityWeight = 1.0;
@@ -225,12 +227,12 @@ public class Constants {
         public static final double kMinimumAngle = 0;
         public static final double kMaximumAngle = 12;
 
-        public static final double kMinimumEncoderPos = 0;
-        public static final double kMaximumEncoderPos = -0.67236328125;
+        public static final double kMinimumEncoderPos = -0.44849609375;
+        public static final double kMaximumEncoderPos = 0;
 
         public static final double maxEncoderValue = -1.258789; // test for this
 
-        public static final double kGearRatio = 210.0 / 15.0; //210.0 / 15.0;
+        public static final double kGearRatio = 18.f / 210.f; //210.0 / 15.0;
 
         public static final double kHoodCurrentLimit = 45;
 
@@ -244,11 +246,11 @@ public class Constants {
     public static class IntakeConstants
     {
         public static final int intakeMotorId = 38; //38
-        public static final double kIntakeGearRatio = 12.0 / 18.0;
+        public static final double kIntakeGearRatio = 2.0 / 3.0;
 
         public static final double kIntakeCurrentLimit = 80.0;
 
-        public static final double intake_kS = 0.18572;
+        public static final double intake_kS = 0.15572; //0.18572
         public static final double intake_kV = 0.11754;
         public static final double intake_kA = 0.0048972;
         public static final double intake_kP = 0.030667;
@@ -258,16 +260,14 @@ public class Constants {
         public static final double intakeMaxVoltage = 5; // can change if not needed
         public static final double intakeMaxAcceleration = 100;
         public static final double intakeMaxVelocity = 500; // rps
-        public static final double intakeSpeed = 30.0; //rps max 66.6 rps 400.0 
+        public static final double intakeSpeed = 50.0; //rps max 66.6 rps 400.0 
     }
 
     public static class HingeConstants {
 
         public static final int kHingeMotorId = 39; //39
+        public static final int kHingeEncoderId = 42;
         public static final int deploymentMaxDeg = 115;
-
-        // rollers
-        public static final int rollerID = 1;
 
         public static final double hinge_kS = 0.24;        
         public static final double hinge_kP = 10.0;
@@ -280,7 +280,7 @@ public class Constants {
         public static final double kHingeCurrentLimit = 120;
 
         public static final int hingeCountsPerRevolution = 2048; // for kraken x60
-        public static final double hingeGearRatio = 45.0 / 1.0; //carter: 8:1 tyler: 45:1
+        public static final double hingeGearRatio = 112.5 / 1.0; //carter: 8:1 tyler: 45:1
 
         public static final double hingeMaxDeg = 50.0; //-100.0;
     }
@@ -398,17 +398,17 @@ public class Constants {
     public static final class LockModeConstants
     {
         //LEFT
-        public static final int kRPMLeft = 4450;
+        public static final int kRPMLeft = 4650; // 4450
         public static final double kHoodLeft = 5.0;
         public static final double kTurretLeft = 44.0;
 
         //CENTER
-        public static final int kRPMCenter = 4050;
+        public static final int kRPMCenter = 4350; // 4050
         public static final double kHoodCenter = 7.0;
         public static final double kTurretCenter = 10.0;
 
         //RIGHT
-        public static final int kRPMRight = 4450;
+        public static final int kRPMRight = 4600;
         public static final double kHoodRight = 5.0;
         public static final double kTurretRight = -44.0;
 

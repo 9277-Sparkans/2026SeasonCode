@@ -49,6 +49,7 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Indexer;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.QuickAccessConstants;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.QuickAccessConstants.ControlTypes;
 import frc.robot.Utils.Lookup;
 import frc.robot.commands.AutoFire;
@@ -81,6 +82,7 @@ public class RobotContainer {
         private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
         private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
         private double driveTrainVelocityPercent = 0.55;
+        private boolean movingConstantSpeed = false;
 
         /* Setting up bindings for necessary control of the swerve drive platform */
         private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -147,11 +149,8 @@ public class RobotContainer {
                         configureFuelSim();
                 }
                 autoFireCommand = new AutoFire(indexer, turret, shooter, hood,
-                                () -> drivetrain.getStateCopy().Speeds,
-                                () -> drivetrain.getStateCopy().Pose, lookup,
-                                DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red
-                                                ? TargetHub.RED_HUB
-                                                : TargetHub.BLUE_HUB);
+                                                () -> drivetrain.getStateCopy().Speeds,
+                                                () -> drivetrain.getStateCopy().Pose, lookup);
 
                 if (RobotBase.isSimulation()) {
                         autoFireCommand.setFuelSim(fuelSim);
@@ -179,7 +178,7 @@ public class RobotContainer {
                                 Commands.runOnce(() -> transfer.toggleTransfer()));
 
                 turret.setDefaultCommand(turret.initDefaultCommand(turret));
-                hood.setDefaultCommand(hood.initDefaultCommand(hood));
+                hood.setDefaultCommand(hood.initDefaultCommand());
                 hinge.setDefaultCommand(hinge.initDefaultCommand(hinge));
 
                 // auto chooser
@@ -199,14 +198,13 @@ public class RobotContainer {
                 SmartDashboard.putData("Auto Chooser", autoChooser);
 
                 SmartDashboard.putData("Git Info", new Sendable() {
-                        @SuppressWarnings("removal")
                         @Override
                         public void initSendable(SendableBuilder builder) {
                                 builder.addStringProperty("Branch", () -> BuildConstants.GIT_BRANCH, null);
                                 builder.addStringProperty("Commit", () -> BuildConstants.GIT_SHA, null);
                                 builder.addStringProperty("Date of commit", () -> BuildConstants.GIT_DATE, null);
                                 builder.addStringProperty("Uncommitted changes",
-                                                () -> new Boolean(BuildConstants.DIRTY > 0).toString(),
+                                                () -> Boolean.valueOf(BuildConstants.DIRTY > 0).toString(),
                                                 null);
                         }
                 });
@@ -230,6 +228,7 @@ public class RobotContainer {
                 SmartDashboard.putBoolean("Shifts/Shift Active", AllianceShifts.areWeActive(teleopTimer));
                 SmartDashboard.putString(
                                 "Shifts/Game State", AllianceShifts.getCurrentShift(teleopTimer).toString());
+                // SmartDashboard.putNumber("Bot velocity magnitude", drivetrain.speeds.get);
         }
 
         private void configureBindings() {
@@ -238,11 +237,20 @@ public class RobotContainer {
                 drivetrain.setDefaultCommand(
                                 drivetrain.applyRequest(() -> {
                                         double x, y, rot;
-                                        if (QuickAccessConstants.controlType == ControlTypes.DRIVER_STICKS) {
+                                        if (movingConstantSpeed && QuickAccessConstants.controlType == ControlTypes.DRIVER_STICKS)
+                                        {
+                                                double maxVal = Math.max(Math.abs(-translateStick.getRawAxis(1)), Math.abs(-translateStick.getRawAxis(0)));
+                                                x = (-translateStick.getRawAxis(1) / maxVal) * ShooterConstants.autoFireDriveSpeed;
+                                                y = (-translateStick.getRawAxis(0) / maxVal) * ShooterConstants.autoFireDriveSpeed;
+                                                rot = -rotateStick.getRawAxis(0);
+                                        } 
+                                        else if (QuickAccessConstants.controlType == ControlTypes.DRIVER_STICKS) {
                                                 x = -translateStick.getRawAxis(1);
                                                 y = -translateStick.getRawAxis(0);
                                                 rot = -rotateStick.getRawAxis(0);
-                                        } else {
+                                        }
+                                        else 
+                                        {
                                                 x = -joystick.getLeftY();
                                                 y = -joystick.getLeftX();
                                                 rot = -joystick.getRightX();
@@ -261,19 +269,19 @@ public class RobotContainer {
 
                 // Run SysId routines when holding back/start and X/Y.
                 // Note that each routine should be run exactly once in a single log.
-                joystick.start().and(joystick.povUp()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-                joystick.start().and(joystick.povDown()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-                joystick.start().and(joystick.povRight()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-                joystick.start().and(joystick.povLeft()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+                // joystick.start().and(joystick.povUp()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+                // joystick.start().and(joystick.povDown()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+                // joystick.start().and(joystick.povRight()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+                // joystick.start().and(joystick.povLeft()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
                 // reset the field-centric heading on left bumper press
                 joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
                 // joystick.().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-                // joystick.start().and(joystick.povUp()).whileTrue(shooter.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-                // joystick.start().and(joystick.povDown()).whileTrue(shooter.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-                // joystick.start().and(joystick.povRight()).whileTrue(shooter.sysIdDynamic(SysIdRoutine.Direction.kForward));
-                // joystick.start().and(joystick.povLeft()).whileTrue(shooter.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+                joystick.start().and(joystick.povUp()).whileTrue(shooter.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+                joystick.start().and(joystick.povDown()).whileTrue(shooter.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+                joystick.start().and(joystick.povRight()).whileTrue(shooter.sysIdDynamic(SysIdRoutine.Direction.kForward));
+                joystick.start().and(joystick.povLeft()).whileTrue(shooter.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
                 // CLIMB button controls
                 // joystick.y().onTrue(climb.climbUp());
@@ -339,7 +347,7 @@ public class RobotContainer {
                                 .onFalse(
                                                 intake.stopRollerCommand());
 
-                joystick.y().whileTrue(AutoAlignCommand.getTrenchCommand(drivetrain));
+                // joystick.y().whileTrue(AutoAlignCommand.getTrenchCommand(drivetrain));
 
                 // HINGE button controls
                 // joystick.povRight()
@@ -351,7 +359,7 @@ public class RobotContainer {
                 // .onFalse(hinge.hingeStopCommand());
 
                 // Indexer button controls
-                joystick.b().onTrue(indexer.toggleIndexer());
+                // joystick.b().onTrue(indexer.toggleIndexer());
                 configureOperatorConsole();
 
                 drivetrain.registerTelemetry(logger::telemeterize);
@@ -415,15 +423,14 @@ public class RobotContainer {
                                 () -> !lockmode));
                 translateStick.button(OIConstants.kSticks_trigger).onFalse(indexer.indexerStop());
 
-                // kicker
-                translateStick.button(OIConstants.kSticks_centerHandle)
-                                .whileTrue(Commands.runOnce(() -> transfer.activateTransfer()));
-                translateStick.button(OIConstants.kSticks_centerHandle)
-                                .onFalse(Commands.runOnce(() -> transfer.stop()));
+                //kicker
+                translateStick.button(OIConstants.kSticks_centerHandle).whileTrue(Commands.runOnce(() -> transfer.activateTransfer()));
+                translateStick.button(OIConstants.kSticks_centerHandle).onFalse(Commands.runOnce(() -> transfer.stop()));
+                
+                translateStick.button(OIConstants.kSticks_leftHandle).whileTrue(Commands.runOnce(() -> indexer.setVel())).onFalse(indexer.indexerStop());
 
-                // outpost autoalign
-                translateStick.button(OIConstants.kSticks_leftHandle)
-                                .whileTrue(AutoAlignCommand.getOutpostCommand(drivetrain));
+                //outpost autoalign
+                // translateStick.button(OIConstants.kSticks_leftHandle).whileTrue(AutoAlignCommand.getOutpostCommand(drivetrain));
 
                 // trench autoalign
                 translateStick.button(OIConstants.kSticks_rightHandle)
@@ -437,9 +444,11 @@ public class RobotContainer {
 
         private void configureOperatorConsole() {
                 // Operator
-                operator(1)
-                                .onTrue(Commands.runOnce(() -> hood.moveHoodToAngle(hood.targetHoodAngle)));
-
+                // operator(1)
+                //                 .onTrue(Commands.runOnce(() -> hood.moveHoodToAngle(hood.targetHoodAngle)));
+                operator(OIConstants.kKeyboard_duck)
+                        .onTrue(Commands.runOnce(() -> movingConstantSpeed = true))
+                        .onFalse(Commands.runOnce(() -> movingConstantSpeed = false));
                 operator(OIConstants.kKeyboard_modeToggle)
                                 .onTrue(Commands.runOnce(() -> manualControl = !manualControl));
 

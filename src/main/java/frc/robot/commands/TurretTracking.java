@@ -12,6 +12,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Turret;
@@ -20,6 +22,9 @@ import frc.robot.Constants.TurretConstants;
 public class TurretTracking extends Command {
   private Turret turret;
   private final Supplier<Pose2d> poseSupplier;
+  
+  private boolean isDumping = false;
+  private boolean isLeftDump = false;
 
   double angleToHub;
 
@@ -63,10 +68,29 @@ public class TurretTracking extends Command {
         .plus(TurretConstants.ROBOT_TO_TURRET_TRANSFORM.getTranslation().toTranslation2d()
             .rotateBy(robotPose2d.getRotation()));
 
+    // Get alliance
+    Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
+
     // Target position (Hub)
-    Translation2d target = new Translation2d(
-        frc.robot.Constants.FieldConstants.BLUE_HUB_X,
-        frc.robot.Constants.FieldConstants.BLUE_HUB_Y);
+    double hubX = alliance == Alliance.Red ? frc.robot.Constants.FieldConstants.RED_HUB_X : frc.robot.Constants.FieldConstants.BLUE_HUB_X;
+    double hubY = alliance == Alliance.Red ? frc.robot.Constants.FieldConstants.RED_HUB_Y : frc.robot.Constants.FieldConstants.BLUE_HUB_Y;
+
+    // Determine if we should dump (simple threshold)
+    isDumping = alliance == Alliance.Blue ? robotPose2d.getX() > hubX : robotPose2d.getX() < hubX;
+
+    if (isDumping) {
+        isLeftDump = robotPose2d.getY() > frc.robot.Constants.FieldConstants.BLUE_HUB_Y;
+
+        if (alliance == Alliance.Blue) {
+            hubX = isLeftDump ? frc.robot.Constants.FieldConstants.BLUE_DUMP_LEFT_X : frc.robot.Constants.FieldConstants.BLUE_DUMP_RIGHT_X;
+            hubY = isLeftDump ? frc.robot.Constants.FieldConstants.BLUE_DUMP_LEFT_Y : frc.robot.Constants.FieldConstants.BLUE_DUMP_RIGHT_Y;
+        } else {
+            hubX = isLeftDump ? frc.robot.Constants.FieldConstants.RED_DUMP_LEFT_X : frc.robot.Constants.FieldConstants.RED_DUMP_RIGHT_X;
+            hubY = isLeftDump ? frc.robot.Constants.FieldConstants.RED_DUMP_LEFT_Y : frc.robot.Constants.FieldConstants.RED_DUMP_RIGHT_Y;
+        }
+    }
+
+    Translation2d target = new Translation2d(hubX, hubY);
 
     // Direction from turret to hub
     Translation2d direction = target.minus(turretTranslation);

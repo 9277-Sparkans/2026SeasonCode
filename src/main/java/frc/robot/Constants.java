@@ -197,9 +197,9 @@ public class Constants {
         public static final double speedPower = 1.0;
         
         // Weights of each value when calculating an optimal shot, higher value means higher priority to minimize
-        public static final double botVelocityWeight = 1.0;
-        public static final double shooterRPMWeight = 0.2;
-        public static final double hoodAngleWeight = 0.0;
+        public static final double botVelocityWeight = 0.1;
+        public static final double shooterRPMWeight = 0.5;
+        public static final double hoodAngleWeight = 0.5;
     }
 
     public static class HoodConstants
@@ -274,7 +274,7 @@ public class Constants {
         public static final double hinge_kG = 2.5; //0.25
         public static final double hingeMaxAcceleration = 20.0;
         public static final double hingeMaxVelocity = 100.0; // rps
-        public static final double kHingeCurrentLimit = 120;
+        public static final double kHingeCurrentLimit = 40;
 
         public static final int hingeCountsPerRevolution = 2048; // for kraken x60
         public static final double hingeGearRatio = 112.5 / 1.0; //carter: 8:1 tyler: 45:1

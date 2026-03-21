@@ -168,7 +168,7 @@ public class RobotContainer {
 
                 turret.setDefaultCommand(turret.initDefaultCommand(turret));
                 hood.setDefaultCommand(hood.initDefaultCommand());
-                hinge.setDefaultCommand(hinge.initDefaultCommand(hinge));
+                // hinge.setDefaultCommand(hinge.initDefaultCommand(hinge));
 
                 // auto chooser
                 autoChooser.setDefaultOption("No auto", Commands.none());

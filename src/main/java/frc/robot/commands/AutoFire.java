@@ -142,7 +142,7 @@ public class AutoFire extends Command
         
         // find virtual goal
         double time = targetDistance / optimal[4];
-        System.out.println(time);
+        // System.out.println(time);
         double virtualXOffset = transformedVelocityX * time;
         double virtualYOffset = transformedVelocityY * time;
 
@@ -156,7 +156,7 @@ public class AutoFire extends Command
         double[] virtualOptimal = lookup.FindOptimalVals(targetDistance, 0, 0, shooterRPM, hoodAngle);
         double optimalTurretAngle = Utils.wrapAngle(rotation.getDegrees() - targetDirectionDeg);
         
-        // double stillOffset = Constants.ShooterConstants.rpmOffset * Math.pow(targetDistance, Constants.ShooterConstants.distancePower);
+        double stillOffset = Constants.ShooterConstants.rpmOffset * Math.pow(targetDistance, Constants.ShooterConstants.distancePower);
         double optimalShooterRPM = virtualOptimal[2];
         double optimalHoodAngle = virtualOptimal[3];
 

@@ -231,7 +231,7 @@ public class RobotContainer {
                                                 double maxVal = Math.max(Math.abs(-translateStick.getRawAxis(1)), Math.abs(-translateStick.getRawAxis(0)));
                                                 x = (-translateStick.getRawAxis(1) / maxVal) * ShooterConstants.autoFireDriveSpeed;
                                                 y = (-translateStick.getRawAxis(0) / maxVal) * ShooterConstants.autoFireDriveSpeed;
-                                                rot = (-rotateStick.getRawAxis(0) / Math.abs(-rotateStick.getRawAxis(0))) * MaxAngularRate / 5.0;
+                                                rot = -rotateStick.getRawAxis(0);
                                         } 
                                         else if (QuickAccessConstants.controlType == ControlTypes.DRIVER_STICKS) {
                                                 x = -translateStick.getRawAxis(1);

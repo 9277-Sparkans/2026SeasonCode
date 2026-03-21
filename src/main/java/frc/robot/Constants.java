@@ -321,7 +321,7 @@ public class Constants {
         public static final int kTransferCurrent_Limit = 80;
         public static final double kTransferGearRatio = 30.0 / 24.0;
 
-        public static final double kTransfer_kS = 0.38572;
+        public static final double kTransfer_kS = 0.18572;
         public static final double kTransfer_kV = 0.11754;
         public static final double kTransfer_kA = 0.0048972;
         public static final double kTransfer_kP = 0.030667;

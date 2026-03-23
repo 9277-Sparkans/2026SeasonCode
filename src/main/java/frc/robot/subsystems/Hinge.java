@@ -43,7 +43,8 @@ public class Hinge extends SubsystemBase {
 
     public enum HingeState {
         UP,
-        DOWN
+        DOWN,
+        AGITATE
     }
 
     private HingeState hingeState;
@@ -133,8 +134,11 @@ public class Hinge extends SubsystemBase {
             case UP:
                 target = HingeConstants.kHingeRetractedPosition;
                 break;
-             case DOWN:
+            case DOWN:
                 target = HingeConstants.kHingeDeploymentPosition;
+                break;
+            case AGITATE:
+                target = HingeConstants.kHingeAgitatePosition;
                 break;
         }        
     }

@@ -11,9 +11,14 @@ import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+
+import javax.lang.model.util.ElementScanner14;
+
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -28,7 +33,7 @@ public class Hinge extends SubsystemBase {
     private final CANcoder hingeEncoder;
     private final CANcoderConfiguration hingeEncoderConfig;
 
-    MotionMagicVoltage m_request = new MotionMagicVoltage(0.0).withSlot(0);
+    MotionMagicVelocityVoltage m_request = new MotionMagicVelocityVoltage(0.0).withSlot(0);
 
     double target;
 
@@ -42,6 +47,7 @@ public class Hinge extends SubsystemBase {
     }
 
     private HingeState hingeState;
+    PIDController pid;
 
     public Hinge() {
         hinge = new TalonFX(Constants.HingeConstants.kHingeMotorId);
@@ -56,7 +62,7 @@ public class Hinge extends SubsystemBase {
         hingeConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
         hingeConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        hingeConfig.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        hingeConfig.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
         hingeConfig.Slot0.kP = Constants.HingeConstants.hinge_kP;
         hingeConfig.Slot0.kI = Constants.HingeConstants.hinge_kI;
@@ -73,14 +79,16 @@ public class Hinge extends SubsystemBase {
 		hingeConfig.MotionMagic.MotionMagicAcceleration = Constants.HingeConstants.hingeMaxAcceleration;
 		hingeConfig.MotionMagic.MotionMagicCruiseVelocity = Constants.HingeConstants.hingeMaxVelocity;
 
-        hinge.getConfigurator().apply(hingeConfig);        
+        hinge.getConfigurator().apply(hingeConfig);
 
         hingeEncoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1;
         hingeEncoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
         hingeEncoderConfig.MagnetSensor.MagnetOffset = -0.70849609375;
         hingeEncoder.getConfigurator().apply(hingeEncoderConfig);
 
-        // target = 0.0;
+        pid = new PIDController(HingeConstants.hinge_kP, HingeConstants.hinge_kI, HingeConstants.hinge_kD);
+
+        target = 0.0;
 
         SmartDashboard.putData("Hinge", new Sendable() {
             @Override
@@ -118,15 +126,15 @@ public class Hinge extends SubsystemBase {
     // state for climb up
     public void states(HingeState state) {
         setState(state);
+
+        // double velocity = 35.0 / 60.0;
+
         switch (state) {
             case UP:
-                hinge.setControl(m_request
-                    .withPosition(0.25d));
-                // target = 0.0;
+                target = HingeConstants.kHingeRetractedPosition;
                 break;
              case DOWN:
-                hinge.setControl(m_request.withPosition(0.05d));
-                // target = 140.0;
+                target = HingeConstants.kHingeDeploymentPosition;
                 break;
         }        
     }
@@ -151,13 +159,41 @@ public class Hinge extends SubsystemBase {
         });
     }
 
-//     public void defaultCommand() {
-//     // System.out.println("target is " + target);
-//     // hinge.setControl(m_request.withPosition(degToRotations(target)));
-//   }
+    public void defaultCommand() {
+        // System.out.println("target is " + target);
+        // hinge.setControl(m_request.withPosition(degToRotations(target)));
 
-//     public Command initDefaultCommand(Hinge hinge) {
-//         return Commands.runOnce(() -> defaultCommand(), this);
-//     }
+        if (hingeState == null) return;
+        
+        UsePID(target);
+        // switch (hingeState) {
+        //     case UP:
+        //         if ((hingeEncoder.getPosition().getValueAsDouble() - HingeConstants.kHingeRetractedPosition) >= -HingeConstants.kHingeDeadband) {
+        //             hinge.set(0);
+        //         }
+        //         break;
+        //     case DOWN:
+        //         if ((hingeEncoder.getPosition().getValueAsDouble() - HingeConstants.kHingeDeploymentPosition) <= HingeConstants.kHingeDeadband) {
+        //             hinge.set(0);
+        //         }
+        //         break;
+        // }
+    }
+
+    private void UsePID(double target)
+    {
+        if (Math.abs(target - hingeEncoder.getPosition().getValueAsDouble()) <= 0.01)
+        {
+            hinge.set(0.0);
+        }
+        else
+        {
+            hinge.set(-(pid.calculate(hingeEncoder.getPosition().getValueAsDouble(), target)) / 2.0);
+        }
+    }
+
+    public Command initDefaultCommand() {
+        return Commands.runOnce(() -> defaultCommand(), this);
+    }
 
 }

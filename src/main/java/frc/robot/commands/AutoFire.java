@@ -162,32 +162,32 @@ public class AutoFire extends Command
         // inverted velocity
         // Get optimal shot
         double[] optimal = lookup.FindOptimalVals(targetDistance, -0, -0, shooterRPM, hoodAngle, goodDist);
-        // double optimalTurretAngle = Utils.wrapAngle(rotation.getDegrees() - targetDirectionDeg + optimal[1]);
+        double optimalTurretAngle = Utils.wrapAngle(rotation.getDegrees() - targetDirectionDeg + optimal[1]);
         
         
         // get bot centric vel
-        double botVelX = speeds.vxMetersPerSecond * rotation.getCos() + speeds.vyMetersPerSecond * rotation.getSin();
-        double botVelY = -speeds.vxMetersPerSecond * rotation.getSin() + speeds.vyMetersPerSecond * rotation.getCos();
+        // double botVelX = speeds.vxMetersPerSecond * rotation.getCos() + speeds.vyMetersPerSecond * rotation.getSin();
+        // double botVelY = -speeds.vxMetersPerSecond * rotation.getSin() + speeds.vyMetersPerSecond * rotation.getCos();
         
-        // find virtual goal
-        double time = targetDistance / optimal[4];
-        // System.out.println(time);
-        double virtualXOffset = botVelX * time;
-        double virtualYOffset = botVelY * time;
+        // // find virtual goal
+        // double time = targetDistance / optimal[4];
+        // // System.out.println(time);
+        // double virtualXOffset = botVelX * time * 2;
+        // double virtualYOffset = botVelY * time * 3;
 
-        offsetX -= virtualXOffset;
-        offsetY -= virtualYOffset;
+        // offsetX -= virtualXOffset;
+        // offsetY -= virtualYOffset;
 
-        targetDirectionRad = Math.atan2(offsetY, offsetX);
-        targetDirectionDeg = targetDirectionRad * 180 / Math.PI;
-        targetDistance = Math.sqrt(offsetX * offsetX + offsetY * offsetY);
+        // targetDirectionRad = Math.atan2(offsetY, offsetX);
+        // targetDirectionDeg = targetDirectionRad * 180 / Math.PI;
+        // targetDistance = Math.sqrt(offsetX * offsetX + offsetY * offsetY);
 
-        double[] virtualOptimal = lookup.FindOptimalVals(targetDistance, 0, 0, shooterRPM, hoodAngle, goodDist);
-        double optimalTurretAngle = Utils.wrapAngle(rotation.getDegrees() - targetDirectionDeg);
+        // double[] virtualOptimal = lookup.FindOptimalVals(targetDistance, 0, 0, shooterRPM, hoodAngle, goodDist);
+        // double optimalTurretAngle = Utils.wrapAngle(rotation.getDegrees() - targetDirectionDeg);
         
         // double stillOffset = Constants.ShooterConstants.rpmOffset * Math.pow(targetDistance, Constants.ShooterConstants.distancePower);
-        double optimalShooterRPM = virtualOptimal[2];
-        double optimalHoodAngle = virtualOptimal[3];
+        double optimalShooterRPM = optimal[2];
+        double optimalHoodAngle = optimal[3];
 
         optimalTurretAngle = Utils.clamp(optimalTurretAngle, Constants.TurretConstants.kMinimumAngle, Constants.TurretConstants.kMaximumAngle);
 
@@ -256,7 +256,7 @@ public class AutoFire extends Command
             }
         }
 
-        if (readyToShoot) {
+        if (readyToShoot && Math.abs(optimalShooterRPM - shooterRPM) < 50.0) {
             indexer.setVel();
         } else {
             indexer.stop();

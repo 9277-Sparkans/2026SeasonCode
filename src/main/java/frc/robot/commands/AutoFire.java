@@ -57,6 +57,8 @@ public class AutoFire extends Command
     private boolean isDumping = false;
     private boolean isLeftDump = false;
 
+    private double goodDist = 0.0;
+
     private final StructPublisher<Pose3d> targetPosePublisher = NetworkTableInstance.getDefault()
             .getStructTopic("AutoFire/TargetPose", Pose3d.struct)
             .publish();
@@ -159,7 +161,7 @@ public class AutoFire extends Command
 
         // inverted velocity
         // Get optimal shot
-        double[] optimal = lookup.FindOptimalVals(targetDistance, -0, -0, shooterRPM, hoodAngle);
+        double[] optimal = lookup.FindOptimalVals(targetDistance, -0, -0, shooterRPM, hoodAngle, goodDist);
         // double optimalTurretAngle = Utils.wrapAngle(rotation.getDegrees() - targetDirectionDeg + optimal[1]);
         
         
@@ -180,7 +182,7 @@ public class AutoFire extends Command
         targetDirectionDeg = targetDirectionRad * 180 / Math.PI;
         targetDistance = Math.sqrt(offsetX * offsetX + offsetY * offsetY);
 
-        double[] virtualOptimal = lookup.FindOptimalVals(targetDistance, 0, 0, shooterRPM, hoodAngle);
+        double[] virtualOptimal = lookup.FindOptimalVals(targetDistance, 0, 0, shooterRPM, hoodAngle, goodDist);
         double optimalTurretAngle = Utils.wrapAngle(rotation.getDegrees() - targetDirectionDeg);
         
         // double stillOffset = Constants.ShooterConstants.rpmOffset * Math.pow(targetDistance, Constants.ShooterConstants.distancePower);
@@ -208,6 +210,7 @@ public class AutoFire extends Command
         SmartDashboard.putNumber("AutoFire/ActualShooterRPM", shooterRPM);
         SmartDashboard.putNumber("AutoFire/OptimalHoodAngle", optimalHoodAngle);
         SmartDashboard.putNumber("AutoFire/ActualHoodAngle", hoodAngle);
+        SmartDashboard.putNumber("AutoFire/GoodDist", goodDist);
 
         // Calculate physics-based velocity and spin using shooter.py polynomial fit
         // initialVelocity = a * (rpm^2) + b * rpm + c

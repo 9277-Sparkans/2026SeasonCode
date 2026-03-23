@@ -3,6 +3,8 @@ package frc.robot;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.ArrayList;
+
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.generated.TunerConstants;
 
 public class Utils {
@@ -103,10 +105,16 @@ public class Utils {
             }
         }
 
-        public double[] FindOptimalVals(double distance, double velocityX, double velocityY, double shooterRPM, double hoodAngle) { // Finds the optimal shot for minimum hood movement and RPM change
+        public double[] FindOptimalVals(double distance, double velocityX, double velocityY, double shooterRPM, double hoodAngle, double goodDist) { // Finds the optimal shot for minimum hood movement and RPM change
+            
+            if (Math.abs(goodDist - distance) >= Constants.ShooterConstants.hysteresisDeadband)
+            {
+                goodDist = distance;
+            }
+            
             // Get range
-            int startI = GetClosestDist(distance - Constants.ShooterConstants.autoshootDistanceRange);
-            int endI = GetClosestDist(distance + Constants.ShooterConstants.autoshootDistanceRange);
+            int startI = GetClosestDist(goodDist - Constants.ShooterConstants.autoshootDistanceRange);
+            int endI = GetClosestDist(goodDist + Constants.ShooterConstants.autoshootDistanceRange);
 
             // Helper values
             double botSpeedRange = 2.0 * TunerConstants.kSpeedAt12Volts.magnitude();

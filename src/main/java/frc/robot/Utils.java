@@ -129,6 +129,7 @@ public class Utils {
                 double normalizedRowShooterRPM = (row[2] - Constants.ShooterConstants.kMinRPM) / shooterRPMRange;
                 double normalizedRowAngle = (row[3] - Constants.HoodConstants.kMinimumAngle) / hoodAngleRange;
 
+                
                 double weight = Constants.ShooterConstants.botVelocityWeight * (normalizedRowBotXVelocity - normalizedCurrentXVelocity)  * (normalizedRowBotXVelocity - normalizedCurrentXVelocity)
                               + Constants.ShooterConstants.botVelocityWeight * (normalizedRowBotYVelocity - normalizedCurrentYVelocity) * (normalizedRowBotYVelocity - normalizedCurrentYVelocity)
                               + Constants.ShooterConstants.shooterRPMWeight * (normalizedRowShooterRPM - normalizedCurrentShooterRPM) * (normalizedRowShooterRPM - normalizedCurrentShooterRPM)

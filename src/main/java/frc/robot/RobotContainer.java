@@ -44,7 +44,6 @@ import frc.robot.subsystems.Turret;
 import frc.robot.util.AllianceShifts;
 import frc.robot.util.FuelSim;
 import frc.robot.subsystems.Shooter;
-import frc.robot.subsystems.SillyHinge;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Indexer;
@@ -424,14 +423,14 @@ public class RobotContainer {
                 //autofire
                 // translateStick.button(OIConstants.kSticks_trigger).whileTrue(autoFireCommand);
 
-                translateStick.button(OIConstants.kSticks_trigger).onTrue(indexer.indexerSpin());
-                translateStick.button(OIConstants.kSticks_trigger).onFalse(indexer.indexerStop());
-
-                // translateStick.button(OIConstants.kSticks_trigger).whileTrue(Commands.either(
-                //     autoFireCommand,
-                //         Commands.runOnce(() -> indexer.setVel()),
-                //         () -> !lockmode));
+                // translateStick.button(OIConstants.kSticks_trigger).onTrue(indexer.indexerSpin());
                 // translateStick.button(OIConstants.kSticks_trigger).onFalse(indexer.indexerStop());
+
+                translateStick.button(OIConstants.kSticks_trigger).whileTrue(Commands.either(
+                    autoFireCommand,
+                        Commands.runOnce(() -> indexer.setVel()),
+                        () -> !lockmode));
+                translateStick.button(OIConstants.kSticks_trigger).onFalse(indexer.indexerStop());
 
                 //kicker
                 translateStick.button(OIConstants.kSticks_centerHandle).whileTrue(Commands.runOnce(() -> transfer.activateTransfer()));

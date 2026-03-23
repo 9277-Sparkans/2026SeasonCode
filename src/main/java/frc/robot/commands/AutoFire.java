@@ -154,12 +154,12 @@ public class AutoFire extends Command
         }
 
         // Shooting while moving is intentionally disabled (transformedVelocity is always 0)
-        double transformedVelocityX = 0;
-        double transformedVelocityY = 0;
+        // double transformedVelocityX = speeds.vxMetersPerSecond * Math.cos(targetDirectionRad) + speeds.vyMetersPerSecond * Math.sin(targetDirectionRad);
+        // double transformedVelocityY = -speeds.vxMetersPerSecond * Math.sin(targetDirectionRad) + speeds.vyMetersPerSecond * Math.cos(targetDirectionRad);
 
         // inverted velocity
         // Get optimal shot
-        double[] optimal = lookup.FindOptimalVals(targetDistance, -transformedVelocityX, -transformedVelocityY, shooterRPM, hoodAngle);
+        double[] optimal = lookup.FindOptimalVals(targetDistance, -0, -0, shooterRPM, hoodAngle);
         // double optimalTurretAngle = Utils.wrapAngle(rotation.getDegrees() - targetDirectionDeg + optimal[1]);
         
         
@@ -196,7 +196,7 @@ public class AutoFire extends Command
         
         turret.target = optimalTurretAngle;
         shooter.targetVel = optimalShooterRPM;
-        hood.targetHoodAngle = (10 - optimalHoodAngle);
+        hood.targetHoodAngle = optimalHoodAngle;
 
         double optimalError = optimal[0];
 

@@ -44,6 +44,7 @@ import frc.robot.subsystems.Turret;
 import frc.robot.util.AllianceShifts;
 import frc.robot.util.FuelSim;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.SillyHinge;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Indexer;
@@ -128,6 +129,7 @@ public class RobotContainer {
         public final Transfer transfer = new Transfer();
         public final Indexer indexer = new Indexer();
         public final Hinge hinge = new Hinge();
+        // public final SillyHinge sillyHinge = new SillyHinge();
         public final AutoFire autoFireCommand;
         // public final LockMode lockModeCommand = new LockMode(turret, shooter, hood);
 
@@ -180,7 +182,8 @@ public class RobotContainer {
 
                 turret.setDefaultCommand(turret.initDefaultCommand(turret));
                 hood.setDefaultCommand(hood.initDefaultCommand());
-                hinge.setDefaultCommand(hinge.initDefaultCommand(hinge));
+                hinge.setDefaultCommand(hinge.initDefaultCommand());
+                // sillyHinge.setDefaultCommand(sillyHinge.initDefaultCommand());
 
                 // auto chooser
                 autoChooser.setDefaultOption("No auto", Commands.none());
@@ -488,6 +491,12 @@ public class RobotContainer {
 
                 operator(OIConstants.kKeyboard_climbDown)
                                 .onTrue(climb.climbDown());
+                                
+                // operator(OIConstants.kKeyboard_intakeDeploy)
+                //                 .onTrue(Commands.runOnce(() -> sillyHinge.moveHoodToAngle(0)));
+
+                // operator(OIConstants.kKeyboard_intakeRetract)
+                //                 .onTrue(Commands.runOnce(() -> sillyHinge.moveHoodToAngle(50)));
 
                 operator(OIConstants.kKeyboard_intakeDeploy)
                                 .onTrue(hinge.hingeDown())

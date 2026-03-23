@@ -25,8 +25,8 @@ import java.util.function.Supplier;
 public class FuelSim {
     protected static final double PERIOD = 0.02; // sec
     protected static final Translation3d GRAVITY = new Translation3d(0, 0, -9.81); // m/s^2
-    // Room temperature dry air density: https://en.wikipedia.org/wiki/Density_of_air#Dry_air
-    protected static final double AIR_DENSITY = 1.2041; // kg/m^3
+    // Room temperature dry air density from shooter.py
+    protected static final double AIR_DENSITY = 1.14; // kg/m^3
     protected static final double FIELD_COR = Math.sqrt(22 / 51.5); // coefficient of restitution with the field
     protected static final double FUEL_COR = 0.5; // coefficient of restitution with another fuel
     protected static final double NET_COR = 0.2; // coefficient of restitution with the net
@@ -42,9 +42,10 @@ public class FuelSim {
     protected static final double FRICTION = 0.1; // proportion of horizontal vel to lose per sec while on ground
     protected static final double FUEL_MASS = 0.448 * 0.45392; // kgs
     protected static final double FUEL_CROSS_AREA = Math.PI * FUEL_RADIUS * FUEL_RADIUS;
-    // Drag coefficient of smooth sphere: https://en.wikipedia.org/wiki/Drag_coefficient#/media/File:14ilf1l.svg
-    protected static final double DRAG_COF = 0.47; // dimensionless
+    // Drag coefficient of smooth sphere from shooter.py
+    protected static final double DRAG_COF = 0.5; // dimensionless
     protected static final double DRAG_FORCE_FACTOR = 0.5 * AIR_DENSITY * DRAG_COF * FUEL_CROSS_AREA;
+    protected static final double MAGNUS_K = 0.3; // S -> Cl ratio from shooter.py
 
     protected static final Translation3d[] FIELD_XZ_LINE_STARTS = {
         new Translation3d(0, 0, 0),
@@ -94,14 +95,20 @@ public class FuelSim {
     protected static class Fuel {
         protected Translation3d pos;
         protected Translation3d vel;
+        protected double spin; // rotations per second
 
-        protected Fuel(Translation3d pos, Translation3d vel) {
+        protected Fuel(Translation3d pos, Translation3d vel, double spin) {
             this.pos = pos;
             this.vel = vel;
+            this.spin = spin;
+        }
+
+        protected Fuel(Translation3d pos, Translation3d vel) {
+            this(pos, vel, 0.0);
         }
 
         protected Fuel(Translation3d pos) {
-            this(pos, new Translation3d());
+            this(pos, new Translation3d(), 0.0);
         }
 
         protected void update(boolean simulateAirResistance, int subticks) {
@@ -109,15 +116,25 @@ public class FuelSim {
             if (pos.getZ() > FUEL_RADIUS) {
                 Translation3d Fg = GRAVITY.times(FUEL_MASS);
                 Translation3d Fd = new Translation3d();
+                Translation3d Fm = new Translation3d();
 
-                if (simulateAirResistance) {
-                    double speed = vel.getNorm();
-                    if (speed > 1e-6) {
+                double speed = vel.getNorm();
+                if (speed > 1e-6) {
+                    if (simulateAirResistance) {
                         Fd = vel.times(-DRAG_FORCE_FACTOR * speed);
                     }
+                    
+                    // Magnus effect (lift) from shooter.py
+                    // S = spin * R / speed
+                    // Cl = k * S
+                    // Force Magnus = 0.5 * p * Cl * A * speed * [vz, 0, -vx]
+                    double s_param = (spin * FUEL_RADIUS) / speed;
+                    double c_l = MAGNUS_K * s_param;
+                    double m_factor = 0.5 * AIR_DENSITY * c_l * FUEL_CROSS_AREA * speed;
+                    Fm = new Translation3d(vel.getZ() * m_factor, 0.0, -vel.getX() * m_factor);
                 }
 
-                Translation3d accel = Fg.plus(Fd).div(FUEL_MASS);
+                Translation3d accel = Fg.plus(Fd).plus(Fm).div(FUEL_MASS);
                 vel = vel.plus(accel.times(PERIOD / subticks));
             }
             if (Math.abs(vel.getZ()) < 0.05 && pos.getZ() <= FUEL_RADIUS + 0.03) {
@@ -517,8 +534,12 @@ public class FuelSim {
      * @param pos Position to spawn at
      * @param vel Initial velocity vector
      */
+    public void spawnFuel(Translation3d pos, Translation3d vel, double spin) {
+        fuels.add(new Fuel(pos, vel, spin));
+    }
+
     public void spawnFuel(Translation3d pos, Translation3d vel) {
-        fuels.add(new Fuel(pos, vel));
+        spawnFuel(pos, vel, 0.0);
     }
 
     /**
@@ -526,10 +547,11 @@ public class FuelSim {
      * @param launchVelocity Initial launch velocity
      * @param hoodAngle Hood angle where 0 is launching horizontally and 90 degrees is launching straight up
      * @param turretYaw <i>Robot-relative</i> turret yaw
+     * @param spin Initial back-spin (rotations per second)
      * @param robotToTurret The 3D transformation from the robot's center to the turret's launch point.
      * @throws IllegalStateException if robot is not registered
      */
-    public void launchFuel(LinearVelocity launchVelocity, Angle hoodAngle, Angle turretYaw, Transform3d robotToTurret) {
+    public void launchFuel(LinearVelocity launchVelocity, Angle hoodAngle, Angle turretYaw, double spin, Transform3d robotToTurret) {
         if (robotPoseSupplier == null || robotFieldSpeedsSupplier == null) {
             throw new IllegalStateException("Robot must be registered before launching fuel.");
         }
@@ -549,7 +571,11 @@ public class FuelSim {
         xVel += fieldSpeeds.vxMetersPerSecond;
         yVel += fieldSpeeds.vyMetersPerSecond;
 
-        spawnFuel(launchPose.getTranslation(), new Translation3d(xVel, yVel, verticalVel));
+        spawnFuel(launchPose.getTranslation(), new Translation3d(xVel, yVel, verticalVel), spin);
+    }
+    
+    public void launchFuel(LinearVelocity launchVelocity, Angle hoodAngle, Angle turretYaw, Transform3d robotToTurret) {
+        launchFuel(launchVelocity, hoodAngle, turretYaw, 0.0, robotToTurret);
     }
 
     protected void handleRobotCollision(Fuel fuel, Pose2d robot, Translation2d robotVel) {

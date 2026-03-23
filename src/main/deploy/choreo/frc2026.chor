@@ -271,6 +271,20 @@
      "val":-1.5707963267948966
     }
    },
+   "s1neutralangleintakeend":{
+    "x":{
+     "exp":"s1neutralangleintakestart.x",
+     "val":7.481388092041016
+    },
+    "y":{
+     "exp":"4.826916027069098 m",
+     "val":4.826916027069098
+    },
+    "heading":{
+     "exp":"s1neutralangleintakestart.heading",
+     "val":1.929566666933208
+    }
+   },
    "s1neutralangleintakestart":{
     "x":{
      "exp":"7.481388092041016 m",

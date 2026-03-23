@@ -25,6 +25,7 @@ public class Led extends SubsystemBase {
   /** Creates a new Led. */
   /* color can be constructed from RGBW, a WPILib Color/Color8Bit, HSV, or hex */
   private static final RGBWColor kGreen = new RGBWColor(0, 217, 0, 0);
+		private static final RGBWColor kBlue = new RGBWColor(0, 0, 217, 0);
   private static final RGBWColor kWhite = new RGBWColor(Color.kWhite).scaleBrightness(0.5);
   private static final RGBWColor kViolet = RGBWColor.fromHSV(Degrees.of(270), 0.9, 0.8);
   private static final RGBWColor kRed = RGBWColor.fromHex("#D9000000").orElseThrow();
@@ -111,7 +112,7 @@ public void periodic() {
 		case ColorFlow:
 			m_candle.setControl(
 							new ColorFlowAnimation(kSlot0StartIdx, kSlot0EndIdx).withSlot(0)
-											.withColor(kViolet)
+											.withColor(kBlue)
 			);
 			break;
 		case Rainbow:

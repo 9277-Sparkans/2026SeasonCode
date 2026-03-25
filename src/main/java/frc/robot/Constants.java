@@ -139,13 +139,13 @@ public class Constants {
 
         public static double turret_kV = 0.095;
         public static double turret_kA = 0.0;
-        public static double turret_kS = 0.6; // 0.6
+        public static double turret_kS = 1.0; // 0.6
         public static double turret_kP = 13.5;
         public static double turret_kI = 0.07;
         public static double turret_kD = 0.25;
 
-        public static double kMaximumAngle = 167.0;
-        public static double kMinimumAngle = -167.0;
+        public static double kMaximumAngle = 90.0;
+        public static double kMinimumAngle = -90.0;
         
         public static double kGearRatio = 105.0 / 18.0;
 
@@ -173,8 +173,8 @@ public class Constants {
 
         public static final double kRpmIncrement = 50.0;
 
-        public static final int kMinRPM = 0;
-        public static final int kMaxRPM = 6000;
+        public static final int kMinRPM = 4000; // 0
+        public static final int kMaxRPM = 5000; // 6000
 
         public static double kMinOperationalRPM = 3000;
 
@@ -202,7 +202,7 @@ public class Constants {
         
         // Weights of each value when calculating an optimal shot, higher value means higher priority to minimize
         public static final double botVelocityWeight = 0.0;
-        public static final double shooterRPMWeight = 0.2;
+        public static final double shooterRPMWeight = 0.1;
         public static final double hoodAngleWeight = 1.0;
     }
 
@@ -225,8 +225,8 @@ public class Constants {
 
         public static final double kHoodSpeed = 0.1;
 
-        public static final double kMinimumAngle = 0;
-        public static final double kMaximumAngle = 12;
+        public static final double kMinimumAngle = 3; // 0
+        public static final double kMaximumAngle = 10; // 12
 
         public static final double kMinimumEncoderPos = -0.44849609375;
         public static final double kMaximumEncoderPos = 0;
@@ -262,6 +262,7 @@ public class Constants {
         public static final double intakeMaxAcceleration = 100;
         public static final double intakeMaxVelocity = 500; // rps
         public static final double intakeSpeed = 45.0; //rps max 66.6 rps 400.0 
+        public static final double intakeAgitate = 20.0;
     }
 
     public static class HingeConstants {
@@ -404,27 +405,27 @@ public class Constants {
     public static final class LockModeConstants
     {
         //LEFT
-        public static final int kRPMLeft = 4650; // 4450
-        public static final double kHoodLeft = 5.0;
-        public static final double kTurretLeft = 44.0;
+        public static final int kRPMLeft = 4900; // 4450
+        public static final double kHoodLeft = 4.0;
+        public static final double kTurretLeft = 45.0;
 
         //CENTER
-        public static final int kRPMCenter = 4350; // 4050
-        public static final double kHoodCenter = 7.0;
+        public static final int kRPMCenter = 4600; // 4450
+        public static final double kHoodCenter = 5.5; //7
         public static final double kTurretCenter = 10.0;
 
         //RIGHT
-        public static final int kRPMRight = 4600;
-        public static final double kHoodRight = 5.0;
-        public static final double kTurretRight = -44.0;
+        public static final int kRPMRight = 4900;
+        public static final double kHoodRight = 4.0;
+        public static final double kTurretRight = -45.0;
 
         //TRENCH LEFT
-        public static final int kRPMTrenchLeft = 4350;
+        public static final int kRPMTrenchLeft = 4650;
         public static final double kHoodTrenchLeft = 6.0;
         public static final double kTurretTrenchLeft = 62.0;
 
         //TRENCH RIGHT
-        public static final int kRPMTrenchRight = 4350;
+        public static final int kRPMTrenchRight = 4650;
         public static final double kHoodTrenchRight = 6.0;
         public static final double kTurretTrenchRight = -62.0;
 

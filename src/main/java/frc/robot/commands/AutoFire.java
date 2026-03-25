@@ -162,7 +162,7 @@ public class AutoFire extends Command
         // inverted velocity
         // Get optimal shot
         double[] optimal = lookup.FindOptimalVals(targetDistance, -0, -0, shooterRPM, hoodAngle, goodDist);
-        double optimalTurretAngle = Utils.wrapAngle(rotation.getDegrees() - targetDirectionDeg + optimal[1]);
+        double optimalTurretAngle = Utils.wrapAngle(rotation.getDegrees() - targetDirectionDeg);
         
         
         // get bot centric vel
@@ -256,9 +256,8 @@ public class AutoFire extends Command
             }
         }
 
-        if (Math.abs(optimalShooterRPM - shooterRPM) < 30.0 
-        && Math.abs(hoodAngle - optimalHoodAngle) < 0.1
-        && Math.abs(turretAngle - optimalTurretAngle) < 1.0) {
+        if (Math.abs(optimalShooterRPM - shooterRPM) < 100.0 
+        && Math.abs(turretAngle - optimalTurretAngle) < 3.0) {
             indexer.setVel();
         } else {
             indexer.stop();

@@ -130,19 +130,28 @@ public class Utils {
             // Get least square distance between current RPM and Angle vs desired
             double minimumWeight = Double.POSITIVE_INFINITY;
             int minimumI = 0;
+
+            // double minAvg = Double.POSITIVE_INFINITY;
+
             for (int i = startI; i <= endI; i++) {
                 double[] row = vals.get(i);
 
-                double normalizedRowBotXVelocity = row[0] / botSpeedRange;
-                double normalizedRowBotYVelocity = row[1] / botSpeedRange;
+                // double normalizedRowBotXVelocity = row[0] / botSpeedRange;
+                // double normalizedRowBotYVelocity = row[1] / botSpeedRange;
                 double normalizedRowShooterRPM = (row[2] - Constants.ShooterConstants.kMinRPM) / shooterRPMRange;
                 double normalizedRowAngle = (row[3] - Constants.HoodConstants.kMinimumAngle) / hoodAngleRange;
-
                 
-                double weight = Constants.ShooterConstants.botVelocityWeight * (normalizedRowBotXVelocity - normalizedCurrentXVelocity)  * (normalizedRowBotXVelocity - normalizedCurrentXVelocity)
-                              + Constants.ShooterConstants.botVelocityWeight * (normalizedRowBotYVelocity - normalizedCurrentYVelocity) * (normalizedRowBotYVelocity - normalizedCurrentYVelocity)
-                              + Constants.ShooterConstants.shooterRPMWeight * (normalizedRowShooterRPM - normalizedCurrentShooterRPM) * (normalizedRowShooterRPM - normalizedCurrentShooterRPM)
+                // double average = (normalizedRowShooterRPM + normalizedRowAngle) / 2.0;
+
+                // if (average < minAvg)
+                // {
+                //     average = minAvg;
+                //     minimumI = i;
+                // } 
+
+                double weight = Constants.ShooterConstants.shooterRPMWeight * (normalizedRowShooterRPM - normalizedCurrentShooterRPM)* (normalizedRowShooterRPM - normalizedCurrentShooterRPM)
                               + Constants.ShooterConstants.hoodAngleWeight * (normalizedRowAngle - normalizedCurrentHoodAngle) * (normalizedRowAngle - normalizedCurrentHoodAngle);
+                
                 if (weight < minimumWeight) {
                     minimumWeight = weight;
                     minimumI = i;

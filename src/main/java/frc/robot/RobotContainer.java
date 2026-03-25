@@ -454,8 +454,8 @@ public class RobotContainer {
                 operator(OIConstants.kKeyboard_duck)
                         .onTrue(Commands.runOnce(() -> movingConstantSpeed = true))
                         .onFalse(Commands.runOnce(() -> movingConstantSpeed = false));
-                operator(OIConstants.kKeyboard_modeToggle)
-                                .onTrue(Commands.runOnce(() -> manualControl = !manualControl));
+                // operator(OIConstants.kKeyboard_modeToggle)
+                //                 .onTrue(Commands.runOnce(() -> manualControl = !manualControl));
 
                 operator(OIConstants.kKeyboard_trackToggle)
                                 .onTrue(Commands.runOnce(() -> lockmode = !lockmode));
@@ -500,6 +500,14 @@ public class RobotContainer {
                 operator(OIConstants.kKeyboard_intakeRetract)
                                 .onTrue(hinge.hingeUp())
                                 .onFalse(hinge.hingeStopCommand());
+
+                operator(OIConstants.kKeyboard_modeToggle)
+                                .onTrue(hinge.hingeAgitate())
+                                .onFalse(hinge.hingeStopCommand());
+
+                operator(OIConstants.kKeyboard_modeToggle)
+                                .whileTrue(intake.agitateCommand())
+                                .onFalse(intake.stopRollerCommand());
         }
 
         public JoystickButton operator(int keyCode) {

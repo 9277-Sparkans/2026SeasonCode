@@ -139,13 +139,13 @@ public class Constants {
 
         public static double turret_kV = 0.095;
         public static double turret_kA = 0.0;
-        public static double turret_kS = 0.6; // 0.6
+        public static double turret_kS = 1.0; // 0.6
         public static double turret_kP = 13.5;
         public static double turret_kI = 0.07;
         public static double turret_kD = 0.25;
 
-        public static double kMaximumAngle = 167.0;
-        public static double kMinimumAngle = -167.0;
+        public static double kMaximumAngle = 90.0;
+        public static double kMinimumAngle = -90.0;
         
         public static double kGearRatio = 105.0 / 18.0;
 
@@ -202,7 +202,7 @@ public class Constants {
         
         // Weights of each value when calculating an optimal shot, higher value means higher priority to minimize
         public static final double botVelocityWeight = 0.0;
-        public static final double shooterRPMWeight = 0.2;
+        public static final double shooterRPMWeight = 1.0;
         public static final double hoodAngleWeight = 1.0;
     }
 

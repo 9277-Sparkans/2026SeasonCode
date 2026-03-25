@@ -150,7 +150,7 @@ public class Constants {
         public static double kGearRatio = 105.0 / 18.0;
 
         public static final edu.wpi.first.math.geometry.Transform3d ROBOT_TO_TURRET_TRANSFORM = new edu.wpi.first.math.geometry.Transform3d(
-                new edu.wpi.first.math.geometry.Translation3d(0.0, 0.0, 0.4572), // 18 inches
+                new edu.wpi.first.math.geometry.Translation3d(0.12543, 0.0, 0.2897), // 18 inches
                 new edu.wpi.first.math.geometry.Rotation3d());
     }
 
@@ -287,7 +287,7 @@ public class Constants {
         public static final double hingeMaxDeg = 50.0; //-100.0;
 
         public static final double kHingeDeploymentPosition = 0.0;
-        public static final double kHingeAgitatePosition = 0.1;
+        public static final double kHingeAgitatePosition = 0.18;
         public static final double kHingeRetractedPosition = 0.33;
         // public static final double kHingeDeadband = 0.025;
     }

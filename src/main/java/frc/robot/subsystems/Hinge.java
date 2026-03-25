@@ -157,6 +157,12 @@ public class Hinge extends SubsystemBase {
         });
     }
 
+    public Command hingeAgitate() {
+        return Commands.runOnce(() -> {
+            states(HingeState.AGITATE);
+        });
+    }
+
     public Command hingeStopCommand() {
         return Commands.runOnce(() -> {
             hinge.set(0.0);

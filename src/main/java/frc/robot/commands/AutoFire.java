@@ -158,7 +158,7 @@ public class AutoFire extends Command
         // Shooting while moving is intentionally disabled (transformedVelocity is always 0)
         // double transformedVelocityX = speeds.vxMetersPerSecond * Math.cos(targetDirectionRad) + speeds.vyMetersPerSecond * Math.sin(targetDirectionRad);
         // double transformedVelocityY = -speeds.vxMetersPerSecond * Math.sin(targetDirectionRad) + speeds.vyMetersPerSecond * Math.cos(targetDirectionRad);
-
+ 
         // inverted velocity
         // Get optimal shot
         double[] optimal = lookup.FindOptimalVals(targetDistance, -0, -0, shooterRPM, hoodAngle, goodDist);
@@ -240,7 +240,7 @@ public class AutoFire extends Command
         
         publishTrajectory(targetTrajectoryPublisher, pose, speeds, targetLinearVelocity, targetSpinFactor, (10 - optimalHoodAngle), optimalTurretAngle);
 
-        boolean readyToShoot = optimalError < Constants.ShooterConstants.maxShotError;
+        // boolean readyToShoot = optimalError < Constants.ShooterConstants.maxShotError;
 
         if (RobotBase.isSimulation()) {
             if (fuelSim != null && launchCooldown.hasElapsed(LAUNCH_COOLDOWN_SEC)) {
@@ -256,7 +256,9 @@ public class AutoFire extends Command
             }
         }
 
-        if (readyToShoot && Math.abs(optimalShooterRPM - shooterRPM) < 50.0) {
+        if (Math.abs(optimalShooterRPM - shooterRPM) < 30.0 
+        && Math.abs(hoodAngle - optimalHoodAngle) < 0.1
+        && Math.abs(turretAngle - optimalTurretAngle) < 1.0) {
             indexer.setVel();
         } else {
             indexer.stop();

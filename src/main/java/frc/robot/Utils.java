@@ -107,14 +107,15 @@ public class Utils {
 
         public double[] FindOptimalVals(double distance, double velocityX, double velocityY, double shooterRPM, double hoodAngle, double goodDist) { // Finds the optimal shot for minimum hood movement and RPM change
             
-            if (Math.abs(goodDist - distance) >= Constants.ShooterConstants.hysteresisDeadband)
-            {
-                goodDist = distance;
-            }
+            // goodDist = distance;
+            // if (Math.abs(goodDist - distance) >= Constants.ShooterConstants.hysteresisDeadband)
+            // {
+            //     goodDist = distance;
+            // }
             
             // Get range
-            int startI = GetClosestDist(goodDist - Constants.ShooterConstants.autoshootDistanceRange);
-            int endI = GetClosestDist(goodDist + Constants.ShooterConstants.autoshootDistanceRange);
+            int startI = GetClosestDist(distance - Constants.ShooterConstants.autoshootDistanceRange);
+            int endI = GetClosestDist(distance + Constants.ShooterConstants.autoshootDistanceRange);
 
             // Helper values
             double botSpeedRange = 2.0 * TunerConstants.kSpeedAt12Volts.magnitude();

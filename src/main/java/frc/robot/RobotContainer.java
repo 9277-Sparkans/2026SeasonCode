@@ -21,6 +21,9 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -77,6 +80,7 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Hinge;
 import frc.robot.commands.AutoAlignCommand;
 import frc.robot.commands.LockMode;
+import frc.robot.commands.AutoFireInterpolated;
 
 public class RobotContainer {
         private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
@@ -132,6 +136,8 @@ public class RobotContainer {
         public final AutoFire autoFireCommand;
         // public final LockMode lockModeCommand = new LockMode(turret, shooter, hood);
 
+        public final AutoFireInterpolated autoFireInterpolated;
+
         public boolean manualControl = false;
         public boolean lockmode = false;
 
@@ -150,8 +156,12 @@ public class RobotContainer {
                         configureFuelSim();
                 }
                 autoFireCommand = new AutoFire(indexer, turret, shooter, hood,
-                                                () -> drivetrain.getStateCopy().Speeds,
-                                                () -> drivetrain.getStateCopy().Pose, lookup);
+                                () -> drivetrain.getStateCopy().Speeds,
+                                () -> drivetrain.getStateCopy().Pose, lookup);
+
+                autoFireInterpolated  = new AutoFireInterpolated(indexer, turret, shooter, hood,
+                        () -> drivetrain.getStateCopy().Speeds,
+                        () -> drivetrain.getStateCopy().Pose);
 
                 if (RobotBase.isSimulation()) {
                         autoFireCommand.setFuelSim(fuelSim);
@@ -168,7 +178,7 @@ public class RobotContainer {
                 NamedCommands.registerCommand("climbHang",
                                 Commands.runOnce(() -> climb.climbHang()));
                 NamedCommands.registerCommand("autofire",
-                                autoFireCommand);
+                                autoFireInterpolated);
                 NamedCommands.registerCommand("hingeDown",
                                 hinge.hingeDown());
                 NamedCommands.registerCommand("hingeUp",
@@ -239,20 +249,20 @@ public class RobotContainer {
                 drivetrain.setDefaultCommand(
                                 drivetrain.applyRequest(() -> {
                                         double x, y, rot;
-                                        if (movingConstantSpeed && QuickAccessConstants.controlType == ControlTypes.DRIVER_STICKS)
-                                        {
-                                                double maxVal = Math.max(Math.abs(-translateStick.getRawAxis(1)), Math.abs(-translateStick.getRawAxis(0)));
-                                                x = (-translateStick.getRawAxis(1) / maxVal) * ShooterConstants.autoFireDriveSpeed;
-                                                y = (-translateStick.getRawAxis(0) / maxVal) * ShooterConstants.autoFireDriveSpeed;
+                                        if (movingConstantSpeed
+                                                        && QuickAccessConstants.controlType == ControlTypes.DRIVER_STICKS) {
+                                                double maxVal = Math.max(Math.abs(-translateStick.getRawAxis(1)),
+                                                                Math.abs(-translateStick.getRawAxis(0)));
+                                                x = (-translateStick.getRawAxis(1) / maxVal)
+                                                                * ShooterConstants.autoFireDriveSpeed;
+                                                y = (-translateStick.getRawAxis(0) / maxVal)
+                                                                * ShooterConstants.autoFireDriveSpeed;
                                                 rot = -rotateStick.getRawAxis(0);
-                                        } 
-                                        else if (QuickAccessConstants.controlType == ControlTypes.DRIVER_STICKS) {
+                                        } else if (QuickAccessConstants.controlType == ControlTypes.DRIVER_STICKS) {
                                                 x = -translateStick.getRawAxis(1);
                                                 y = -translateStick.getRawAxis(0);
                                                 rot = -rotateStick.getRawAxis(0);
-                                        }
-                                        else 
-                                        {
+                                        } else {
                                                 x = -joystick.getLeftY();
                                                 y = -joystick.getLeftX();
                                                 rot = -joystick.getRightX();
@@ -280,10 +290,14 @@ public class RobotContainer {
                 joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
                 // joystick.().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-                joystick.start().and(joystick.povUp()).whileTrue(shooter.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-                joystick.start().and(joystick.povDown()).whileTrue(shooter.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-                joystick.start().and(joystick.povRight()).whileTrue(shooter.sysIdDynamic(SysIdRoutine.Direction.kForward));
-                joystick.start().and(joystick.povLeft()).whileTrue(shooter.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+                joystick.start().and(joystick.povUp())
+                                .whileTrue(shooter.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+                joystick.start().and(joystick.povDown())
+                                .whileTrue(shooter.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+                joystick.start().and(joystick.povRight())
+                                .whileTrue(shooter.sysIdDynamic(SysIdRoutine.Direction.kForward));
+                joystick.start().and(joystick.povLeft())
+                                .whileTrue(shooter.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
                 // CLIMB button controls
                 // joystick.y().onTrue(climb.climbUp());
@@ -380,15 +394,19 @@ public class RobotContainer {
                 rotateStick.button(OIConstants.kSticks_centerHandle).onTrue(intake.outtakeCommand());
                 rotateStick.button(OIConstants.kSticks_centerHandle).onFalse(intake.stopRollerCommand());
 
-                rotateStick.button(OIConstants.kSticks_leftHandle).onTrue(Commands.runOnce(() -> shooter.increaseSpeed()));
-                rotateStick.button(OIConstants.kSticks_rightHandle).onTrue(Commands.runOnce(() -> shooter.decreaseSpeed()));
+                rotateStick.button(OIConstants.kSticks_leftHandle)
+                                .onTrue(Commands.runOnce(() -> shooter.increaseSpeed()));
+                rotateStick.button(OIConstants.kSticks_rightHandle)
+                                .onTrue(Commands.runOnce(() -> shooter.decreaseSpeed()));
 
-                //climb autoalign
+                // climb autoalign
                 // rotateStick.button(OIConstants.kSticks_leftHandle).whileTrue(AutoAlignCommand.getAutoClimbCommand(drivetrain));
 
-                //boost
-                // rotateStick.button(OIConstants.kSticks_rightHandle).whileTrue(Commands.runOnce(() -> driveTrainVelocityPercent = 1.0));
-                // rotateStick.button(OIConstants.kSticks_rightHandle).onFalse(Commands.runOnce(() -> driveTrainVelocityPercent = 0.55));
+                // boost
+                // rotateStick.button(OIConstants.kSticks_rightHandle).whileTrue(Commands.runOnce(()
+                // -> driveTrainVelocityPercent = 1.0));
+                // rotateStick.button(OIConstants.kSticks_rightHandle).onFalse(Commands.runOnce(()
+                // -> driveTrainVelocityPercent = 0.55));
 
                 // shooter up down
                 // rotateStick.button(OIConstants.povUp).onTrue(Commands.either(
@@ -423,18 +441,21 @@ public class RobotContainer {
                 // translateStick.button(OIConstants.kSticks_trigger).onFalse(indexer.indexerStop());
 
                 translateStick.button(OIConstants.kSticks_trigger).whileTrue(Commands.either(
-                                autoFireCommand,
+                                autoFireInterpolated,
                                 Commands.runOnce(() -> indexer.setVel()),
                                 () -> !lockmode));
                 translateStick.button(OIConstants.kSticks_trigger).onFalse(indexer.indexerStop());
 
-                //kicker
-                translateStick.button(OIConstants.kSticks_centerHandle).whileTrue(Commands.runOnce(() -> transfer.activateTransfer()));
-                translateStick.button(OIConstants.kSticks_centerHandle).onFalse(Commands.runOnce(() -> transfer.stop()));
-                
-                translateStick.button(OIConstants.kSticks_leftHandle).whileTrue(Commands.runOnce(() -> indexer.setVel())).onFalse(indexer.indexerStop());
+                // kicker
+                translateStick.button(OIConstants.kSticks_centerHandle)
+                                .whileTrue(Commands.runOnce(() -> transfer.activateTransfer()));
+                translateStick.button(OIConstants.kSticks_centerHandle)
+                                .onFalse(Commands.runOnce(() -> transfer.stop()));
 
-                //outpost autoalign
+                translateStick.button(OIConstants.kSticks_leftHandle)
+                                .whileTrue(Commands.runOnce(() -> indexer.setVel())).onFalse(indexer.indexerStop());
+
+                // outpost autoalign
                 // translateStick.button(OIConstants.kSticks_leftHandle).whileTrue(AutoAlignCommand.getOutpostCommand(drivetrain));
 
                 // trench autoalign
@@ -450,12 +471,12 @@ public class RobotContainer {
         private void configureOperatorConsole() {
                 // Operator
                 // operator(1)
-                //                 .onTrue(Commands.runOnce(() -> hood.moveHoodToAngle(hood.targetHoodAngle)));
+                // .onTrue(Commands.runOnce(() -> hood.moveHoodToAngle(hood.targetHoodAngle)));
                 operator(OIConstants.kKeyboard_duck)
-                        .onTrue(Commands.runOnce(() -> movingConstantSpeed = true))
-                        .onFalse(Commands.runOnce(() -> movingConstantSpeed = false));
+                                .onTrue(Commands.runOnce(() -> movingConstantSpeed = true))
+                                .onFalse(Commands.runOnce(() -> movingConstantSpeed = false));
                 // operator(OIConstants.kKeyboard_modeToggle)
-                //                 .onTrue(Commands.runOnce(() -> manualControl = !manualControl));
+                // .onTrue(Commands.runOnce(() -> manualControl = !manualControl));
 
                 operator(OIConstants.kKeyboard_trackToggle)
                                 .onTrue(Commands.runOnce(() -> lockmode = !lockmode));
@@ -486,12 +507,12 @@ public class RobotContainer {
 
                 operator(OIConstants.kKeyboard_climbDown)
                                 .onTrue(climb.climbDown());
-                                
+
                 // operator(OIConstants.kKeyboard_intakeDeploy)
-                //                 .onTrue(Commands.runOnce(() -> sillyHinge.moveHoodToAngle(0)));
+                // .onTrue(Commands.runOnce(() -> sillyHinge.moveHoodToAngle(0)));
 
                 // operator(OIConstants.kKeyboard_intakeRetract)
-                //                 .onTrue(Commands.runOnce(() -> sillyHinge.moveHoodToAngle(50)));
+                // .onTrue(Commands.runOnce(() -> sillyHinge.moveHoodToAngle(50)));
 
                 operator(OIConstants.kKeyboard_intakeDeploy)
                                 .onTrue(hinge.hingeDown())

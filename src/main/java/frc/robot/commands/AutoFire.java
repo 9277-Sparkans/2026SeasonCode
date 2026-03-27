@@ -250,13 +250,14 @@ public class AutoFire extends Command {
             linearVelocity = 0;
 
         // Actual Trajectory
-        publishTrajectory(trajectoryPublisher, pose, speeds, linearVelocity, spinFactor, (10 - hoodAngle), turretAngle);
+        publishTrajectory(trajectoryPublisher, pose, speeds, linearVelocity, spinFactor, (hoodAngle), turretAngle);
 
         // Target Trajectory
         double targetLinearVelocity = v_a * (optimalShooterRPM * optimalShooterRPM) + v_b * optimalShooterRPM + v_c;
         double targetSpinFactor = s_a * (optimalShooterRPM * optimalShooterRPM) + s_b * optimalShooterRPM + s_c;
-        if (targetLinearVelocity < 0)
-            targetLinearVelocity = 0;
+        if (targetLinearVelocity < 0) targetLinearVelocity = 0;
+        
+        publishTrajectory(targetTrajectoryPublisher, pose, speeds, targetLinearVelocity, targetSpinFactor, (optimalHoodAngle), optimalTurretAngle);
 
         publishTrajectory(targetTrajectoryPublisher, pose, speeds, targetLinearVelocity, targetSpinFactor,
                 (10 - optimalHoodAngle), optimalTurretAngle);
@@ -277,8 +278,8 @@ public class AutoFire extends Command {
             }
         }
 
-        if (Math.abs(optimalShooterRPM - shooterRPM) < 100.0
-                && Math.abs(turretAngle - optimalTurretAngle) < 3.0) {
+        if (Math.abs(optimalShooterRPM - shooterRPM) < 100.0 
+        && Math.abs(turretAngle - optimalTurretAngle) < 4.0) {
             indexer.setVel();
         } else {
             indexer.stop();

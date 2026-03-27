@@ -114,7 +114,7 @@ public class Hinge extends SubsystemBase {
     
     @Override
     public void periodic() {
-        System.out.println(hingeEncoder.getAbsolutePosition().getValueAsDouble());
+        // System.out.println(hingeEncoder.getAbsolutePosition().getValueAsDouble());
         // hinge.setPosition(hingeEncoder.getAbsolutePosition().getValueAsDouble());
         // System.out.println("hingePos is " + getPosition());
     }

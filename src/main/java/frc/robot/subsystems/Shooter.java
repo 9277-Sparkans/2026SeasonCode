@@ -112,6 +112,7 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     setVel();
+    System.out.println("shooter rpm is " + targetVel);
   }
 
   public Command shooterSpin() {

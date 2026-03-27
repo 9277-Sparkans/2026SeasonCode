@@ -391,14 +391,31 @@ public class RobotContainer {
                 // rotateStick.button(OIConstants.kSticks_rightHandle).onFalse(Commands.runOnce(() -> driveTrainVelocityPercent = 0.55));
 
                 // shooter up down
-                // rotateStick.button(OIConstants.povUp).onTrue(Commands.either(
+                // translateStick.button(OIConstants.kRightSticks_rightGrid_topLeft).onTrue(Commands.either(
                 // Commands.runOnce(() -> shooter.increaseSpeed()),
                 // Commands.runOnce(() -> {}),
                 // () -> manualControl));
-                // rotateStick.button(OIConstants.povDown).onTrue(Commands.either(
+                // translateStick.button(OIConstants.kRightSticks_rightGrid_bottomLeft).onTrue(Commands.either(
                 // Commands.runOnce(() -> shooter.decreaseSpeed()),
                 // Commands.runOnce(() -> {}),
                 // () -> manualControl));
+
+                translateStick.button(OIConstants.kRightSticks_rightGrid_topLeft).onTrue(Commands.runOnce(() -> shooter.increaseSpeed()));
+                translateStick.button(OIConstants.kRightSticks_rightGrid_bottomLeft).onTrue(Commands.runOnce(() -> shooter.decreaseSpeed()));
+
+                // hood up down
+                // translateStick.button(OIConstants.kRightSticks_leftGrid_topRight).onTrue(Commands.either(
+                // Commands.runOnce(() -> hood.runHoodReverse()),
+                // Commands.runOnce(() -> {}),
+                // () -> manualControl));
+                // translateStick.button(OIConstants.kRightSticks_leftGrid_bottomRight).onTrue(Commands.either(
+                // Commands.runOnce(() -> hood.runHood()),
+                // Commands.runOnce(() -> {}),
+                // () -> manualControl));
+
+                
+                translateStick.button(OIConstants.kRightSticks_leftGrid_bottomRight).onTrue(Commands.runOnce(() -> hood.runHood()));
+                translateStick.button(OIConstants.kRightSticks_leftGrid_topRight).onTrue(Commands.runOnce(() -> hood.runHoodReverse()));
 
                 // turret left right
                 // rotateStick.button(OIConstants.povRight).onTrue(Commands.either(
@@ -454,8 +471,8 @@ public class RobotContainer {
                 operator(OIConstants.kKeyboard_duck)
                         .onTrue(Commands.runOnce(() -> movingConstantSpeed = true))
                         .onFalse(Commands.runOnce(() -> movingConstantSpeed = false));
-                // operator(OIConstants.kKeyboard_modeToggle)
-                //                 .onTrue(Commands.runOnce(() -> manualControl = !manualControl));
+                operator(OIConstants.kKeyboard_modeToggle)
+                                .onTrue(Commands.runOnce(() -> manualControl = !manualControl));
 
                 operator(OIConstants.kKeyboard_trackToggle)
                                 .onTrue(Commands.runOnce(() -> lockmode = !lockmode));
@@ -501,13 +518,13 @@ public class RobotContainer {
                                 .onTrue(hinge.hingeUp())
                                 .onFalse(hinge.hingeStopCommand());
 
-                operator(OIConstants.kKeyboard_modeToggle)
-                                .onTrue(hinge.hingeAgitate())
-                                .onFalse(hinge.hingeStopCommand());
+                // operator(OIConstants.kKeyboard_modeToggle)
+                //                 .onTrue(hinge.hingeAgitate())
+                //                 .onFalse(hinge.hingeStopCommand());
 
-                operator(OIConstants.kKeyboard_modeToggle)
-                                .whileTrue(intake.agitateCommand())
-                                .onFalse(intake.stopRollerCommand());
+                // operator(OIConstants.kKeyboard_modeToggle)
+                //                 .whileTrue(intake.agitateCommand())
+                //                 .onFalse(intake.stopRollerCommand());
         }
 
         public JoystickButton operator(int keyCode) {

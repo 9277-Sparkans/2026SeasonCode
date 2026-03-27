@@ -173,8 +173,8 @@ public class Constants {
 
         public static final double kRpmIncrement = 50.0;
 
-        public static final int kMinRPM = 4000; // 0
-        public static final int kMaxRPM = 5000; // 6000
+        public static final int kMinRPM = 3500; // 0
+        public static final int kMaxRPM = 6000; // 6000
 
         public static double kMinOperationalRPM = 3000;
 

@@ -1,0 +1,109 @@
+{
+  "name": "Atlas",
+  "isFTC": false,
+  "rotations": [
+    {
+      "axis": "x",
+      "degrees": 90
+    },
+    {
+      "axis": "z",
+      "degrees": -90
+    }
+  ],
+  "position": [
+    0,
+    0,
+    0.045
+  ],
+  "cameras": [
+    {
+      "name": "front_left",
+      "rotations": [
+        {
+          "axis": "z",
+          "degrees": -30
+        },
+        {
+          "axis": "y",
+          "degrees": -20
+        }
+      ],
+      "position": [
+        0.31754,
+        0.324226,
+        0.178
+      ],
+      "resolution": [
+        640,
+        480
+      ],
+      "fov": 70
+    },
+    {
+      "name": "front_right",
+      "rotations": [
+        {
+          "axis": "z",
+          "degrees": 30
+        },
+        {
+          "axis": "y",
+          "degrees": -20
+        }
+      ],
+      "position": [
+        0.31754,
+        -0.324226,
+        0.178
+      ],
+      "resolution": [
+        640,
+        480
+      ],
+      "fov": 70
+    },
+    {
+      "name": "back_left",
+      "rotations": [
+        {
+          "axis": "z",
+          "degrees": 150
+        },
+        {
+          "axis": "y",
+          "degrees": -20
+        }
+      ],
+      "position": [
+        -0.31754,
+        0.324226,
+        0.17
+      ],
+      "resolution": [
+        640,
+        480
+      ],
+      "fov": 70
+    }
+  ],
+  "components": [
+    {
+      "zeroedRotations": [
+        {
+          "axis": "x",
+          "degrees": 90
+        },
+        {
+          "axis": "z",
+          "degrees": -90
+        }
+      ],
+      "zeroedPosition": [
+        -0.21,
+        0,
+        -0.2
+      ]
+    }
+  ]
+}

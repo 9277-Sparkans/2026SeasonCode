@@ -167,7 +167,7 @@ public class RobotContainer {
                                 () -> drivetrain.getStateCopy().Pose, lookup);
 
                 // new autotrack subsystem does caculations every 20 ms
-                AutoTrack = new AutoTrack(turret, hood, shooter,
+                AutoTrack = new AutoTrack(turret, shooter,
                                 () -> drivetrain.getStateCopy().Pose,
                                 () -> drivetrain.getStateCopy().Speeds);
 

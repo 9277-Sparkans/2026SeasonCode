@@ -24,7 +24,7 @@ import frc.robot.util.ShotCalculator.CalculatedShot;
  */
 public class AutoTrack extends SubsystemBase {
     private final Turret turret;
-    private final Hood hood;
+    // private final Hood hood;
     private final Shooter shooter;
 
     private final Supplier<Pose2d> poseSupplier;
@@ -45,12 +45,12 @@ public class AutoTrack extends SubsystemBase {
 
     public AutoTrack(
             Turret turret,
-            Hood hood,
+            // Hood hood,
             Shooter shooter,
             Supplier<Pose2d> poseSupplier,
             Supplier<ChassisSpeeds> speedsSupplier) {
         this.turret = turret;
-        this.hood = hood;
+        // this.hood = hood;
         this.shooter = shooter;
         this.poseSupplier = poseSupplier;
         this.speedsSupplier = speedsSupplier;

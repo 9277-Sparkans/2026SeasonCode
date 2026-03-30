@@ -132,15 +132,15 @@ public class AutoFireInterpolated extends Command {
         // shooter rpm has to be within 150 of the optimal rpm, and if dumping, the turret must not be clamped for indexer to run.
         if (Math.abs(optimalShooterRPM - shooterRPM) < 150.0
                 && targetValid) {
-            indexer.setVel();
+            indexer.activate();
         } else {
-            indexer.stop();
+            indexer.deactivate();
         }
     }
 
     @Override
     public void end(boolean interrupted) {
-        indexer.stop();
+        indexer.deactivate();
         shooter.stop();
     }
 

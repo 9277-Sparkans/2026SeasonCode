@@ -345,7 +345,7 @@ public class Constants {
         public static final double hingeMaxDeg = 50.0; // -100.0;
 
         public static final double kHingeDeploymentPosition = 0.0;
-        public static final double kHingeAgitatePosition = 0.18;
+        public static final double kHingeAgitatePosition = 0.2;
         public static final double kHingeRetractedPosition = 0.33;
         // public static final double kHingeDeadband = 0.025;
     }
@@ -410,7 +410,9 @@ public class Constants {
         public static final double kIndexerMaxVoltage = 5;// kraken x44 max voltage
         public static final double kIndexerCurrentLimit = 100;
         public static final int kIndexerMotorId = 35; // 35
-        public static final double kIndexerSpeed = 30.0; // rps 60 before
+
+        public static final double kIndexerSpeed = 30.0; //rps 60 before
+        public static final double kIndexerAgitateSpeed = -10.0; //rps 60 before
         public static final double kIndexerGearRatio = 12.0 / 15.0;
         public static final double indexerSpeed = 30.0; // rps
 
@@ -424,6 +426,11 @@ public class Constants {
         public static final double kIndexer_kD = 0.0; // 0.05;
         public static final double kIndexerMaxAcceleration = 150;
         public static final double kIndexerMaxJerk = 500;
+
+        public static final double kIndexerStallCurrent = 0;
+        public static final double kIndexerStallVelocity = 0;
+
+
     }
 
     public static class RobotDimensions {

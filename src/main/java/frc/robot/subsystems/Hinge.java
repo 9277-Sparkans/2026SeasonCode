@@ -44,10 +44,11 @@ public class Hinge extends SubsystemBase {
     public enum HingeState {
         UP,
         DOWN,
-        AGITATE
+        AGITATE,
+        IDLE
     }
 
-    private HingeState hingeState;
+    private HingeState hingeState = HingeState.IDLE;
     PIDController pid;
 
     public Hinge() {
@@ -84,7 +85,7 @@ public class Hinge extends SubsystemBase {
 
         hingeEncoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1;
         hingeEncoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
-        hingeEncoderConfig.MagnetSensor.MagnetOffset = -0.70849609375;
+        hingeEncoderConfig.MagnetSensor.MagnetOffset = -0.690185546875;
         hingeEncoder.getConfigurator().apply(hingeEncoderConfig);
 
         pid = new PIDController(HingeConstants.hinge_kP, HingeConstants.hinge_kI, HingeConstants.hinge_kD);
@@ -99,6 +100,7 @@ public class Hinge extends SubsystemBase {
                 builder.addDoubleProperty("Absolute Encoder Position", () -> (hingeEncoder.getAbsolutePosition().getValueAsDouble()), (double val) -> hingeEncoder.setPosition(val));
                 builder.addDoubleProperty("Motor Encoder Position", () -> hinge.getPosition().getValueAsDouble(), (double val) -> hinge.setPosition(val));
                 builder.addDoubleProperty("Target Hinge Position", () -> target, (double val) -> target = val);
+                builder.addStringProperty("State", () -> hingeState.toString(), null);
             }
         });
     }
@@ -139,6 +141,8 @@ public class Hinge extends SubsystemBase {
                 break;
             case AGITATE:
                 target = HingeConstants.kHingeAgitatePosition;
+                break;
+            case IDLE:
                 break;
         }        
     }
@@ -198,7 +202,7 @@ public class Hinge extends SubsystemBase {
         }
         else
         {
-            hinge.set(-(pid.calculate(hingeEncoder.getPosition().getValueAsDouble(), target)) / 2.0);
+            hinge.set(-(pid.calculate(hingeEncoder.getPosition().getValueAsDouble(), target)) / 1.5);
         }
     }
 

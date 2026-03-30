@@ -114,8 +114,10 @@ public class Utils {
             // }
             
             // Get range
-            int startI = GetClosestDist(distance - Constants.ShooterConstants.autoshootDistanceRange);
-            int endI = GetClosestDist(distance + Constants.ShooterConstants.autoshootDistanceRange);
+            // int startI = GetClosestDist(distance - Constants.ShooterConstants.autoshootDistanceRange);
+            // int endI = GetClosestDist(distance + Constants.ShooterConstants.autoshootDistanceRange);
+
+            int optimalI = GetClosestDist(distance);
 
             // Helper values
             double botSpeedRange = 2.0 * TunerConstants.kSpeedAt12Volts.magnitude();
@@ -133,8 +135,10 @@ public class Utils {
 
             // double minAvg = Double.POSITIVE_INFINITY;
 
-            for (int i = startI; i <= endI; i++) {
+            for (int i = optimalI; i <= optimalI; i++) {
                 double[] row = vals.get(i);
+
+                row[3] = (10 - row[3]);
 
                 // double normalizedRowBotXVelocity = row[0] / botSpeedRange;
                 // double normalizedRowBotYVelocity = row[1] / botSpeedRange;

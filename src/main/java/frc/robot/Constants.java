@@ -14,6 +14,10 @@ import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.util.struct.Struct;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.math.interpolation.Interpolatable;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
+import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
+import edu.wpi.first.math.interpolation.InverseInterpolator;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 
@@ -81,7 +85,7 @@ public class Constants {
         public static final int kKeyboard_climbUp = 7;
         public static final int kKeyboard_climbDown = 10;
         public static final int kKeyboard_climbHang = 9;
-        
+
         public static final int kKeyboard_intakeDeploy = 16;
         public static final int kKeyboard_intakeRetract = 6;
 
@@ -146,26 +150,26 @@ public class Constants {
 
         public static double kMaximumAngle = 90.0;
         public static double kMinimumAngle = -90.0;
-        
+
         public static double kGearRatio = 105.0 / 18.0;
 
         public static final edu.wpi.first.math.geometry.Transform3d ROBOT_TO_TURRET_TRANSFORM = new edu.wpi.first.math.geometry.Transform3d(
-                new edu.wpi.first.math.geometry.Translation3d(0.0, 0.0, 0.4572), // 18 inches
+                new edu.wpi.first.math.geometry.Translation3d(0.12543, 0.0, 0.2897), //updated
                 new edu.wpi.first.math.geometry.Rotation3d());
     }
 
     public static class ShooterConstants {
-        public static final int kShooterMotorId = 33; //33
+        public static final int kShooterMotorId = 33; // 33
 
         public static final int kShooterCurrentLimit = 80;
-        public static final double kShooterGearRatio = 36.0 / 30.0; //36/ 30
+        public static final double kShooterGearRatio = 36.0 / 30.0; // 36/ 30
 
         public static final double kShooterMaxVoltage = 5;// kraken x44 max voltage
         public static final double kShooterMaxAcceleration = 100; // rotations per second^2
         public static final double kShooterMaxJerk = 1000; // rotations per second^3
 
         // subject to change if we end up automating these
-        public static double kShooterSpeed = 30.0; //rpm
+        public static double kShooterSpeed = 30.0; // rpm
 
         public static double kMaxVelocity = 100.0;
 
@@ -173,8 +177,8 @@ public class Constants {
 
         public static final double kRpmIncrement = 50.0;
 
-        public static final int kMinRPM = 4000; // 0
-        public static final int kMaxRPM = 5000; // 6000
+        public static final int kMinRPM = 3500; // 0
+        public static final int kMaxRPM = 6000; // 6000
 
         public static double kMinOperationalRPM = 3000;
 
@@ -189,8 +193,10 @@ public class Constants {
         public static final double shooter_kV = 0.11753;
         public static final double shooter_kA = 0.0038935;
 
-        public static final String lookupTablePath = Filesystem.getDeployDirectory().getPath() + "/ShooterLookupTable/shooter-lookup.csv"; // Generated with github.com/DanielR723/shooter
-        public static final double autoshootDistanceRange = 0.1; // Range of distances to check to choose the best shot (Least hood rotation and flywheel RPM change)
+        public static final String lookupTablePath = Filesystem.getDeployDirectory().getPath()
+                + "/ShooterLookupTable/shooter-lookup.csv"; // Generated with github.com/DanielR723/shooter
+        public static final double autoshootDistanceRange = 0.1; // Range of distances to check to choose the best shot
+                                                                 // (Least hood rotation and flywheel RPM change)
         public static final double maxShotError = 0.001; // The maximum allowed error for a shot to occur
 
         // Tuning constants for autofire
@@ -199,19 +205,56 @@ public class Constants {
         public static final double speedPower = 1.0;
         public static final double autoFireDriveSpeed = 0.25;
         public static final double hysteresisDeadband = 0.0;
-        
-        // Weights of each value when calculating an optimal shot, higher value means higher priority to minimize
+
+        // Weights of each value when calculating an optimal shot, higher value means
+        // higher priority to minimize
         public static final double botVelocityWeight = 0.0;
         public static final double shooterRPMWeight = 0.1;
         public static final double hoodAngleWeight = 1.0;
+
+        // autofire treemapping
+
+        public record ShotData(double rpm, double hoodAngle) implements Interpolatable<ShotData> {
+            @Override
+            public ShotData interpolate(ShotData endValue, double t) {
+                return new ShotData(
+                        edu.wpi.first.math.MathUtil.interpolate(this.rpm, endValue.rpm, t),
+                        edu.wpi.first.math.MathUtil.interpolate(this.hoodAngle, endValue.hoodAngle, t));
+            }
+        }
+
+        public static final InterpolatingTreeMap<Double, ShotData> SHOT_MAP = new InterpolatingTreeMap<Double, ShotData>(
+                InverseInterpolator.forDouble(), (start, end, t) -> start.interpolate(end, t));
+        public static final InterpolatingDoubleTreeMap TOF_MAP = new InterpolatingDoubleTreeMap();
+
+        static {
+
+            // data points (distance from turret, rpm, hood angle)
+            SHOT_MAP.put(2.265, new ShotData(4000.0, 10.0));
+            SHOT_MAP.put(2.765, new ShotData(4050.0, 10.0));
+            SHOT_MAP.put(3.265, new ShotData(4200.0, 9.0));
+            SHOT_MAP.put(3.765, new ShotData(4400.0, 8.0));
+            SHOT_MAP.put(4.265, new ShotData(4500.0, 6.0));
+            SHOT_MAP.put(4.765, new ShotData(4700.0, 5.0));
+            SHOT_MAP.put(5.265, new ShotData(5150.0, 5.0));
+
+            // distance, time of flight
+            TOF_MAP.put(2.265, 0.7940);
+            TOF_MAP.put(2.765, 0.8145);
+            TOF_MAP.put(3.265, 0.8444);
+            TOF_MAP.put(3.765, 0.8798);
+            TOF_MAP.put(4.265, 0.8543);
+            TOF_MAP.put(4.765, 0.8719);
+            TOF_MAP.put(5.265, 0.9375);
+        }
     }
 
-    public static class HoodConstants
-    {
-        public static final int kHoodMotorId = 34; //34
-        public static final int kHoodEncoderId = 41; //41
+    public static class HoodConstants {
+        public static final int kHoodMotorId = 34; // 34
+        public static final int kHoodEncoderId = 41; // 41
 
-        public static final double hood_maxVelocity = 20; // rotations per second; was 1.0, setting it to this to avoid grinding the gear again!
+        public static final double hood_maxVelocity = 20; // rotations per second; was 1.0, setting it to this to avoid
+                                                          // grinding the gear again!
         public static final double hood_maxAcceleration = 80; // rotations per second^2
         public static final double hood_maxVoltage = 15;// kraken x44 max voltage
 
@@ -221,7 +264,7 @@ public class Constants {
         public static final double hood_kA = 0.01;
         public static final double hood_kP = 13.5; // 7.23, 11
         public static final double hood_kI = 0.07; // 0.01
-        public static final double hood_kD = 0.25; //0.38
+        public static final double hood_kD = 0.25; // 0.38
 
         public static final double kHoodSpeed = 0.1;
 
@@ -233,25 +276,24 @@ public class Constants {
 
         public static final double maxEncoderValue = -1.258789; // test for this
 
-        public static final double kGearRatio = 18.f / 210.f; //210.0 / 15.0;
+        public static final double kGearRatio = 18.f / 210.f; // 210.0 / 15.0;
 
         public static final double kHoodCurrentLimit = 45;
 
-        public static final double kHoodIncrement = 17.0/2.0;
+        public static final double kHoodIncrement = 17.0 / 2.0;
 
         public static final double kIdkManConstant = 1.209757239732467f;
 
         public static final double hoodOffset = 0.205; // Offset from center of the bot (m)
     }
 
-    public static class IntakeConstants
-    {
-        public static final int intakeMotorId = 38; //38
+    public static class IntakeConstants {
+        public static final int intakeMotorId = 38; // 38
         public static final double kIntakeGearRatio = 2.0 / 3.0;
 
         public static final double kIntakeCurrentLimit = 80.0;
 
-        public static final double intake_kS = 0.15572; //0.18572
+        public static final double intake_kS = 0.15572; // 0.18572
         public static final double intake_kV = 0.11754;
         public static final double intake_kA = 0.0048972;
         public static final double intake_kP = 0.030667;
@@ -261,48 +303,44 @@ public class Constants {
         public static final double intakeMaxVoltage = 5; // can change if not needed
         public static final double intakeMaxAcceleration = 100;
         public static final double intakeMaxVelocity = 500; // rps
-        public static final double intakeSpeed = 45.0; //rps max 66.6 rps 400.0 
+        public static final double intakeSpeed = 45.0; // rps max 66.6 rps 400.0
         public static final double intakeAgitate = 20.0;
     }
 
     public static class HingeConstants {
 
-        public static final int kHingeMotorId = 39; //39
+        public static final int kHingeMotorId = 39; // 39
         public static final int kHingeEncoderId = 42;
         public static final int deploymentMaxDeg = 115;
 
-        public static final double hinge_kS = 0.24;        
+        public static final double hinge_kS = 0.24;
         public static final double hinge_kP = 3.0;
         public static final double hinge_kI = 0.0;
         public static final double hinge_kD = 0.03;
         public static final double hinge_kV = 0.12;
-        public static final double hinge_kG = 2.5; //0.25
+        public static final double hinge_kG = 2.5; // 0.25
         public static final double hingeMaxAcceleration = 10.0;
         public static final double hingeMaxVelocity = 100.0; // rps
         public static final double kHingeCurrentLimit = 25;
 
         public static final int hingeCountsPerRevolution = 2048; // for kraken x60
-        public static final double hingeGearRatio = 112.5 / 1.0; //carter: 8:1 tyler: 45:1
+        public static final double hingeGearRatio = 112.5 / 1.0; // carter: 8:1 tyler: 45:1
 
-        public static final double hingeMaxDeg = 50.0; //-100.0;
+        public static final double hingeMaxDeg = 50.0; // -100.0;
 
         public static final double kHingeDeploymentPosition = 0.0;
-        // pi / 2
-        // why? idk it's funny
-        // - damola
         public static final double kHingeAgitatePosition = 0.2;
         public static final double kHingeRetractedPosition = 0.33;
         // public static final double kHingeDeadband = 0.025;
     }
 
-    public static class ClimbConstants
-    {
-        public static final int kClimbMotorID = 37; //37
+    public static class ClimbConstants {
+        public static final int kClimbMotorID = 37; // 37
 
         public static final double kClimbMaxVelocity = 90; // rps
         public static final double kClimbMaxAcceleration = 30; // rps^2
-        public static final int kClimbCurrent_Limit = 120;   
-        public static final double kClimb_Speed = 0.3; 
+        public static final int kClimbCurrent_Limit = 120;
+        public static final double kClimb_Speed = 0.3;
 
         public static final double kClimb_kS = 0.05;
         public static final double kClimb_kV = 0.12;
@@ -319,8 +357,7 @@ public class Constants {
         public static final double kClimbGearRatio = 10.0 / 1.0;
     }
 
-    public static class TransferConstants
-    {
+    public static class TransferConstants {
         public static final int transferID = 31; // change later 31
 
         public static final double transferMaxVoltage = 4; // can change if not needed
@@ -357,18 +394,20 @@ public class Constants {
         public static final double kIndexerMaxVoltage = 5;// kraken x44 max voltage
         public static final double kIndexerCurrentLimit = 100;
         public static final int kIndexerMotorId = 35; // 35
+
         public static final double kIndexerSpeed = 30.0; //rps 60 before
         public static final double kIndexerAgitateSpeed = -10.0; //rps 60 before
         public static final double kIndexerGearRatio = 12.0 / 15.0;
         public static final double indexerSpeed = 30.0; // rps
 
-        // tomorrow - use the best tuning and then increase ka and kv cuz the recorrect is kinda messed up
-        public static final double kIndexer_kS = 0.18572; //0.01;
-        public static final double kIndexer_kV = 0.12; //0.11754;
-        public static final double kIndexer_kA = 0.01; //0.0048972;
-        public static final double kIndexer_kP = 0.030667; //1.0;
-        public static final double kIndexer_kI = 0.01; //0.005; 
-        public static final double kIndexer_kD = 0.0; //0.05;
+        // tomorrow - use the best tuning and then increase ka and kv cuz the recorrect
+        // is kinda messed up
+        public static final double kIndexer_kS = 0.18572; // 0.01;
+        public static final double kIndexer_kV = 0.12; // 0.11754;
+        public static final double kIndexer_kA = 0.01; // 0.0048972;
+        public static final double kIndexer_kP = 0.030667; // 1.0;
+        public static final double kIndexer_kI = 0.01; // 0.005;
+        public static final double kIndexer_kD = 0.0; // 0.05;
         public static final double kIndexerMaxAcceleration = 150;
         public static final double kIndexerMaxJerk = 500;
 
@@ -381,13 +420,13 @@ public class Constants {
     public static class RobotDimensions {
         public static final double FULL_WIDTH = 0.838;
         public static final double FULL_LENGTH = 0.838;
-        public static final double BUMPER_HEIGHT = 0.19; 
+        public static final double BUMPER_HEIGHT = 0.19;
     }
 
     public static class FieldConstants {
         public static final double BLUE_HUB_X = 4.625594; // meters
         public static final double BLUE_HUB_Y = 4.034536; // meters
-        public static final double RED_HUB_X = 11.915394; // meters 
+        public static final double RED_HUB_X = 11.915394; // meters
         public static final double RED_HUB_Y = 4.034536; // meters
 
         public static final double BLUE_DUMP_RIGHT_X = 1.7;
@@ -412,32 +451,32 @@ public class Constants {
     }
 
     public static final class LockModeConstants {
-        //LEFT
+        // LEFT
         public static final int kRPMLeft = 4900; // 4450
         public static final double kHoodLeft = 4.0;
         public static final double kTurretLeft = 45.0;
 
-        //CENTER
+        // CENTER
         public static final int kRPMCenter = 4600; // 4450
-        public static final double kHoodCenter = 5.5; //7
+        public static final double kHoodCenter = 5.5; // 7
         public static final double kTurretCenter = 10.0;
 
-        //RIGHT
+        // RIGHT
         public static final int kRPMRight = 4900;
         public static final double kHoodRight = 4.0;
         public static final double kTurretRight = -45.0;
 
-        //TRENCH LEFT
+        // TRENCH LEFT
         public static final int kRPMTrenchLeft = 4650;
         public static final double kHoodTrenchLeft = 6.0;
         public static final double kTurretTrenchLeft = 62.0;
 
-        //TRENCH RIGHT
+        // TRENCH RIGHT
         public static final int kRPMTrenchRight = 4650;
         public static final double kHoodTrenchRight = 6.0;
         public static final double kTurretTrenchRight = -62.0;
 
-        //LOCK
+        // LOCK
         public static final int kRPMLock = 3700;
         public static final double kHoodLock = 6.0;
         public static final double kTurretLock = 0.0;

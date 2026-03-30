@@ -49,6 +49,25 @@ public class AutoFireInterpolated extends Command {
     private static final double LAUNCH_COOLDOWN_SEC = 0.2;
     private int simFuelCount = 0;
 
+    private boolean isDumping = false;
+    private boolean isLeftDump = false;
+
+    private double goodDist = 0.0;
+
+    public boolean finished = false;
+
+    private final StructPublisher<Pose3d> targetPosePublisher = NetworkTableInstance.getDefault()
+            .getStructTopic("AutoFire/TargetPose", Pose3d.struct)
+            .publish();
+
+    private final StructArrayPublisher<Pose3d> trajectoryPublisher = NetworkTableInstance.getDefault()
+            .getStructArrayTopic("AutoFire/ActualTrajectory", Pose3d.struct)
+            .publish();
+
+    private final StructArrayPublisher<Pose3d> targetTrajectoryPublisher = NetworkTableInstance.getDefault()
+            .getStructArrayTopic("AutoFire/TargetTrajectory", Pose3d.struct)
+            .publish();
+
     public AutoFireInterpolated(Indexer indexer, Turret turret, Shooter shooter, Hood hood,
             AutoTrack AutoTrack) {
         this.indexer = indexer;
@@ -148,6 +167,6 @@ public class AutoFireInterpolated extends Command {
 
     @Override
     public boolean isFinished() {
-        return false;
+        return finished;
     }
 }

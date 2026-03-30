@@ -39,6 +39,11 @@ public class Agitate extends Command {
                 Commands.waitSeconds(0.5),
                 Commands.runOnce(() -> indexer.agitate(false))
             )
-        );
+        ).finallyDo((interrupted) -> {
+            if (interrupted) {
+                hinge.states(HingeState.DOWN);
+                indexer.agitate(false);
+            }
+        });
     }
 }

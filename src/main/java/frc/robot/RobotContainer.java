@@ -44,6 +44,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import java.util.function.Supplier;
 
 import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.Indexer.IndexerGoal;
 import frc.robot.util.AllianceShifts;
 import frc.robot.util.FuelSim;
 import frc.robot.subsystems.Shooter;
@@ -78,6 +79,7 @@ import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Transfer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Hinge;
+import frc.robot.commands.Agitate;
 import frc.robot.commands.AutoAlignCommand;
 import frc.robot.commands.LockMode;
 import frc.robot.commands.AutoFireInterpolated;
@@ -151,6 +153,8 @@ public class RobotContainer {
         public final Lookup lookup = Utils.createLookup();
         private FuelSim fuelSim;
 
+        private Agitate agitateCommand;
+
         public RobotContainer() {
                 if (RobotBase.isSimulation()) {
                         configureFuelSim();
@@ -162,6 +166,8 @@ public class RobotContainer {
                 autoFireInterpolated  = new AutoFireInterpolated(indexer, turret, shooter, hood,
                         () -> drivetrain.getStateCopy().Speeds,
                         () -> drivetrain.getStateCopy().Pose);
+
+                agitateCommand = new Agitate(hinge);
 
                 if (RobotBase.isSimulation()) {
                         autoFireCommand.setFuelSim(fuelSim);
@@ -184,7 +190,7 @@ public class RobotContainer {
                 NamedCommands.registerCommand("hingeUp",
                                 hinge.hingeUp());
                 NamedCommands.registerCommand("index",
-                                Commands.runOnce(() -> indexer.setVel()));
+                                Commands.runOnce(() -> indexer.activate()));
                 NamedCommands.registerCommand("kicker",
                                 Commands.runOnce(() -> transfer.toggleTransfer()));
                 NamedCommands.registerCommand("stopFire",
@@ -351,6 +357,8 @@ public class RobotContainer {
                 // joystick.x().onTrue(shooter.shootCmd());
                 // joystick.x().whileTrue(Commands.runOnce(() -> autoFireCommand.execute()));
 
+                joystick.x().onTrue(Commands.runOnce(() -> indexer.setGoal(IndexerGoal.ACTIVE)));
+
                 // TRANSFER button controls
                 joystick.b().onTrue(Commands.runOnce(() -> transfer.toggleTransfer()));
 
@@ -406,11 +414,9 @@ public class RobotContainer {
                 // climb autoalign
                 // rotateStick.button(OIConstants.kSticks_leftHandle).whileTrue(AutoAlignCommand.getAutoClimbCommand(drivetrain));
 
-                // boost
-                // rotateStick.button(OIConstants.kSticks_rightHandle).whileTrue(Commands.runOnce(()
-                // -> driveTrainVelocityPercent = 1.0));
-                // rotateStick.button(OIConstants.kSticks_rightHandle).onFalse(Commands.runOnce(()
-                // -> driveTrainVelocityPercent = 0.55));
+                //boost
+                rotateStick.button(OIConstants.kSticks_rightHandle).whileTrue(Commands.runOnce(() -> driveTrainVelocityPercent = 1.0));
+                rotateStick.button(OIConstants.kSticks_rightHandle).onFalse(Commands.runOnce(() -> driveTrainVelocityPercent = 0.55));
 
                 // shooter up down
                 // translateStick.button(OIConstants.kRightSticks_rightGrid_topLeft).onTrue(Commands.either(
@@ -463,7 +469,7 @@ public class RobotContainer {
 
                 translateStick.button(OIConstants.kSticks_trigger).whileTrue(Commands.either(
                                 autoFireInterpolated,
-                                Commands.runOnce(() -> indexer.setVel()),
+                                Commands.runOnce(() -> indexer.activate()),
                                 () -> !lockmode));
                 translateStick.button(OIConstants.kSticks_trigger).onFalse(indexer.indexerStop());
 
@@ -474,7 +480,7 @@ public class RobotContainer {
                                 .onFalse(Commands.runOnce(() -> transfer.stop()));
 
                 translateStick.button(OIConstants.kSticks_leftHandle)
-                                .whileTrue(Commands.runOnce(() -> indexer.setVel())).onFalse(indexer.indexerStop());
+                                .whileTrue(Commands.runOnce(() -> indexer.activate())).onFalse(indexer.indexerStop());
 
                 // outpost autoalign
                 // translateStick.button(OIConstants.kSticks_leftHandle).whileTrue(AutoAlignCommand.getOutpostCommand(drivetrain));
@@ -485,7 +491,7 @@ public class RobotContainer {
 
                 // spindexer
                 translateStick.button(OIConstants.kLeftSticks_leftGrid_bottomLeft)
-                                .whileTrue(Commands.runOnce(() -> indexer.setVel()));
+                                .whileTrue(Commands.runOnce(() -> indexer.activate()));
 
         }
 
@@ -543,9 +549,9 @@ public class RobotContainer {
                                 .onTrue(hinge.hingeUp())
                                 .onFalse(hinge.hingeStopCommand());
 
-                // operator(OIConstants.kKeyboard_modeToggle)
-                //                 .onTrue(hinge.hingeAgitate())
-                //                 .onFalse(hinge.hingeStopCommand());
+                operator(OIConstants.kKeyboard_modeToggle)
+                                .whileTrue(Agitate.agitate(hinge, indexer))
+                                .onFalse(hinge.hingeStopCommand());
 
                 // operator(OIConstants.kKeyboard_modeToggle)
                 //                 .whileTrue(intake.agitateCommand())

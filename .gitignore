@@ -191,3 +191,5 @@ compile_commands.json
 
 # Build constants
 BuildConstants.java
+
+simgui-ds.json

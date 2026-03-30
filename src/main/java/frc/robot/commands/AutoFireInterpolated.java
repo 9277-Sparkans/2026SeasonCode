@@ -232,9 +232,9 @@ public class AutoFireInterpolated extends Command {
 
         if (Math.abs(optimalShooterRPM - shooterRPM) < 150.0
                 && Math.abs(turretAngle - optimalTurretAngle) < 4.0) {
-            indexer.setVel();
+            indexer.activate();
         } else {
-            indexer.stop();
+            indexer.deactivate();
         }
     }
 
@@ -301,7 +301,7 @@ public class AutoFireInterpolated extends Command {
 
     @Override
     public void end(boolean interrupted) {
-        indexer.stop();
+        indexer.deactivate();
         shooter.stop();
         turret.stop();
         hood.stopHoodCmd();

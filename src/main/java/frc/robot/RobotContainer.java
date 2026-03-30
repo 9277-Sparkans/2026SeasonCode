@@ -193,6 +193,10 @@ public class RobotContainer {
                                 Commands.runOnce(() -> indexer.activate()));
                 NamedCommands.registerCommand("kicker",
                                 Commands.runOnce(() -> transfer.toggleTransfer()));
+                NamedCommands.registerCommand("stopFire",
+                                new LockMode(turret, shooter, hood, LockState.NEUTRAL));
+                NamedCommands.registerCommand("stopFireBetter",
+                                Commands.runOnce(() -> autoFireInterpolated.finished = true));
 
                 turret.setDefaultCommand(turret.initDefaultCommand(turret));
                 hood.setDefaultCommand(hood.initDefaultCommand());
@@ -565,7 +569,7 @@ public class RobotContainer {
 
         public Command getAutonomousCommand() {
                 // return autoChooser.getSelected();
-                return new PathPlannerAuto("tuffauto");
+                return new PathPlannerAuto("henockAuto");
         }
 
         private void configureFuelSim() {

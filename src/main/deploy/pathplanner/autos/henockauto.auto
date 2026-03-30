@@ -61,6 +61,12 @@
         {
           "type": "named",
           "data": {
+            "name": "stopFireBetter"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "climbUp"
           }
         },

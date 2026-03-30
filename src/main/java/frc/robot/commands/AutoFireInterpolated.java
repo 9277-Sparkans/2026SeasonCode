@@ -61,6 +61,8 @@ public class AutoFireInterpolated extends Command {
 
     private double goodDist = 0.0;
 
+    public boolean finished = false;
+
     private final StructPublisher<Pose3d> targetPosePublisher = NetworkTableInstance.getDefault()
             .getStructTopic("AutoFire/TargetPose", Pose3d.struct)
             .publish();
@@ -307,6 +309,6 @@ public class AutoFireInterpolated extends Command {
 
     @Override
     public boolean isFinished() {
-        return false;
+        return finished;
     }
 }

@@ -121,9 +121,9 @@ public class AutoTrack extends SubsystemBase {
                 Constants.TurretConstants.kMinimumAngle,
                 Constants.TurretConstants.kMaximumAngle);
 
-        // Set turret and hood targets — they track continuously
+        // Set turret target — it tracks continuously
         turret.target = latestTurretAngle;
-        hood.targetHoodAngle = optimalShot.hoodAngle();
+        // hood.targetHoodAngle = optimalShot.hoodAngle();
 
         Translation2d turretPos2d = ShotCalculator.getTurretTranslation(pose);
         double targetDistance = turretPos2d.getDistance(
@@ -142,7 +142,7 @@ public class AutoTrack extends SubsystemBase {
         // calibration widget for collecting data points
         SmartDashboard.putNumber("Calibration/DistanceToTarget", targetDistance);
         SmartDashboard.putNumber("Calibration/CurrentRPM", shooter.getMotorRPM());
-        SmartDashboard.putNumber("Calibration/CurrentHoodAngle", hood.getPosition());
+        // SmartDashboard.putNumber("Calibration/CurrentHoodAngle", hood.getPosition());
         SmartDashboard.putBoolean("Calibration/IsDumping", isDumping);
         SmartDashboard.putString("Calibration/TargetType", isDumping ? (isLeftDump ? "DUMP_LEFT" : "DUMP_RIGHT") : "HUB");
     }

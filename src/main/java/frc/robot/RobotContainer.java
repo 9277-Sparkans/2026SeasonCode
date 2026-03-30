@@ -203,7 +203,7 @@ public class RobotContainer {
                                 Commands.runOnce(() -> transfer.toggleTransfer()));
 
                 turret.setDefaultCommand(turret.initDefaultCommand(turret));
-                // hood.setDefaultCommand(hood.initDefaultCommand());  // autotrack sets hood so commented out
+                hood.setDefaultCommand(hood.initDefaultCommand());  // autotrack sets hood so commented out
                 hinge.setDefaultCommand(hinge.initDefaultCommand());
                 // sillyHinge.setDefaultCommand(sillyHinge.initDefaultCommand());
 

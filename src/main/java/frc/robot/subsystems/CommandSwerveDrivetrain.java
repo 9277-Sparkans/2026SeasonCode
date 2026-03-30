@@ -199,7 +199,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     public enum DriveAssistMode {
         NORMAL,
         TRENCH_LOCK,
-        BUMP_LOCK
+        BUMP_LOCK,
+        DISABLED
     }
 
     /**
@@ -545,7 +546,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             // yeahhhh i kinda borrowed this from hammerheads
             switch (m_currentAssistMode) {
                 // for trench, it chooses the nearest 90 deg angle (-90, 0, 90, 180) in case we wanna shovel, and locks the y axis (i got the y values from choreo)
-                case TRENCH_LOCK:
+                case DISABLED:
                     double curDeg = pose.getRotation().getDegrees();
                     double closest = 0;
                     double minDiff = Math.abs(MathUtil.inputModulus(curDeg - 0, -180, 180));

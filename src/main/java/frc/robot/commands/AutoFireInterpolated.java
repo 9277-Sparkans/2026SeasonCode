@@ -82,6 +82,7 @@ public class AutoFireInterpolated extends Command {
 
         double optimalShooterRPM = optimalShot.rpm();
         shooter.setTargetRPM(optimalShooterRPM);
+        hood.targetHoodAngle = optimalShot.hoodAngle();
 
         double shooterRPM = shooter.getMotorRPM();
         double hoodAngle = hood.getPosition();
@@ -142,6 +143,7 @@ public class AutoFireInterpolated extends Command {
     public void end(boolean interrupted) {
         indexer.deactivate();
         shooter.stop();
+        hood.stopHoodCmd();
     }
 
     @Override

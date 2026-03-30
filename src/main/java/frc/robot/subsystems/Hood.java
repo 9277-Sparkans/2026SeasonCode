@@ -213,6 +213,10 @@ public class Hood extends SubsystemBase {
     return Commands.runOnce(() -> {});
   }
 
+  public void stop() {
+    hoodMotor.set(0);
+  }
+
   
   public void clampTarget() {
     targetHoodPosition = Utils.clamp(targetHoodPosition, HoodConstants.kMinimumEncoderPos, HoodConstants.kMaximumEncoderPos);

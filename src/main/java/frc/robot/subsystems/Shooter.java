@@ -156,6 +156,11 @@ public class Shooter extends SubsystemBase {
     return shooterMotor.getVelocity().getValueAsDouble() * 60.0;
   }
 
+  // set target rpm
+  public void setTargetRPM(double rpm) {
+    targetVel = rpm;
+  }
+
   public Command sysIdQuasistatic ( SysIdRoutine . Direction direction ) {
     return sysIdRoutine . quasistatic ( direction ) ;
   }

@@ -88,6 +88,7 @@ public class Constants {
 
         public static final int kKeyboard_intakeDeploy = 16;
         public static final int kKeyboard_intakeRetract = 6;
+        public static final int kKeyboard_AutoTrackToggle = 14;
 
         // Triggers [CONTROLLER ONLY]
         public static final int kController_leftBumper = 5;
@@ -246,6 +247,21 @@ public class Constants {
             TOF_MAP.put(4.265, 0.8543);
             TOF_MAP.put(4.765, 0.8719);
             TOF_MAP.put(5.265, 0.9375);
+        }
+
+        // dumping tree map
+        public static final InterpolatingTreeMap<Double, ShotData> DUMP_MAP = new InterpolatingTreeMap<Double, ShotData>(
+                InverseInterpolator.forDouble(), (start, end, t) -> start.interpolate(end, t));
+        public static final InterpolatingDoubleTreeMap DUMP_TOF_MAP = new InterpolatingDoubleTreeMap();
+
+        static {
+            // data points (distance from turret, rpm, hood angle)
+            DUMP_MAP.put(2.0, new ShotData(3700.0, 8.0));
+            DUMP_MAP.put(4.0, new ShotData(3700.0, 8.0));
+
+            // distance, time of flight
+            DUMP_TOF_MAP.put(2.0, 0.6);
+            DUMP_TOF_MAP.put(4.0, 0.6);
         }
     }
 
@@ -417,10 +433,17 @@ public class Constants {
     }
 
     public static class FieldConstants {
+        public static final double FIELD_LENGTH = Units.inchesToMeters(650.12);
+        public static final double FIELD_WIDTH = Units.inchesToMeters(316.64);
         public static final double BLUE_HUB_X = 4.625594; // meters
         public static final double BLUE_HUB_Y = 4.034536; // meters
         public static final double RED_HUB_X = 11.915394; // meters
         public static final double RED_HUB_Y = 4.034536; // meters
+
+        public static final edu.wpi.first.math.geometry.Translation3d HUB_BLUE = new edu.wpi.first.math.geometry.Translation3d(
+                BLUE_HUB_X, BLUE_HUB_Y, 1.4);
+        public static final edu.wpi.first.math.geometry.Translation3d HUB_RED = new edu.wpi.first.math.geometry.Translation3d(
+                RED_HUB_X, RED_HUB_Y, 1.4);
 
         public static final double BLUE_DUMP_RIGHT_X = 1.7;
         public static final double BLUE_DUMP_RIGHT_Y = 1.8;
@@ -431,11 +454,6 @@ public class Constants {
         public static final double RED_DUMP_RIGHT_Y = 1.8;
         public static final double RED_DUMP_LEFT_X = 14.840988;
         public static final double RED_DUMP_LEFT_Y = 6.4;
-
-        public static final edu.wpi.first.math.geometry.Translation3d HUB_BLUE = new edu.wpi.first.math.geometry.Translation3d(
-                BLUE_HUB_X, BLUE_HUB_Y, 1.4); // 1.4m height approx
-        public static final edu.wpi.first.math.geometry.Translation3d HUB_RED = new edu.wpi.first.math.geometry.Translation3d(
-                RED_HUB_X, RED_HUB_Y, 1.4);
     }
 
     public static final class CanBusConstants {
@@ -473,5 +491,32 @@ public class Constants {
         public static final int kRPMLock = 3700;
         public static final double kHoodLock = 6.0;
         public static final double kTurretLock = 0.0;
+    }
+
+    public static final class DriveAssistConstants {
+        public static final double TRENCH_BUMP_X = Units.inchesToMeters(181.56);
+        public static final double TRENCH_WIDTH = Units.inchesToMeters(49.86);
+        public static final double TRENCH_BUMP_LENGTH = Units.inchesToMeters(47.0);
+        public static final double TRENCH_BAR_WIDTH = Units.inchesToMeters(4.0);
+        public static final double TRENCH_BLOCK_WIDTH = Units.inchesToMeters(12.0);
+        public static final double BUMP_WIDTH = Units.inchesToMeters(73.0);
+        public static final double TRENCH_CENTER = TRENCH_WIDTH / 2.0;
+        public static final double TRENCH_ALIGN_TIME = 0.5;
+        public static final double BUMP_ALIGN_TIME = 0.3;
+        public static final double TRANSLATION_kP = 8.0;
+        public static final double TRANSLATION_kI = 0.0;
+        public static final double TRANSLATION_kD = 0.05;
+        public static final double TRANSLATION_TOLERANCE = 0.05;
+        public static final double ROTATION_kP = 5.0;
+        public static final double ROTATION_kI = 0.0;
+        public static final double ROTATION_kD = 0.0;
+        public static final double ROTATION_TOLERANCE = Units.degreesToRadians(5.0);
+
+        public static final double NORMAL_ACCEL_LIMIT = 15.0; 
+        public static final double SHOOTING_ACCEL_LIMIT = 1.5;
+        public static final double BRAKING_ACCEL_LIMIT = 100.0; 
+        public static final double SHOOTING_MAX_VELOCITY = 1.5; 
+        public static final double NORMAL_ROT_ACCEL_LIMIT = 25.0; 
+        public static final double SHOOTING_ROT_ACCEL_LIMIT = 4.0; 
     }
 }

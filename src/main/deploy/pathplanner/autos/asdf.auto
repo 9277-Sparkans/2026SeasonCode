@@ -9,6 +9,18 @@
           "data": {
             "pathName": "newneutralangles1"
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "neutralintakes1angle"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "angletos1"
+          }
         }
       ]
     }

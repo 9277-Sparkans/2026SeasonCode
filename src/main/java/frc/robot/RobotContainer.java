@@ -58,6 +58,7 @@ import frc.robot.Utils.Lookup;
 import frc.robot.commands.AutoFire;
 import frc.robot.commands.LockMode;
 import frc.robot.commands.TurretTracking;
+import frc.robot.util.Zones;
 import frc.robot.commands.AutoFire.TargetHub;
 import frc.robot.commands.LockMode.LockState;
 import frc.robot.subsystems.Transfer;
@@ -81,6 +82,7 @@ import frc.robot.subsystems.Hinge;
 import frc.robot.commands.AutoAlignCommand;
 import frc.robot.commands.LockMode;
 import frc.robot.commands.AutoFireInterpolated;
+import frc.robot.subsystems.AutoTrack;
 
 public class RobotContainer {
         private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
@@ -136,6 +138,7 @@ public class RobotContainer {
         public final AutoFire autoFireCommand;
         // public final LockMode lockModeCommand = new LockMode(turret, shooter, hood);
 
+        public final AutoTrack AutoTrack;
         public final AutoFireInterpolated autoFireInterpolated;
 
         public boolean manualControl = false;
@@ -159,12 +162,17 @@ public class RobotContainer {
                                 () -> drivetrain.getStateCopy().Speeds,
                                 () -> drivetrain.getStateCopy().Pose, lookup);
 
-                autoFireInterpolated  = new AutoFireInterpolated(indexer, turret, shooter, hood,
-                        () -> drivetrain.getStateCopy().Speeds,
-                        () -> drivetrain.getStateCopy().Pose);
+                // new autotrack subsystem does caculations every 20 ms
+                AutoTrack = new AutoTrack(turret, hood, shooter,
+                                () -> drivetrain.getStateCopy().Pose,
+                                () -> drivetrain.getStateCopy().Speeds);
+
+                autoFireInterpolated = new AutoFireInterpolated(indexer, turret, shooter, hood,
+                                AutoTrack);
 
                 if (RobotBase.isSimulation()) {
                         autoFireCommand.setFuelSim(fuelSim);
+                        autoFireInterpolated.setFuelSim(fuelSim);
                 }
 
                 NamedCommands.registerCommand("intake",
@@ -189,7 +197,7 @@ public class RobotContainer {
                                 Commands.runOnce(() -> transfer.toggleTransfer()));
 
                 turret.setDefaultCommand(turret.initDefaultCommand(turret));
-                hood.setDefaultCommand(hood.initDefaultCommand());
+                // hood.setDefaultCommand(hood.initDefaultCommand());  // autotrack sets hood so commented out
                 hinge.setDefaultCommand(hinge.initDefaultCommand());
                 // sillyHinge.setDefaultCommand(sillyHinge.initDefaultCommand());
 
@@ -247,31 +255,32 @@ public class RobotContainer {
                 // Note that X is defined as forward according to WPILib convention,
                 // and Y is defined as to the left according to WPILib convention.
                 drivetrain.setDefaultCommand(
-                                drivetrain.applyRequest(() -> {
-                                        double x, y, rot;
-                                        if (movingConstantSpeed
-                                                        && QuickAccessConstants.controlType == ControlTypes.DRIVER_STICKS) {
-                                                double maxVal = Math.max(Math.abs(-translateStick.getRawAxis(1)),
-                                                                Math.abs(-translateStick.getRawAxis(0)));
-                                                x = (-translateStick.getRawAxis(1) / maxVal)
-                                                                * ShooterConstants.autoFireDriveSpeed;
-                                                y = (-translateStick.getRawAxis(0) / maxVal)
-                                                                * ShooterConstants.autoFireDriveSpeed;
-                                                rot = -rotateStick.getRawAxis(0);
-                                        } else if (QuickAccessConstants.controlType == ControlTypes.DRIVER_STICKS) {
-                                                x = -translateStick.getRawAxis(1);
-                                                y = -translateStick.getRawAxis(0);
-                                                rot = -rotateStick.getRawAxis(0);
-                                        } else {
-                                                x = -joystick.getLeftY();
-                                                y = -joystick.getLeftX();
-                                                rot = -joystick.getRightX();
-                                        }
-                                        return drive.withVelocityX(x * MaxSpeed * driveTrainVelocityPercent)
-                                                        .withVelocityY(y * MaxSpeed * driveTrainVelocityPercent)
-                                                        .withRotationalRate(rot * MaxAngularRate
-                                                                        * driveTrainVelocityPercent);
-                                }));
+                                drivetrain.driveWithAssist(
+                                                () -> {
+                                                        if (QuickAccessConstants.controlType == ControlTypes.DRIVER_STICKS) {
+                                                                return -translateStick.getRawAxis(1) * driveTrainVelocityPercent;
+                                                        } else {
+                                                                return -joystick.getLeftY() * driveTrainVelocityPercent;
+                                                        }
+                                                },
+                                                () -> {
+                                                        if (QuickAccessConstants.controlType == ControlTypes.DRIVER_STICKS) {
+                                                                return -translateStick.getRawAxis(0) * driveTrainVelocityPercent;
+                                                        } else {
+                                                                return -joystick.getLeftX() * driveTrainVelocityPercent;
+                                                        }
+                                                },
+                                                () -> {
+                                                        if (QuickAccessConstants.controlType == ControlTypes.DRIVER_STICKS) {
+                                                                return -rotateStick.getRawAxis(0) * driveTrainVelocityPercent;
+                                                        } else {
+                                                                return -joystick.getRightX() * driveTrainVelocityPercent;
+                                                        }
+                                                },
+                                                () -> translateStick.getHID()
+                                                                .getRawButton(OIConstants.kSticks_trigger),
+                                                () -> AutoTrack.isDumping(),
+                                                () -> AutoTrack.getDesiredTurretAngle()));
 
                 // Idle while the robot is disabled. This ensures the configured
                 // neutral mode is applied to the drive motors while disabled.
@@ -494,6 +503,16 @@ public class RobotContainer {
                                 .onFalse(Commands.runOnce(() -> movingConstantSpeed = false));
                 // operator(OIConstants.kKeyboard_modeToggle)
                 // .onTrue(Commands.runOnce(() -> manualControl = !manualControl));
+
+                // turn on or off autotrack
+                operator(OIConstants.kKeyboard_AutoTrackToggle)
+                                .onTrue(Commands.runOnce(() -> {
+                                        if (AutoTrack.isTracking()) {
+                                                AutoTrack.disableTracking();
+                                        } else {
+                                                AutoTrack.enableTracking();
+                                        }
+                                }));
 
                 operator(OIConstants.kKeyboard_trackToggle)
                                 .onTrue(Commands.runOnce(() -> lockmode = !lockmode));

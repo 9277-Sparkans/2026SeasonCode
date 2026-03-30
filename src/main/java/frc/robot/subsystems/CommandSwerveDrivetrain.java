@@ -29,10 +29,17 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.Constants;
 import frc.robot.generated.TunerConstants;
+import frc.robot.util.Zones;
+import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
+import org.littletonrobotics.junction.AutoLogOutput;
 
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 
@@ -126,6 +133,75 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     /* The SysId routine to test */
     private SysIdRoutine m_sysIdRoutineToApply = m_sysIdRoutineRotation;
 
+    private final SwerveRequest.FieldCentric m_fieldCentricDrive = new SwerveRequest.FieldCentric();
+
+    private double m_lastX = 0;
+    private double m_lastY = 0;
+    private double m_lastOmega = 0;
+
+    private final PIDController m_translationController = new PIDController(
+            Constants.DriveAssistConstants.TRANSLATION_kP,
+            Constants.DriveAssistConstants.TRANSLATION_kI,
+            Constants.DriveAssistConstants.TRANSLATION_kD
+    );
+
+    private final PIDController m_rotationController = new PIDController(
+            Constants.DriveAssistConstants.ROTATION_kP,
+            Constants.DriveAssistConstants.ROTATION_kI,
+            Constants.DriveAssistConstants.ROTATION_kD
+    );
+
+    @AutoLogOutput
+    private DriveAssistMode m_currentAssistMode = DriveAssistMode.NORMAL;
+
+    @AutoLogOutput(key = "DriveAssist/TargetPose")
+    private Pose2d m_targetPose = new Pose2d();
+
+    @AutoLogOutput(key = "DriveAssist/TrenchZones")
+    public Pose2d[] getTrenchZones() {
+        return Zones.TRENCH_ZONES.getCorners();
+    }
+
+    @AutoLogOutput(key = "DriveAssist/BumpZones")
+    public Pose2d[] getBumpZones() {
+        return Zones.BUMP_ZONES.getCorners();
+    }
+
+    @AutoLogOutput(key = "DriveAssist/Debug/TrenchSetpoint")
+    private double m_debugTrenchSetpoint = 0;
+
+    @AutoLogOutput(key = "DriveAssist/Debug/TrenchClosestHeading")
+    private double m_debugTrenchHeading = 0;
+
+    @AutoLogOutput(key = "DriveAssist/Debug/IsTopTrench")
+    private boolean m_debugIsTopTrench = false;
+
+    @AutoLogOutput(key = "DriveAssist/Debug/TrenchCurrentY")
+    private double m_debugTrenchCurrentY = 0;
+
+    @AutoLogOutput(key = "DriveAssist/Debug/PidOutput")
+    private double m_debugPidOutput = 0;
+
+    // --- NT-controllable assist toggles (all default enabled) ---
+    @AutoLogOutput(key = "DriveAssist/Enable/All")
+    public boolean assistEnabled = true;
+    @AutoLogOutput(key = "DriveAssist/Enable/TrenchLock")
+    public boolean trenchLockEnabled = true;
+    @AutoLogOutput(key = "DriveAssist/Enable/BumpLock")
+    public boolean bumpLockEnabled = true;
+    @AutoLogOutput(key = "DriveAssist/Enable/ShootingRotLock")
+    public boolean shootingRotLockEnabled = true;
+    @AutoLogOutput(key = "DriveAssist/Enable/SlewRate")
+    public boolean slewRateEnabled = true;
+    @AutoLogOutput(key = "DriveAssist/Enable/VelocityCap")
+    public boolean velocityCapEnabled = true;
+
+    public enum DriveAssistMode {
+        NORMAL,
+        TRENCH_LOCK,
+        BUMP_LOCK
+    }
+
     /**
      * Constructs a CTRE SwerveDrivetrain using the specified constants.
      * <p>
@@ -218,7 +294,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     // autobuilder
     private void configureAutoBuilder() {
         try {
-            var config = RobotConfig.fromGUISettings();
+            RobotConfig config = RobotConfig.fromGUISettings();
             AutoBuilder.configure(
                     () -> getStateCopy().Pose, // supply position
                     this::resetPose, // consumer for seeding pose against auto
@@ -368,6 +444,177 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         var pose2d = getStateCopy().Pose;
         var rotation3d = pidgey.getRotation3d();
         return new Pose3d(pose2d.getX(), pose2d.getY(), 0.0, rotation3d);
+    }
+
+    public Command driveWithAssist(
+            DoubleSupplier xSupplier,
+            DoubleSupplier ySupplier,
+            DoubleSupplier omegaSupplier,
+            BooleanSupplier isShootingSupplier,
+            BooleanSupplier isDumpingSupplier,
+            DoubleSupplier desiredTurretAngleSupplier) {
+
+        m_translationController.setTolerance(Constants.DriveAssistConstants.TRANSLATION_TOLERANCE);
+        m_rotationController.setTolerance(Constants.DriveAssistConstants.ROTATION_TOLERANCE);
+        m_rotationController.enableContinuousInput(-Math.PI, Math.PI);
+
+        return run(() -> {
+            double x = xSupplier.getAsDouble();
+            double y = ySupplier.getAsDouble();
+            double omega = omegaSupplier.getAsDouble();
+            boolean isShooting = isShootingSupplier.getAsBoolean();
+            boolean isDumping = isDumpingSupplier.getAsBoolean();
+
+            Pose2d pose = getStateCopy().Pose;
+            ChassisSpeeds speeds = getStateCopy().Speeds;
+
+            // zone detection for trench and bump, borrowed from hammerheads
+            boolean inTrench = Zones.TRENCH_ZONES.willContain(() -> pose, () -> speeds, Constants.DriveAssistConstants.TRENCH_ALIGN_TIME).getAsBoolean();
+            boolean inBump = Zones.BUMP_ZONES.willContain(() -> pose, () -> speeds, Constants.DriveAssistConstants.BUMP_ALIGN_TIME).getAsBoolean();
+
+            if (assistEnabled && trenchLockEnabled && inTrench) m_currentAssistMode = DriveAssistMode.TRENCH_LOCK;
+            else if (assistEnabled && bumpLockEnabled && inBump) m_currentAssistMode = DriveAssistMode.BUMP_LOCK;
+            else m_currentAssistMode = DriveAssistMode.NORMAL;
+
+            double maxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
+            double maxRot = 2.0 * Math.PI;
+
+            // capping velocity while autofiring
+            boolean applyVelCap = assistEnabled && velocityCapEnabled && isShooting;
+            double velCap = applyVelCap ? Constants.DriveAssistConstants.SHOOTING_MAX_VELOCITY : maxSpeed;
+            double targetX = MathUtil.clamp(x * maxSpeed, -velCap, velCap);
+            double targetY = MathUtil.clamp(y * maxSpeed, -velCap, velCap);
+            double targetOmega = omega * maxRot;
+
+            // asymmetric slew rate limiter for limiting acceleration while allowing to brake instantaneously via ramping
+            double dt = 0.02;
+            double finalX, finalY, finalOmega;
+
+            if (assistEnabled && slewRateEnabled) {
+                double accelLimit = isShooting ? Constants.DriveAssistConstants.SHOOTING_ACCEL_LIMIT : Constants.DriveAssistConstants.NORMAL_ACCEL_LIMIT;
+                double rotAccelLimit = isShooting ? Constants.DriveAssistConstants.SHOOTING_ROT_ACCEL_LIMIT : Constants.DriveAssistConstants.NORMAL_ROT_ACCEL_LIMIT;
+                double brakingLimit = Constants.DriveAssistConstants.BRAKING_ACCEL_LIMIT;
+
+                double xLimit = (Math.abs(targetX) < Math.abs(m_lastX)) ? brakingLimit : accelLimit;
+                finalX = m_lastX + MathUtil.clamp(targetX - m_lastX, -xLimit * dt, xLimit * dt);
+
+                double yLimit = (Math.abs(targetY) < Math.abs(m_lastY)) ? brakingLimit : accelLimit;
+                finalY = m_lastY + MathUtil.clamp(targetY - m_lastY, -yLimit * dt, yLimit * dt);
+
+                double omegaLimit = (Math.abs(targetOmega) < Math.abs(m_lastOmega)) ? brakingLimit : rotAccelLimit;
+                finalOmega = m_lastOmega + MathUtil.clamp(targetOmega - m_lastOmega, -omegaLimit * dt, omegaLimit * dt);
+            } else {
+                finalX = targetX;
+                finalY = targetY;
+                finalOmega = targetOmega;
+            }
+
+            // limiting driver rotation so that the bot heading can not surpass the turret range only while autofiring to hub and not when dumping
+            if (isShooting && !isDumping && assistEnabled && shootingRotLockEnabled) {
+                double desiredTurretAngle = desiredTurretAngleSupplier.getAsDouble();
+                double turretMargin = 5.0;
+                double minTurret = Constants.TurretConstants.kMinimumAngle + turretMargin;
+                double maxTurret = Constants.TurretConstants.kMaximumAngle - turretMargin;
+                
+                // if past positive limit, then uses negative omega or clockwise to correct
+                if (desiredTurretAngle > maxTurret) {
+                    if (finalOmega >= 0) {
+                        double targetDirRad = pose.getRotation().getRadians()
+                                - Math.toRadians(desiredTurretAngle);
+                        m_rotationController.setSetpoint(targetDirRad + Math.toRadians(maxTurret));
+                        finalOmega = MathUtil.clamp(
+                                m_rotationController.calculate(pose.getRotation().getRadians()),
+                                -Math.PI, Math.PI);
+                        if (m_rotationController.atSetpoint()) finalOmega = 0;
+                    }
+                    //
+                } else if (desiredTurretAngle < minTurret) {
+                    // the opposite for this one
+                    if (finalOmega <= 0) {
+                        double targetDirRad = pose.getRotation().getRadians()
+                                - Math.toRadians(desiredTurretAngle);
+                        m_rotationController.setSetpoint(targetDirRad + Math.toRadians(minTurret));
+                        finalOmega = MathUtil.clamp(
+                                m_rotationController.calculate(pose.getRotation().getRadians()),
+                                -Math.PI, Math.PI);
+                        if (m_rotationController.atSetpoint()) finalOmega = 0;
+                    }
+                }
+            }
+
+            // yeahhhh i kinda borrowed this from hammerheads
+            switch (m_currentAssistMode) {
+                // for trench, it chooses the nearest 90 deg angle (-90, 0, 90, 180) in case we wanna shovel, and locks the y axis (i got the y values from choreo)
+                case TRENCH_LOCK:
+                    double curDeg = pose.getRotation().getDegrees();
+                    double closest = 0;
+                    double minDiff = Math.abs(MathUtil.inputModulus(curDeg - 0, -180, 180));
+                    for (double t : new double[] { 90, -90 }) {
+                        double d = Math.abs(MathUtil.inputModulus(curDeg - t, -180, 180));
+                        if (d < minDiff) {
+                            minDiff = d;
+                            closest = t;
+                        }
+                    }
+                    m_rotationController.setSetpoint(Math.toRadians(closest));
+                    finalOmega = MathUtil.clamp(m_rotationController.calculate(pose.getRotation().getRadians()), -Math.PI, Math.PI);
+                    if (m_rotationController.atSetpoint()) finalOmega = 0;
+
+                    boolean isTopTrench = pose.getY() >= 4.1055; 
+                    double trenchY;
+                    if (isTopTrench) {
+                        if (Math.abs(MathUtil.inputModulus(closest - (-90), -180, 180)) < 1.0) {
+                            trenchY = 7.320613861083984; // -90 deg
+                        } else if (Math.abs(MathUtil.inputModulus(closest - 90, -180, 180)) < 1.0) {
+                            trenchY = 7.531105995178223; // +90 deg
+                        } else {
+                            trenchY = 7.437553882598877; // 0 or 180 deg
+                        }
+                    } else {
+                        if (Math.abs(MathUtil.inputModulus(closest - (-90), -180, 180)) < 1.0) {
+                            trenchY = 0.5396772623062134; // -90 deg
+                        } else if (Math.abs(MathUtil.inputModulus(closest - 90, -180, 180)) < 1.0) {
+                            trenchY = 0.759850263595581; // +90 deg
+                        } else {
+                            trenchY = 0.6595473289489746; // 0 or 180 deg
+                        }
+                    }
+
+                    m_debugTrenchSetpoint = trenchY;
+                    m_debugTrenchHeading = closest;
+                    m_debugIsTopTrench = isTopTrench;
+                    m_debugTrenchCurrentY = pose.getY();
+
+                    m_translationController.setSetpoint(trenchY);
+                    double rawPidOutput = m_translationController.calculate(pose.getY());
+                    m_debugPidOutput = rawPidOutput;
+                    finalY = MathUtil.clamp(-rawPidOutput, -1.5, 1.5); 
+                    if (m_translationController.atSetpoint()) finalY = 0;
+
+                    m_targetPose = new Pose2d(pose.getX(), trenchY, Rotation2d.fromDegrees(closest));
+                    break;
+
+                 // for bump, it chooses the nearest 45 deg angle but doesnt lock translation
+                case BUMP_LOCK:
+                    double closestBump = Math.round((pose.getRotation().getDegrees() - 45.0) / 90.0) * 90.0 + 45.0;
+                    m_rotationController.setSetpoint(Math.toRadians(closestBump));
+                    finalOmega = MathUtil.clamp(m_rotationController.calculate(pose.getRotation().getRadians()), -Math.PI, Math.PI);
+                    if (m_rotationController.atSetpoint()) finalOmega = 0;
+
+                    m_targetPose = new Pose2d(pose.getX(), pose.getY(), Rotation2d.fromDegrees(closestBump));
+                    break;
+                
+                default: 
+                    m_targetPose = pose;
+                    break;
+            }
+
+            m_lastX = finalX;
+            m_lastY = finalY;
+            m_lastOmega = finalOmega;
+
+            setControl(m_fieldCentricDrive.withVelocityX(finalX).withVelocityY(finalY).withRotationalRate(finalOmega));
+        });
     }
 
 }

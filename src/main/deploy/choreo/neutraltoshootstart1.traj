@@ -170,5 +170,5 @@
   "splits":[0]
  },
  "events":[
-   {"name":"shootwhilemoving", "from":{"target":3, "targetTimestamp":2.65747, "offset":{"exp":"0 s", "val":0.0}}, "event":{"type":"named", "data":{"name":"autofire"}}}]
+   {"name":"shootwhilemoving", "from":{"target":3, "targetTimestamp":2.65747, "offset":{"exp":"2 s", "val":2.0}}, "event":{"type":"named", "data":{"name":"autofire"}}}]
 }

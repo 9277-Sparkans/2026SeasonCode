@@ -35,6 +35,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
+import frc.robot.Constants.OIConstants;
 import frc.robot.generated.TunerConstants;
 import frc.robot.util.Zones;
 import java.util.function.BooleanSupplier;
@@ -453,7 +454,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             DoubleSupplier omegaSupplier,
             BooleanSupplier isShootingSupplier,
             BooleanSupplier isDumpingSupplier,
-            DoubleSupplier desiredTurretAngleSupplier) {
+            DoubleSupplier desiredTurretAngleSupplier,
+            DoubleSupplier MaxSpeed,
+            DoubleSupplier MaxAngularRate) {
 
         m_translationController.setTolerance(Constants.DriveAssistConstants.TRANSLATION_TOLERANCE);
         m_rotationController.setTolerance(Constants.DriveAssistConstants.ROTATION_TOLERANCE);
@@ -546,7 +549,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             // yeahhhh i kinda borrowed this from hammerheads
             switch (m_currentAssistMode) {
                 // for trench, it chooses the nearest 90 deg angle (-90, 0, 90, 180) in case we wanna shovel, and locks the y axis (i got the y values from choreo)
-                case DISABLED:
+                case TRENCH_LOCK:
                     double curDeg = pose.getRotation().getDegrees();
                     double closest = 0;
                     double minDiff = Math.abs(MathUtil.inputModulus(curDeg - 0, -180, 180));
@@ -589,7 +592,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                     m_translationController.setSetpoint(trenchY);
                     double rawPidOutput = m_translationController.calculate(pose.getY());
                     m_debugPidOutput = rawPidOutput;
-                    finalY = MathUtil.clamp(-rawPidOutput, -1.5, 1.5); 
+
+                    boolean isRedAlliance = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red;
+                    double yOutput = isRedAlliance ? -rawPidOutput : rawPidOutput;
+                    finalY = MathUtil.clamp(yOutput, -1.5, 1.5);
+  
                     if (m_translationController.atSetpoint()) finalY = 0;
 
                     m_targetPose = new Pose2d(pose.getX(), trenchY, Rotation2d.fromDegrees(closest));
@@ -614,7 +621,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             m_lastY = finalY;
             m_lastOmega = finalOmega;
 
-            setControl(m_fieldCentricDrive.withVelocityX(finalX).withVelocityY(finalY).withRotationalRate(finalOmega));
+            setControl(m_fieldCentricDrive
+                .withVelocityX(finalX)
+                .withVelocityY(finalY)
+                .withRotationalRate(finalOmega)
+                .withDeadband(MaxSpeed.getAsDouble() * OIConstants.kDeadband).withRotationalDeadband(MaxAngularRate.getAsDouble() * OIConstants.kDeadband) // Add a 10% deadband
+            );
         });
     }
 

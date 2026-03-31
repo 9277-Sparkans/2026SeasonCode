@@ -290,7 +290,9 @@ public class RobotContainer {
                                                 () -> translateStick.getHID()
                                                                 .getRawButton(OIConstants.kSticks_trigger),
                                                 () -> AutoTrack.isDumping(),
-                                                () -> AutoTrack.getDesiredTurretAngle()));
+                                                () -> AutoTrack.getDesiredTurretAngle(),
+                                                () -> MaxSpeed,
+                                                () -> MaxAngularRate));
 
                 // Idle while the robot is disabled. This ensures the configured
                 // neutral mode is applied to the drive motors while disabled.

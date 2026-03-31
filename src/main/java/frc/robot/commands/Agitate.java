@@ -32,17 +32,17 @@ public class Agitate extends Command {
                 Commands.runOnce(() -> hinge.states(HingeState.AGITATE)),
                 Commands.waitSeconds(1),
                 Commands.runOnce(() -> hinge.states(HingeState.DOWN))
-            ),
-            Commands.repeatingSequence(
-                Commands.waitSeconds(1.5),
-                Commands.runOnce(() -> indexer.agitate(true)),
-                Commands.waitSeconds(0.5),
-                Commands.runOnce(() -> indexer.agitate(false))
             )
+            // Commands.repeatingSequence(
+            //     Commands.waitSeconds(1.5),
+            //     Commands.runOnce(() -> indexer.agitate(true)),
+            //     Commands.waitSeconds(0.5),
+            //     Commands.runOnce(() -> indexer.agitate(false))
+            // )
         ).finallyDo((interrupted) -> {
             if (interrupted) {
                 hinge.states(HingeState.DOWN);
-                indexer.agitate(false);
+                // indexer.agitate(false);
             }
         });
     }

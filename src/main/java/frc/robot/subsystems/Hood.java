@@ -172,13 +172,13 @@ public class Hood extends SubsystemBase {
   @Override
   public void periodic() {
     // hoodMotor.set(0.0);
-    moveHoodToAngle(targetHoodAngle);
+    // moveHoodToAngle(targetHoodAngle);
     // System.out.println("hood angle back is " + targetHoodAngle);
   }
 
   public double getPosition() {
-    double position = hoodMotor.getPosition().getValueAsDouble() / HoodConstants.kGearRatio;
-    return position * 360; 
+    double position = -hoodEncoder.getPosition().getValueAsDouble() * HoodConstants.kGearRatio;
+    return position * 2.0; 
   }
 
   public void moveHoodMotionMagic() {

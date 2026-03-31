@@ -57,6 +57,11 @@ public class Hinge extends SubsystemBase {
 
         hingeEncoder = new CANcoder(Constants.HingeConstants.kHingeEncoderId);
         hingeEncoderConfig = new CANcoderConfiguration();
+        
+        hingeEncoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1;
+        hingeEncoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
+        hingeEncoderConfig.MagnetSensor.MagnetOffset = -0.690185546875;
+        hingeEncoder.getConfigurator().apply(hingeEncoderConfig);
 
         // hinge.setPosition(0.0);
 
@@ -83,10 +88,6 @@ public class Hinge extends SubsystemBase {
 
         hinge.getConfigurator().apply(hingeConfig);
 
-        hingeEncoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1;
-        hingeEncoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
-        hingeEncoderConfig.MagnetSensor.MagnetOffset = -0.690185546875;
-        hingeEncoder.getConfigurator().apply(hingeEncoderConfig);
 
         pid = new PIDController(HingeConstants.hinge_kP, HingeConstants.hinge_kI, HingeConstants.hinge_kD);
 
@@ -196,6 +197,8 @@ public class Hinge extends SubsystemBase {
 
     private void UsePID(double target)
     {
+        if (hingeState == HingeState.IDLE) return;
+        
         if (Math.abs(target - hingeEncoder.getPosition().getValueAsDouble()) <= 0.01)
         {
             hinge.set(0.0);

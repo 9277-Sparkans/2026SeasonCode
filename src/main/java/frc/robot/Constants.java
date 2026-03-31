@@ -49,7 +49,7 @@ public class Constants {
         public static final int kDriverTranslateStickPort = 2;
         public static final int kDriverRotateStickPort = 3;
         public static final int kBackupOperatorControllerPort = 4;
-        public static final double kDeadband = 0.02;
+        public static final double kDeadband = 0.065;
 
         // Joysticks
         public static final int kDriverYAxis = 1;
@@ -231,13 +231,22 @@ public class Constants {
         static {
 
             // data points (distance from turret, rpm, hood angle)
-            SHOT_MAP.put(2.265, new ShotData(4000.0, 10.0));
-            SHOT_MAP.put(2.765, new ShotData(4050.0, 10.0));
-            SHOT_MAP.put(3.265, new ShotData(4200.0, 9.0));
-            SHOT_MAP.put(3.765, new ShotData(4400.0, 8.0));
-            SHOT_MAP.put(4.265, new ShotData(4500.0, 6.0));
-            SHOT_MAP.put(4.765, new ShotData(4700.0, 5.0));
-            SHOT_MAP.put(5.265, new ShotData(5150.0, 5.0));
+            // SHOT_MAP.put(2.265, new ShotData(4000.0, 10.0));
+            // SHOT_MAP.put(2.765, new ShotData(4050.0, 10.0));
+            // SHOT_MAP.put(3.265, new ShotData(4200.0, 9.0));
+            // SHOT_MAP.put(3.765, new ShotData(4400.0, 8.0));
+            // SHOT_MAP.put(4.265, new ShotData(4500.0, 6.0));
+            // SHOT_MAP.put(4.765, new ShotData(4700.0, 5.0));
+            // SHOT_MAP.put(5.265, new ShotData(5150.0, 5.0));
+            SHOT_MAP.put(2.370, new ShotData(4000.0, 10));
+            SHOT_MAP.put(2.964, new ShotData(4050.0, 9));
+            SHOT_MAP.put(3.521, new ShotData(4200.0, 9.0));
+            SHOT_MAP.put(4.023, new ShotData(4550.0, 8.0));
+            SHOT_MAP.put(4.523, new ShotData(4700.0, 6.0));
+            SHOT_MAP.put(4.923, new ShotData(5100.0, 6.0));
+            SHOT_MAP.put(5.415, new ShotData(5300.0, 5.0));
+            SHOT_MAP.put(6.223, new ShotData(5900.0, 2.0));
+
 
             // distance, time of flight
             TOF_MAP.put(2.265, 0.7940);
@@ -275,10 +284,10 @@ public class Constants {
         public static final double hood_maxVoltage = 15;// kraken x44 max voltage
 
         public static final double hood_kG = 0.00;
-        public static final double hood_kS = 0.15;
+        public static final double hood_kS = 0.09;
         public static final double hood_kV = 0.095;
         public static final double hood_kA = 0.01;
-        public static final double hood_kP = 13.5; // 7.23, 11
+        public static final double hood_kP = 9.5; // 7.23, 11
         public static final double hood_kI = 0.07; // 0.01
         public static final double hood_kD = 0.25; // 0.38
 

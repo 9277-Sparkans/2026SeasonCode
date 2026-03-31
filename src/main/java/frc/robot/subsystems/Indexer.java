@@ -96,13 +96,13 @@ public class Indexer extends SubsystemBase {
     } else if (goal == IndexerGoal.IDLE) {
       stop();
     }
-    if (goal == IndexerGoal.ACTIVE) {
-      if (agitateOverride) {
-        spinReverse();
-      } else {
-        spinForward();
-      }
-    }
+    // if (goal == IndexerGoal.ACTIVE) {
+    //   if (agitateOverride) {
+    //     spinReverse();
+    //   } else {
+    //     spinForward();
+    //   }
+    // }
 
     this.goal = goal;
   }
@@ -139,11 +139,13 @@ public class Indexer extends SubsystemBase {
 
 
   public void activate() {
-    setGoal(IndexerGoal.ACTIVE);
+    // setGoal(IndexerGoal.ACTIVE);
+    spinForward();
   }
 
   public void deactivate() {
-    setGoal(IndexerGoal.IDLE);
+    // setGoal(IndexerGoal.IDLE);
+    stop();
   }
 
   public void agitate(boolean agitate) {

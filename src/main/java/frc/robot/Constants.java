@@ -239,12 +239,26 @@ public class Constants {
             // SHOT_MAP.put(4.765, new ShotData(4700.0, 5.0));
             // SHOT_MAP.put(5.265, new ShotData(5150.0, 5.0));
             SHOT_MAP.put(2.340, new ShotData(4000.0, 10));
+                TOF_MAP.put(2.340, 0.98333);
+
             SHOT_MAP.put(2.964, new ShotData(4150.0, 10));
+                TOF_MAP.put(2.964, 1.0);
+
             SHOT_MAP.put(3.516, new ShotData(4350.0, 7.0));
+                 TOF_MAP.put(3.516, 0.95);
+
             SHOT_MAP.put(4.007, new ShotData(4550.0, 6.0));
+                TOF_MAP.put(4.007, 1.15);
+
             SHOT_MAP.put(4.535, new ShotData(4850.0, 5.0));
+                TOF_MAP.put(4.535, 1.98333);
+
             SHOT_MAP.put(4.929, new ShotData(5000.0, 4.0));
+                TOF_MAP.put(4.929, 1.20);
+
             SHOT_MAP.put(5.411, new ShotData(5300.0, 3.0));
+                TOF_MAP.put(5.411, 1.98333);
+
             // SHOT_MAP.put(6.223, new ShotData(5900.0, 2.0));
 
 
@@ -257,13 +271,12 @@ public class Constants {
             // TOF_MAP.put(4.765, 0.8719);
             // TOF_MAP.put(5.265, 0.9375);
 
-            TOF_MAP.put(2.265, 0.816875);
-            TOF_MAP.put(2.765, 0.956875);
-            TOF_MAP.put(3.265, 0.9975);
-            TOF_MAP.put(3.765, 1.165);
-            TOF_MAP.put(4.265, 1.1375);
-            TOF_MAP.put(4.765, 1.28375);
-            TOF_MAP.put(5.265, 1.22875);
+            // TOF_MAP.put(2.765, 0.956875);
+            // TOF_MAP.put(3.265, 0.9975);
+            // TOF_MAP.put(3.765, 1.165);
+            // TOF_MAP.put(4.265, 1.1375);
+            // TOF_MAP.put(4.765, 1.28375);
+            // TOF_MAP.put(5.265, 1.22875);
         }
 
         // dumping tree map
@@ -273,12 +286,18 @@ public class Constants {
 
         static {
             // data points (distance from turret, rpm, hood angle)
-            DUMP_MAP.put(2.0, new ShotData(3700.0, 8.0));
-            DUMP_MAP.put(4.0, new ShotData(3700.0, 8.0));
+            DUMP_MAP.put(4.21, new ShotData(4300.0, 6.0));
+                DUMP_TOF_MAP.put(2.0, 0.6);
+
+            DUMP_MAP.put(7.04, new ShotData(4700.0, 3.0));
+                DUMP_TOF_MAP.put(2.0, 0.6);
+
+            DUMP_MAP.put(8.43, new ShotData(5400.0, 0.0));
+                DUMP_TOF_MAP.put(2.0, 0.6);
+
 
             // distance, time of flight
-            DUMP_TOF_MAP.put(2.0, 0.6);
-            DUMP_TOF_MAP.put(4.0, 0.6);
+            // DUMP_TOF_MAP.put(4.0, 0.6);
         }
     }
 
@@ -539,7 +558,7 @@ public class Constants {
         public static final double NORMAL_ACCEL_LIMIT = 15.0; 
         public static final double SHOOTING_ACCEL_LIMIT = 1.5;
         public static final double BRAKING_ACCEL_LIMIT = 100.0; 
-        public static final double SHOOTING_MAX_VELOCITY = 1.5; 
+        public static final double SHOOTING_MAX_VELOCITY = 0.5; 
         public static final double NORMAL_ROT_ACCEL_LIMIT = 25.0; 
         public static final double SHOOTING_ROT_ACCEL_LIMIT = 4.0; 
     }

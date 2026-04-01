@@ -12,6 +12,9 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import edu.wpi.first.units.measure.Voltage;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 
 
@@ -98,12 +101,12 @@ public class Shooter extends SubsystemBase {
     ) ;
 
 
-    // SmartDashboard.putData("Shooter]]]", new Sendable() {
-    //     @Override
-    //     public void initSendable(SendableBuilder builder) {
-    //         builder.addDoubleProperty("Speed", () -> targetVel, (val) -> targetVel = val);
-    //     }
-    // });
+    SmartDashboard.putData("Shooter", new Sendable() {
+        @Override
+        public void initSendable(SendableBuilder builder) {
+            builder.addDoubleProperty("Speed", () -> targetVel, (val) -> targetVel = val);
+        }
+    });
 
     targetVel = 0.0;
   }
@@ -112,7 +115,7 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     setVel();
-    // System.out.println("shooter rpm is " + targetVel);
+    System.out.println("shooter rpm is " + targetVel);
   }
 
   public Command shooterSpin() {

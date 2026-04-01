@@ -167,7 +167,7 @@ public class RobotContainer {
                                 () -> drivetrain.getStateCopy().Pose, lookup);
 
                 // new autotrack subsystem does caculations every 20 ms
-                AutoTrack = new AutoTrack(turret, shooter,
+                AutoTrack = new AutoTrack(turret, hood, shooter,
                                 () -> drivetrain.getStateCopy().Pose,
                                 () -> drivetrain.getStateCopy().Speeds);
 
@@ -527,7 +527,8 @@ public class RobotContainer {
                                 }));
 
                 operator(OIConstants.kKeyboard_trackToggle)
-                                .onTrue(Commands.runOnce(() -> lockmode = !lockmode));
+                                .onTrue(Commands.runOnce(() -> lockmode = !lockmode))
+                                .onTrue(Commands.runOnce(() -> AutoTrack.tracking = !AutoTrack.tracking));
 
                 operator(OIConstants.kKeyboard_lockModeToggle)
                                 .whileTrue(new LockMode(turret, shooter, hood, LockState.LOCK));

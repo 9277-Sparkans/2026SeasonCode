@@ -238,24 +238,32 @@ public class Constants {
             // SHOT_MAP.put(4.265, new ShotData(4500.0, 6.0));
             // SHOT_MAP.put(4.765, new ShotData(4700.0, 5.0));
             // SHOT_MAP.put(5.265, new ShotData(5150.0, 5.0));
-            SHOT_MAP.put(2.370, new ShotData(4000.0, 10));
-            SHOT_MAP.put(2.964, new ShotData(4050.0, 9));
-            SHOT_MAP.put(3.521, new ShotData(4200.0, 9.0));
-            SHOT_MAP.put(4.023, new ShotData(4550.0, 8.0));
-            SHOT_MAP.put(4.523, new ShotData(4700.0, 6.0));
-            SHOT_MAP.put(4.923, new ShotData(5100.0, 6.0));
-            SHOT_MAP.put(5.415, new ShotData(5300.0, 5.0));
-            SHOT_MAP.put(6.223, new ShotData(5900.0, 2.0));
+            SHOT_MAP.put(2.340, new ShotData(4000.0, 10));
+            SHOT_MAP.put(2.964, new ShotData(4150.0, 10));
+            SHOT_MAP.put(3.516, new ShotData(4350.0, 7.0));
+            SHOT_MAP.put(4.007, new ShotData(4550.0, 6.0));
+            SHOT_MAP.put(4.535, new ShotData(4850.0, 5.0));
+            SHOT_MAP.put(4.929, new ShotData(5000.0, 4.0));
+            SHOT_MAP.put(5.411, new ShotData(5300.0, 3.0));
+            // SHOT_MAP.put(6.223, new ShotData(5900.0, 2.0));
 
 
             // distance, time of flight
-            TOF_MAP.put(2.265, 0.7940);
-            TOF_MAP.put(2.765, 0.8145);
-            TOF_MAP.put(3.265, 0.8444);
-            TOF_MAP.put(3.765, 0.8798);
-            TOF_MAP.put(4.265, 0.8543);
-            TOF_MAP.put(4.765, 0.8719);
-            TOF_MAP.put(5.265, 0.9375);
+            // TOF_MAP.put(2.265, 0.7940);
+            // TOF_MAP.put(2.765, 0.8145);
+            // TOF_MAP.put(3.265, 0.8444);
+            // TOF_MAP.put(3.765, 0.8798);
+            // TOF_MAP.put(4.265, 0.8543);
+            // TOF_MAP.put(4.765, 0.8719);
+            // TOF_MAP.put(5.265, 0.9375);
+
+            TOF_MAP.put(2.265, 0.816875);
+            TOF_MAP.put(2.765, 0.956875);
+            TOF_MAP.put(3.265, 0.9975);
+            TOF_MAP.put(3.765, 1.165);
+            TOF_MAP.put(4.265, 1.1375);
+            TOF_MAP.put(4.765, 1.28375);
+            TOF_MAP.put(5.265, 1.22875);
         }
 
         // dumping tree map
@@ -280,14 +288,14 @@ public class Constants {
 
         public static final double hood_maxVelocity = 20; // rotations per second; was 1.0, setting it to this to avoid
                                                           // grinding the gear again!
-        public static final double hood_maxAcceleration = 80; // rotations per second^2
+        public static final double hood_maxAcceleration = 10; // rotations per second^2
         public static final double hood_maxVoltage = 15;// kraken x44 max voltage
 
         public static final double hood_kG = 0.00;
         public static final double hood_kS = 0.09;
         public static final double hood_kV = 0.095;
         public static final double hood_kA = 0.01;
-        public static final double hood_kP = 9.5; // 7.23, 11
+        public static final double hood_kP = 13.5; // 7.23, 11
         public static final double hood_kI = 0.07; // 0.01
         public static final double hood_kD = 0.25; // 0.38
 
@@ -328,7 +336,7 @@ public class Constants {
         public static final double intakeMaxVoltage = 5; // can change if not needed
         public static final double intakeMaxAcceleration = 100;
         public static final double intakeMaxVelocity = 500; // rps
-        public static final double intakeSpeed = 45.0; // rps max 66.6 rps 400.0
+        public static final double intakeSpeed = 35.0; // rps max 66.6 rps 400.0
         public static final double intakeAgitate = 20.0;
     }
 
@@ -461,15 +469,15 @@ public class Constants {
         public static final edu.wpi.first.math.geometry.Translation3d HUB_RED = new edu.wpi.first.math.geometry.Translation3d(
                 RED_HUB_X, RED_HUB_Y, 1.4);
 
-        public static final double BLUE_DUMP_RIGHT_X = 1.7;
-        public static final double BLUE_DUMP_RIGHT_Y = 1.8;
+        public static final double BLUE_DUMP_RIGHT_X = 1.164;
+        public static final double BLUE_DUMP_RIGHT_Y = 1.253326;
         public static final double BLUE_DUMP_LEFT_X = 1.7;
-        public static final double BLUE_DUMP_LEFT_Y = 6.4;
+        public static final double BLUE_DUMP_LEFT_Y = 6.816;
 
-        public static final double RED_DUMP_RIGHT_X = 14.840988; // 16.540988 - 1.7
-        public static final double RED_DUMP_RIGHT_Y = 1.8;
+        public static final double RED_DUMP_RIGHT_X = 15.376; // 16.540988 - 1.7
+        public static final double RED_DUMP_RIGHT_Y = 1.253326;
         public static final double RED_DUMP_LEFT_X = 14.840988;
-        public static final double RED_DUMP_LEFT_Y = 6.4;
+        public static final double RED_DUMP_LEFT_Y = 6.816;
     }
 
     public static final class CanBusConstants {

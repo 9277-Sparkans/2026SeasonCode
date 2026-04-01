@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.RobotContainer;
 import frc.robot.Constants.ShooterConstants.ShotData;
 import frc.robot.Utils;
 import frc.robot.util.ShotCalculator;
@@ -24,7 +25,7 @@ import frc.robot.util.ShotCalculator.CalculatedShot;
  */
 public class AutoTrack extends SubsystemBase {
     private final Turret turret;
-    // private final Hood hood;
+    private final Hood hood;
     private final Shooter shooter;
 
     private final Supplier<Pose2d> poseSupplier;
@@ -35,7 +36,7 @@ public class AutoTrack extends SubsystemBase {
     private double desiredTurretAngle = 0.0;
     private boolean isDumping = false;
     private boolean isLeftDump = false;
-    private boolean tracking = true;
+    public boolean tracking = true;
 
     // target coords
     private double currentHubX = Constants.FieldConstants.BLUE_HUB_X;
@@ -45,12 +46,12 @@ public class AutoTrack extends SubsystemBase {
 
     public AutoTrack(
             Turret turret,
-            // Hood hood,
+            Hood hood,
             Shooter shooter,
             Supplier<Pose2d> poseSupplier,
             Supplier<ChassisSpeeds> speedsSupplier) {
         this.turret = turret;
-        // this.hood = hood;
+        this.hood = hood;
         this.shooter = shooter;
         this.poseSupplier = poseSupplier;
         this.speedsSupplier = speedsSupplier;
@@ -142,7 +143,9 @@ public class AutoTrack extends SubsystemBase {
         // calibration widget for collecting data points
         SmartDashboard.putNumber("Calibration/DistanceToTarget", targetDistance);
         SmartDashboard.putNumber("Calibration/CurrentRPM", shooter.getMotorRPM());
-        // SmartDashboard.putNumber("Calibration/CurrentHoodAngle", hood.getPosition());
+        SmartDashboard.putNumber("Calibration/TargetRPM", shooter.targetVel);
+        SmartDashboard.putNumber("Calibration/TargetHoodAngle", hood.targetHoodAngle);
+        SmartDashboard.putNumber("Calibration/CurrentHoodAngle", hood.getPosition());
         SmartDashboard.putBoolean("Calibration/IsDumping", isDumping);
         SmartDashboard.putString("Calibration/TargetType", isDumping ? (isLeftDump ? "DUMP_LEFT" : "DUMP_RIGHT") : "HUB");
     }

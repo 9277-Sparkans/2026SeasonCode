@@ -495,6 +495,9 @@ public class RobotContainer {
                 // translateStick.button(OIConstants.kSticks_trigger).onTrue(indexer.indexerSpin());
                 // translateStick.button(OIConstants.kSticks_trigger).onFalse(indexer.indexerStop());
 
+                translateStick.button(OIConstants.kSticks_trigger).whileTrue(Commands.runOnce(
+                        () -> autoFireInterpolated.finished = false));
+
                 translateStick.button(OIConstants.kSticks_trigger).whileTrue(Commands.either(
                                 autoFireInterpolated,
                                 Commands.runOnce(() -> indexer.activate()),

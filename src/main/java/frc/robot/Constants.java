@@ -145,7 +145,7 @@ public class Constants {
         public static double turret_kV = 0.095;
         public static double turret_kA = 0.0;
         public static double turret_kS = 1.0; // 0.6
-        public static double turret_kP = 13.5;
+        public static double turret_kP = 9.0; // 13.5
         public static double turret_kI = 0.07;
         public static double turret_kD = 0.25;
 
@@ -231,13 +231,7 @@ public class Constants {
         static {
 
             // data points (distance from turret, rpm, hood angle)
-            // SHOT_MAP.put(2.265, new ShotData(4000.0, 10.0));
-            // SHOT_MAP.put(2.765, new ShotData(4050.0, 10.0));
-            // SHOT_MAP.put(3.265, new ShotData(4200.0, 9.0));
-            // SHOT_MAP.put(3.765, new ShotData(4400.0, 8.0));
-            // SHOT_MAP.put(4.265, new ShotData(4500.0, 6.0));
-            // SHOT_MAP.put(4.765, new ShotData(4700.0, 5.0));
-            // SHOT_MAP.put(5.265, new ShotData(5150.0, 5.0));
+            //    time of flight (distance from turret, time of flight)
             SHOT_MAP.put(2.340, new ShotData(4000.0, 10));
                 TOF_MAP.put(2.340, 0.98333);
 
@@ -259,6 +253,13 @@ public class Constants {
             SHOT_MAP.put(5.411, new ShotData(5300.0, 3.0));
                 TOF_MAP.put(5.411, 1.98333);
 
+            // SHOT_MAP.put(2.265, new ShotData(4000.0, 10.0));
+            // SHOT_MAP.put(2.765, new ShotData(4050.0, 10.0));
+            // SHOT_MAP.put(3.265, new ShotData(4200.0, 9.0));
+            // SHOT_MAP.put(3.765, new ShotData(4400.0, 8.0));
+            // SHOT_MAP.put(4.265, new ShotData(4500.0, 6.0));
+            // SHOT_MAP.put(4.765, new ShotData(4700.0, 5.0));
+            // SHOT_MAP.put(5.265, new ShotData(5150.0, 5.0));    
             // SHOT_MAP.put(6.223, new ShotData(5900.0, 2.0));
 
 
@@ -286,6 +287,7 @@ public class Constants {
 
         static {
             // data points (distance from turret, rpm, hood angle)
+            //     time of flight (distance from turret, time of flight)
             DUMP_MAP.put(4.21, new ShotData(4300.0, 6.0));
                 DUMP_TOF_MAP.put(2.0, 0.6);
 

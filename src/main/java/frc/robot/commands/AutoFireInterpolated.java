@@ -128,7 +128,8 @@ public class AutoFireInterpolated extends Command {
                 double linearVelocity = shooterRPM * (2.0 * Math.PI / 60.0) * 0.0508;
 
                 if (AutoTrack.isDumping()) {
-                    if (targetValid) {
+                    // if (targetValid) 
+                    {
                         fuelSim.launchFuel(
                                 MetersPerSecond.of(linearVelocity),
                                 Degrees.of(90.0 - optimalShot.hoodAngle()),
@@ -151,7 +152,8 @@ public class AutoFireInterpolated extends Command {
 
         // shooter rpm has to be within 150 of the optimal rpm, and if dumping, the turret must not be clamped for indexer to run.
         if (Math.abs(optimalShooterRPM - shooterRPM) < 200.0
-                && targetValid) {
+                // && targetValid
+                ) {
             indexer.activate();
         } else {
             indexer.deactivate();

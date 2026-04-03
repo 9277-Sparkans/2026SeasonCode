@@ -251,13 +251,13 @@ public class Constants {
                 TOF_MAP.put(4.007, 1.15);
 
             SHOT_MAP.put(4.535, new ShotData(4850.0, 5.0));
-                TOF_MAP.put(4.535, 1.98333);
+                TOF_MAP.put(4.535, 1.28375); // 1.98333
 
             SHOT_MAP.put(4.929, new ShotData(5000.0, 4.0));
-                TOF_MAP.put(4.929, 1.20);
+                TOF_MAP.put(4.929, 1.40); // 1.20
 
             SHOT_MAP.put(5.411, new ShotData(5300.0, 3.0));
-                TOF_MAP.put(5.411, 1.98333);
+                TOF_MAP.put(5.411, 1.3525); // 1.98333
 
             // SHOT_MAP.put(6.223, new ShotData(5900.0, 2.0));
 

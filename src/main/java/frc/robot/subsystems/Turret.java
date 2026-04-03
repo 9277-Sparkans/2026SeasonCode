@@ -55,6 +55,20 @@ public class Turret extends SubsystemBase {
     turretMotorConfig.Slot0.kI = TurretConstants.turret_kI;
     turretMotorConfig.Slot0.kD = TurretConstants.turret_kD;
 
+    turretMotorConfig.Slot1.kS = TurretConstants.turret_kS1;
+    turretMotorConfig.Slot1.kV = TurretConstants.turret_kV1;
+    turretMotorConfig.Slot1.kA = TurretConstants.turret_kA1;
+    turretMotorConfig.Slot1.kP = TurretConstants.turret_kP1;
+    turretMotorConfig.Slot1.kI = TurretConstants.turret_kI1;
+    turretMotorConfig.Slot1.kD = TurretConstants.turret_kD1;
+
+    turretMotorConfig.Slot2.kS = TurretConstants.turret_kS2;
+    turretMotorConfig.Slot2.kV = TurretConstants.turret_kV2;
+    turretMotorConfig.Slot2.kA = TurretConstants.turret_kA2;
+    turretMotorConfig.Slot2.kP = TurretConstants.turret_kP2;
+    turretMotorConfig.Slot2.kI = TurretConstants.turret_kI2;
+    turretMotorConfig.Slot2.kD = TurretConstants.turret_kD2;
+    
     turretMotorConfig.Voltage.PeakForwardVoltage = TurretConstants.turret_maxVoltage;
     turretMotorConfig.Voltage.PeakReverseVoltage = -TurretConstants.turret_maxVoltage;
     turretMotorConfig.MotionMagic.MotionMagicAcceleration = TurretConstants.turret_maxAcceleration;
@@ -122,6 +136,20 @@ public class Turret extends SubsystemBase {
 
   public void defaultCommand() {
     // System.out.println("target is " + target);
+
+    if (Math.abs(target) < 30.0)
+    {
+      m_request.Slot = 0;
+    }
+    else if (Math.abs(target) < 60.0)
+    {
+      m_request.Slot = 1;
+    } 
+    else
+    {
+      m_request.Slot = 2;
+    }
+
     if (target > TurretConstants.kMaximumAngle) {
       turretMotor.setControl(m_request.withPosition(TurretConstants.kMaximumAngle / 360.0 * TurretConstants.kGearRatio));
     }

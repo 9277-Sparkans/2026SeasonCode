@@ -68,7 +68,7 @@ public class Turret extends SubsystemBase {
     turretMotorConfig.Slot2.kP = TurretConstants.turret_kP2;
     turretMotorConfig.Slot2.kI = TurretConstants.turret_kI2;
     turretMotorConfig.Slot2.kD = TurretConstants.turret_kD2;
-    
+
     turretMotorConfig.Voltage.PeakForwardVoltage = TurretConstants.turret_maxVoltage;
     turretMotorConfig.Voltage.PeakReverseVoltage = -TurretConstants.turret_maxVoltage;
     turretMotorConfig.MotionMagic.MotionMagicAcceleration = TurretConstants.turret_maxAcceleration;
@@ -137,27 +137,25 @@ public class Turret extends SubsystemBase {
   public void defaultCommand() {
     // System.out.println("target is " + target);
 
+    int index = 2;
+
     if (Math.abs(target) < 30.0)
     {
-      m_request.Slot = 0;
+      index = 0;
     }
     else if (Math.abs(target) < 60.0)
     {
-      m_request.Slot = 1;
+      index = 1;
     } 
-    else
-    {
-      m_request.Slot = 2;
-    }
 
     if (target > TurretConstants.kMaximumAngle) {
-      turretMotor.setControl(m_request.withPosition(TurretConstants.kMaximumAngle / 360.0 * TurretConstants.kGearRatio));
+      turretMotor.setControl(m_request.withPosition(TurretConstants.kMaximumAngle / 360.0 * TurretConstants.kGearRatio).withSlot(index));
     }
     else if (target < TurretConstants.kMinimumAngle) {
-      turretMotor.setControl(m_request.withPosition(TurretConstants.kMinimumAngle / 360.0 * TurretConstants.kGearRatio));
+      turretMotor.setControl(m_request.withPosition(TurretConstants.kMinimumAngle / 360.0 * TurretConstants.kGearRatio).withSlot(index));
     }
     else {
-      turretMotor.setControl(m_request.withPosition(target / 360.0 * TurretConstants.kGearRatio));
+      turretMotor.setControl(m_request.withPosition(target / 360.0 * TurretConstants.kGearRatio).withSlot(index));
     }
   }
 

@@ -149,6 +149,20 @@ public class Constants {
         public static double turret_kI = 0.07;
         public static double turret_kD = 0.25;
 
+        public static double turret_kV1 = 0.095;
+        public static double turret_kA1 = 0.0;
+        public static double turret_kS1 = 0.09; // 0.6 1.0
+        public static double turret_kP1 = 11.5; // 13.5
+        public static double turret_kI1 = 0.07;
+        public static double turret_kD1 = 0.25;
+
+        public static double turret_kV2 = 0.095;
+        public static double turret_kA2 = 0.0;
+        public static double turret_kS2 = 0.09; // 0.6 1.0
+        public static double turret_kP2 = 13.5; // 13.5
+        public static double turret_kI2 = 0.07;
+        public static double turret_kD2 = 0.25;
+
         public static double kMaximumAngle = 90.0;
         public static double kMinimumAngle = -90.0;
 

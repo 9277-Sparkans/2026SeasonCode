@@ -9,6 +9,7 @@ import static edu.wpi.first.units.Units.*;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -101,7 +102,7 @@ public class RobotContainer {
         private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
         private final Telemetry logger = new Telemetry(MaxSpeed);
-        private final SendableChooser<Command> autoChooser = new SendableChooser<>();
+        private SendableChooser<Command> autoChooser;
 
         public final CommandXboxController joystick = new CommandXboxController(OIConstants.kDriverControllerPort);
         public final CommandJoystick translateStick = new CommandJoystick(OIConstants.kDriverTranslateStickPort);
@@ -181,49 +182,58 @@ public class RobotContainer {
                         autoFireInterpolated.setFuelSim(fuelSim);
                 }
 
+                // Named Commands for use in autonomous
                 NamedCommands.registerCommand("intake",
                                 intake.intakeCommand());
-                // NamedCommands.registerCommand("climbUp",
-                // climb.climbUp());
-                // NamedCommands.registerCommand("climbHang",
-                // climb.climbHang());
-                NamedCommands.registerCommand("climbUp",
+                NamedCommands.registerCommand("stopintake",
+                                intake.stopRollerCommand());
+
+                NamedCommands.registerCommand("climbup",
                                 Commands.runOnce(() -> climb.climbUp()));
-                NamedCommands.registerCommand("climbHang",
+                NamedCommands.registerCommand("climbhang",
                                 Commands.runOnce(() -> climb.climbHang()));
+
                 NamedCommands.registerCommand("autofire",
                                 autoFireInterpolated);
-                NamedCommands.registerCommand("hingeDown",
-                                hinge.hingeDown());
-                NamedCommands.registerCommand("hingeUp",
-                                hinge.hingeUp());
-                NamedCommands.registerCommand("index",
-                                Commands.runOnce(() -> indexer.activate()));
-                NamedCommands.registerCommand("kicker",
-                                Commands.runOnce(() -> transfer.toggleTransfer()));
-                NamedCommands.registerCommand("stopFire",
-                                new LockMode(turret, shooter, hood, LockState.NEUTRAL));
-                NamedCommands.registerCommand("stopFireBetter",
+                NamedCommands.registerCommand("stopautofire",
                                 Commands.runOnce(() -> autoFireInterpolated.finished = true));
 
+                NamedCommands.registerCommand("hingedown",
+                                hinge.hingeDown());
+                NamedCommands.registerCommand("hingeup",
+                                hinge.hingeUp());
+                NamedCommands.registerCommand("agitate",
+                                agitateCommand);
+
+                // TO CHANGE TO TRANSFER ON/OFF INSTEAD OF TOGGLE
+                NamedCommands.registerCommand("kicker",
+                                Commands.runOnce(() -> transfer.activateTransfer()));
+
+                NamedCommands.registerCommand("stopkicker",
+                                Commands.runOnce(() -> transfer.stop()));                 
+
+                // deprecated
+                // NamedCommands.registerCommand("index",
+                //                 Commands.runOnce(() -> indexer.activate()));
+                
+                // NamedCommands.registerCommand("stopFire",
+                //                 new LockMode(turret, shooter, hood, LockState.NEUTRAL));
+
+
                 turret.setDefaultCommand(turret.initDefaultCommand(turret));
-                hood.setDefaultCommand(hood.initDefaultCommand());  // autotrack sets hood so commented out
+                hood.setDefaultCommand(hood.initDefaultCommand());
                 hinge.setDefaultCommand(hinge.initDefaultCommand());
                 // sillyHinge.setDefaultCommand(sillyHinge.initDefaultCommand());
 
-                // auto chooser
+                autoChooser = new SendableChooser<>();
                 autoChooser.setDefaultOption("No auto", Commands.none());
-                // jeet autos, add final autos in later
-                // autoChooser.addOption("S1 DPR + Climb (S1.1-S-DPR-C)",
-                // AutoAlignCommand.getS1DPR_C(drivetrain));
-                // autoChooser.addOption("S1 DPR (S1.1-S-DPR)",
-                // AutoAlignCommand.getS1DPR(drivetrain));
-                // autoChooser.addOption("S2 Depost (S2.DP)",
-                // AutoAlignCommand.getS2DP(drivetrain));
-                // autoChooser.addOption("S2 Human Player (S2.HP)",
-                // AutoAlignCommand.getS2HP(drivetrain));
-                // autoChooser.addOption("S3 Human Player (S3.HP)",
-                // AutoAlignCommand.getS3HP(drivetrain));
+                autoChooser.addOption("doubleswipestart1", new PathPlannerAuto("doubleswipestart1"));
+                autoChooser.addOption("autofiremovetest", new PathPlannerAuto("autofiremovetest"));
+                autoChooser.addOption("deadlinedumptest", new PathPlannerAuto("deadlinedumptest"));
+                autoChooser.addOption("Trench Left 2 Sweeps", new PathPlannerAuto("Trench Left 2 Sweeps"));
+                autoChooser.addOption("trenchtoclimb", new PathPlannerAuto("trenchtoclimb"));
+                autoChooser.addOption("shoottest", new PathPlannerAuto("shoottest"));
+
 
                 SmartDashboard.putData("Auto Chooser", autoChooser);
 
@@ -528,7 +538,13 @@ public class RobotContainer {
 
                 operator(OIConstants.kKeyboard_trackToggle)
                                 .onTrue(Commands.runOnce(() -> lockmode = !lockmode))
-                                .onTrue(Commands.runOnce(() -> AutoTrack.tracking = !AutoTrack.tracking));
+                                .onTrue(Commands.runOnce(() -> {
+                                        if (AutoTrack.isTracking()) {
+                                                AutoTrack.disableTracking();
+                                        } else {
+                                                AutoTrack.enableTracking();
+                                        }
+                                }));
 
                 operator(OIConstants.kKeyboard_lockModeToggle)
                                 .whileTrue(new LockMode(turret, shooter, hood, LockState.LOCK));
@@ -590,8 +606,7 @@ public class RobotContainer {
         }
 
         public Command getAutonomousCommand() {
-                // return autoChooser.getSelected();
-                return new PathPlannerAuto("henockAuto");
+                return autoChooser.getSelected();
         }
 
         private void configureFuelSim() {

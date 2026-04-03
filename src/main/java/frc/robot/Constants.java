@@ -144,7 +144,7 @@ public class Constants {
 
         public static double turret_kV = 0.095;
         public static double turret_kA = 0.0;
-        public static double turret_kS = 1.0; // 0.6
+        public static double turret_kS = 0.09; // 0.6 1.0
         public static double turret_kP = 9.0; // 13.5
         public static double turret_kI = 0.07;
         public static double turret_kD = 0.25;

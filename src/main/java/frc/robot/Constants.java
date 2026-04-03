@@ -357,7 +357,7 @@ public class Constants {
         public static final double intakeMaxVoltage = 5; // can change if not needed
         public static final double intakeMaxAcceleration = 100;
         public static final double intakeMaxVelocity = 500; // rps
-        public static final double intakeSpeed = 35.0; // rps max 66.6 rps 400.0
+        public static final double intakeSpeed = 55.0; // rps max 66.6 rps 400.0
         public static final double intakeAgitate = 20.0;
     }
 

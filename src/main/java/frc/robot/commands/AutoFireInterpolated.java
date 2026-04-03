@@ -150,14 +150,16 @@ public class AutoFireInterpolated extends Command {
             }
         }
 
+        indexer.activate();
+
         // shooter rpm has to be within 150 of the optimal rpm, and if dumping, the turret must not be clamped for indexer to run.
-        if (Math.abs(optimalShooterRPM - shooterRPM) < 200.0
-                // && targetValid
-                ) {
-            indexer.activate();
-        } else {
-            indexer.deactivate();
-        }
+        // if (Math.abs(optimalShooterRPM - shooterRPM) < 200.0
+        //         // && targetValid
+        //         ) {
+        //     indexer.activate();
+        // } else {
+        //     indexer.activate();
+        // }
     }
 
     @Override

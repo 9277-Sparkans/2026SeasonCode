@@ -189,9 +189,9 @@ public class RobotContainer {
                                 intake.stopRollerCommand());
 
                 NamedCommands.registerCommand("climbup",
-                                Commands.runOnce(() -> climb.climbUp()));
+                                climb.climbUp());
                 NamedCommands.registerCommand("climbhang",
-                                Commands.runOnce(() -> climb.climbHang()));
+                                climb.climbHang());
 
                 NamedCommands.registerCommand("autofire",
                                 autoFireInterpolated);
@@ -203,7 +203,9 @@ public class RobotContainer {
                 NamedCommands.registerCommand("hingeup",
                                 hinge.hingeUp());
                 NamedCommands.registerCommand("agitate",
-                                agitateCommand);
+                                Agitate.agitate(hinge, indexer));
+                NamedCommands.registerCommand("stopagitate",
+                                Commands.runOnce(() -> Agitate.agitate(hinge, indexer).end(true)));
 
                 // TO CHANGE TO TRANSFER ON/OFF INSTEAD OF TOGGLE
                 NamedCommands.registerCommand("kicker",
@@ -231,9 +233,13 @@ public class RobotContainer {
                 autoChooser.addOption("autofiremovetest", new PathPlannerAuto("autofiremovetest"));
                 autoChooser.addOption("deadlinedumptest", new PathPlannerAuto("deadlinedumptest"));
                 autoChooser.addOption("Trench Left 2 Sweeps", new PathPlannerAuto("Trench Left 2 Sweeps"));
-                autoChooser.addOption("trenchtoclimb", new PathPlannerAuto("trenchtoclimb"));
                 autoChooser.addOption("shoottest", new PathPlannerAuto("shoottest"));
                 autoChooser.addOption("trenchshootclimbtest", new PathPlannerAuto("trenchshootclimbtest"));
+                autoChooser.addOption("intaketest", new PathPlannerAuto("intaketest"));
+                autoChooser.addOption("intake2test", new PathPlannerAuto("intake2test"));
+                autoChooser.addOption("commandtest", new PathPlannerAuto("commandtest"));
+                autoChooser.addOption("intakeshootclimb", new PathPlannerAuto("intakeshootclimb"));
+
 
 
                 SmartDashboard.putData("Auto Chooser", autoChooser);

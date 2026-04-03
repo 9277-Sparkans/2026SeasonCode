@@ -4,11 +4,25 @@
  "type":"Swerve",
  "variables":{
   "expressions":{
+   "climbspeed":{
+    "dimension":"LinVel",
+    "var":{
+     "exp":"0.3 m / s",
+     "val":0.3
+    }
+   },
+   "intakespeed":{
+    "dimension":"LinVel",
+    "var":{
+     "exp":"2 m / s",
+     "val":2.0
+    }
+   },
    "shoot":{
     "dimension":"LinVel",
     "var":{
-     "exp":"0.7 m / s",
-     "val":0.7
+     "exp":"0.5 m / s",
+     "val":0.5
     }
    }
   },
@@ -391,6 +405,34 @@
      "val":-1.5707963267948966
     }
    },
+   "preshootleft":{
+    "x":{
+     "exp":"3.4900000000000064 m",
+     "val":3.4900000000000064
+    },
+    "y":{
+     "exp":"trenchexitleft.y",
+     "val":7.441
+    },
+    "heading":{
+     "exp":"trenchexitleft.heading",
+     "val":3.141592653589793
+    }
+   },
+   "pretrenchshootleft":{
+    "x":{
+     "exp":"trenchshootleft.x",
+     "val":5.99
+    },
+    "y":{
+     "exp":"7.313945770263672 m",
+     "val":7.313945770263672
+    },
+    "heading":{
+     "exp":"-90 deg",
+     "val":-1.5707963267948966
+    }
+   },
    "s1neutralangleintakeend":{
     "x":{
      "exp":"s1neutralangleintakestart.x",
@@ -517,6 +559,20 @@
      "val":0.0
     }
    },
+   "shootlefttrench":{
+    "x":{
+     "exp":"preshootleft.x",
+     "val":3.4900000000000064
+    },
+    "y":{
+     "exp":"pretrenchshootleft.y",
+     "val":7.313945770263672
+    },
+    "heading":{
+     "exp":"pretrenchshootleft.heading",
+     "val":-1.5707963267948966
+    }
+   },
    "shoottrenchbegin":{
     "x":{
      "exp":"4.53902006149292 m",
@@ -541,8 +597,22 @@
      "val":7.45149040222168
     },
     "heading":{
-     "exp":"S1.heading",
-     "val":0.0
+     "exp":"180 deg",
+     "val":3.141592653589793
+    }
+   },
+   "startorbitintakeleft":{
+    "x":{
+     "exp":"8.747640228271484 m",
+     "val":8.747640228271484
+    },
+    "y":{
+     "exp":"7.0456223487854 m",
+     "val":7.0456223487854
+    },
+    "heading":{
+     "exp":"90 deg",
+     "val":1.5707963267948966
     }
    },
    "startshootingtrenchleft":{
@@ -555,8 +625,22 @@
      "val":7.3
     },
     "heading":{
-     "exp":"beforetrenchbegins1.heading",
-     "val":-1.5707963267948966
+     "exp":"180 deg",
+     "val":3.141592653589793
+    }
+   },
+   "straightintakeleftstart":{
+    "x":{
+     "exp":"7.798328399658203 m",
+     "val":7.798328399658203
+    },
+    "y":{
+     "exp":"7.000432014465332 m",
+     "val":7.000432014465332
+    },
+    "heading":{
+     "exp":"90 deg",
+     "val":1.5707963267948966
     }
    },
    "testneutralintakeend":{
@@ -597,8 +681,8 @@
      "val":7.441
     },
     "heading":{
-     "exp":"0 deg",
-     "val":0.0
+     "exp":"180 deg",
+     "val":3.141592653589793
     }
    },
    "trenchshootleft":{
@@ -607,12 +691,12 @@
      "val":5.99
     },
     "y":{
-     "exp":"7.313945770263672 m",
-     "val":7.313945770263672
+     "exp":"7.4139457702636715 m",
+     "val":7.413945770263672
     },
     "heading":{
-     "exp":"-90 deg",
-     "val":-1.5707963267948966
+     "exp":"180 deg",
+     "val":3.141592653589793
     }
    }
   }

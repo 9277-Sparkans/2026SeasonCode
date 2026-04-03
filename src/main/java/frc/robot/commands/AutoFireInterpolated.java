@@ -8,6 +8,7 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Indexer;
 import frc.robot.Constants;
+import frc.robot.Constants.TurretConstants;
 import frc.robot.Constants.ShooterConstants.ShotData;
 
 import java.util.ArrayList;
@@ -116,6 +117,7 @@ public class AutoFireInterpolated extends Command {
         SmartDashboard.putNumber("AutoFire/ActualShooterRPM", shooterRPM);
         SmartDashboard.putNumber("AutoFire/OptimalHoodAngle", optimalShot.hoodAngle());
         SmartDashboard.putNumber("AutoFire/ActualHoodAngle", hoodAngle);
+        // SmartDashboard.putNumber("AutoFire/ACTUAL TURRET ANGLE", turret.getPosition());
 
         boolean targetValid = AutoTrack.isDumping() ? AutoTrack.isTurretTrulyOnTarget()
                 : true;
@@ -153,7 +155,7 @@ public class AutoFireInterpolated extends Command {
         // indexer.activate();
 
         // shooter rpm has to be within 150 of the optimal rpm, and if dumping, the turret must not be clamped for indexer to run.
-        if (Math.abs(optimalShooterRPM - (shooterRPM + 100.0)) < 250.0
+        if (Math.abs(optimalShooterRPM - (shooterRPM + 100.0)) < 300.0
                 // && targetValid
                 ) {
             indexer.activate();

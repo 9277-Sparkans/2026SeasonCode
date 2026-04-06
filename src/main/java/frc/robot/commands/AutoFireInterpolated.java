@@ -84,6 +84,7 @@ public class AutoFireInterpolated extends Command {
 
     @Override
     public void initialize() {
+        finished = false;
         launchCooldown.restart();
 
         CalculatedShot shot = AutoTrack.getLatestShot();

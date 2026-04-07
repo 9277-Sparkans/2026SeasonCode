@@ -575,7 +575,7 @@ public class Constants {
         public static final double NORMAL_ACCEL_LIMIT = 15.0; 
         public static final double SHOOTING_ACCEL_LIMIT = 1.5;
         public static final double BRAKING_ACCEL_LIMIT = 100.0; 
-        public static final double SHOOTING_MAX_VELOCITY = 1.0; 
+        public static final double SHOOTING_MAX_VELOCITY = 0.5; 
         public static final double NORMAL_ROT_ACCEL_LIMIT = 25.0; 
         public static final double SHOOTING_ROT_ACCEL_LIMIT = 4.0; 
     }

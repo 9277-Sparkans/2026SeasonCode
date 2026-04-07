@@ -544,14 +544,14 @@ public class RobotContainer {
                                 }));
 
                 operator(OIConstants.kKeyboard_trackToggle)
-                                .onTrue(Commands.runOnce(() -> lockmode = !lockmode))
-                                .onTrue(Commands.runOnce(() -> {
-                                        if (AutoTrack.isTracking()) {
-                                                AutoTrack.disableTracking();
-                                        } else {
-                                                AutoTrack.enableTracking();
-                                        }
-                                }));
+                                .onTrue(Commands.runOnce(() -> lockmode = !lockmode));
+                                // .onTrue(Commands.runOnce(() -> {
+                                //         if (AutoTrack.isTracking()) {
+                                //                 AutoTrack.disableTracking();
+                                //         } else {
+                                //                 AutoTrack.enableTracking();
+                                //         }
+                                // }));
 
                 operator(OIConstants.kKeyboard_lockModeToggle)
                                 .whileTrue(new LockMode(turret, shooter, hood, LockState.LOCK));
@@ -592,7 +592,9 @@ public class RobotContainer {
 
                 operator(OIConstants.kKeyboard_intakeRetract)
                                 .onTrue(hinge.hingeUp())
-                                .onFalse(hinge.hingeStopCommand());
+                                .whileTrue(intake.intakeCommand())
+                                .onFalse(hinge.hingeStopCommand())
+                                .onFalse(intake.stopRollerCommand());
 
                 operator(OIConstants.kKeyboard_modeToggle)
                                 .whileTrue(Agitate.agitate(hinge, indexer))

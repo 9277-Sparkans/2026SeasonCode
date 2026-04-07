@@ -141,25 +141,26 @@ public class Constants {
         public static final int kTurretEncoderId = 40;
         public static final double kTurretEncoderOffset = 0.0; // Rotations
         public static final double turret_speed = 0.2;
+        public static final double turret_currentLimit = 40.0; //amps
 
         public static double turret_kV = 0.095;
         public static double turret_kA = 0.0;
         public static double turret_kS = 0.09; // 0.6 1.0
-        public static double turret_kP = 9.0; // 13.5
+        public static double turret_kP = 12.0; // 13.5
         public static double turret_kI = 0.07;
         public static double turret_kD = 0.25;
 
         public static double turret_kV1 = 0.095;
         public static double turret_kA1 = 0.0;
-        public static double turret_kS1 = 1.0; // 0.6 1.0
-        public static double turret_kP1 = 9.0; // 13.5
+        public static double turret_kS1 = 0.09; // 0.6 1.0
+        public static double turret_kP1 = 20.0; // 13.5
         public static double turret_kI1 = 0.07;
         public static double turret_kD1 = 0.25;
 
         public static double turret_kV2 = 0.095;
         public static double turret_kA2 = 0.0;
-        public static double turret_kS2 = 1.0; // 0.6 1.0
-        public static double turret_kP2 = 12.0; // 13.5
+        public static double turret_kS2 = 0.09; // 0.6 1.0
+        public static double turret_kP2 = 24.0; // 13.5
         public static double turret_kI2 = 0.12; // 0.07
         public static double turret_kD2 = 0.25;
 
@@ -332,7 +333,7 @@ public class Constants {
         public static final double hood_kA = 0.01;
         public static final double hood_kP = 13.5; // 7.23, 11
         public static final double hood_kI = 0.07; // 0.01
-        public static final double hood_kD = 0.25; // 0.38
+        public static final double hood_kD = 0.0; // 0.38 0.25
 
         public static final double kHoodSpeed = 0.1;
 
@@ -371,7 +372,7 @@ public class Constants {
         public static final double intakeMaxVoltage = 5; // can change if not needed
         public static final double intakeMaxAcceleration = 100;
         public static final double intakeMaxVelocity = 500; // rps
-        public static final double intakeSpeed = 55.0; // rps max 66.6 rps 400.0
+        public static final double intakeSpeed = 35.0; // rps max 66.6 rps 400.0
         public static final double intakeAgitate = 20.0;
     }
 

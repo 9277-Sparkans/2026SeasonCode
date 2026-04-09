@@ -596,6 +596,10 @@ public class RobotContainer {
                                 .onFalse(hinge.hingeStopCommand())
                                 .onFalse(intake.stopRollerCommand());
 
+                operator(OIConstants.kKeyboard_intakeRetract)
+                                .whileTrue(intake.intakeCommand())
+                                .onFalse(intake.stopRollerCommand());
+
                 operator(OIConstants.kKeyboard_modeToggle)
                                 .whileTrue(Agitate.agitate(hinge, indexer))
                                 .onFalse(hinge.hingeStopCommand());

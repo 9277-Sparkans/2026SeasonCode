@@ -143,23 +143,56 @@ public class Constants {
         public static final double turret_speed = 0.2;
         public static final double turret_currentLimit = 40.0; //amps
 
+        // public static double turret_kV = 0.095;
+        // public static double turret_kA = 0.0;
+        // public static double turret_kS = 0.09; // 0.6 1.0
+        // public static double turret_kP = 9.0; // 13.5
+        // public static double turret_kI = 0.07;
+        // public static double turret_kD = 0.25;
+
+        // public static double turret_kV1 = 0.095;
+        // public static double turret_kA1 = 0.0;
+        // public static double turret_kS1 = 1.0; // 0.6 1.0
+        // public static double turret_kP1 = 9.0; // 13.5
+        // public static double turret_kI1 = 0.07;
+        // public static double turret_kD1 = 0.25;
+
+        // public static double turret_kV2 = 0.095;
+        // public static double turret_kA2 = 0.0;
+        // public static double turret_kS2 = 1.0; // 0.6 1.0
+        // public static double turret_kP2 = 12.0; // 13.5
+        // public static double turret_kI2 = 0.12; // 0.07
+        // public static double turret_kD2 = 0.25;
+
         public static double turret_kV = 0.095;
         public static double turret_kA = 0.0;
+<<<<<<< HEAD
         public static double turret_kS = 0.09; // 0.6 1.0
+=======
+        public static double turret_kS = 0.2; // 0.6 1.0
+>>>>>>> the-matrix-2
         public static double turret_kP = 12.0; // 13.5
         public static double turret_kI = 0.07;
         public static double turret_kD = 0.25;
 
         public static double turret_kV1 = 0.095;
         public static double turret_kA1 = 0.0;
+<<<<<<< HEAD
         public static double turret_kS1 = 0.20; // 0.6 1.0
+=======
+        public static double turret_kS1 = 0.50; // 0.6 1.0
+>>>>>>> the-matrix-2
         public static double turret_kP1 = 12.0; // 13.5
         public static double turret_kI1 = 0.07;
         public static double turret_kD1 = 0.25;
 
         public static double turret_kV2 = 0.095;
         public static double turret_kA2 = 0.0;
+<<<<<<< HEAD
         public static double turret_kS2 = 0.5; // 0.6 1.0
+=======
+        public static double turret_kS2 = 0.9; // 0.6 1.0
+>>>>>>> the-matrix-2
         public static double turret_kP2 = 12.0; // 13.5
         public static double turret_kI2 = 0.07; // 0.07
         public static double turret_kD2 = 0.25;
@@ -168,6 +201,8 @@ public class Constants {
         public static double kMinimumAngle = -90.0;
 
         public static double kGearRatio = 105.0 / 18.0;
+
+        public static double kTurretCurrentLimit = 50.0;
 
         public static final edu.wpi.first.math.geometry.Transform3d ROBOT_TO_TURRET_TRANSFORM = new edu.wpi.first.math.geometry.Transform3d(
                 new edu.wpi.first.math.geometry.Translation3d(0.12543, 0.0, 0.2897), //updated
@@ -254,19 +289,19 @@ public class Constants {
                 TOF_MAP.put(2.964, 1.0);
 
             SHOT_MAP.put(3.516, new ShotData(4350.0, 7.0));
-                 TOF_MAP.put(3.516, 0.95);
+                 TOF_MAP.put(3.516, 1.05);
 
             SHOT_MAP.put(4.007, new ShotData(4550.0, 6.0));
-                TOF_MAP.put(4.007, 1.15);
+                TOF_MAP.put(4.007, 1.10); // 1.15
 
             SHOT_MAP.put(4.535, new ShotData(4850.0, 5.0));
-                TOF_MAP.put(4.535, 1.28375); // 1.98333
+                TOF_MAP.put(4.535, 1.22); // 1.98333 1.28375
 
             SHOT_MAP.put(4.929, new ShotData(5000.0, 4.0));
-                TOF_MAP.put(4.929, 1.40); // 1.20
+                TOF_MAP.put(4.929, 1.32); // 1.20 1.40
 
             SHOT_MAP.put(5.411, new ShotData(5300.0, 3.0));
-                TOF_MAP.put(5.411, 1.3525); // 1.98333
+                TOF_MAP.put(5.411, 1.39); // 1.98333 1.3525
 
             // SHOT_MAP.put(2.265, new ShotData(4000.0, 10.0));
             // SHOT_MAP.put(2.765, new ShotData(4050.0, 10.0));

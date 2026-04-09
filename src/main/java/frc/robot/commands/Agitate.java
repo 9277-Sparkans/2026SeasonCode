@@ -28,10 +28,15 @@ public class Agitate extends Command {
     public static Command agitate(Hinge hinge, Indexer indexer) {
         return Commands.parallel(
             Commands.repeatingSequence(
-                Commands.waitSeconds(1),
+                // Commands.waitSeconds(1),
+                // Commands.runOnce(() -> hinge.states(HingeState.AGITATE)),
+                // Commands.waitSeconds(1),
+                // Commands.runOnce(() -> hinge.states(HingeState.DOWN))
+
                 Commands.runOnce(() -> hinge.states(HingeState.AGITATE)),
-                Commands.waitSeconds(1),
-                Commands.runOnce(() -> hinge.states(HingeState.DOWN))
+                Commands.waitSeconds(0.5),
+                Commands.runOnce(() -> hinge.states(HingeState.DOWN)),
+                Commands.waitSeconds(0.5)
             )
             // Commands.repeatingSequence(
             //     Commands.waitSeconds(1.5),

@@ -133,6 +133,7 @@ public class AutoTrack extends SubsystemBase {
 
         SmartDashboard.putNumber("AutoTrack/TargetDistance", targetDistance);
         SmartDashboard.putNumber("AutoTrack/OptimalTurretAngle", latestTurretAngle);
+        SmartDashboard.putNumber("AutoTrack/ActualTurretAngle", turret.getTurretAngle());
         SmartDashboard.putNumber("AutoTrack/DesiredTurretAngle", desiredTurretAngle);
         SmartDashboard.putNumber("AutoTrack/OptimalRPM", optimalRPM);
         SmartDashboard.putNumber("AutoTrack/OptimalHoodAngle", optimalShot.hoodAngle());

@@ -56,16 +56,25 @@ public class ShotCalculator {
         double distance = getTurretTranslation(robotPose).getDistance(target.toTranslation2d());
 
         // initial estimate
-        ShotData shot = isDumping ? ShooterConstants.DUMP_MAP.get(distance) : ShooterConstants.SHOT_MAP.get(distance);
-        double timeOfFlight = isDumping ? ShooterConstants.DUMP_TOF_MAP.get(distance) : ShooterConstants.TOF_MAP.get(distance);
+        // ShotData shot = isDumping ? ShooterConstants.DUMP_MAP.get(distance) :
+        // ShooterConstants.SHOT_MAP.get(distance);
+        // double timeOfFlight = isDumping ? ShooterConstants.DUMP_TOF_MAP.get(distance)
+        // : ShooterConstants.TOF_MAP.get(distance);
+        ShotData shot = isDumping ? ShooterConstants.DUMP_MAP.get(distance) : ShooterConstants.getShotData(distance);
+        double timeOfFlight = isDumping ? ShooterConstants.DUMP_TOF_MAP.get(distance)
+                : ShooterConstants.getTOF(distance);
         Translation3d predictedTarget = target;
 
         // iterative lookahead
         for (int i = 0; i < iterations; i++) {
             predictedTarget = predictTargetPos(target, fieldSpeeds, timeOfFlight);
             distance = getTurretTranslation(robotPose).getDistance(predictedTarget.toTranslation2d());
-            shot = isDumping ? ShooterConstants.DUMP_MAP.get(distance) : ShooterConstants.SHOT_MAP.get(distance);
-            timeOfFlight = isDumping ? ShooterConstants.DUMP_TOF_MAP.get(distance) : ShooterConstants.TOF_MAP.get(distance);
+            // shot = isDumping ? ShooterConstants.DUMP_MAP.get(distance) :
+            // ShooterConstants.SHOT_MAP.get(distance);
+            // timeOfFlight = isDumping ? ShooterConstants.DUMP_TOF_MAP.get(distance) :
+            // ShooterConstants.TOF_MAP.get(distance);
+            shot = isDumping ? ShooterConstants.DUMP_MAP.get(distance) : ShooterConstants.getShotData(distance);
+            timeOfFlight = isDumping ? ShooterConstants.DUMP_TOF_MAP.get(distance) : ShooterConstants.getTOF(distance);
         }
 
         return new CalculatedShot(shot, predictedTarget);

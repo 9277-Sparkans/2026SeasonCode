@@ -166,7 +166,7 @@ public class Constants {
 
         public static double turret_kV = 0.095;
         public static double turret_kA = 0.0;
-        public static double turret_kS = 0.2; // 0.6 1.0
+        public static double turret_kS = 0.6; // 0.6 1.0 // handled by ffmap
         public static double turret_kP = 12.0; // 13.5
         public static double turret_kI = 0.07;
         public static double turret_kD = 0.25;
@@ -191,6 +191,14 @@ public class Constants {
         public static double kGearRatio = 105.0 / 18.0;
 
         public static double kTurretCurrentLimit = 50.0;
+
+        public static final InterpolatingDoubleTreeMap FF_MAP = new InterpolatingDoubleTreeMap();
+
+        static {
+            // turret angle, voltage required
+            FF_MAP.put(0.0, 0.0);
+            
+        }
 
         public static final edu.wpi.first.math.geometry.Transform3d ROBOT_TO_TURRET_TRANSFORM = new edu.wpi.first.math.geometry.Transform3d(
                 new edu.wpi.first.math.geometry.Translation3d(0.12543, 0.0, 0.2897), //updated
@@ -251,76 +259,111 @@ public class Constants {
         public static final double shooterRPMWeight = 0.1;
         public static final double hoodAngleWeight = 1.0;
 
-        // autofire treemapping
-
-        public record ShotData(double rpm, double hoodAngle) implements Interpolatable<ShotData> {
-            @Override
-            public ShotData interpolate(ShotData endValue, double t) {
-                return new ShotData(
-                        edu.wpi.first.math.MathUtil.interpolate(this.rpm, endValue.rpm, t),
-                        edu.wpi.first.math.MathUtil.interpolate(this.hoodAngle, endValue.hoodAngle, t));
-            }
+        // quadratic regression tests
+        public record ShotData(double rpm, double hoodAngle) {
         }
 
-        public static final InterpolatingTreeMap<Double, ShotData> SHOT_MAP = new InterpolatingTreeMap<Double, ShotData>(
-                InverseInterpolator.forDouble(), (start, end, t) -> start.interpolate(end, t));
-        public static final InterpolatingDoubleTreeMap TOF_MAP = new InterpolatingDoubleTreeMap();
+        // https://www.desmos.com/calculator/aitlewjs62
+        private static final double RPM_A = 61.615382;
+        private static final double RPM_B = -50.348060;
+        private static final double RPM_C = 3770.981534;
 
-        static {
+        private static final double HOOD_A = 0.035756;
+        private static final double HOOD_B = -2.748184;
+        private static final double HOOD_C = 16.707595;
 
-            // data points (distance from turret, rpm, hood angle)
-            //    time of flight (distance from turret, time of flight)
-            SHOT_MAP.put(2.340, new ShotData(4000.0, 10));
-                TOF_MAP.put(2.340, 0.98333);
+        private static final double TOF_A = 0.040110;
+        private static final double TOF_B = -0.170120;
+        private static final double TOF_C = 1.155771;
 
-            SHOT_MAP.put(2.964, new ShotData(4150.0, 10));
-                TOF_MAP.put(2.964, 1.0);
-
-            SHOT_MAP.put(3.516, new ShotData(4350.0, 7.0));
-                 TOF_MAP.put(3.516, 1.05);
-
-            SHOT_MAP.put(4.007, new ShotData(4550.0, 6.0));
-                TOF_MAP.put(4.007, 1.10); // 1.15
-
-            SHOT_MAP.put(4.535, new ShotData(4850.0, 5.0));
-                TOF_MAP.put(4.535, 1.22); // 1.98333 1.28375
-
-            SHOT_MAP.put(4.929, new ShotData(5000.0, 4.0));
-                TOF_MAP.put(4.929, 1.32); // 1.20 1.40
-
-            SHOT_MAP.put(5.411, new ShotData(5300.0, 3.0));
-                TOF_MAP.put(5.411, 1.39); // 1.98333 1.3525
-
-            // SHOT_MAP.put(2.265, new ShotData(4000.0, 10.0));
-            // SHOT_MAP.put(2.765, new ShotData(4050.0, 10.0));
-            // SHOT_MAP.put(3.265, new ShotData(4200.0, 9.0));
-            // SHOT_MAP.put(3.765, new ShotData(4400.0, 8.0));
-            // SHOT_MAP.put(4.265, new ShotData(4500.0, 6.0));
-            // SHOT_MAP.put(4.765, new ShotData(4700.0, 5.0));
-            // SHOT_MAP.put(5.265, new ShotData(5150.0, 5.0));    
-            // SHOT_MAP.put(6.223, new ShotData(5900.0, 2.0));
-
-
-            // distance, time of flight
-            // TOF_MAP.put(2.265, 0.7940);
-            // TOF_MAP.put(2.765, 0.8145);
-            // TOF_MAP.put(3.265, 0.8444);
-            // TOF_MAP.put(3.765, 0.8798);
-            // TOF_MAP.put(4.265, 0.8543);
-            // TOF_MAP.put(4.765, 0.8719);
-            // TOF_MAP.put(5.265, 0.9375);
-
-            // TOF_MAP.put(2.765, 0.956875);
-            // TOF_MAP.put(3.265, 0.9975);
-            // TOF_MAP.put(3.765, 1.165);
-            // TOF_MAP.put(4.265, 1.1375);
-            // TOF_MAP.put(4.765, 1.28375);
-            // TOF_MAP.put(5.265, 1.22875);
+        public static ShotData getShotData(double distMeters) {
+            double rpm = RPM_A * distMeters * distMeters + RPM_B * distMeters + RPM_C;
+            double hood = HOOD_A * distMeters * distMeters + HOOD_B * distMeters + HOOD_C;
+            rpm = Math.max(4000.0, Math.min(5300.0, rpm));
+            hood = Math.max(3.0, Math.min(10.0, hood));
+            return new ShotData(rpm, hood);
         }
+
+        public static double getTOF(double distMeters) {
+            double tof = TOF_A * distMeters * distMeters + TOF_B * distMeters + TOF_C;
+            return Math.max(0.98, Math.min(1.39, tof));
+        }
+
+        // autofire treemapping with interpolation (commented out)
+        // public record ShotData(double rpm, double hoodAngle) implements
+        // Interpolatable<ShotData> {
+        // @Override
+        // public ShotData interpolate(ShotData endValue, double t) {
+        // return new ShotData(
+        // edu.wpi.first.math.MathUtil.interpolate(this.rpm, endValue.rpm, t),
+        // edu.wpi.first.math.MathUtil.interpolate(this.hoodAngle, endValue.hoodAngle,
+        // t));
+        // }
+        // }
+
+        // public static final InterpolatingTreeMap<Double, ShotData> SHOT_MAP = new
+        // InterpolatingTreeMap<Double, ShotData>(
+        // InverseInterpolator.forDouble(), (start, end, t) -> start.interpolate(end,
+        // t));
+        // public static final InterpolatingDoubleTreeMap TOF_MAP = new
+        // InterpolatingDoubleTreeMap();
+
+        // static {
+
+        // // data points (distance from turret, rpm, hood angle)
+        // // time of flight (distance from turret, time of flight)
+        // SHOT_MAP.put(2.340, new ShotData(4000.0, 10));
+        // TOF_MAP.put(2.340, 0.98333);
+
+        // SHOT_MAP.put(2.964, new ShotData(4150.0, 10));
+        // TOF_MAP.put(2.964, 1.0);
+
+        // SHOT_MAP.put(3.516, new ShotData(4350.0, 7.0));
+        // TOF_MAP.put(3.516, 1.05);
+
+        // SHOT_MAP.put(4.007, new ShotData(4550.0, 6.0));
+        // TOF_MAP.put(4.007, 1.10); // 1.15
+
+        // SHOT_MAP.put(4.535, new ShotData(4850.0, 5.0));
+        // TOF_MAP.put(4.535, 1.22); // 1.98333 1.28375
+
+        // SHOT_MAP.put(4.929, new ShotData(5000.0, 4.0));
+        // TOF_MAP.put(4.929, 1.32); // 1.20 1.40
+
+        // SHOT_MAP.put(5.411, new ShotData(5300.0, 3.0));
+        // TOF_MAP.put(5.411, 1.39); // 1.98333 1.3525
+
+        // // SHOT_MAP.put(2.265, new ShotData(4000.0, 10.0));
+        // // SHOT_MAP.put(2.765, new ShotData(4050.0, 10.0));
+        // // SHOT_MAP.put(3.265, new ShotData(4200.0, 9.0));
+        // // SHOT_MAP.put(3.765, new ShotData(4400.0, 8.0));
+        // // SHOT_MAP.put(4.265, new ShotData(4500.0, 6.0));
+        // // SHOT_MAP.put(4.765, new ShotData(4700.0, 5.0));
+        // // SHOT_MAP.put(5.265, new ShotData(5150.0, 5.0));
+        // // SHOT_MAP.put(6.223, new ShotData(5900.0, 2.0));
+
+        // // distance, time of flight
+        // // TOF_MAP.put(2.265, 0.7940);
+        // // TOF_MAP.put(2.765, 0.8145);
+        // // TOF_MAP.put(3.265, 0.8444);
+        // // TOF_MAP.put(3.765, 0.8798);
+        // // TOF_MAP.put(4.265, 0.8543);
+        // // TOF_MAP.put(4.765, 0.8719);
+        // // TOF_MAP.put(5.265, 0.9375);
+
+        // // TOF_MAP.put(2.765, 0.956875);
+        // // TOF_MAP.put(3.265, 0.9975);
+        // // TOF_MAP.put(3.765, 1.165);
+        // // TOF_MAP.put(4.265, 1.1375);
+        // // TOF_MAP.put(4.765, 1.28375);
+        // // TOF_MAP.put(5.265, 1.22875);
+        // }
 
         // dumping tree map
         public static final InterpolatingTreeMap<Double, ShotData> DUMP_MAP = new InterpolatingTreeMap<Double, ShotData>(
-                InverseInterpolator.forDouble(), (start, end, t) -> start.interpolate(end, t));
+                InverseInterpolator.forDouble(), (start, end, t) -> new ShotData(
+                        edu.wpi.first.math.MathUtil.interpolate(start.rpm(), end.rpm(), t),
+                        edu.wpi.first.math.MathUtil.interpolate(start.hoodAngle(), end.hoodAngle(), t)));
         public static final InterpolatingDoubleTreeMap DUMP_TOF_MAP = new InterpolatingDoubleTreeMap();
 
         static {
@@ -487,8 +530,8 @@ public class Constants {
         public static final double kIndexerCurrentLimit = 100;
         public static final int kIndexerMotorId = 35; // 35
 
-        public static final double kIndexerSpeed = 30.0; //rps 60 before
-        public static final double kIndexerAgitateSpeed = -10.0; //rps 60 before
+        public static final double kIndexerSpeed = 30.0; // rps 60 before
+        public static final double kIndexerAgitateSpeed = -10.0; // rps 60 before
         public static final double kIndexerGearRatio = 12.0 / 15.0;
         public static final double indexerSpeed = 30.0; // rps
 
@@ -505,7 +548,6 @@ public class Constants {
 
         public static final double kIndexerStallCurrent = 0;
         public static final double kIndexerStallVelocity = 0;
-
 
     }
 
@@ -595,11 +637,11 @@ public class Constants {
         public static final double ROTATION_kD = 0.0;
         public static final double ROTATION_TOLERANCE = Units.degreesToRadians(5.0);
 
-        public static final double NORMAL_ACCEL_LIMIT = 15.0; 
+        public static final double NORMAL_ACCEL_LIMIT = 15.0;
         public static final double SHOOTING_ACCEL_LIMIT = 1.5;
-        public static final double BRAKING_ACCEL_LIMIT = 100.0; 
-        public static final double SHOOTING_MAX_VELOCITY = 0.5; 
-        public static final double NORMAL_ROT_ACCEL_LIMIT = 25.0; 
-        public static final double SHOOTING_ROT_ACCEL_LIMIT = 4.0; 
+        public static final double BRAKING_ACCEL_LIMIT = 100.0;
+        public static final double SHOOTING_MAX_VELOCITY = 0.5;
+        public static final double NORMAL_ROT_ACCEL_LIMIT = 25.0;
+        public static final double SHOOTING_ROT_ACCEL_LIMIT = 4.0;
     }
 }

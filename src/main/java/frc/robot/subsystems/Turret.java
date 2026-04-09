@@ -150,28 +150,23 @@ public class Turret extends SubsystemBase {
   }
 
   public void defaultCommand() {
-    // System.out.println("target is " + target);
+    double setpoint = target;
 
-    int index = 2;
+    if (setpoint > TurretConstants.kMaximumAngle) {
+      setpoint = TurretConstants.kMaximumAngle;
+    } else if (setpoint < TurretConstants.kMinimumAngle) {
+      setpoint = TurretConstants.kMinimumAngle;
+    }
 
-    if (Math.abs(target) < 30.0)
-    {
-      index = 0;
-    }
-    else if (Math.abs(target) < 60.0)
-    {
-      index = 1;
-    } 
+    double error = setpoint - getPosition();
+    double ffVoltage = 0.0;
 
-    if (target > TurretConstants.kMaximumAngle) {
-      turretMotor.setControl(m_request.withPosition(TurretConstants.kMaximumAngle / 360.0 * TurretConstants.kGearRatio).withSlot(index));
+    if (Math.abs(error) > 0.5) {
+      ffVoltage = TurretConstants.FF_MAP.get(getPosition()) * Math.signum(error);
     }
-    else if (target < TurretConstants.kMinimumAngle) {
-      turretMotor.setControl(m_request.withPosition(TurretConstants.kMinimumAngle / 360.0 * TurretConstants.kGearRatio).withSlot(index));
-    }
-    else {
-      turretMotor.setControl(m_request.withPosition(target / 360.0 * TurretConstants.kGearRatio).withSlot(index));
-    }
+
+    turretMotor.setControl(
+        m_request.withPosition(setpoint / 360.0 * TurretConstants.kGearRatio).withSlot(0).withFeedForward(ffVoltage));
   }
 
   public Command initDefaultCommand(Turret turret) {

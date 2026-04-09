@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Telemetry;
+import frc.robot.Constants.ClimbConstants;
+import frc.robot.Constants.HoodConstants;
 import frc.robot.Constants.TurretConstants;
 import frc.robot.Constants;
 import frc.robot.Constants;
@@ -32,8 +34,6 @@ public class Turret extends SubsystemBase {
 
   // final DutyCycleOut turret_dutyCycle = new DutyCycleOut(0.0);
 
-  
-
   /** Creates a new Turret. */
   public Turret() {
     turretMotor = new TalonFX(TurretConstants.turret_motorId);
@@ -46,7 +46,14 @@ public class Turret extends SubsystemBase {
     //     .withLimitReverseMotion(turret_reverseLimit.get())
     // );
 
+    turretMotorConfig.CurrentLimits.StatorCurrentLimit = TurretConstants.turret_currentLimit;
+    turretMotorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+
+    turretMotorConfig.CurrentLimits.SupplyCurrentLimit = TurretConstants.turret_currentLimit;
+    turretMotorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+
     turretMotorConfig.MotorOutput.NeutralMode = brake;
+  
 
     turretMotorConfig.Slot0.kS = TurretConstants.turret_kS;
     turretMotorConfig.Slot0.kV = TurretConstants.turret_kV;
@@ -69,11 +76,22 @@ public class Turret extends SubsystemBase {
     turretMotorConfig.Slot2.kI = TurretConstants.turret_kI2;
     turretMotorConfig.Slot2.kD = TurretConstants.turret_kD2;
 
-    turretMotorConfig.Voltage.PeakForwardVoltage = TurretConstants.turret_maxVoltage;
-    turretMotorConfig.Voltage.PeakReverseVoltage = -TurretConstants.turret_maxVoltage;
+<<<<<<< HEAD
+=======
+    // last tested with this
+    // turretMotorConfig.Voltage.PeakForwardVoltage = TurretConstants.turret_maxVoltage;
+    // turretMotorConfig.Voltage.PeakReverseVoltage = -TurretConstants.turret_maxVoltage;
+>>>>>>> the-matrix-2
     turretMotorConfig.MotionMagic.MotionMagicAcceleration = TurretConstants.turret_maxAcceleration;
     turretMotorConfig.MotionMagic.MotionMagicCruiseVelocity = TurretConstants.turret_maxVelocity;
     turretMotorConfig.MotionMagic.MotionMagicJerk = TurretConstants.turret_maxJerk;
+
+    // last tested without this    
+    turretMotorConfig.CurrentLimits.SupplyCurrentLimit = TurretConstants.kTurretCurrentLimit;
+    turretMotorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+      
+    turretMotorConfig.CurrentLimits.StatorCurrentLimit = TurretConstants.kTurretCurrentLimit;
+    turretMotorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
     turretMotor.getConfigurator().apply(turretMotorConfig);
 

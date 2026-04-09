@@ -21,6 +21,13 @@
    "shoot":{
     "dimension":"LinVel",
     "var":{
+     "exp":"0.67 m / s",
+     "val":0.67
+    }
+   },
+   "shootslow":{
+    "dimension":"LinVel",
+    "var":{
      "exp":"0.5 m / s",
      "val":0.5
     }
@@ -159,8 +166,8 @@
      "val":1.057
     },
     "y":{
-     "exp":"4.631 m",
-     "val":4.631
+     "exp":"4.531000000000001 m",
+     "val":4.531000000000001
     },
     "heading":{
      "exp":"180 deg",
@@ -416,7 +423,7 @@
     },
     "heading":{
      "exp":"trenchexitleft.heading",
-     "val":3.141592653589793
+     "val":0.0
     }
    },
    "pretrenchshootleft":{
@@ -431,6 +438,20 @@
     "heading":{
      "exp":"-90 deg",
      "val":-1.5707963267948966
+    }
+   },
+   "rightbehindhubswipe2":{
+    "x":{
+     "exp":"6.181201934814453 m",
+     "val":6.181201934814453
+    },
+    "y":{
+     "exp":"3.594489336013794 m",
+     "val":3.594489336013794
+    },
+    "heading":{
+     "exp":"-66.9 deg",
+     "val":-1.1676252695842066
     }
    },
    "s1neutralangleintakeend":{
@@ -597,8 +618,8 @@
      "val":7.45149040222168
     },
     "heading":{
-     "exp":"180 deg",
-     "val":3.141592653589793
+     "exp":"0 deg",
+     "val":0.0
     }
    },
    "startorbitintakeleft":{
@@ -681,8 +702,8 @@
      "val":7.441
     },
     "heading":{
-     "exp":"180 deg",
-     "val":3.141592653589793
+     "exp":"0 deg",
+     "val":0.0
     }
    },
    "trenchshootleft":{

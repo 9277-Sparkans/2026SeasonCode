@@ -239,8 +239,7 @@ public class RobotContainer {
                 autoChooser.addOption("intake2test", new PathPlannerAuto("intake2test"));
                 autoChooser.addOption("commandtest", new PathPlannerAuto("commandtest"));
                 autoChooser.addOption("intakeshootclimb", new PathPlannerAuto("intakeshootclimb"));
-
-
+                autoChooser.addOption("Fast Trench Left 2 Sweeps", new PathPlannerAuto("Fast Trench Left 2 Sweeps"));
 
                 SmartDashboard.putData("Auto Chooser", autoChooser);
 

@@ -13,49 +13,56 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Intake_Sweep_1_Bump_Left"
+            "pathName": "Intake_Sweep_1_Left"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Bump_to_Shoot_Left"
+            "pathName": "Fast_Trench_Shoot_Left"
           }
         },
         {
-          "type": "named",
+          "type": "sequential",
           "data": {
-            "name": "autofire"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 3.0
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "stopautofire"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Shoot_Left_to_Bump"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Intake_Sweep_2_Bump_Left"
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "autofire"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 3.0
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "stopautofire"
+                }
+              }
+            ]
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Bump_Shoot_Climb"
+            "pathName": "Shoot_Left_to_Trench"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Intake_Sweep_2_Left"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Trench_Shoot_Climb"
           }
         }
       ]

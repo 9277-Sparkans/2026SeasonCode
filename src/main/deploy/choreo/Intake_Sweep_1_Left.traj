@@ -267,5 +267,6 @@
   "splits":[0]
  },
  "events":[
-   {"name":"startintake", "from":{"target":0, "targetTimestamp":0.0, "offset":{"exp":"0 s", "val":0.0}}, "event":{"type":"named", "data":{"name":"intake"}}}]
+   {"name":"startintake", "from":{"target":0, "targetTimestamp":0.0, "offset":{"exp":"0 s", "val":0.0}}, "event":{"type":"named", "data":{"name":"intake"}}},
+   {"name":"stopintake", "from":{"target":9, "targetTimestamp":5.19811, "offset":{"exp":"0 s", "val":0.0}}, "event":{"type":"named", "data":{"name":"stopintake"}}}]
 }

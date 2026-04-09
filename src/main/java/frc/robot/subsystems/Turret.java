@@ -76,12 +76,9 @@ public class Turret extends SubsystemBase {
     turretMotorConfig.Slot2.kI = TurretConstants.turret_kI2;
     turretMotorConfig.Slot2.kD = TurretConstants.turret_kD2;
 
-<<<<<<< HEAD
-=======
     // last tested with this
     // turretMotorConfig.Voltage.PeakForwardVoltage = TurretConstants.turret_maxVoltage;
     // turretMotorConfig.Voltage.PeakReverseVoltage = -TurretConstants.turret_maxVoltage;
->>>>>>> the-matrix-2
     turretMotorConfig.MotionMagic.MotionMagicAcceleration = TurretConstants.turret_maxAcceleration;
     turretMotorConfig.MotionMagic.MotionMagicCruiseVelocity = TurretConstants.turret_maxVelocity;
     turretMotorConfig.MotionMagic.MotionMagicJerk = TurretConstants.turret_maxJerk;

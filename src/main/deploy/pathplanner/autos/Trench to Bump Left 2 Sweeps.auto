@@ -25,6 +25,12 @@
         {
           "type": "named",
           "data": {
+            "name": "kicker"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
             "name": "autofire"
           }
         },

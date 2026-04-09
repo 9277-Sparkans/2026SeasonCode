@@ -196,7 +196,7 @@ public class RobotContainer {
                 NamedCommands.registerCommand("autofire",
                                 autoFireInterpolated);
                 NamedCommands.registerCommand("stopautofire",
-                                Commands.runOnce(() -> autoFireInterpolated.finished = true));
+                                Commands.runOnce(() -> autoFireInterpolated.cancel()));
 
                 NamedCommands.registerCommand("hingedown",
                                 hinge.hingeDown());
@@ -232,7 +232,7 @@ public class RobotContainer {
                 autoChooser.addOption("doubleswipestart1", new PathPlannerAuto("doubleswipestart1"));
                 autoChooser.addOption("autofiremovetest", new PathPlannerAuto("autofiremovetest"));
                 autoChooser.addOption("deadlinedumptest", new PathPlannerAuto("deadlinedumptest"));
-                autoChooser.addOption("Trench Left 2 Sweeps", new PathPlannerAuto("Trench Left 2 Sweeps"));
+                autoChooser.addOption("Trench Left 2 Sweeps Cool", new PathPlannerAuto("Trench Left 2 Sweeps Cool"));
                 autoChooser.addOption("shoottest", new PathPlannerAuto("shoottest"));
                 autoChooser.addOption("trenchshootclimbtest", new PathPlannerAuto("trenchshootclimbtest"));
                 autoChooser.addOption("intaketest", new PathPlannerAuto("intaketest"));

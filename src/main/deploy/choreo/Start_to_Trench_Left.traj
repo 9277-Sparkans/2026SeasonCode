@@ -73,5 +73,5 @@
   "splits":[0]
  },
  "events":[
-   {"name":"deployhinge", "from":{"target":1, "targetTimestamp":0.59603, "offset":{"exp":"0 s", "val":0.0}}, "event":{"type":"named", "data":{"name":"hingedown"}}}]
+   {"name":"deployhinge", "from":{"target":0, "targetTimestamp":0.0, "offset":{"exp":"0 s", "val":0.0}}, "event":{"type":"named", "data":{"name":"hingedown"}}}]
 }

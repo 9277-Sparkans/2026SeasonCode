@@ -174,7 +174,6 @@
   "splits":[0]
  },
  "events":[
-   {"name":"agitate", "from":{"target":1, "targetTimestamp":1.00633, "offset":{"exp":"0 s", "val":0.0}}, "event":{"type":"named", "data":{"name":"agitate"}}},
-   {"name":"kicker", "from":{"target":0, "targetTimestamp":0.0, "offset":{"exp":"0 s", "val":0.0}}, "event":{"type":"named", "data":{"name":"kicker"}}},
-   {"name":"shoot", "from":{"target":1, "targetTimestamp":1.00633, "offset":{"exp":"0 s", "val":0.0}}, "event":{"type":"named", "data":{"name":"autofire"}}}]
+   {"name":"intake", "from":{"target":0, "targetTimestamp":0.0, "offset":{"exp":"0 s", "val":0.0}}, "event":{"type":"named", "data":{"name":"intake"}}},
+   {"name":"stopintake", "from":{"target":2, "targetTimestamp":2.08383, "offset":{"exp":"0 s", "val":0.0}}, "event":{"type":"named", "data":{"name":"stopintake"}}}]
 }

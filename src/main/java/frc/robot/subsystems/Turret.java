@@ -32,8 +32,6 @@ public class Turret extends SubsystemBase {
 
   // final DutyCycleOut turret_dutyCycle = new DutyCycleOut(0.0);
 
-  
-
   /** Creates a new Turret. */
   public Turret() {
     turretMotor = new TalonFX(TurretConstants.turret_motorId);
@@ -69,11 +67,19 @@ public class Turret extends SubsystemBase {
     turretMotorConfig.Slot2.kI = TurretConstants.turret_kI2;
     turretMotorConfig.Slot2.kD = TurretConstants.turret_kD2;
 
-    turretMotorConfig.Voltage.PeakForwardVoltage = TurretConstants.turret_maxVoltage;
-    turretMotorConfig.Voltage.PeakReverseVoltage = -TurretConstants.turret_maxVoltage;
+    // last tested with this
+    // turretMotorConfig.Voltage.PeakForwardVoltage = TurretConstants.turret_maxVoltage;
+    // turretMotorConfig.Voltage.PeakReverseVoltage = -TurretConstants.turret_maxVoltage;
     turretMotorConfig.MotionMagic.MotionMagicAcceleration = TurretConstants.turret_maxAcceleration;
     turretMotorConfig.MotionMagic.MotionMagicCruiseVelocity = TurretConstants.turret_maxVelocity;
     turretMotorConfig.MotionMagic.MotionMagicJerk = TurretConstants.turret_maxJerk;
+
+    // last tested without this    
+    turretMotorConfig.CurrentLimits.SupplyCurrentLimit = TurretConstants.kTurretCurrentLimit;
+    turretMotorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+      
+    turretMotorConfig.CurrentLimits.StatorCurrentLimit = TurretConstants.kTurretCurrentLimit;
+    turretMotorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
     turretMotor.getConfigurator().apply(turretMotorConfig);
 

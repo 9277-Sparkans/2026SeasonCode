@@ -106,6 +106,7 @@ public class AutoTrack extends SubsystemBase {
         Translation3d currentTarget = new Translation3d(currentHubX, currentHubY, currentTargetZ);
 
         // Calculate iterative shot with moving robot lookahead (5 iterations)
+        // try 8 for the next test
         latestShot = ShotCalculator.calculateIterativeShot(
                 pose, speeds, currentTarget, 5, isDumping);
 

@@ -166,7 +166,7 @@ public class Constants {
 
         public static double turret_kV = 0.095;
         public static double turret_kA = 0.0;
-        public static double turret_kS = 0.6; // 0.6 1.0 // handled by ffmap
+        public static double turret_kS = 0.0; // 0.6 1.0 // handled by ffmap
         public static double turret_kP = 12.0; // 13.5
         public static double turret_kI = 0.07;
         public static double turret_kD = 0.25;
@@ -195,9 +195,22 @@ public class Constants {
         public static final InterpolatingDoubleTreeMap FF_MAP = new InterpolatingDoubleTreeMap();
 
         static {
+            FF_MAP.put(-10.0, 0.4);
+            FF_MAP.put(-20.0, 0.8);
+            FF_MAP.put(-35.0, 0.85);
+            FF_MAP.put(-45.0, 0.6);
+            FF_MAP.put(-65.0, 0.4);
+            FF_MAP.put(-80.0, 1.4);
+
             // turret angle, voltage required
-            FF_MAP.put(0.0, 0.0);
-            
+            FF_MAP.put(0.0, 0.5);
+            FF_MAP.put(10.0, 0.8);
+            FF_MAP.put(20.0, 1.1);
+            FF_MAP.put(30.0, 1.45);
+            FF_MAP.put(40.0, 0.83);
+            FF_MAP.put(50.0, 1.024);
+            FF_MAP.put(60.0, 1.5);
+            FF_MAP.put(80.0, 1.8);
         }
 
         public static final edu.wpi.first.math.geometry.Transform3d ROBOT_TO_TURRET_TRANSFORM = new edu.wpi.first.math.geometry.Transform3d(

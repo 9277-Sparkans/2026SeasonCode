@@ -153,7 +153,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     );
 
     @AutoLogOutput
-    private DriveAssistMode m_currentAssistMode = DriveAssistMode.NORMAL;
+    public DriveAssistMode m_currentAssistMode = DriveAssistMode.NORMAL;
 
     @AutoLogOutput(key = "DriveAssist/TargetPose")
     private Pose2d m_targetPose = new Pose2d();

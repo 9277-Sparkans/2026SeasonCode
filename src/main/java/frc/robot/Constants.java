@@ -88,7 +88,7 @@ public class Constants {
 
         public static final int kKeyboard_intakeDeploy = 16;
         public static final int kKeyboard_intakeRetract = 6;
-        public static final int kKeyboard_AutoTrackToggle = 14;
+        public static final int kKeyboard_AutoTrackToggle = 13;
 
         // Triggers [CONTROLLER ONLY]
         public static final int kController_leftBumper = 5;

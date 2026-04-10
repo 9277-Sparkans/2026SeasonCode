@@ -604,9 +604,8 @@ public class RobotContainer {
                                 .whileTrue(Agitate.agitate(hinge, indexer))
                                 .onFalse(hinge.hingeStopCommand());
 
-                // operator(OIConstants.kKeyboard_modeToggle)
-                //                 .whileTrue(intake.agitateCommand())
-                //                 .onFalse(intake.stopRollerCommand());
+                operator(OIConstants.kKeyboard_modeToggle)
+                                .onTrue(Commands.runOnce(() -> drivetrain.m_currentAssistMode = CommandSwerveDrivetrain.DriveAssistMode.DISABLED));
         }
 
         public JoystickButton operator(int keyCode) {

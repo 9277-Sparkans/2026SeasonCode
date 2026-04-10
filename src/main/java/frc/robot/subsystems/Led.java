@@ -108,7 +108,6 @@ public void periodic() {
 		m_anim0State = anim0Selection;
 
 	switch (m_anim0State) {
-		default:
 		case ColorFlow:
 			m_candle.setControl(
 							new ColorFlowAnimation(kSlot0StartIdx, kSlot0EndIdx).withSlot(0)
@@ -137,6 +136,9 @@ public void periodic() {
 							new FireAnimation(kSlot0StartIdx, kSlot0EndIdx).withSlot(0)
 			);
 			break;
+
+    default:
+      break;
 		}
 	}
 }

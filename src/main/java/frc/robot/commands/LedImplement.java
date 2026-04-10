@@ -25,8 +25,8 @@ public class LedImplement extends Command {
   @Override
   public void end(boolean interrupted) {}
 
-  public static Command implement(Led led) {
-    return Commands.runOnce(() ->led.m_anim0State = Led.AnimationType.Rainbow);
+  public Command implement() {
+    return Commands.runOnce(() -> led.m_anim0State = Led.AnimationType.Rainbow);
   }
 
   @Override

@@ -60,6 +60,7 @@ import frc.robot.Utils.Lookup;
 import frc.robot.commands.AutoFire;
 import frc.robot.commands.LockMode;
 import frc.robot.commands.TurretTracking;
+import frc.robot.commands.LedImplement;
 import frc.robot.util.Zones;
 import frc.robot.commands.AutoFire.TargetHub;
 import frc.robot.commands.LockMode.LockState;
@@ -141,6 +142,7 @@ public class RobotContainer {
         public final Led led = new Led();
         // public final SillyHinge sillyHinge = new SillyHinge();
         public final AutoFire autoFireCommand;
+        public final LedImplement ledImplementCommand;
         // public final LockMode lockModeCommand = new LockMode(turret, shooter, hood);
 
         public final AutoTrack AutoTrack;
@@ -176,6 +178,8 @@ public class RobotContainer {
 
                 autoFireInterpolated = new AutoFireInterpolated(indexer, turret, shooter, hood,
                                 AutoTrack);
+                
+                ledImplementCommand = new LedImplement(led);
 
                 agitateCommand = new Agitate(hinge);
 
@@ -458,8 +462,11 @@ public class RobotContainer {
                 // Commands.runOnce(() -> {}),
                 // () -> manualControl));
 
-                translateStick.button(OIConstants.kRightSticks_rightGrid_topLeft).onTrue(Commands.runOnce(() -> shooter.increaseSpeed()));
-                translateStick.button(OIConstants.kRightSticks_rightGrid_bottomLeft).onTrue(Commands.runOnce(() -> shooter.decreaseSpeed()));
+                // translateStick.button(OIConstants.kRightSticks_rightGrid_topLeft).onTrue(Commands.runOnce(() -> shooter.increaseSpeed()));
+
+                translateStick.button(OIConstants.kRightSticks_rightGrid_topLeft).onTrue(Commands.runOnce(() -> ledImplementCommand.implement()));
+
+                // translateStick.button(OIConstants.kRightSticks_rightGrid_bottomLeft).onTrue(Commands.runOnce(() -> shooter.decreaseSpeed()));
 
                 // hood up down
                 // translateStick.button(OIConstants.kRightSticks_leftGrid_topRight).onTrue(Commands.either(

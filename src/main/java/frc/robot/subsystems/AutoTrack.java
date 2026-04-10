@@ -63,7 +63,7 @@ public class AutoTrack extends SubsystemBase {
             return;
 
         Pose2d pose = poseSupplier.get();
-        ChassisSpeeds speeds = speedsSupplier.get();
+        ChassisSpeeds robotSpeeds = speedsSupplier.get();
         Rotation2d rotation = pose.getRotation();
 
         Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
@@ -105,10 +105,13 @@ public class AutoTrack extends SubsystemBase {
                         : Constants.FieldConstants.HUB_RED.getZ());
         Translation3d currentTarget = new Translation3d(currentHubX, currentHubY, currentTargetZ);
 
+        ChassisSpeeds fieldSpeeds = ChassisSpeeds.fromRobotRelativeSpeeds(
+                robotSpeeds.vxMetersPerSecond, robotSpeeds.vyMetersPerSecond, robotSpeeds.omegaRadiansPerSecond, rotation);
+
         // Calculate iterative shot with moving robot lookahead (5 iterations)
         // try 8 for the next test
         latestShot = ShotCalculator.calculateIterativeShot(
-                pose, speeds, currentTarget, 5, isDumping);
+                pose, fieldSpeeds, currentTarget, 5, isDumping);
 
         ShotData optimalShot = latestShot.shot();
         Translation3d predictedTarget = latestShot.predictedTarget();

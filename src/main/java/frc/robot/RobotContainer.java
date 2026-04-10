@@ -66,6 +66,7 @@ import frc.robot.commands.LockMode.LockState;
 import frc.robot.subsystems.Transfer;
 import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Hinge;
+import frc.robot.subsystems.Led;
 import frc.robot.Vision.Vision;
 import frc.robot.Vision.VisionIOPhotonVision;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -137,6 +138,7 @@ public class RobotContainer {
         public final Transfer transfer = new Transfer();
         public final Indexer indexer = new Indexer();
         public final Hinge hinge = new Hinge();
+        public final Led led = new Led();
         // public final SillyHinge sillyHinge = new SillyHinge();
         public final AutoFire autoFireCommand;
         // public final LockMode lockModeCommand = new LockMode(turret, shooter, hood);

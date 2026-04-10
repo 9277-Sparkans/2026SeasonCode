@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 import static edu.wpi.first.units.Units.*;
 
@@ -40,9 +41,9 @@ public class Led extends SubsystemBase {
   private static final int kSlot1StartIdx = 38;
   private static final int kSlot1EndIdx = 67;
 
-  private final CANdle m_candle = new CANdle(1, CANBus.roboRIO());
+  private final CANdle m_candle = new CANdle(Constants.LedConstants.kCandleId, CANBus.roboRIO());
 
-  private enum AnimationType {
+  public enum AnimationType {
     None,
     ColorFlow,
     Fire,
@@ -55,8 +56,8 @@ public class Led extends SubsystemBase {
     TwinkleOff,
   }
 
-  private AnimationType m_anim0State = AnimationType.None;
-  private AnimationType m_anim1State = AnimationType.None;
+  public AnimationType m_anim0State = AnimationType.None;
+  public AnimationType m_anim1State = AnimationType.None;
 
   private final SendableChooser<AnimationType> m_anim0Chooser = new SendableChooser<AnimationType>();
   private final SendableChooser<AnimationType> m_anim1Chooser = new SendableChooser<AnimationType>();
@@ -65,7 +66,7 @@ public class Led extends SubsystemBase {
     /* Configure CANdle */
     var cfg = new CANdleConfiguration();
     /* set the LED strip type and brightness */
-    cfg.LED.StripType = StripTypeValue.GRB;
+    cfg.LED.StripType = StripTypeValue.RGBW;
     cfg.LED.BrightnessScalar = 0.5;
     /* disable status LED when being controlled */
     cfg.CANdleFeatures.StatusLedWhenActive = StatusLedWhenActiveValue.Disabled;

@@ -61,6 +61,10 @@ public class Intake extends SubsystemBase {
 		return Commands.runOnce(() -> setVel());
 	}
 
+	public Command autoIntakeCommand() {
+		return Commands.runOnce(() -> setAutoVel());
+	}
+
 	public Command outtakeCommand() {
 		return Commands.runOnce(() -> setVelNeg());
 	}
@@ -90,6 +94,12 @@ public class Intake extends SubsystemBase {
 		double tgt = -IntakeConstants.intakeSpeed / IntakeConstants.kIntakeGearRatio;
 		intakeMotor.setControl(m_request.withVelocity(tgt)); //rps
   	}
+
+	public void setAutoVel()
+	{
+		double tgt = -IntakeConstants.intakeAutoSpeed / IntakeConstants.kIntakeGearRatio;
+		intakeMotor.setControl(m_request.withVelocity(tgt)); //rps
+	}
 
 	public void setVelNeg() {
 		double tgt = IntakeConstants.intakeSpeed / IntakeConstants.kIntakeGearRatio;

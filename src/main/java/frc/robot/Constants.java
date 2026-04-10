@@ -167,9 +167,9 @@ public class Constants {
         public static double turret_kV = 0.095;
         public static double turret_kA = 0.0;
         public static double turret_kS = 0.0; // 0.6 1.0 // handled by ffmap
-        public static double turret_kP = 12.0; // 13.5
+        public static double turret_kP = 10; // 13.5 //12.0
         public static double turret_kI = 0.07;
-        public static double turret_kD = 0.25;
+        public static double turret_kD = 0.25; // 0.25
 
         public static double turret_kV1 = 0.095;
         public static double turret_kA1 = 0.0;
@@ -292,8 +292,8 @@ public class Constants {
         public static ShotData getShotData(double distMeters) {
             double rpm = RPM_A * distMeters * distMeters + RPM_B * distMeters + RPM_C;
             double hood = HOOD_A * distMeters * distMeters + HOOD_B * distMeters + HOOD_C;
-            rpm = Math.max(4000.0, Math.min(5300.0, rpm));
-            hood = Math.max(3.0, Math.min(10.0, hood));
+            rpm = Math.max(3800.0, Math.min(5600.0, rpm));
+            hood = Math.max(2.0, Math.min(10.0, hood));
             return new ShotData(rpm, hood);
         }
 
@@ -451,7 +451,8 @@ public class Constants {
         public static final double intakeMaxVoltage = 5; // can change if not needed
         public static final double intakeMaxAcceleration = 100;
         public static final double intakeMaxVelocity = 500; // rps
-        public static final double intakeSpeed = 55.0; // rps max 66.6 rps 400.0
+        public static final double intakeSpeed = 35.0; // rps max 66.6 rps 400.0
+        public static final double intakeAutoSpeed = 66.0; // rps max 66.6 rps 400.0
         public static final double intakeAgitate = 20.0;
     }
 

@@ -159,11 +159,14 @@ public class Turret extends SubsystemBase {
     }
 
     double error = setpoint - getPosition();
-    double ffVoltage = 0.0;
+    // double ffVoltage = 0.0;
 
-    if (Math.abs(error) > 0.5) {
-      ffVoltage = TurretConstants.FF_MAP.get(getPosition()) * Math.signum(error);
-    }
+    // if (Math.abs(error) > 0.5) {
+    //   ffVoltage = TurretConstants.FF_MAP.get(getPosition()) * Math.signum(error);
+    // }
+    
+    double ffVoltage = TurretConstants.FF_MAP.get(getPosition()) * Math.signum(error);
+
 
     turretMotor.setControl(
         m_request.withPosition(setpoint / 360.0 * TurretConstants.kGearRatio).withSlot(0).withFeedForward(ffVoltage));

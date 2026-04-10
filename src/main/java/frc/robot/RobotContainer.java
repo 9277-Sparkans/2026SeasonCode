@@ -184,7 +184,7 @@ public class RobotContainer {
 
                 // Named Commands for use in autonomous
                 NamedCommands.registerCommand("intake",
-                                intake.intakeCommand());
+                                intake.autoIntakeCommand());
                 NamedCommands.registerCommand("stopintake",
                                 intake.stopRollerCommand());
 
@@ -240,6 +240,7 @@ public class RobotContainer {
                 autoChooser.addOption("commandtest", new PathPlannerAuto("commandtest"));
                 autoChooser.addOption("intakeshootclimb", new PathPlannerAuto("intakeshootclimb"));
                 autoChooser.addOption("Fast Trench Left 2 Sweeps", new PathPlannerAuto("Fast Trench Left 2 Sweeps"));
+                autoChooser.addOption("rock", new PathPlannerAuto("rock"));
 
                 SmartDashboard.putData("Auto Chooser", autoChooser);
 

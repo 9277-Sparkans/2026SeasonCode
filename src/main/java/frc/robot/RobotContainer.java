@@ -92,7 +92,7 @@ import frc.robot.subsystems.AutoTrack;
 public class RobotContainer {
         private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
         private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
-        private double driveTrainVelocityPercent = 0.55;
+        private double driveTrainVelocityPercent = 0.70;
         private boolean movingConstantSpeed = false;
 
         /* Setting up bindings for necessary control of the swerve drive platform */
@@ -246,6 +246,8 @@ public class RobotContainer {
                 autoChooser.addOption("intakeshootclimb", new PathPlannerAuto("intakeshootclimb"));
                 autoChooser.addOption("Fast Trench Left 2 Sweeps", new PathPlannerAuto("Fast Trench Left 2 Sweeps"));
                 autoChooser.addOption("rock", new PathPlannerAuto("rock"));
+                // autoChooser.addOption("Trench to Bump Left 2 Sweeps", new PathPlannerAuto("Trench to Bump Left 2 Sweeps"));
+
 
                 SmartDashboard.putData("Auto Chooser", autoChooser);
 
@@ -321,7 +323,7 @@ public class RobotContainer {
                                                         if (autoFireInterpolated.isScheduled()) {
                                                                 return rotateStick.getHID().getRawButton(
                                                                                 OIConstants.kSticks_rightHandle) ? 0.5
-                                                                                                : 0.2;
+                                                                                                : 0.5;
                                                         }
                                                         if (slowMode) {
                                                                 return 0.2;
@@ -454,19 +456,21 @@ public class RobotContainer {
                 rotateStick.button(OIConstants.kSticks_centerHandle).onTrue(intake.outtakeCommand());
                 rotateStick.button(OIConstants.kSticks_centerHandle).onFalse(intake.stopRollerCommand());
 
-                rotateStick.button(OIConstants.kSticks_leftHandle)
-                                .onTrue(Commands.runOnce(() -> shooter.increaseSpeed()));
-                rotateStick.button(OIConstants.kSticks_rightHandle)
-                                .onTrue(Commands.runOnce(() -> shooter.decreaseSpeed()));
+                // rotateStick.button(OIConstants.kSticks_leftHandle)
+                //                 .onTrue(Commands.runOnce(() -> shooter.increaseSpeed()));
+                // rotateStick.button(OIConstants.kSticks_rightHandle)
+                //                 .onTrue(Commands.runOnce(() -> shooter.decreaseSpeed()));
 
                 // climb autoalign
-                // rotateStick.button(OIConstants.kSticks_leftHandle).whileTrue(AutoAlignCommand.getAutoClimbCommand(drivetrain));
+                rotateStick.button(OIConstants.kSticks_leftHandle).whileTrue(Commands.runOnce(() -> indexer.activate()));
+                rotateStick.button(OIConstants.kSticks_leftHandle).onFalse(Commands.runOnce(() -> indexer.deactivate()));
+
 
                 // boost
                 rotateStick.button(OIConstants.kSticks_rightHandle)
                                 .whileTrue(Commands.runOnce(() -> driveTrainVelocityPercent = 1.0));
                 rotateStick.button(OIConstants.kSticks_rightHandle)
-                                .onFalse(Commands.runOnce(() -> driveTrainVelocityPercent = 0.55));
+                                .onFalse(Commands.runOnce(() -> driveTrainVelocityPercent = 0.70));
                 translateStick.button(OIConstants.kSticks_leftHandle).whileTrue(Commands.runOnce(() -> slowMode = true));
                 translateStick.button(OIConstants.kSticks_leftHandle).onFalse(Commands.runOnce(() -> slowMode = false));
 
@@ -538,8 +542,6 @@ public class RobotContainer {
                 translateStick.button(OIConstants.kSticks_centerHandle)
                                 .onFalse(Commands.runOnce(() -> transfer.stop()));
 
-                translateStick.button(OIConstants.kSticks_leftHandle)
-                                .whileTrue(Commands.runOnce(() -> indexer.activate())).onFalse(indexer.indexerStop());
 
                 // outpost autoalign
                 // translateStick.button(OIConstants.kSticks_leftHandle).whileTrue(AutoAlignCommand.getOutpostCommand(drivetrain));

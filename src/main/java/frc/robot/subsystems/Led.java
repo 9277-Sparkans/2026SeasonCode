@@ -18,8 +18,8 @@ import com.ctre.phoenix6.signals.RGBWColor;
  * Subsystem that controls an addressable LED strip using a CANdle.
  */
 public class Led extends SubsystemBase {
-    // private final CANBus kCANBus = new CANBus("rio");
-    private final CANdle m_candle = new CANdle(Constants.LedConstants.kCandleId);
+    private final CANBus kCANBus = new CANBus("rio");
+    private final CANdle m_candle = new CANdle(Constants.LedConstants.kCandleId, kCANBus);
 
     private final ColorFlowAnimation m_slot0Animation = new ColorFlowAnimation(0, 50)
         .withSlot(0)

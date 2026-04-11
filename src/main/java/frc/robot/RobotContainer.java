@@ -464,7 +464,7 @@ public class RobotContainer {
 
                 // translateStick.button(OIConstants.kRightSticks_rightGrid_topLeft).onTrue(Commands.runOnce(() -> shooter.increaseSpeed()));
 
-                translateStick.button(OIConstants.kRightSticks_rightGrid_topLeft).onTrue(Commands.runOnce(() -> ledImplementCommand.implement()));
+                translateStick.button(OIConstants.kRightSticks_rightGrid_topLeft).onTrue(Commands.runOnce(() -> led.newFunsies()));
 
                 // translateStick.button(OIConstants.kRightSticks_rightGrid_bottomLeft).onTrue(Commands.runOnce(() -> shooter.decreaseSpeed()));
 
@@ -554,13 +554,6 @@ public class RobotContainer {
 
                 operator(OIConstants.kKeyboard_trackToggle)
                                 .onTrue(Commands.runOnce(() -> lockmode = !lockmode));
-                                // .onTrue(Commands.runOnce(() -> {
-                                //         if (AutoTrack.isTracking()) {
-                                //                 AutoTrack.disableTracking();
-                                //         } else {
-                                //                 AutoTrack.enableTracking();
-                                //         }
-                                // }));
 
                 operator(OIConstants.kKeyboard_lockModeToggle)
                                 .whileTrue(new LockMode(turret, shooter, hood, LockState.LOCK));
@@ -614,7 +607,16 @@ public class RobotContainer {
                                 .onFalse(hinge.hingeStopCommand());
 
                 operator(OIConstants.kKeyboard_modeToggle)
-                                .onTrue(Commands.runOnce(() -> drivetrain.m_currentAssistMode = CommandSwerveDrivetrain.DriveAssistMode.DISABLED));
+                                .onTrue(Commands.runOnce(() -> drivetrain.assistEnabled = !drivetrain.assistEnabled));
+
+                operator(OIConstants.kKeyboard_duck)
+                                .onTrue(Commands.runOnce(() -> {
+                                        if (AutoTrack.isTracking()) {
+                                                AutoTrack.disableTracking();
+                                        } else {
+                                                AutoTrack.enableTracking();
+                                        }
+                                }));
         }
 
         public JoystickButton operator(int keyCode) {

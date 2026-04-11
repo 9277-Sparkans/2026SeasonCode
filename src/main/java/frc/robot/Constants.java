@@ -72,8 +72,8 @@ public class Constants {
         // NOTE: IDs here are 1-indexed as opposed to the keyboard firmware's 0-indexing
         // Add one to your ID or else you'll be binding to a completely different button
         public static final int kKeyboard_modeToggle = 5;
-        public static final int kKeyboard_trackToggle = 3;
-        public static final int kKeyboard_duck = 1;
+        public static final int kKeyboard_trackToggle = 3; //3
+        public static final int kKeyboard_duck = 1; //1
 
         public static final int kKeyboard_lockModeToggle = 2;
         public static final int kKeyboard_lockModeLeft = 11;
@@ -172,9 +172,9 @@ public class Constants {
         public static double turret_kV = 0.095;
         public static double turret_kA = 0.0;
         public static double turret_kS = 0.0; // 0.6 1.0 // handled by ffmap
-        public static double turret_kP = 10; // 13.5 //12.0
-        public static double turret_kI = 0.07;
-        public static double turret_kD = 0.25; // 0.25
+        public static double turret_kP = 1.5; // 13.5 //12.0 //1.5
+        public static double turret_kI = 0.0; // 0.07
+        public static double turret_kD = 0.35; // 0.25 //0.35
 
         public static double turret_kV1 = 0.095;
         public static double turret_kA1 = 0.0;
@@ -200,19 +200,19 @@ public class Constants {
         public static final InterpolatingDoubleTreeMap FF_MAP = new InterpolatingDoubleTreeMap();
 
         static {
-            FF_MAP.put(-10.0, 0.55);
-            FF_MAP.put(-20.0, 0.65);
-            FF_MAP.put(-30.0, 0.7);
+            FF_MAP.put(-10.0, 0.45); //0.55
+            FF_MAP.put(-20.0, 0.55); //0.65
+            FF_MAP.put(-30.0, 0.7); //0.7
             FF_MAP.put(-40.0, 0.95);
             FF_MAP.put(-60.0, 0.4);
             FF_MAP.put(-70.0, 0.52);
 
             // turret angle, voltage required
-            FF_MAP.put(0.0, 0.5);
-            FF_MAP.put(10.0, 0.55);
-            FF_MAP.put(20.0, 0.85);
-            FF_MAP.put(30.0, 1.15);
-            FF_MAP.put(40.0, 0.83);
+            FF_MAP.put(0.0, 0.35); //0.5
+            FF_MAP.put(10.0, 0.45); //0.55
+            FF_MAP.put(20.0, 0.65); //0.85
+            FF_MAP.put(30.0, 0.8); //1.15
+            FF_MAP.put(40.0, 0.7); //0.83
             FF_MAP.put(50.0, 1.024);
             FF_MAP.put(60.0, 1.26);
             FF_MAP.put(80.0, 1.45);
@@ -632,7 +632,7 @@ public class Constants {
         public static final double kTurretTrenchRight = -62.0;
 
         // LOCK
-        public static final int kRPMLock = 3700;
+        public static final int kRPMLock = 4550;
         public static final double kHoodLock = 6.0;
         public static final double kTurretLock = 0.0;
     }

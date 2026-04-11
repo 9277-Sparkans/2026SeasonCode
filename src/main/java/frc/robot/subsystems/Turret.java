@@ -167,9 +167,10 @@ public class Turret extends SubsystemBase {
     
     double ffVoltage = TurretConstants.FF_MAP.get(getPosition()) * Math.signum(error);
 
+    double targetTicks = (setpoint / 360.0 * TurretConstants.kGearRatio);
 
     turretMotor.setControl(
-        m_request.withPosition(setpoint / 360.0 * TurretConstants.kGearRatio).withSlot(0).withFeedForward(ffVoltage));
+        m_request.withPosition(targetTicks).withSlot(0).withFeedForward(ffVoltage));
   }
 
   public Command initDefaultCommand(Turret turret) {

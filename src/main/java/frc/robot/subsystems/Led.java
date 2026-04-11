@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -21,6 +22,10 @@ import com.ctre.phoenix6.signals.StripTypeValue;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Color;
+
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+
 
 public class Led extends SubsystemBase {
   /** Creates a new Led. */
@@ -136,10 +141,18 @@ public void periodic() {
 							new FireAnimation(kSlot0StartIdx, kSlot0EndIdx).withSlot(0)
 			);
 			break;
+    }
+  }}
+  
 
-    default:
-      break;
-		}
-	}
-}
+  public Command newFunsies()
+  {
+    return Commands.runOnce(() -> thing());
+  }
+
+  public void thing()
+  {
+    m_candle.setControl(
+							new RainbowAnimation(kSlot0StartIdx, kSlot0EndIdx).withSlot(0));
+  }
 }

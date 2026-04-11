@@ -140,7 +140,6 @@ public class RobotContainer {
         public final Indexer indexer = new Indexer();
         public final Hinge hinge = new Hinge();
         public final Led led = new Led();
-        // public final SillyHinge sillyHinge = new SillyHinge();
         public final AutoFire autoFireCommand;
         public final LedImplement ledImplementCommand;
         // public final LockMode lockModeCommand = new LockMode(turret, shooter, hood);
@@ -464,7 +463,8 @@ public class RobotContainer {
 
                 // translateStick.button(OIConstants.kRightSticks_rightGrid_topLeft).onTrue(Commands.runOnce(() -> shooter.increaseSpeed()));
 
-                translateStick.button(OIConstants.kRightSticks_rightGrid_topLeft).onTrue(Commands.runOnce(() -> led.newFunsies()));
+                // translateStick.button(OIConstants.kRightSticks_rightGrid_topLeft).onTrue(Commands.runOnce(() -> led.newFunsies()));
+                // translateStick.button(OIConstants.kRightSticks_rightGrid_topLeft).onTrue(Commands.runOnce(() -> ledImplementCommand.implement()));
 
                 // translateStick.button(OIConstants.kRightSticks_rightGrid_bottomLeft).onTrue(Commands.runOnce(() -> shooter.decreaseSpeed()));
 

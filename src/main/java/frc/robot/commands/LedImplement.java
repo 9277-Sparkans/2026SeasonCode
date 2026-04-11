@@ -6,6 +6,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
 import frc.robot.subsystems.Led;
+import edu.wpi.first.util.sendable.Sendable;
+import edu.wpi.first.util.sendable.SendableBuilder;
 
 public class LedImplement extends Command {
   private Led led;
@@ -25,9 +27,9 @@ public class LedImplement extends Command {
   @Override
   public void end(boolean interrupted) {}
 
-  public Command implement() {
-    return Commands.runOnce(() -> led.m_anim0State = Led.AnimationType.Rainbow);
-  }
+  // public Command implement() {
+  //   // return Commands.runOnce(() -> led.m_anim0State = Led.AnimationType.Rainbow);
+  // }
 
   @Override
   public boolean isFinished() {

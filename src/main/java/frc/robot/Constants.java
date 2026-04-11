@@ -132,7 +132,7 @@ public class Constants {
     }
 
     public static final class LedConstants {
-        public static final int kCandleId = 15; // 15
+        public static final int kCandleId = 50; // 50
 
     }
 

@@ -71,7 +71,7 @@ public class Constants {
         // 87777877ui00o831.00
         // NOTE: IDs here are 1-indexed as opposed to the keyboard firmware's 0-indexing
         // Add one to your ID or else you'll be binding to a completely different button
-        public static final int kKeyboard_modeToggle = 5;
+        public static final int kKeyboard_modeToggle = 5; 
         public static final int kKeyboard_trackToggle = 3; //3
         public static final int kKeyboard_duck = 1; //1
 
@@ -88,7 +88,7 @@ public class Constants {
 
         public static final int kKeyboard_intakeDeploy = 16;
         public static final int kKeyboard_intakeRetract = 6;
-        public static final int kKeyboard_AutoTrackToggle = 13;
+        public static final int kKeyboard_AutoTrackToggle = 14;
 
         // Triggers [CONTROLLER ONLY]
         public static final int kController_leftBumper = 5;

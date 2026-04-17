@@ -560,9 +560,9 @@ public class RobotContainer {
                 // Operator
                 // operator(1)
                 // .onTrue(Commands.runOnce(() -> hood.moveHoodToAngle(hood.targetHoodAngle)));
-                operator(OIConstants.kKeyboard_duck)
-                                .onTrue(Commands.runOnce(() -> movingConstantSpeed = true))
-                                .onFalse(Commands.runOnce(() -> movingConstantSpeed = false));
+                // operator(OIConstants.kKeyboard_duck)
+                //                 .onTrue(Commands.runOnce(() -> movingConstantSpeed = true))
+                //                 .onFalse(Commands.runOnce(() -> movingConstantSpeed = false));
                 // operator(OIConstants.kKeyboard_modeToggle)
                 // .onTrue(Commands.runOnce(() -> manualControl = !manualControl));
 
@@ -626,21 +626,21 @@ public class RobotContainer {
                                 .whileTrue(intake.intakeCommand())
                                 .onFalse(intake.stopRollerCommand());
 
-                operator(OIConstants.kKeyboard_modeToggle)
-                                .whileTrue(Agitate.agitate(hinge, indexer))
-                                .onFalse(hinge.hingeStopCommand());
+                // operator(OIConstants.kKeyboard_modeToggle)
+                //                 .whileTrue(Agitate.agitate(hinge, indexer))
+                //                 .onFalse(hinge.hingeStopCommand());
 
                 operator(OIConstants.kKeyboard_modeToggle)
                                 .onTrue(Commands.runOnce(() -> drivetrain.assistEnabled = !drivetrain.assistEnabled));
 
-                operator(OIConstants.kKeyboard_duck)
-                                .onTrue(Commands.runOnce(() -> {
-                                        if (AutoTrack.isTracking()) {
-                                                AutoTrack.disableTracking();
-                                        } else {
-                                                AutoTrack.enableTracking();
-                                        }
-                                }));
+                // operator(OIConstants.kKeyboard_duck)
+                //                 .onTrue(Commands.runOnce(() -> {
+                //                         if (AutoTrack.isTracking()) {
+                //                                 AutoTrack.disableTracking();
+                //                         } else {
+                //                                 AutoTrack.enableTracking();
+                //                         }
+                //                 }));
         }
 
         public JoystickButton operator(int keyCode) {

@@ -1,0 +1,92 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Start_to_Trench_Right"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Intake_Sweep_1_Right"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "kicker"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Fast_Trench_Shoot_Right"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "climbUp"
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 6.7
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "autofire"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "agitate"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "stopautofire"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "stopkicker"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "shootright_climb"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "climbHang"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "Choreo Final Autos",
+  "choreoAuto": true
+}

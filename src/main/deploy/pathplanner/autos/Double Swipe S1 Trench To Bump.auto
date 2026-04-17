@@ -17,12 +17,6 @@
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "Bump_to_Shoot_Left"
-          }
-        },
-        {
           "type": "named",
           "data": {
             "name": "kicker"
@@ -62,56 +56,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Shoot_Left_to_Trench"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Intake_Sweep_2_Left"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Fast_Trench_Shoot_Left"
-          }
-        },
-        {
-          "type": "deadline",
-          "data": {
-            "commands": [
-              {
-                "type": "wait",
-                "data": {
-                  "waitTime": 6.7
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "autofire"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "agitate"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "stopautofire"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Trench_Climb_L"
+            "pathName": null
           }
         }
       ]

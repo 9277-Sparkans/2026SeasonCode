@@ -15,48 +15,6 @@
           "data": {
             "pathName": "Intake_Sweep_1_Bump_Left"
           }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Bump_to_Shoot_Left"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "kicker"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "autofire"
-          }
-        },
-        {
-          "type": "wait",
-          "data": {
-            "waitTime": 3.0
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "stopautofire"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Shoot_Left_to_Bump"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Intake_Sweep_2_Bump_Left"
-          }
         }
       ]
     }

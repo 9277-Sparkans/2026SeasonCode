@@ -13,13 +13,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Intake_Sweep_1_Left"
+            "pathName": "Intake_Sweep_1_Bump_Left"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "Fast_Trench_Shoot_Left"
+            "pathName": "Bump_to_Shoot_Left"
           }
         },
         {

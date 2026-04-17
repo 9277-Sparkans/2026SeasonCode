@@ -235,20 +235,23 @@ public class RobotContainer {
 
                 autoChooser = new SendableChooser<>();
                 autoChooser.setDefaultOption("No auto", Commands.none());
-                autoChooser.addOption("doubleswipestart1", new PathPlannerAuto("doubleswipestart1"));
-                autoChooser.addOption("autofiremovetest", new PathPlannerAuto("autofiremovetest"));
-                autoChooser.addOption("deadlinedumptest", new PathPlannerAuto("deadlinedumptest"));
-                autoChooser.addOption("Trench Left 2 Sweeps Cool", new PathPlannerAuto("Trench Left 2 Sweeps Cool"));
-                autoChooser.addOption("shoottest", new PathPlannerAuto("shoottest"));
-                autoChooser.addOption("trenchshootclimbtest", new PathPlannerAuto("trenchshootclimbtest"));
-                autoChooser.addOption("intaketest", new PathPlannerAuto("intaketest"));
-                autoChooser.addOption("intake2test", new PathPlannerAuto("intake2test"));
-                autoChooser.addOption("bumpshoot", new PathPlannerAuto("bumpshoot"));
-                autoChooser.addOption("intakeshootclimb", new PathPlannerAuto("intakeshootclimb"));
+                // autoChooser.addOption("doubleswipestart1", new PathPlannerAuto("doubleswipestart1"));
+                // autoChooser.addOption("autofiremovetest", new PathPlannerAuto("autofiremovetest"));
+                // autoChooser.addOption("deadlinedumptest", new PathPlannerAuto("deadlinedumptest"));
+                // autoChooser.addOption("Trench Left 2 Sweeps Cool", new PathPlannerAuto("Trench Left 2 Sweeps Cool"));
+                // autoChooser.addOption("shoottest", new PathPlannerAuto("shoottest"));
+                // autoChooser.addOption("trenchshootclimbtest", new PathPlannerAuto("trenchshootclimbtest"));
+                // autoChooser.addOption("intaketest", new PathPlannerAuto("intaketest"));
+                // autoChooser.addOption("intake2test", new PathPlannerAuto("intake2test"));
+                // autoChooser.addOption("bumpshoot", new PathPlannerAuto("bumpshoot"));
+                // autoChooser.addOption("intakeshootclimb", new PathPlannerAuto("intakeshootclimb"));
                 autoChooser.addOption("Fast Trench Left 2 Sweeps", new PathPlannerAuto("Fast Trench Left 2 Sweeps"));
-                autoChooser.addOption("rock", new PathPlannerAuto("rock"));
-                autoChooser.addOption("Trench to Bump Left 2 Sweeps", new PathPlannerAuto("Trench to Bump Left 2 Sweeps"));
+                autoChooser.addOption("Fast Trench Right 2 Sweeps", new PathPlannerAuto("Fast Trench Right 2 Sweeps"));
+                // autoChooser.addOption("rock", new PathPlannerAuto("rock"));
+                // autoChooser.addOption("Trench to Bump Left 2 Sweeps", new PathPlannerAuto("Trench to Bump Left 2 Sweeps"));
                 autoChooser.addOption("right_trench_bump_outpost_sotm", new PathPlannerAuto("right_trench_bump_outpost_sotm"));
+                autoChooser.addOption("Trench Right 1 Sweep Climb", new PathPlannerAuto("Trench Right 1 Sweep Climb"));
+
                 autoChooser.addOption("COMMAND TEST - DO NOT SELECT DURING COMPETITION", new PathPlannerAuto("commandtest"));
 
                 SmartDashboard.putData("Auto Chooser", autoChooser);

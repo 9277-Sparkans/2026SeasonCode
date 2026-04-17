@@ -282,9 +282,9 @@ public class Constants {
         }
 
         // https://www.desmos.com/calculator/aitlewjs62
-        private static final double RPM_A = 61.615382;
-        private static final double RPM_B = -50.348060;
-        private static final double RPM_C = 3770.981534;
+        private static final double RPM_A = 84.3726;
+        private static final double RPM_B = -206.71965;
+        private static final double RPM_C = 4024.31321;
 
         private static final double HOOD_A = 0.035756;
         private static final double HOOD_B = -2.748184;

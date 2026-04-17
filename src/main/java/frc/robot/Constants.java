@@ -483,7 +483,7 @@ public class Constants {
         public static final double hingeMaxDeg = 50.0; // -100.0;
 
         public static final double kHingeDeploymentPosition = 0.0;
-        public static final double kHingeAgitatePosition = 0.2;
+        public static final double kHingeAgitatePosition = 0.28;
         public static final double kHingeRetractedPosition = 0.33;
         // public static final double kHingeDeadband = 0.025;
     }

@@ -88,7 +88,7 @@ public class Constants {
 
         public static final int kKeyboard_intakeDeploy = 16;
         public static final int kKeyboard_intakeRetract = 6;
-        public static final int kKeyboard_AutoTrackToggle = 13;
+        public static final int kKeyboard_AutoTrackToggle = 14;
 
         // Triggers [CONTROLLER ONLY]
         public static final int kController_leftBumper = 5;
@@ -282,9 +282,9 @@ public class Constants {
         }
 
         // https://www.desmos.com/calculator/aitlewjs62
-        private static final double RPM_A = 61.615382;
-        private static final double RPM_B = -50.348060;
-        private static final double RPM_C = 3770.981534;
+        private static final double RPM_A = 84.3726;
+        private static final double RPM_B = -206.71965;
+        private static final double RPM_C = 4024.31321;
 
         private static final double HOOD_A = 0.035756;
         private static final double HOOD_B = -2.748184;
@@ -660,6 +660,7 @@ public class Constants {
         public static final double SHOOTING_ACCEL_LIMIT = 1.5;
         public static final double BRAKING_ACCEL_LIMIT = 100.0;
         public static final double SHOOTING_MAX_VELOCITY = 0.5;
+        public static final double DUMP_MAX_VELOCITY = 0.8;
         public static final double NORMAL_ROT_ACCEL_LIMIT = 25.0;
         public static final double SHOOTING_ROT_ACCEL_LIMIT = 4.0;
     }

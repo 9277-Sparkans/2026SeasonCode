@@ -1,0 +1,88 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "rockR_FarSweepBump"
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "sequential",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "path",
+                      "data": {
+                        "pathName": "Bump_Right_to_outpost"
+                      }
+                    },
+                    {
+                      "type": "wait",
+                      "data": {
+                        "waitTime": 5.0
+                      }
+                    }
+                  ]
+                }
+              },
+              {
+                "type": "parallel",
+                "data": {
+                  "commands": [
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "kicker"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "autofire"
+                      }
+                    },
+                    {
+                      "type": "named",
+                      "data": {
+                        "name": "agitate"
+                      }
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "stopautofire"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "stopagitate"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "outpost_climb_right"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "Choreo Final Autos",
+  "choreoAuto": true
+}

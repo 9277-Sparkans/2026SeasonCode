@@ -34,9 +34,9 @@ public class Agitate extends Command {
                 // Commands.runOnce(() -> hinge.states(HingeState.DOWN))
 
                 Commands.runOnce(() -> hinge.states(HingeState.AGITATE)),
-                Commands.waitSeconds(0.5),
+                Commands.waitSeconds(0.3),
                 Commands.runOnce(() -> hinge.states(HingeState.DOWN)),
-                Commands.waitSeconds(0.5)
+                Commands.waitSeconds(0.3)
             )
             // Commands.repeatingSequence(
             //     Commands.waitSeconds(1.5),

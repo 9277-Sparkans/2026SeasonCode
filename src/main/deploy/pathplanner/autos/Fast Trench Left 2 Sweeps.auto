@@ -17,15 +17,15 @@
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "Fast_Trench_Shoot_Left"
-          }
-        },
-        {
           "type": "named",
           "data": {
             "name": "kicker"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Fast_Trench_Shoot_Left"
           }
         },
         {
@@ -109,9 +109,9 @@
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "Trench_Climb_L"
+            "name": "stopkicker"
           }
         }
       ]

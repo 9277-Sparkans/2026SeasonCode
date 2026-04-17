@@ -473,30 +473,42 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             ChassisSpeeds speeds = getStateCopy().Speeds;
 
             // zone detection for trench and bump, borrowed from hammerheads
-            boolean inTrench = Zones.TRENCH_ZONES.willContain(() -> pose, () -> speeds, Constants.DriveAssistConstants.TRENCH_ALIGN_TIME).getAsBoolean();
-            boolean inBump = Zones.BUMP_ZONES.willContain(() -> pose, () -> speeds, Constants.DriveAssistConstants.BUMP_ALIGN_TIME).getAsBoolean();
+            boolean inTrench = Zones.TRENCH_ZONES
+                    .willContain(() -> pose, () -> speeds, Constants.DriveAssistConstants.TRENCH_ALIGN_TIME)
+                    .getAsBoolean();
+            boolean inBump = Zones.BUMP_ZONES
+                    .willContain(() -> pose, () -> speeds, Constants.DriveAssistConstants.BUMP_ALIGN_TIME)
+                    .getAsBoolean();
 
-            if (assistEnabled && trenchLockEnabled && inTrench) m_currentAssistMode = DriveAssistMode.TRENCH_LOCK;
-            else if (assistEnabled && bumpLockEnabled && inBump) m_currentAssistMode = DriveAssistMode.BUMP_LOCK;
-            else m_currentAssistMode = DriveAssistMode.NORMAL;
+            if (assistEnabled && trenchLockEnabled && inTrench)
+                m_currentAssistMode = DriveAssistMode.TRENCH_LOCK;
+            else if (assistEnabled && bumpLockEnabled && inBump)
+                m_currentAssistMode = DriveAssistMode.BUMP_LOCK;
+            else
+                m_currentAssistMode = DriveAssistMode.NORMAL;
 
             double maxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
             double maxRot = 2.0 * Math.PI;
 
             // capping velocity while autofiring
-            boolean applyVelCap = assistEnabled && velocityCapEnabled && isShooting;
-            double velCap = applyVelCap ? Constants.DriveAssistConstants.SHOOTING_MAX_VELOCITY : maxSpeed;
+            double velCap = (assistEnabled && velocityCapEnabled && isShooting)
+                    ? (isDumping ? Constants.DriveAssistConstants.DUMP_MAX_VELOCITY
+                                : Constants.DriveAssistConstants.SHOOTING_MAX_VELOCITY)
+                    : maxSpeed;
             double targetX = MathUtil.clamp(x * maxSpeed, -velCap, velCap);
             double targetY = MathUtil.clamp(y * maxSpeed, -velCap, velCap);
             double targetOmega = omega * maxRot;
 
-            // asymmetric slew rate limiter for limiting acceleration while allowing to brake instantaneously via ramping
+            // asymmetric slew rate limiter for limiting acceleration while allowing to
+            // brake instantaneously via ramping
             double dt = 0.02;
             double finalX, finalY, finalOmega;
 
             if (assistEnabled && slewRateEnabled) {
-                double accelLimit = isShooting ? Constants.DriveAssistConstants.SHOOTING_ACCEL_LIMIT : Constants.DriveAssistConstants.NORMAL_ACCEL_LIMIT;
-                double rotAccelLimit = isShooting ? Constants.DriveAssistConstants.SHOOTING_ROT_ACCEL_LIMIT : Constants.DriveAssistConstants.NORMAL_ROT_ACCEL_LIMIT;
+                double accelLimit = isShooting ? Constants.DriveAssistConstants.SHOOTING_ACCEL_LIMIT
+                        : Constants.DriveAssistConstants.NORMAL_ACCEL_LIMIT;
+                double rotAccelLimit = isShooting ? Constants.DriveAssistConstants.SHOOTING_ROT_ACCEL_LIMIT
+                        : Constants.DriveAssistConstants.NORMAL_ROT_ACCEL_LIMIT;
                 double brakingLimit = Constants.DriveAssistConstants.BRAKING_ACCEL_LIMIT;
 
                 double xLimit = (Math.abs(targetX) < Math.abs(m_lastX)) ? brakingLimit : accelLimit;
@@ -513,13 +525,14 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 finalOmega = targetOmega;
             }
 
-            // limiting driver rotation so that the bot heading can not surpass the turret range only while autofiring to hub and not when dumping
+            // limiting driver rotation so that the bot heading can not surpass the turret
+            // range only while autofiring to hub and not when dumping
             if (isShooting && !isDumping && assistEnabled && shootingRotLockEnabled) {
                 double desiredTurretAngle = desiredTurretAngleSupplier.getAsDouble();
                 double turretMargin = 5.0;
                 double minTurret = Constants.TurretConstants.kMinimumAngle + turretMargin;
                 double maxTurret = Constants.TurretConstants.kMaximumAngle - turretMargin;
-                
+
                 // if past positive limit, then uses negative omega or clockwise to correct
                 if (desiredTurretAngle > maxTurret) {
                     if (finalOmega >= 0) {
@@ -529,7 +542,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                         finalOmega = MathUtil.clamp(
                                 m_rotationController.calculate(pose.getRotation().getRadians()),
                                 -Math.PI, Math.PI);
-                        if (m_rotationController.atSetpoint()) finalOmega = 0;
+                        if (m_rotationController.atSetpoint())
+                            finalOmega = 0;
                     }
                     //
                 } else if (desiredTurretAngle < minTurret) {
@@ -541,14 +555,16 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                         finalOmega = MathUtil.clamp(
                                 m_rotationController.calculate(pose.getRotation().getRadians()),
                                 -Math.PI, Math.PI);
-                        if (m_rotationController.atSetpoint()) finalOmega = 0;
+                        if (m_rotationController.atSetpoint())
+                            finalOmega = 0;
                     }
                 }
             }
 
             // yeahhhh i kinda borrowed this from hammerheads
             switch (m_currentAssistMode) {
-                // for trench, it chooses the nearest 90 deg angle (-90, 0, 90, 180) in case we wanna shovel, and locks the y axis (i got the y values from choreo)
+                // for trench, it chooses the nearest 90 deg angle (-90, 0, 90, 180) in case we
+                // wanna shovel, and locks the y axis (i got the y values from choreo)
                 case DISABLED:
                     double curDeg = pose.getRotation().getDegrees();
                     double closest = 0;
@@ -561,10 +577,12 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                         }
                     }
                     m_rotationController.setSetpoint(Math.toRadians(closest));
-                    finalOmega = MathUtil.clamp(m_rotationController.calculate(pose.getRotation().getRadians()), -Math.PI, Math.PI);
-                    if (m_rotationController.atSetpoint()) finalOmega = 0;
+                    finalOmega = MathUtil.clamp(m_rotationController.calculate(pose.getRotation().getRadians()),
+                            -Math.PI, Math.PI);
+                    if (m_rotationController.atSetpoint())
+                        finalOmega = 0;
 
-                    boolean isTopTrench = pose.getY() >= 4.1055; 
+                    boolean isTopTrench = pose.getY() >= 4.1055;
                     double trenchY;
                     if (isTopTrench) {
                         if (Math.abs(MathUtil.inputModulus(closest - (-90), -180, 180)) < 1.0) {
@@ -596,23 +614,26 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                     boolean isRedAlliance = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red;
                     double yOutput = isRedAlliance ? -rawPidOutput : rawPidOutput;
                     finalY = MathUtil.clamp(yOutput, -1.5, 1.5);
-  
-                    if (m_translationController.atSetpoint()) finalY = 0;
+
+                    if (m_translationController.atSetpoint())
+                        finalY = 0;
 
                     m_targetPose = new Pose2d(pose.getX(), trenchY, Rotation2d.fromDegrees(closest));
                     break;
 
-                 // for bump, it chooses the nearest 45 deg angle but doesnt lock translation
+                // for bump, it chooses the nearest 45 deg angle but doesnt lock translation
                 case BUMP_LOCK:
                     double closestBump = Math.round((pose.getRotation().getDegrees() - 45.0) / 90.0) * 90.0 + 45.0;
                     m_rotationController.setSetpoint(Math.toRadians(closestBump));
-                    finalOmega = MathUtil.clamp(m_rotationController.calculate(pose.getRotation().getRadians()), -Math.PI, Math.PI);
-                    if (m_rotationController.atSetpoint()) finalOmega = 0;
+                    finalOmega = MathUtil.clamp(m_rotationController.calculate(pose.getRotation().getRadians()),
+                            -Math.PI, Math.PI);
+                    if (m_rotationController.atSetpoint())
+                        finalOmega = 0;
 
                     m_targetPose = new Pose2d(pose.getX(), pose.getY(), Rotation2d.fromDegrees(closestBump));
                     break;
-                
-                default: 
+
+                default:
                     m_targetPose = pose;
                     break;
             }
@@ -622,10 +643,11 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             m_lastOmega = finalOmega;
 
             setControl(m_fieldCentricDrive
-                .withVelocityX(finalX)
-                .withVelocityY(finalY)
-                .withRotationalRate(finalOmega)
-                .withDeadband(MaxSpeed.getAsDouble() * OIConstants.kDeadband).withRotationalDeadband(MaxAngularRate.getAsDouble() * OIConstants.kDeadband) // Add a 10% deadband
+                    .withVelocityX(finalX)
+                    .withVelocityY(finalY)
+                    .withRotationalRate(finalOmega)
+                    .withDeadband(MaxSpeed.getAsDouble() * OIConstants.kDeadband)
+                    .withRotationalDeadband(MaxAngularRate.getAsDouble() * OIConstants.kDeadband) // Add a 10% deadband
             );
         });
     }

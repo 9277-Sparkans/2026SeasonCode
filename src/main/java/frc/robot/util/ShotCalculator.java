@@ -57,24 +57,34 @@ public class ShotCalculator {
 
         // initial estimate
         // ShotData shot = isDumping ? ShooterConstants.DUMP_MAP.get(distance) :
-        // ShooterConstants.SHOT_MAP.get(distance);
+
+        // lets try dump data points
+        // ShotData shot = isDumping ? ShooterConstants.DUMP_MAP.get(distance) : ShooterConstants.getShotData(distance);
         // double timeOfFlight = isDumping ? ShooterConstants.DUMP_TOF_MAP.get(distance)
-        // : ShooterConstants.TOF_MAP.get(distance);
-        ShotData shot = isDumping ? ShooterConstants.DUMP_MAP.get(distance) : ShooterConstants.getShotData(distance);
-        double timeOfFlight = isDumping ? ShooterConstants.DUMP_TOF_MAP.get(distance)
-                : ShooterConstants.getTOF(distance);
+        //         : ShooterConstants.getTOF(distance);
+
+        // if dump data points are bad then just treat it as a hub
+        ShotData shot = isDumping ? ShooterConstants.getShotData(distance) :
+        ShooterConstants.getShotData(distance);
+        double timeOfFlight = isDumping ? ShooterConstants.getTOF(distance) :
+        ShooterConstants.getTOF(distance);
+
         Translation3d predictedTarget = target;
 
         // iterative lookahead
         for (int i = 0; i < iterations; i++) {
             predictedTarget = predictTargetPos(target, fieldSpeeds, timeOfFlight);
             distance = getTurretTranslation(robotPose).getDistance(predictedTarget.toTranslation2d());
-            // shot = isDumping ? ShooterConstants.DUMP_MAP.get(distance) :
-            // ShooterConstants.SHOT_MAP.get(distance);
-            // timeOfFlight = isDumping ? ShooterConstants.DUMP_TOF_MAP.get(distance) :
-            // ShooterConstants.TOF_MAP.get(distance);
-            shot = isDumping ? ShooterConstants.DUMP_MAP.get(distance) : ShooterConstants.getShotData(distance);
-            timeOfFlight = isDumping ? ShooterConstants.DUMP_TOF_MAP.get(distance) : ShooterConstants.getTOF(distance);
+
+            // lets try dump data points
+            // shot = isDumping ? ShooterConstants.DUMP_MAP.get(distance) : ShooterConstants.getShotData(distance);
+            // timeOfFlight = isDumping ? ShooterConstants.DUMP_TOF_MAP.get(distance) : ShooterConstants.getTOF(distance);
+
+            // if dump data points are bad then just treat it as a hub
+            shot = isDumping ? ShooterConstants.getShotData(distance) :
+            ShooterConstants.getShotData(distance);
+            timeOfFlight = isDumping ? ShooterConstants.getTOF(distance) :
+            ShooterConstants.getTOF(distance);
         }
 
         return new CalculatedShot(shot, predictedTarget);

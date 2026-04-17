@@ -13,7 +13,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "L_FarSweep"
+            "pathName": "rockL_FarSweep"
           }
         },
         {
@@ -61,12 +61,6 @@
           }
         },
         {
-          "type": "path",
-          "data": {
-            "pathName": "L_CloseSweep"
-          }
-        },
-        {
           "type": "sequential",
           "data": {
             "commands": [
@@ -108,12 +102,6 @@
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "L_Leave"
           }
         }
       ]

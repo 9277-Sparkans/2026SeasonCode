@@ -120,9 +120,6 @@ public class AutoFireInterpolated extends Command {
         SmartDashboard.putNumber("AutoFire/ActualHoodAngle", hoodAngle);
         // SmartDashboard.putNumber("AutoFire/ACTUAL TURRET ANGLE", turret.getPosition());
 
-        boolean targetValid = AutoTrack.isDumping() ? AutoTrack.isTurretTrulyOnTarget()
-                : true;
-
         // launch fuel in sim
         if (RobotBase.isSimulation()) {
             if (fuelSim != null && launchCooldown.hasElapsed(LAUNCH_COOLDOWN_SEC)) {
@@ -155,10 +152,8 @@ public class AutoFireInterpolated extends Command {
 
         // indexer.activate();
 
-        // shooter rpm has to be within 150 of the optimal rpm, and if dumping, the turret must not be clamped for indexer to run.
-        if (Math.abs(optimalShooterRPM - (shooterRPM + 100.0)) < 300.0
-                // && targetValid
-                ) {
+        // shoot whenever shooter rpm is within range
+        if (Math.abs(optimalShooterRPM - (shooterRPM + 100.0)) < 300.0) {
             indexer.activate();
         } else {
             indexer.deactivate();

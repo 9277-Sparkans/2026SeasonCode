@@ -57,12 +57,6 @@
           "data": {
             "pathName": "Intake_Sweep_2_Bump_Left"
           }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Bump_Shoot_Climb"
-          }
         }
       ]
     }

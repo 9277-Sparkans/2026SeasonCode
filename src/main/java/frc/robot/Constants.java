@@ -483,7 +483,7 @@ public class Constants {
         public static final double hingeMaxDeg = 50.0; // -100.0;
 
         public static final double kHingeDeploymentPosition = 0.0;
-        public static final double kHingeAgitatePosition = 0.2;
+        public static final double kHingeAgitatePosition = 0.28;
         public static final double kHingeRetractedPosition = 0.33;
         // public static final double kHingeDeadband = 0.025;
     }
@@ -660,6 +660,7 @@ public class Constants {
         public static final double SHOOTING_ACCEL_LIMIT = 1.5;
         public static final double BRAKING_ACCEL_LIMIT = 100.0;
         public static final double SHOOTING_MAX_VELOCITY = 0.5;
+        public static final double DUMP_MAX_VELOCITY = 0.8;
         public static final double NORMAL_ROT_ACCEL_LIMIT = 25.0;
         public static final double SHOOTING_ROT_ACCEL_LIMIT = 4.0;
     }

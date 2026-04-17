@@ -7,13 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Bump_Start_Left_to_Bump_Left"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "Intake_Sweep_2_Bump_Left"
+            "pathName": "Bump_to_Shoot_Left"
           }
         }
       ]

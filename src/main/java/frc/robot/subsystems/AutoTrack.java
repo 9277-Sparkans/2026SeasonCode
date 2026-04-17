@@ -122,9 +122,12 @@ public class AutoTrack extends SubsystemBase {
         double targetDirectionDeg = Math.toDegrees(targetDirectionRad);
 
         desiredTurretAngle = Utils.wrapAngle(rotation.getDegrees() - targetDirectionDeg);
-        latestTurretAngle = Utils.clamp(desiredTurretAngle,
-                Constants.TurretConstants.kMinimumAngle,
-                Constants.TurretConstants.kMaximumAngle);
+
+        latestTurretAngle = isDumping
+                ? desiredTurretAngle
+                : Utils.clamp(desiredTurretAngle,
+                        Constants.TurretConstants.kMinimumAngle,
+                        Constants.TurretConstants.kMaximumAngle);
 
         // Set turret target — it tracks continuously
         turret.target = latestTurretAngle;
@@ -152,7 +155,8 @@ public class AutoTrack extends SubsystemBase {
         SmartDashboard.putNumber("Calibration/TargetHoodAngle", hood.targetHoodAngle);
         SmartDashboard.putNumber("Calibration/CurrentHoodAngle", hood.getPosition());
         SmartDashboard.putBoolean("Calibration/IsDumping", isDumping);
-        SmartDashboard.putString("Calibration/TargetType", isDumping ? (isLeftDump ? "DUMP_LEFT" : "DUMP_RIGHT") : "HUB");
+        SmartDashboard.putString("Calibration/TargetType",
+                isDumping ? (isLeftDump ? "DUMP_LEFT" : "DUMP_RIGHT") : "HUB");
     }
 
     public CalculatedShot getLatestShot() {

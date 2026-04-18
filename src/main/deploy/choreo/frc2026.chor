@@ -314,6 +314,20 @@
      "val":0.0
     }
    },
+   "midtrenchright":{
+    "x":{
+     "exp":"4.690000000000005 m",
+     "val":4.690000000000005
+    },
+    "y":{
+     "exp":"preautofireright.y",
+     "val":0.7553802297363283
+    },
+    "heading":{
+     "exp":"preautofireright.heading",
+     "val":0.0
+    }
+   },
    "neutralcloseintake":{
     "x":{
      "exp":"6.460224628448486 m",
@@ -480,6 +494,34 @@
     "heading":{
      "exp":"-0.4970023028700718 rad",
      "val":-0.4970023028700718
+    }
+   },
+   "preautofire":{
+    "x":{
+     "exp":"3.4900000000000064 m",
+     "val":3.4900000000000064
+    },
+    "y":{
+     "exp":"0.7553802297363283 m",
+     "val":0.7553802297363283
+    },
+    "heading":{
+     "exp":"0 deg",
+     "val":0.0
+    }
+   },
+   "preautofireright":{
+    "x":{
+     "exp":"preautofire.x",
+     "val":3.4900000000000064
+    },
+    "y":{
+     "exp":"preautofire.y",
+     "val":0.7553802297363283
+    },
+    "heading":{
+     "exp":"preautofire.heading",
+     "val":0.0
     }
    },
    "preclimbleft":{

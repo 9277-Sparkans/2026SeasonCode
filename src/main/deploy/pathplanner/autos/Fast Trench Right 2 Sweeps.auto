@@ -25,7 +25,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "Fast_Trench_Shoot_Right"
+            "pathName": "trench_shoot_right"
           }
         },
         {
@@ -48,6 +48,12 @@
                 "type": "named",
                 "data": {
                   "name": "agitate"
+                }
+              },
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "start_right_shoot"
                 }
               }
             ]

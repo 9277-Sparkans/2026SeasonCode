@@ -178,7 +178,7 @@ public class RobotContainer {
                                 () -> drivetrain.getStateCopy().Speeds);
 
                 autoFireInterpolated = new AutoFireInterpolated(indexer, turret, shooter, hood,
-                                AutoTrack);
+                                AutoTrack, transfer);
                 
                 // ledImplementCommand = new LedImplement(led);
 
@@ -523,11 +523,14 @@ public class RobotContainer {
                                 () -> !lockmode));
                 translateStick.button(OIConstants.kSticks_trigger).onFalse(indexer.indexerStop());
 
+                // translateStick.button(OIConstants.kSticks_trigger)
+                //                 .onFalse(Commands.runOnce(() -> transfer.stop()));
+
                 // kicker
-                translateStick.button(OIConstants.kSticks_centerHandle)
-                                .whileTrue(Commands.runOnce(() -> transfer.activateTransfer()));
-                translateStick.button(OIConstants.kSticks_centerHandle)
-                                .onFalse(Commands.runOnce(() -> transfer.stop()));
+                // translateStick.button(OIConstants.kSticks_centerHandle)
+                //                 .whileTrue(Commands.runOnce(() -> transfer.activateTransfer()));
+                // translateStick.button(OIConstants.kSticks_centerHandle)
+                //                 .onFalse(Commands.runOnce(() -> transfer.stop()));
 
 
                 // outpost autoalign

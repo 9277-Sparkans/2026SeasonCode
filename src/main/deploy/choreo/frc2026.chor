@@ -3,7 +3,36 @@
  "version":2,
  "type":"Swerve",
  "variables":{
-  "expressions":{},
+  "expressions":{
+   "climbspeed":{
+    "dimension":"LinVel",
+    "var":{
+     "exp":"0.3 m / s",
+     "val":0.3
+    }
+   },
+   "intakespeed":{
+    "dimension":"LinVel",
+    "var":{
+     "exp":"2 m / s",
+     "val":2.0
+    }
+   },
+   "shoot":{
+    "dimension":"LinVel",
+    "var":{
+     "exp":"0.67 m / s",
+     "val":0.67
+    }
+   },
+   "shootslow":{
+    "dimension":"LinVel",
+    "var":{
+     "exp":"0.5 m / s",
+     "val":0.5
+    }
+   }
+  },
   "poses":{
    "S1":{
     "x":{
@@ -75,28 +104,154 @@
      "val":0.8150922976382168
     }
    },
-   "climbleftstart":{
+   "beforetrenchbegins1":{
     "x":{
-     "exp":"1.5538334846496573 m",
-     "val":1.553833484649657
+     "exp":"5.239020061492917 m",
+     "val":5.239020061492917
     },
     "y":{
-     "exp":"4.71 m",
-     "val":4.71
+     "exp":"shoottrenchbegin.y",
+     "val":7.3
+    },
+    "heading":{
+     "exp":"shoottrenchbegin.heading",
+     "val":-1.5707963267948966
+    }
+   },
+   "bumpexit":{
+    "x":{
+     "exp":"6.15 m",
+     "val":6.15
+    },
+    "y":{
+     "exp":"bumpshootleft.y",
+     "val":5.675904273986816
+    },
+    "heading":{
+     "exp":"bumpshootleft.heading",
+     "val":-0.9075712110370514
+    }
+   },
+   "bumpexitright":{
+    "x":{
+     "exp":"6.146083831787109 m",
+     "val":6.146083831787109
+    },
+    "y":{
+     "exp":"2.6458346843719482 m",
+     "val":2.645834684371948
+    },
+    "heading":{
+     "exp":"0.6386819591494679 rad",
+     "val":0.6386819591494679
+    }
+   },
+   "bumpshootleft":{
+    "x":{
+     "exp":"2.441438913345337 m",
+     "val":2.441438913345337
+    },
+    "y":{
+     "exp":"5.675904273986816 m",
+     "val":5.675904273986816
+    },
+    "heading":{
+     "exp":"-52 deg",
+     "val":-0.9075712110370514
+    }
+   },
+   "bumpshootr":{
+    "x":{
+     "exp":"3.024977922439575 m",
+     "val":3.024977922439575
+    },
+    "y":{
+     "exp":"bumpexitright.y",
+     "val":2.645834684371948
+    },
+    "heading":{
+     "exp":"bumpexitright.heading",
+     "val":0.6386819591494679
+    }
+   },
+   "bumpshootright":{
+    "x":{
+     "exp":"2.660407543182373 m",
+     "val":2.660407543182373
+    },
+    "y":{
+     "exp":"2.5381879806518555 m",
+     "val":2.5381879806518555
+    },
+    "heading":{
+     "exp":"45 deg",
+     "val":0.7853981633974483
+    }
+   },
+   "bumpstartleft":{
+    "x":{
+     "exp":"3.4500000000000073 m",
+     "val":3.4500000000000073
+    },
+    "y":{
+     "exp":"bumpexit.y",
+     "val":5.675904273986816
+    },
+    "heading":{
+     "exp":"bumpexit.heading",
+     "val":-0.9075712110370514
+    }
+   },
+   "climbleft":{
+    "x":{
+     "exp":"1.087 m",
+     "val":1.087
+    },
+    "y":{
+     "exp":"4.623 m",
+     "val":4.623
     },
     "heading":{
      "exp":"180 deg",
      "val":3.141592653589793
     }
    },
-   "climbrightstart":{
+   "climbleftstart":{
     "x":{
-     "exp":"2 m",
-     "val":2.0
+     "exp":"1.087 m",
+     "val":1.087
     },
     "y":{
-     "exp":"2.78 m",
-     "val":2.78
+     "exp":"4.812 m",
+     "val":4.812
+    },
+    "heading":{
+     "exp":"180 deg",
+     "val":3.141592653589793
+    }
+   },
+   "climbright":{
+    "x":{
+     "exp":"1.19 m",
+     "val":1.19
+    },
+    "y":{
+     "exp":"2.871 m",
+     "val":2.871
+    },
+    "heading":{
+     "exp":"0 deg",
+     "val":0.0
+    }
+   },
+   "climbrightstart":{
+    "x":{
+     "exp":"1.19 m",
+     "val":1.19
+    },
+    "y":{
+     "exp":"2.608 m",
+     "val":2.608
     },
     "heading":{
      "exp":"0 deg",
@@ -115,6 +270,20 @@
     "heading":{
      "exp":"0 deg",
      "val":0.0
+    }
+   },
+   "etqwe":{
+    "x":{
+     "exp":"2.6900000000000057 m",
+     "val":2.6900000000000057
+    },
+    "y":{
+     "exp":"7.113945770263673 m",
+     "val":7.113945770263673
+    },
+    "heading":{
+     "exp":"-1.2586267534041227 rad",
+     "val":-1.2586267534041229
     }
    },
    "hopperfullneutralleft":{
@@ -142,6 +311,20 @@
     },
     "heading":{
      "exp":"depot.heading",
+     "val":0.0
+    }
+   },
+   "midtrenchright":{
+    "x":{
+     "exp":"4.690000000000005 m",
+     "val":4.690000000000005
+    },
+    "y":{
+     "exp":"preautofireright.y",
+     "val":0.7553802297363283
+    },
+    "heading":{
+     "exp":"preautofireright.heading",
      "val":0.0
     }
    },
@@ -215,6 +398,34 @@
      "val":-1.5707963267948966
     }
    },
+   "neutralintakes1angle":{
+    "x":{
+     "exp":"8.314518928527832 m",
+     "val":8.314518928527832
+    },
+    "y":{
+     "exp":"6.958020210266113 m",
+     "val":6.958020210266113
+    },
+    "heading":{
+     "exp":"1.2490457723982544 rad",
+     "val":1.2490457723982544
+    }
+   },
+   "neutralintakes1angleend":{
+    "x":{
+     "exp":"neutralintakes1angle.x",
+     "val":8.314518928527832
+    },
+    "y":{
+     "exp":"4.758020210266121 m",
+     "val":4.758020210266121
+    },
+    "heading":{
+     "exp":"neutralintakes1angle.heading",
+     "val":1.2490457723982544
+    }
+   },
    "neutraltestforus":{
     "x":{
      "exp":"6.165179347991945 m",
@@ -245,16 +456,100 @@
    },
    "outpost":{
     "x":{
-     "exp":"0.4551571011543274 m",
-     "val":0.4551571011543274
+     "exp":"0.415 m",
+     "val":0.415
     },
     "y":{
-     "exp":"0.46768635511398315 m",
-     "val":0.4676863551139831
+     "exp":"1.001 m",
+     "val":1.001
     },
     "heading":{
-     "exp":"-90 deg",
-     "val":-1.5707963267948966
+     "exp":"90 deg",
+     "val":1.5707963267948966
+    }
+   },
+   "outshootleft":{
+    "x":{
+     "exp":"2.6900000000000057 m",
+     "val":2.6900000000000057
+    },
+    "y":{
+     "exp":"7.113945770263673 m",
+     "val":7.113945770263673
+    },
+    "heading":{
+     "exp":"-1.2586267534041227 rad",
+     "val":-1.2586267534041229
+    }
+   },
+   "outtrenchleft":{
+    "x":{
+     "exp":"2.6900000000000057 m",
+     "val":2.6900000000000057
+    },
+    "y":{
+     "exp":"7.113945770263673 m",
+     "val":7.113945770263673
+    },
+    "heading":{
+     "exp":"-0.4970023028700718 rad",
+     "val":-0.4970023028700718
+    }
+   },
+   "preautofire":{
+    "x":{
+     "exp":"3.4900000000000064 m",
+     "val":3.4900000000000064
+    },
+    "y":{
+     "exp":"0.7553802297363283 m",
+     "val":0.7553802297363283
+    },
+    "heading":{
+     "exp":"0 deg",
+     "val":0.0
+    }
+   },
+   "preautofireright":{
+    "x":{
+     "exp":"preautofire.x",
+     "val":3.4900000000000064
+    },
+    "y":{
+     "exp":"preautofire.y",
+     "val":0.7553802297363283
+    },
+    "heading":{
+     "exp":"preautofire.heading",
+     "val":0.0
+    }
+   },
+   "preclimbleft":{
+    "x":{
+     "exp":"2.8752729892730713 m",
+     "val":2.8752729892730713
+    },
+    "y":{
+     "exp":"5.3218464851379395 m",
+     "val":5.3218464851379395
+    },
+    "heading":{
+     "exp":"0 deg",
+     "val":0.0
+    }
+   },
+   "predepot":{
+    "x":{
+     "exp":"1.2324634790420532 m",
+     "val":1.2324634790420532
+    },
+    "y":{
+     "exp":"5.96355676651001 m",
+     "val":5.96355676651001
+    },
+    "heading":{
+     "exp":"depot.heading",
+     "val":0.0
     }
    },
    "preoutpost":{
@@ -268,7 +563,91 @@
     },
     "heading":{
      "exp":"outpost.heading",
-     "val":-1.5707963267948966
+     "val":1.5707963267948966
+    }
+   },
+   "preshootleft":{
+    "x":{
+     "exp":"3.4900000000000064 m",
+     "val":3.4900000000000064
+    },
+    "y":{
+     "exp":"trenchexitleft.y",
+     "val":7.441
+    },
+    "heading":{
+     "exp":"trenchexitleft.heading",
+     "val":0.0
+    }
+   },
+   "pretrenchshootleft":{
+    "x":{
+     "exp":"trenchshootleft.x",
+     "val":5.99
+    },
+    "y":{
+     "exp":"trenchexitleft.y",
+     "val":7.441
+    },
+    "heading":{
+     "exp":"0 deg",
+     "val":0.0
+    }
+   },
+   "pretrenchshootright":{
+    "x":{
+     "exp":"6.489999999999998 m",
+     "val":6.489999999999998
+    },
+    "y":{
+     "exp":"0.6553802297363284 m",
+     "val":0.6553802297363284
+    },
+    "heading":{
+     "exp":"0 deg",
+     "val":0.0
+    }
+   },
+   "red":{
+    "x":{
+     "exp":"7.30558967590332 m",
+     "val":7.30558967590332
+    },
+    "y":{
+     "exp":"6.725126546 m",
+     "val":6.725126546
+    },
+    "heading":{
+     "exp":"65.4084409738 deg",
+     "val":1.141592653589176
+    }
+   },
+   "rightbehindhubswipe2":{
+    "x":{
+     "exp":"6.181201934814453 m",
+     "val":6.181201934814453
+    },
+    "y":{
+     "exp":"3.594489336013794 m",
+     "val":3.594489336013794
+    },
+    "heading":{
+     "exp":"-66.9 deg",
+     "val":-1.1676252695842066
+    }
+   },
+   "s1neutralangleintakeend":{
+    "x":{
+     "exp":"s1neutralangleintakestart.x",
+     "val":7.481388092041016
+    },
+    "y":{
+     "exp":"4.826916027069098 m",
+     "val":4.826916027069098
+    },
+    "heading":{
+     "exp":"s1neutralangleintakestart.heading",
+     "val":1.929566666933208
     }
    },
    "s1neutralangleintakestart":{
@@ -355,6 +734,20 @@
      "val":-1.5707963267948966
     }
    },
+   "shoot1s1end":{
+    "x":{
+     "exp":"3.089871406555176 m",
+     "val":3.089871406555176
+    },
+    "y":{
+     "exp":"6.9485249519348145 m",
+     "val":6.9485249519348145
+    },
+    "heading":{
+     "exp":"-0.9983366200975676 rad",
+     "val":-0.9983366200975676
+    }
+   },
    "shoot2":{
     "x":{
      "exp":"2.2556076049804688 m",
@@ -369,6 +762,118 @@
      "val":0.0
     }
    },
+   "shootlefttrench":{
+    "x":{
+     "exp":"3.090000000000006 m",
+     "val":3.090000000000006
+    },
+    "y":{
+     "exp":"pretrenchshootleft.y",
+     "val":7.441
+    },
+    "heading":{
+     "exp":"pretrenchshootleft.heading",
+     "val":0.0
+    }
+   },
+   "shootrock":{
+    "x":{
+     "exp":"3.6 m",
+     "val":3.6
+    },
+    "y":{
+     "exp":"7.44958 m",
+     "val":7.44958
+    },
+    "heading":{
+     "exp":"0 deg",
+     "val":0.0
+    }
+   },
+   "shoottrenchbegin":{
+    "x":{
+     "exp":"4.53902006149292 m",
+     "val":4.53902006149292
+    },
+    "y":{
+     "exp":"7.3 m",
+     "val":7.3
+    },
+    "heading":{
+     "exp":"-90 deg",
+     "val":-1.5707963267948966
+    }
+   },
+   "startleft":{
+    "x":{
+     "exp":"4.42415189743042 m",
+     "val":4.42415189743042
+    },
+    "y":{
+     "exp":"7.45149040222168 m",
+     "val":7.45149040222168
+    },
+    "heading":{
+     "exp":"0 deg",
+     "val":0.0
+    }
+   },
+   "startorbitintakeleft":{
+    "x":{
+     "exp":"8.747640228271484 m",
+     "val":8.747640228271484
+    },
+    "y":{
+     "exp":"7.0456223487854 m",
+     "val":7.0456223487854
+    },
+    "heading":{
+     "exp":"90 deg",
+     "val":1.5707963267948966
+    }
+   },
+   "startright":{
+    "x":{
+     "exp":"4.42415189743042 m",
+     "val":4.42415189743042
+    },
+    "y":{
+     "exp":"0.6178355978 m",
+     "val":0.6178355978
+    },
+    "heading":{
+     "exp":"0 rad",
+     "val":0.0
+    }
+   },
+   "startshootingtrenchleft":{
+    "x":{
+     "exp":"4.239020061492921 m",
+     "val":4.239020061492921
+    },
+    "y":{
+     "exp":"beforetrenchbegins1.y",
+     "val":7.3
+    },
+    "heading":{
+     "exp":"180 deg",
+     "val":3.141592653589793
+    }
+   },
+   "straightintakeleftstart":{
+    "x":{
+     "exp":"7.798328399658203 m",
+     "val":7.798328399658203
+    },
+    "y":{
+     "exp":"7.000432014465332 m",
+     "val":7.000432014465332
+    },
+    "heading":{
+     "exp":"90 deg",
+     "val":1.5707963267948966
+    }
+   },
    "testneutralintakeend":{
     "x":{
      "exp":"neutraltestforus.x",
@@ -381,6 +886,76 @@
     "heading":{
      "exp":"neutraltestforus.heading",
      "val":1.5707963267948966
+    }
+   },
+   "trenchbegins1":{
+    "x":{
+     "exp":"3.9390200614929216 m",
+     "val":3.9390200614929216
+    },
+    "y":{
+     "exp":"shoottrenchbegin.y",
+     "val":7.3
+    },
+    "heading":{
+     "exp":"shoottrenchbegin.heading",
+     "val":-1.5707963267948966
+    }
+   },
+   "trenchexitleft":{
+    "x":{
+     "exp":"5.99 m",
+     "val":5.99
+    },
+    "y":{
+     "exp":"7.441 m",
+     "val":7.441
+    },
+    "heading":{
+     "exp":"0 deg",
+     "val":0.0
+    }
+   },
+   "trenchexitright":{
+    "x":{
+     "exp":"5.99 m",
+     "val":5.99
+    },
+    "y":{
+     "exp":"0.628326 m",
+     "val":0.628326
+    },
+    "heading":{
+     "exp":"0 rad",
+     "val":0.0
+    }
+   },
+   "trenchshootleft":{
+    "x":{
+     "exp":"5.99 m",
+     "val":5.99
+    },
+    "y":{
+     "exp":"7.4139457702636715 m",
+     "val":7.413945770263672
+    },
+    "heading":{
+     "exp":"180 deg",
+     "val":3.141592653589793
+    }
+   },
+   "trenchshootright":{
+    "x":{
+     "exp":"outtrenchleft.x",
+     "val":2.6900000000000057
+    },
+    "y":{
+     "exp":"0.9553802297363276 m",
+     "val":0.9553802297363276
+    },
+    "heading":{
+     "exp":"1.0089544702297164 rad",
+     "val":1.0089544702297164
     }
    }
   }

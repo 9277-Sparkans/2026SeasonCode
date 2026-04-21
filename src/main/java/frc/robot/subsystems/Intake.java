@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 
@@ -14,6 +15,24 @@ public class Intake extends SubsystemBase {
 	private final TalonFX intakeMotor;
 	private final TalonFXConfiguration intakeMotorConfig;
   	final MotionMagicVelocityVoltage m_request = new MotionMagicVelocityVoltage(0);
+	
+	private int fuelCount = 0;
+
+	public boolean isIntaking() {
+		return intakeMotor.getVelocity().getValueAsDouble() > 10.0;
+	}
+
+	public boolean canIntake() {
+		return fuelCount < 5;
+	}
+
+	public void addFuel() {
+		fuelCount++;
+	}
+
+	public int getFuelCount() {
+		return fuelCount;
+	}
 
 	public Intake() {	
 		intakeMotor = new TalonFX(Constants.IntakeConstants.intakeMotorId);
@@ -38,13 +57,26 @@ public class Intake extends SubsystemBase {
     	intakeMotor.getConfigurator().apply(intakeMotorConfig);
 	}
 
-	
+	@Override
+	public void periodic() {
+		SmartDashboard.putNumber("intake/targetrps", m_request.Velocity);
+		SmartDashboard.putNumber("intake/actualrps", intakeMotor.getVelocity().getValueAsDouble());
+	}
+
 	public Command intakeCommand() {
 		return Commands.runOnce(() -> setVel());
 	}
 
+	public Command autoIntakeCommand() {
+		return Commands.runOnce(() -> setAutoVel());
+	}
+
 	public Command outtakeCommand() {
 		return Commands.runOnce(() -> setVelNeg());
+	}
+
+	public Command agitateCommand() {
+		return Commands.runOnce(() -> setVelAgitate());
 	}
 	
 	public Command stopRollerCommand() {
@@ -69,9 +101,20 @@ public class Intake extends SubsystemBase {
 		intakeMotor.setControl(m_request.withVelocity(tgt)); //rps
   	}
 
+	public void setAutoVel()
+	{
+		double tgt = -IntakeConstants.intakeAutoSpeed / IntakeConstants.kIntakeGearRatio;
+		intakeMotor.setControl(m_request.withVelocity(tgt)); //rps
+	}
+
 	public void setVelNeg() {
 		double tgt = IntakeConstants.intakeSpeed / IntakeConstants.kIntakeGearRatio;
 		intakeMotor.setControl(m_request.withVelocity(tgt)); //rps
   	}
+
+	public void setVelAgitate() {
+		double tgt = -IntakeConstants.intakeAgitate / IntakeConstants.kIntakeGearRatio;
+		intakeMotor.setControl(m_request.withVelocity(tgt));
+	}
 
 }

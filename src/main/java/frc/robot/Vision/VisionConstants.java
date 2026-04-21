@@ -66,18 +66,18 @@ public class VisionConstants {
 
         // back right camera: 324.7 back, 324.7mm right, 205mm up, and yaw 45 degrees
         // out, pitch 20 degrees up.
-        // public static Transform3d robotToCamera2 = new Transform3d(
-                        // -0.324.7, -0.324.7, 0.205,
+        // public static Transform3d robotToCamera3 = new Transform3d(
+                        // -0.3247, -0.3247, 0.205,
                         // new Rotation3d(0.0, Units.degreesToRadians(-20), Units.degreesToRadians(225)));
 
         // Basic filtering thresholds
         public static double maxAmbiguity = 0.2;
-        public static double maxZError = 1.5;
+        public static double maxZError = 0.2;
 
         // Standard deviation baselines, for 1 meter distance and 1 tag
         // (Adjusted automatically based on distance and # of tags)
-        public static double linearStdDevBaseline = 0.09;// Meters (was 0.5)
-        public static double angularStdDevBaseline = 0.13; // Radians (was 2.0). Highly trusts IMU gyro.
+        public static double linearStdDevBaseline = 0.5; // Meters
+        public static double angularStdDevBaseline = 0.5; // Radians
 
         // Standard deviation multipliers for each camera
         // (Adjust to trust some cameras more than others)
@@ -87,5 +87,5 @@ public class VisionConstants {
                         1.0 // Camera 2
         };
 
-        public static List<Integer> rejectedTags = Arrays.asList(2, 3, 4, 5, 14, 15, 16);
+        public static List<Integer> rejectedTags = Arrays.asList();
 }

@@ -153,15 +153,25 @@ public class Vision extends SubsystemBase {
                                 } else if (observation.tagCount() == 1 && observation.ambiguity() > maxAmbiguity) {
                                         rejectPose = true;
                                         rejectionReason = "Ambiguity=" + observation.ambiguity() + " > " + maxAmbiguity;
+                                } else if (observation.tagCount() == 1 && observation.averageTagDistance() > 3.0) {
+                                        rejectPose = true;
+                                        rejectionReason = "Distance=" + String.format("%.2f", observation.averageTagDistance()) + " > 3.0 for 1 tag";
                                 } else if (Math.abs(observation.pose().getZ()) > maxZError) {
                                         rejectPose = true;
                                         rejectionReason = "ZError=" + observation.pose().getZ() + " > " + maxZError;
+                                } else if (Math.abs(observation.pose().getRotation().getX()) > Math.toRadians(5.0)
+                                                || Math.abs(observation.pose().getRotation().getY()) > Math.toRadians(5.0)) {
+                                        rejectPose = true;
+                                        rejectionReason = "Bad Pitch/Roll";
                                 } else if (observation.pose().getX() < 0.0
                                                 || observation.pose().getX() > aprilTagLayout.getFieldLength()
                                                 || observation.pose().getY() < 0.0
                                                 || observation.pose().getY() > aprilTagLayout.getFieldWidth()) {
                                         rejectPose = true;
                                         rejectionReason = "OutOfBounds";
+                                // } else if (observation.pose().toPose2d().getTranslation().getDistance(poseSupplier.get().getTranslation()) < visionHysteresis) {
+                                //         rejectPose = true;
+                                //         rejectionReason = "Hysteresis";
                                 }
 
                                 // Add pose to log

@@ -1,0 +1,50 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Trench_to_Shoot_Left"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "kicker"
+          }
+        },
+        {
+          "type": "deadline",
+          "data": {
+            "commands": [
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 3.0
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "autofire"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "agitate"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "Choreo Test Autos",
+  "choreoAuto": true
+}

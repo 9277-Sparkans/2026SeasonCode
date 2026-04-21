@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Telemetry;
+import frc.robot.Constants.ClimbConstants;
+import frc.robot.Constants.HoodConstants;
 import frc.robot.Constants.TurretConstants;
 import frc.robot.Constants;
 import frc.robot.Constants;
@@ -32,8 +34,6 @@ public class Turret extends SubsystemBase {
 
   // final DutyCycleOut turret_dutyCycle = new DutyCycleOut(0.0);
 
-  
-
   /** Creates a new Turret. */
   public Turret() {
     turretMotor = new TalonFX(TurretConstants.turret_motorId);
@@ -46,7 +46,14 @@ public class Turret extends SubsystemBase {
     //     .withLimitReverseMotion(turret_reverseLimit.get())
     // );
 
+    turretMotorConfig.CurrentLimits.StatorCurrentLimit = TurretConstants.turret_currentLimit;
+    turretMotorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
+
+    turretMotorConfig.CurrentLimits.SupplyCurrentLimit = TurretConstants.turret_currentLimit;
+    turretMotorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+
     turretMotorConfig.MotorOutput.NeutralMode = brake;
+  
 
     turretMotorConfig.Slot0.kS = TurretConstants.turret_kS;
     turretMotorConfig.Slot0.kV = TurretConstants.turret_kV;
@@ -55,11 +62,33 @@ public class Turret extends SubsystemBase {
     turretMotorConfig.Slot0.kI = TurretConstants.turret_kI;
     turretMotorConfig.Slot0.kD = TurretConstants.turret_kD;
 
-    turretMotorConfig.Voltage.PeakForwardVoltage = TurretConstants.turret_maxVoltage;
-    turretMotorConfig.Voltage.PeakReverseVoltage = -TurretConstants.turret_maxVoltage;
+    turretMotorConfig.Slot1.kS = TurretConstants.turret_kS1;
+    turretMotorConfig.Slot1.kV = TurretConstants.turret_kV1;
+    turretMotorConfig.Slot1.kA = TurretConstants.turret_kA1;
+    turretMotorConfig.Slot1.kP = TurretConstants.turret_kP1;
+    turretMotorConfig.Slot1.kI = TurretConstants.turret_kI1;
+    turretMotorConfig.Slot1.kD = TurretConstants.turret_kD1;
+
+    turretMotorConfig.Slot2.kS = TurretConstants.turret_kS2;
+    turretMotorConfig.Slot2.kV = TurretConstants.turret_kV2;
+    turretMotorConfig.Slot2.kA = TurretConstants.turret_kA2;
+    turretMotorConfig.Slot2.kP = TurretConstants.turret_kP2;
+    turretMotorConfig.Slot2.kI = TurretConstants.turret_kI2;
+    turretMotorConfig.Slot2.kD = TurretConstants.turret_kD2;
+
+    // last tested with this
+    // turretMotorConfig.Voltage.PeakForwardVoltage = TurretConstants.turret_maxVoltage;
+    // turretMotorConfig.Voltage.PeakReverseVoltage = -TurretConstants.turret_maxVoltage;
     turretMotorConfig.MotionMagic.MotionMagicAcceleration = TurretConstants.turret_maxAcceleration;
     turretMotorConfig.MotionMagic.MotionMagicCruiseVelocity = TurretConstants.turret_maxVelocity;
     turretMotorConfig.MotionMagic.MotionMagicJerk = TurretConstants.turret_maxJerk;
+
+    // last tested without this    
+    turretMotorConfig.CurrentLimits.SupplyCurrentLimit = TurretConstants.kTurretCurrentLimit;
+    turretMotorConfig.CurrentLimits.SupplyCurrentLimitEnable = true;
+      
+    turretMotorConfig.CurrentLimits.StatorCurrentLimit = TurretConstants.kTurretCurrentLimit;
+    turretMotorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
     turretMotor.getConfigurator().apply(turretMotorConfig);
 
@@ -93,8 +122,7 @@ public class Turret extends SubsystemBase {
 
 
   public double getTurretAngle() {
-    double position = getTurretCurrent(); // turns
-    return position * 360;
+    return getPosition();
   }
 
   public double getVelocity() {
@@ -122,16 +150,27 @@ public class Turret extends SubsystemBase {
   }
 
   public void defaultCommand() {
-    // System.out.println("target is " + target);
-    if (target > TurretConstants.kMaximumAngle) {
-      turretMotor.setControl(m_request.withPosition(TurretConstants.kMaximumAngle / 360.0 * TurretConstants.kGearRatio));
+    double setpoint = target;
+
+    if (setpoint > TurretConstants.kMaximumAngle) {
+      setpoint = TurretConstants.kMaximumAngle;
+    } else if (setpoint < TurretConstants.kMinimumAngle) {
+      setpoint = TurretConstants.kMinimumAngle;
     }
-    if (target < TurretConstants.kMinimumAngle) {
-      turretMotor.setControl(m_request.withPosition(TurretConstants.kMinimumAngle / 360.0 * TurretConstants.kGearRatio));
-    }
-    else {
-      turretMotor.setControl(m_request.withPosition(target / 360.0 * TurretConstants.kGearRatio));
-    }
+
+    double error = setpoint - getPosition();
+    // double ffVoltage = 0.0;
+
+    // if (Math.abs(error) > 0.5) {
+    //   ffVoltage = TurretConstants.FF_MAP.get(getPosition()) * Math.signum(error);
+    // }
+    
+    double ffVoltage = TurretConstants.FF_MAP.get(getPosition()) * Math.signum(error);
+
+    double targetTicks = (setpoint / 360.0 * TurretConstants.kGearRatio);
+
+    turretMotor.setControl(
+        m_request.withPosition(targetTicks).withSlot(0).withFeedForward(ffVoltage));
   }
 
   public Command initDefaultCommand(Turret turret) {

@@ -7,20 +7,16 @@
 
 package frc.robot.subsystems;
 
+import static edu.wpi.first.units.Units.Amps;
+import static edu.wpi.first.units.Units.RPM;
+
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
-import frc.robot.Constants.IndexerConstants;
-import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.hardware.TalonFX;
-import com.ctre.phoenix6.controls.MotionMagicVelocityVoltage;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.Constants;
 import frc.robot.Constants.IndexerConstants;
 
@@ -32,11 +28,27 @@ public class Indexer extends SubsystemBase {
 
   final MotionMagicVelocityVoltage m_request = new MotionMagicVelocityVoltage(0);
 
+  public enum IndexerGoal {
+    ACTIVE,
+    IDLE
+  };
+
+  private IndexerGoal goal = IndexerGoal.IDLE;
+
+  private final Trigger feedStallTrigger;
+
+  private boolean agitateOverride = false;
+
   /** Creates a new Indexer. */
   public Indexer() {
     indexerMotor = new TalonFX(IndexerConstants.kIndexerMotorId);
     indexerMotorConfig = new TalonFXConfiguration(); 
     indexerMotor.setPosition(0);
+
+    feedStallTrigger = new Trigger(
+        () -> (indexerMotor.getStatorCurrent().getValue().in(Amps) >= IndexerConstants.kIndexerStallCurrent &&
+          indexerMotor.getVelocity().getValue().abs(RPM) <= IndexerConstants.kIndexerStallVelocity)
+    );
 
     indexerMotorConfig.CurrentLimits.StatorCurrentLimit = Constants.IndexerConstants.kIndexerCurrentLimit;
     indexerMotorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
@@ -51,18 +63,56 @@ public class Indexer extends SubsystemBase {
     indexerMotorConfig.MotionMagic.MotionMagicAcceleration = IndexerConstants.kIndexerMaxAcceleration;
     indexerMotorConfig.MotionMagic.MotionMagicJerk = IndexerConstants.kIndexerMaxJerk;
 
+    // feedStallTrigger.and(() -> this.goal == IndexerGoal.ACTIVE).onTrue(unjam());
+
     indexerMotor.getConfigurator().apply(indexerMotorConfig);
   }
 
-
+  private Command unjam() {
+    return
+      this.runOnce(() -> {
+        spinReverse();
+      })
+      .andThen(Commands.waitSeconds(0.5))
+      .andThen(Commands.runOnce(() -> {
+        spinForward();
+      }))
+      .finallyDo((interrupted) -> {
+        if (interrupted) {
+          stop();
+        }
+      })
+      .withName("Indexer unjam");
+  }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
   }
 
+  public void setGoal(IndexerGoal goal) {
+    if (goal == IndexerGoal.ACTIVE && this.goal != IndexerGoal.ACTIVE) {
+      spinForward();
+    } else if (goal == IndexerGoal.IDLE) {
+      stop();
+    }
+    // if (goal == IndexerGoal.ACTIVE) {
+    //   if (agitateOverride) {
+    //     spinReverse();
+    //   } else {
+    //     spinForward();
+    //   }
+    // }
+
+    this.goal = goal;
+  }
+
   public Command indexerSpin() {
     return Commands.runOnce(() -> spin());
+  }
+
+  public Command indexerSpinReverse() {
+    return Commands.runOnce(() -> spinReverse());
   }
 
   public Command indexerStop() {
@@ -76,7 +126,7 @@ public class Indexer extends SubsystemBase {
   public void toggle() {
     indexerOn = !indexerOn;
     if (indexerOn) {
-      setVel();
+      setVelocity(IndexerConstants.kIndexerSpeed);
     } else {
       stop();
     }
@@ -88,12 +138,35 @@ public class Indexer extends SubsystemBase {
   }
 
 
-  public void stop() {
+  public void activate() {
+    // setGoal(IndexerGoal.ACTIVE);
+    spinForward();
+  }
+
+  public void deactivate() {
+    // setGoal(IndexerGoal.IDLE);
+    stop();
+  }
+
+  public void agitate(boolean agitate) {
+    agitateOverride = agitate;
+    setGoal(this.goal);
+  }
+
+  private void stop() {
     indexerMotor.set(0);
   }
 
-  public void setVel() {
-    double tgt = IndexerConstants.kIndexerSpeed / IndexerConstants.kIndexerGearRatio;
+  private void setVelocity(double velocity) {
+    double tgt = velocity / IndexerConstants.kIndexerGearRatio;
     indexerMotor.setControl(m_request.withVelocity(tgt)); //rps
+  }
+
+  public void spinForward() {
+    setVelocity(IndexerConstants.kIndexerSpeed);
+  }
+
+  private void spinReverse() {
+    setVelocity(IndexerConstants.kIndexerAgitateSpeed);
   }
 }

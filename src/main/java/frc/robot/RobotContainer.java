@@ -9,6 +9,7 @@ import static edu.wpi.first.units.Units.*;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
+import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.commands.PathPlannerAuto;
@@ -16,10 +17,14 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Joystick;
+import edu.wpi.first.wpilibj.RobotBase;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.util.sendable.Sendable;
 import edu.wpi.first.util.sendable.SendableBuilder;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.DriverStation.Alliance;
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -40,23 +45,30 @@ import edu.wpi.first.math.geometry.Pose2d;
 import java.util.function.Supplier;
 
 import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.Indexer.IndexerGoal;
 import frc.robot.util.AllianceShifts;
+import frc.robot.util.FuelSim;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Intake;
+// import frc.robot.subsystems.Led;
 import frc.robot.subsystems.Indexer;
 import frc.robot.Constants.OIConstants;
 import frc.robot.Constants.QuickAccessConstants;
+import frc.robot.Constants.ShooterConstants;
 import frc.robot.Constants.QuickAccessConstants.ControlTypes;
 import frc.robot.Utils.Lookup;
 import frc.robot.commands.AutoFire;
 import frc.robot.commands.LockMode;
 import frc.robot.commands.TurretTracking;
+// import frc.robot.commands.LedImplement;
+import frc.robot.util.Zones;
 import frc.robot.commands.AutoFire.TargetHub;
 import frc.robot.commands.LockMode.LockState;
 import frc.robot.subsystems.Transfer;
 import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Hinge;
+import frc.robot.subsystems.betterled;
 import frc.robot.Vision.Vision;
 import frc.robot.Vision.VisionIOPhotonVision;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -72,13 +84,17 @@ import frc.robot.subsystems.Indexer;
 import frc.robot.subsystems.Transfer;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Hinge;
-import frc.robot.commands.AutoAlignCommand;
+import frc.robot.commands.Agitate;
+// import frc.robot.commands.AutoAlignCommand;
 import frc.robot.commands.LockMode;
+import frc.robot.commands.AutoFireInterpolated;
+import frc.robot.subsystems.AutoTrack;
 
 public class RobotContainer {
         private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
         private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond);
-        private double driveTrainVelocityPercent = 0.55;
+        private double driveTrainVelocityPercent = 0.70;
+        private boolean movingConstantSpeed = false;
 
         /* Setting up bindings for necessary control of the swerve drive platform */
         private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
@@ -89,7 +105,7 @@ public class RobotContainer {
         private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
         private final Telemetry logger = new Telemetry(MaxSpeed);
-        private final SendableChooser<Command> autoChooser = new SendableChooser<>();
+        private SendableChooser<Command> autoChooser;
 
         public final CommandXboxController joystick = new CommandXboxController(OIConstants.kDriverControllerPort);
         public final CommandJoystick translateStick = new CommandJoystick(OIConstants.kDriverTranslateStickPort);
@@ -124,13 +140,19 @@ public class RobotContainer {
         public final Transfer transfer = new Transfer();
         public final Indexer indexer = new Indexer();
         public final Hinge hinge = new Hinge();
+        public final Timer teleopTimer = new Timer();
+        public final betterled led = new betterled(teleopTimer);
+        // public final SillyHinge sillyHinge = new SillyHinge();
         public final AutoFire autoFireCommand;
+        // public final LedImplement ledImplementCommand;
         // public final LockMode lockModeCommand = new LockMode(turret, shooter, hood);
+
+        public final AutoTrack AutoTrack;
+        public final AutoFireInterpolated autoFireInterpolated;
 
         public boolean manualControl = false;
         public boolean lockmode = false;
-
-        public final Timer teleopTimer = new Timer();
+        public boolean slowMode = false;
 
         public final Vision vision = new Vision(
                         (Vision.VisionConsumer) drivetrain::addVisionMeasurement,
@@ -138,63 +160,110 @@ public class RobotContainer {
                         camera0, camera1, camera2);
 
         public final Lookup lookup = Utils.createLookup();
+        private FuelSim fuelSim;
+
+        private Agitate agitateCommand;
 
         public RobotContainer() {
+                if (RobotBase.isSimulation()) {
+                        configureFuelSim();
+                }
                 autoFireCommand = new AutoFire(indexer, turret, shooter, hood,
-                                                () -> drivetrain.getStateCopy().Speeds,
-                                                () -> drivetrain.getStateCopy().Pose, lookup);
+                                () -> drivetrain.getStateCopy().Speeds,
+                                () -> drivetrain.getStateCopy().Pose, lookup);
 
+                // new autotrack subsystem does caculations every 20 ms
+                AutoTrack = new AutoTrack(turret, hood, shooter,
+                                () -> drivetrain.getStateCopy().Pose,
+                                () -> drivetrain.getStateCopy().Speeds);
+
+                autoFireInterpolated = new AutoFireInterpolated(indexer, turret, shooter, hood,
+                                AutoTrack);
+                
+                // ledImplementCommand = new LedImplement(led);
+
+                agitateCommand = new Agitate(hinge);
+
+                if (RobotBase.isSimulation()) {
+                        autoFireCommand.setFuelSim(fuelSim);
+                        autoFireInterpolated.setFuelSim(fuelSim);
+                }
+
+                // Named Commands for use in autonomous
                 NamedCommands.registerCommand("intake",
-                                intake.intakeCommand());
-                // NamedCommands.registerCommand("climbUp",
-                //                 climb.climbUp());
-                // NamedCommands.registerCommand("climbHang",
-                //                 climb.climbHang());
-                NamedCommands.registerCommand("climbUp",
-                                Commands.runOnce(() -> climb.climbUp()));
-                NamedCommands.registerCommand("climbHang",
-                                Commands.runOnce(() -> climb.climbHang()));
-                NamedCommands.registerCommand("autofire",
-                        autoFireCommand);
-                NamedCommands.registerCommand("hingeDown",
-                                hinge.hingeDown());
-                NamedCommands.registerCommand("hingeUp",
-                                hinge.hingeUp());
-                NamedCommands.registerCommand("index",
-                                Commands.runOnce(() -> indexer.setVel()));
-                NamedCommands.registerCommand("kicker",
-                                Commands.runOnce(() -> transfer.toggleTransfer()));
+                                intake.autoIntakeCommand());
+                NamedCommands.registerCommand("stopintake",
+                                intake.stopRollerCommand());
 
+                NamedCommands.registerCommand("climbup",
+                                climb.climbUp());
+                NamedCommands.registerCommand("climbhang",
+                                climb.climbHang());
+
+                NamedCommands.registerCommand("autofire",
+                                autoFireInterpolated);
+                NamedCommands.registerCommand("stopautofire",
+                                Commands.runOnce(() -> autoFireInterpolated.cancel()));
+
+                NamedCommands.registerCommand("hingedown",
+                                hinge.hingeDown());
+                NamedCommands.registerCommand("hingeup",
+                                hinge.hingeUp());
+                NamedCommands.registerCommand("agitate",
+                                Agitate.agitate(hinge, indexer));
+                NamedCommands.registerCommand("stopagitate",
+                                Commands.runOnce(() -> Agitate.agitate(hinge, indexer).end(true)));
+
+                // TO CHANGE TO TRANSFER ON/OFF INSTEAD OF TOGGLE
+                NamedCommands.registerCommand("kicker",
+                                Commands.runOnce(() -> transfer.activateTransfer()));
+
+                NamedCommands.registerCommand("stopkicker",
+                                Commands.runOnce(() -> transfer.stop()));
+
+                // deprecated
+                // NamedCommands.registerCommand("index",
+                // Commands.runOnce(() -> indexer.activate()));
+
+                // NamedCommands.registerCommand("stopFire",
+                // new LockMode(turret, shooter, hood, LockState.NEUTRAL));
 
                 turret.setDefaultCommand(turret.initDefaultCommand(turret));
-                hood.setDefaultCommand(hood.initDefaultCommand(hood));
-                hinge.setDefaultCommand(hinge.initDefaultCommand(hinge));
+                hood.setDefaultCommand(hood.initDefaultCommand());
+                hinge.setDefaultCommand(hinge.initDefaultCommand());
+                // sillyHinge.setDefaultCommand(sillyHinge.initDefaultCommand());
 
-                // auto chooser
+                autoChooser = new SendableChooser<>();
                 autoChooser.setDefaultOption("No auto", Commands.none());
-                // jeet autos, add final autos in later
-                // autoChooser.addOption("S1 DPR + Climb (S1.1-S-DPR-C)",
-                // AutoAlignCommand.getS1DPR_C(drivetrain));
-                // autoChooser.addOption("S1 DPR (S1.1-S-DPR)",
-                // AutoAlignCommand.getS1DPR(drivetrain));
-                // autoChooser.addOption("S2 Depost (S2.DP)",
-                // AutoAlignCommand.getS2DP(drivetrain));
-                // autoChooser.addOption("S2 Human Player (S2.HP)",
-                // AutoAlignCommand.getS2HP(drivetrain));
-                // autoChooser.addOption("S3 Human Player (S3.HP)",
-                // AutoAlignCommand.getS3HP(drivetrain));
+                // autoChooser.addOption("doubleswipestart1", new PathPlannerAuto("doubleswipestart1"));
+                // autoChooser.addOption("autofiremovetest", new PathPlannerAuto("autofiremovetest"));
+                // autoChooser.addOption("deadlinedumptest", new PathPlannerAuto("deadlinedumptest"));
+                // autoChooser.addOption("Trench Left 2 Sweeps Cool", new PathPlannerAuto("Trench Left 2 Sweeps Cool"));
+                // autoChooser.addOption("shoottest", new PathPlannerAuto("shoottest"));
+                // autoChooser.addOption("trenchshootclimbtest", new PathPlannerAuto("trenchshootclimbtest"));
+                // autoChooser.addOption("intaketest", new PathPlannerAuto("intaketest"));
+                // autoChooser.addOption("intake2test", new PathPlannerAuto("intake2test"));
+                // autoChooser.addOption("bumpshoot", new PathPlannerAuto("bumpshoot"));
+                // autoChooser.addOption("intakeshootclimb", new PathPlannerAuto("intakeshootclimb"));
+                autoChooser.addOption("Fast Trench Left 2 Sweeps", new PathPlannerAuto("Fast Trench Left 2 Sweeps"));
+                autoChooser.addOption("Fast Trench Right 2 Sweeps", new PathPlannerAuto("Fast Trench Right 2 Sweeps"));
+                // autoChooser.addOption("rock", new PathPlannerAuto("rock"));
+                // autoChooser.addOption("Trench to Bump Left 2 Sweeps", new PathPlannerAuto("Trench to Bump Left 2 Sweeps"));
+                autoChooser.addOption("right_trench_bump_outpost_sotm", new PathPlannerAuto("right_trench_bump_outpost_sotm"));
+                autoChooser.addOption("Trench Right 1 Sweep Climb", new PathPlannerAuto("Trench Right 1 Sweep Climb"));
+
+                autoChooser.addOption("COMMAND TEST - DO NOT SELECT DURING COMPETITION", new PathPlannerAuto("commandtest"));
 
                 SmartDashboard.putData("Auto Chooser", autoChooser);
 
                 SmartDashboard.putData("Git Info", new Sendable() {
-                        @SuppressWarnings("removal")
                         @Override
                         public void initSendable(SendableBuilder builder) {
                                 builder.addStringProperty("Branch", () -> BuildConstants.GIT_BRANCH, null);
                                 builder.addStringProperty("Commit", () -> BuildConstants.GIT_SHA, null);
                                 builder.addStringProperty("Date of commit", () -> BuildConstants.GIT_DATE, null);
                                 builder.addStringProperty("Uncommitted changes",
-                                                () -> new Boolean(BuildConstants.DIRTY > 0).toString(),
+                                                () -> Boolean.valueOf(BuildConstants.DIRTY > 0).toString(),
                                                 null);
                         }
                 });
@@ -207,36 +276,56 @@ public class RobotContainer {
         }
 
         public void teleopPeriodic() {
-                if (teleopTimer.get() >= 140) teleopTimer.stop();
-                
+                if (teleopTimer.get() >= 140)
+                        teleopTimer.stop();
+
                 SmartDashboard.putNumber("Shifts/Match Time", teleopTimer.get());
                 SmartDashboard.putString(
-                        "Shifts/Remaining Shift Time",
-                        String.format("%.1f", Math.max(AllianceShifts.getRemainingShiftTime(teleopTimer), 0.0)));
+                                "Shifts/Remaining Shift Time",
+                                String.format("%.1f",
+                                                Math.max(AllianceShifts.getRemainingShiftTime(teleopTimer), 0.0)));
                 SmartDashboard.putBoolean("Shifts/Shift Active", AllianceShifts.areWeActive(teleopTimer));
                 SmartDashboard.putString(
-                        "Shifts/Game State", AllianceShifts.getCurrentShift(teleopTimer).toString());
+                                "Shifts/Game State", AllianceShifts.getCurrentShift(teleopTimer).toString());
+                // SmartDashboard.putNumber("Bot velocity magnitude", drivetrain.speeds.get);
         }
 
         private void configureBindings() {
                 // Note that X is defined as forward according to WPILib convention,
                 // and Y is defined as to the left according to WPILib convention.
                 drivetrain.setDefaultCommand(
-                                drivetrain.applyRequest(() -> {
-                                        double x, y, rot;
-                                        if (QuickAccessConstants.controlType == ControlTypes.DRIVER_STICKS) {
-                                                x = -translateStick.getRawAxis(1);
-                                                y = -translateStick.getRawAxis(0);
-                                                rot = -rotateStick.getRawAxis(0);
-                                        } else {
-                                                x = -joystick.getLeftY();
-                                                y = -joystick.getLeftX();
-                                                rot = -joystick.getRightX();
-                                        }
-                                        return drive.withVelocityX(x * MaxSpeed * driveTrainVelocityPercent)
-                                                        .withVelocityY(y * MaxSpeed * driveTrainVelocityPercent)
-                                                        .withRotationalRate(rot * MaxAngularRate * driveTrainVelocityPercent);
-                                }));
+                                drivetrain.driveWithAssist(
+                                                () -> {
+                                                        if (QuickAccessConstants.controlType == ControlTypes.DRIVER_STICKS) {
+                                                                return -translateStick.getRawAxis(1)
+                                                                                * driveTrainVelocityPercent;
+                                                        } else {
+                                                                return -joystick.getLeftY() * driveTrainVelocityPercent;
+                                                        }
+                                                },
+                                                () -> {
+                                                        if (QuickAccessConstants.controlType == ControlTypes.DRIVER_STICKS) {
+                                                                return -translateStick.getRawAxis(0)
+                                                                                * driveTrainVelocityPercent;
+                                                        } else {
+                                                                return -joystick.getLeftX() * driveTrainVelocityPercent;
+                                                        }
+                                                },
+                                                () -> {
+                                                        if (QuickAccessConstants.controlType == ControlTypes.DRIVER_STICKS) {
+                                                                return -rotateStick.getRawAxis(0)
+                                                                                * driveTrainVelocityPercent;
+                                                        } else {
+                                                                return -joystick.getRightX()
+                                                                                * driveTrainVelocityPercent;
+                                                        }
+                                                },
+                                                () -> translateStick.getHID()
+                                                                .getRawButton(OIConstants.kSticks_trigger),
+                                                () -> AutoTrack.isDumping(),
+                                                () -> AutoTrack.getDesiredTurretAngle(),
+                                                () -> MaxSpeed,
+                                                () -> MaxAngularRate));
 
                 // Idle while the robot is disabled. This ensures the configured
                 // neutral mode is applied to the drive motors while disabled.
@@ -255,10 +344,14 @@ public class RobotContainer {
                 joystick.start().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
                 // joystick.().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-                joystick.start().and(joystick.povUp()).whileTrue(shooter.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
-                joystick.start().and(joystick.povDown()).whileTrue(shooter.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
-                joystick.start().and(joystick.povRight()).whileTrue(shooter.sysIdDynamic(SysIdRoutine.Direction.kForward));
-                joystick.start().and(joystick.povLeft()).whileTrue(shooter.sysIdDynamic(SysIdRoutine.Direction.kReverse));
+                joystick.start().and(joystick.povUp())
+                                .whileTrue(shooter.sysIdQuasistatic(SysIdRoutine.Direction.kForward));
+                joystick.start().and(joystick.povDown())
+                                .whileTrue(shooter.sysIdQuasistatic(SysIdRoutine.Direction.kReverse));
+                joystick.start().and(joystick.povRight())
+                                .whileTrue(shooter.sysIdDynamic(SysIdRoutine.Direction.kForward));
+                joystick.start().and(joystick.povLeft())
+                                .whileTrue(shooter.sysIdDynamic(SysIdRoutine.Direction.kReverse));
 
                 // CLIMB button controls
                 // joystick.y().onTrue(climb.climbUp());
@@ -300,11 +393,15 @@ public class RobotContainer {
                 // turret, shooter, hood));
 
                 // SHOOTER button controls
-                // joystick.leftBumper().onTrue(Commands.runOnce(() -> shooter.decreaseSpeed()));
-                // joystick.rightBumper().onTrue(Commands.runOnce(() -> shooter.increaseSpeed()));
+                // joystick.leftBumper().onTrue(Commands.runOnce(() ->
+                // shooter.decreaseSpeed()));
+                // joystick.rightBumper().onTrue(Commands.runOnce(() ->
+                // shooter.increaseSpeed()));
 
                 // joystick.x().onTrue(shooter.shootCmd());
                 // joystick.x().whileTrue(Commands.runOnce(() -> autoFireCommand.execute()));
+
+                joystick.x().onTrue(Commands.runOnce(() -> indexer.setGoal(IndexerGoal.ACTIVE)));
 
                 // TRANSFER button controls
                 joystick.b().onTrue(Commands.runOnce(() -> transfer.toggleTransfer()));
@@ -322,7 +419,7 @@ public class RobotContainer {
                                 .onFalse(
                                                 intake.stopRollerCommand());
 
-                joystick.y().whileTrue(AutoAlignCommand.getTrenchCommand(drivetrain));
+                // joystick.y().whileTrue(AutoAlignCommand.getTrenchCommand(drivetrain));
 
                 // HINGE button controls
                 // joystick.povRight()
@@ -343,91 +440,128 @@ public class RobotContainer {
                 // button id +1 (so button 1 would actually be button 2 on here)
                 // rotateStick.button(3).whileTrue(AutoAlignCommand.getAutoAlignCommand(drivetrain));
 
-
-
-
-
-
-
-
-
                 // ---------- FLIGHT STICK DRIVER PREFERENCE (DO NOT CHANGE) ---------- //
 
-                //intake
+                // intake
                 rotateStick.button(OIConstants.kSticks_trigger).onTrue(intake.intakeCommand());
                 rotateStick.button(OIConstants.kSticks_trigger).onFalse(intake.stopRollerCommand());
-                
-                //outtake
+
+                // outtake
                 rotateStick.button(OIConstants.kSticks_centerHandle).onTrue(intake.outtakeCommand());
                 rotateStick.button(OIConstants.kSticks_centerHandle).onFalse(intake.stopRollerCommand());
 
-                //climb autoalign
-                rotateStick.button(OIConstants.kSticks_leftHandle).whileTrue(AutoAlignCommand.getAutoClimbCommand(drivetrain));
+                rotateStick.button(OIConstants.kSticks_leftHandle)
+                                .onTrue(Commands.runOnce(() -> shooter.increaseSpeed()));
+                rotateStick.button(OIConstants.kSticks_rightHandle)
+                                .onTrue(Commands.runOnce(() -> shooter.decreaseSpeed()));
+
+                // climb autoalign
+                // rotateStick.button(OIConstants.kSticks_leftHandle).whileTrue(AutoAlignCommand.getAutoClimbCommand(drivetrain));
 
                 //boost
                 rotateStick.button(OIConstants.kSticks_rightHandle).whileTrue(Commands.runOnce(() -> driveTrainVelocityPercent = 1.0));
                 rotateStick.button(OIConstants.kSticks_rightHandle).onFalse(Commands.runOnce(() -> driveTrainVelocityPercent = 0.55));
 
-                //shooter up down
-                // rotateStick.button(OIConstants.povUp).onTrue(Commands.either(
-                //     Commands.runOnce(() -> shooter.increaseSpeed()),
-                //         Commands.runOnce(() -> {}),
-                //         () -> manualControl));
-                // rotateStick.button(OIConstants.povDown).onTrue(Commands.either(
-                //     Commands.runOnce(() -> shooter.decreaseSpeed()),
-                //         Commands.runOnce(() -> {}),
-                //         () -> manualControl));
-                                
-                //turret left right
+                // shooter up down
+                // translateStick.button(OIConstants.kRightSticks_rightGrid_topLeft).onTrue(Commands.either(
+                // Commands.runOnce(() -> shooter.increaseSpeed()),
+                // Commands.runOnce(() -> {}),
+                // () -> manualControl));
+                // translateStick.button(OIConstants.kRightSticks_rightGrid_bottomLeft).onTrue(Commands.either(
+                // Commands.runOnce(() -> shooter.decreaseSpeed()),
+                // Commands.runOnce(() -> {}),
+                // () -> manualControl));
+
+                // translateStick.button(OIConstants.kRightSticks_rightGrid_topLeft).onTrue(Commands.runOnce(()
+                // -> shooter.increaseSpeed()));
+
+                // translateStick.button(OIConstants.kRightSticks_rightGrid_topLeft).onTrue(Commands.runOnce(() -> led.newFunsies()));
+
+                // translateStick.button(OIConstants.kRightSticks_rightGrid_bottomLeft).onTrue(Commands.runOnce(()
+                // -> shooter.decreaseSpeed()));
+
+                // hood up down
+                // translateStick.button(OIConstants.kRightSticks_leftGrid_topRight).onTrue(Commands.either(
+                // Commands.runOnce(() -> hood.runHoodReverse()),
+                // Commands.runOnce(() -> {}),
+                // () -> manualControl));
+                // translateStick.button(OIConstants.kRightSticks_leftGrid_bottomRight).onTrue(Commands.either(
+                // Commands.runOnce(() -> hood.runHood()),
+                // Commands.runOnce(() -> {}),
+                // () -> manualControl));
+
+                translateStick.button(OIConstants.kRightSticks_leftGrid_bottomRight)
+                                .onTrue(Commands.runOnce(() -> hood.runHood()));
+                translateStick.button(OIConstants.kRightSticks_leftGrid_topRight)
+                                .onTrue(Commands.runOnce(() -> hood.runHoodReverse()));
+
+                // turret left right
                 // rotateStick.button(OIConstants.povRight).onTrue(Commands.either(
-                //     turret.turretPos(),
-                //         Commands.runOnce(() -> {}),
-                //         () -> manualControl));
+                // turret.turretPos(),
+                // Commands.runOnce(() -> {}),
+                // () -> manualControl));
                 // rotateStick.button(OIConstants.povLeftt).onTrue(Commands.either(
-                //     turret.turretNeg(),
-                //         Commands.runOnce(() -> {}),
-                //         () -> manualControl));
-                
-                //GYRO RESET
+                // turret.turretNeg(),
+                // Commands.runOnce(() -> {}),
+                // () -> manualControl));
+
+                // GYRO RESET
                 translateStick.button(OIConstants.kRightSticks_leftGrid_bottomLeft)
-                    .toggleOnTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+                                .toggleOnTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
                 translateStick.button(OIConstants.kRightSticks_leftGrid_bottomLeft)
-                    .toggleOnTrue(Commands.runOnce(() -> vision.enableVision = false));    
-                
-                //autofire
+                                .toggleOnTrue(Commands.runOnce(() -> vision.enableVision = false));
+
+                // autofire
                 // translateStick.button(OIConstants.kSticks_trigger).whileTrue(autoFireCommand);
 
+                // translateStick.button(OIConstants.kSticks_trigger).onTrue(indexer.indexerSpin());
+                // translateStick.button(OIConstants.kSticks_trigger).onFalse(indexer.indexerStop());
+
                 translateStick.button(OIConstants.kSticks_trigger).whileTrue(Commands.either(
-                    autoFireCommand,
-                        Commands.runOnce(() -> indexer.setVel()),
-                        () -> !lockmode));
+                                autoFireInterpolated,
+                                Commands.runOnce(() -> indexer.activate()),
+                                () -> !lockmode));
                 translateStick.button(OIConstants.kSticks_trigger).onFalse(indexer.indexerStop());
 
-                //kicker
-                translateStick.button(OIConstants.kSticks_centerHandle).whileTrue(Commands.runOnce(() -> transfer.activateTransfer()));
-                translateStick.button(OIConstants.kSticks_centerHandle).onFalse(Commands.runOnce(() -> transfer.stop()));
-                
+                // kicker
+                translateStick.button(OIConstants.kSticks_centerHandle)
+                                .whileTrue(Commands.runOnce(() -> transfer.activateTransfer()));
+                translateStick.button(OIConstants.kSticks_centerHandle)
+                                .onFalse(Commands.runOnce(() -> transfer.stop()));
 
-                //outpost autoalign
-                translateStick.button(OIConstants.kSticks_leftHandle).whileTrue(AutoAlignCommand.getOutpostCommand(drivetrain));
 
-                //trench autoalign
-                translateStick.button(OIConstants.kSticks_rightHandle).whileTrue(AutoAlignCommand.getTrenchCommand(drivetrain));
+                // outpost autoalign
+                // translateStick.button(OIConstants.kSticks_leftHandle).whileTrue(AutoAlignCommand.getOutpostCommand(drivetrain));
 
-                //spindexer
-                translateStick.button(OIConstants.kLeftSticks_leftGrid_bottomLeft).whileTrue(Commands.runOnce(() -> indexer.setVel()));
-                
+                // // trench autoalign
+                // translateStick.button(OIConstants.kSticks_rightHandle)
+                //                 .whileTrue(AutoAlignCommand.getTrenchCommand(drivetrain));
+
+                // spindexer
+                translateStick.button(OIConstants.kLeftSticks_leftGrid_bottomLeft)
+                                .whileTrue(Commands.runOnce(() -> indexer.activate()));
+
         }
-
-        
 
         private void configureOperatorConsole() {
                 // Operator
-                operator(1)
-                                .onTrue(Commands.runOnce(() -> hood.moveHoodToAngle(hood.targetHoodAngle)));
+                // operator(1)
+                // .onTrue(Commands.runOnce(() -> hood.moveHoodToAngle(hood.targetHoodAngle)));
+                // operator(OIConstants.kKeyboard_duck)
+                //                 .onTrue(Commands.runOnce(() -> movingConstantSpeed = true))
+                //                 .onFalse(Commands.runOnce(() -> movingConstantSpeed = false));
+                // operator(OIConstants.kKeyboard_modeToggle)
+                // .onTrue(Commands.runOnce(() -> manualControl = !manualControl));
 
-                operator(OIConstants.kKeyboard_modeToggle)
-                                .onTrue(Commands.runOnce(() -> manualControl = !manualControl));
+                // turn on or off autotrack
+                operator(OIConstants.kKeyboard_AutoTrackToggle)
+                                .onTrue(Commands.runOnce(() -> {
+                                        if (AutoTrack.isTracking()) {
+                                                AutoTrack.disableTracking();
+                                        } else {
+                                                AutoTrack.enableTracking();
+                                        }
+                                }));
 
                 operator(OIConstants.kKeyboard_trackToggle)
                                 .onTrue(Commands.runOnce(() -> lockmode = !lockmode));
@@ -459,13 +593,41 @@ public class RobotContainer {
                 operator(OIConstants.kKeyboard_climbDown)
                                 .onTrue(climb.climbDown());
 
+                // operator(OIConstants.kKeyboard_intakeDeploy)
+                // .onTrue(Commands.runOnce(() -> sillyHinge.moveHoodToAngle(0)));
+
+                // operator(OIConstants.kKeyboard_intakeRetract)
+                // .onTrue(Commands.runOnce(() -> sillyHinge.moveHoodToAngle(50)));
+
                 operator(OIConstants.kKeyboard_intakeDeploy)
                                 .onTrue(hinge.hingeDown())
                                 .onFalse(hinge.hingeStopCommand());
 
                 operator(OIConstants.kKeyboard_intakeRetract)
                                 .onTrue(hinge.hingeUp())
-                                .onFalse(hinge.hingeStopCommand());
+                                .whileTrue(intake.intakeCommand())
+                                .onFalse(hinge.hingeStopCommand())
+                                .onFalse(intake.stopRollerCommand());
+
+                operator(OIConstants.kKeyboard_intakeRetract)
+                                .whileTrue(intake.intakeCommand())
+                                .onFalse(intake.stopRollerCommand());
+
+                // operator(OIConstants.kKeyboard_modeToggle)
+                //                 .whileTrue(Agitate.agitate(hinge, indexer))
+                //                 .onFalse(hinge.hingeStopCommand());
+
+                operator(OIConstants.kKeyboard_modeToggle)
+                                .onTrue(Commands.runOnce(() -> drivetrain.assistEnabled = !drivetrain.assistEnabled));
+
+                // operator(OIConstants.kKeyboard_duck)
+                //                 .onTrue(Commands.runOnce(() -> {
+                //                         if (AutoTrack.isTracking()) {
+                //                                 AutoTrack.disableTracking();
+                //                         } else {
+                //                                 AutoTrack.enableTracking();
+                //                         }
+                //                 }));
         }
 
         public JoystickButton operator(int keyCode) {
@@ -478,7 +640,34 @@ public class RobotContainer {
         }
 
         public Command getAutonomousCommand() {
-                // return autoChooser.getSelected();
-                return new PathPlannerAuto("henockauto");
+                return autoChooser.getSelected();
+        }
+
+        private void configureFuelSim() {
+                fuelSim = new FuelSim();
+                // Register robot with its dimensions (from Constants)
+                fuelSim.registerRobot(
+                                Constants.RobotDimensions.FULL_WIDTH,
+                                Constants.RobotDimensions.FULL_LENGTH,
+                                Constants.RobotDimensions.BUMPER_HEIGHT,
+                                () -> drivetrain.getStateCopy().Pose,
+                                () -> drivetrain.getStateCopy().Speeds // Field-relative speeds
+                );
+
+                // Register intake region - DISABLED FOR UNLIMITED FUEL TESTING
+                fuelSim.registerIntake(
+                                0.3, 0.7, -0.4, 0.4, // bounding box relative to robot center
+                                () -> intake.isIntaking() && intake.canIntake(), // active when intaking and NOT full
+                                () -> intake.addFuel()); // increment fuel count when a ball is picked up
+
+                fuelSim.setLoggingFrequency(100.0);
+                fuelSim.spawnStartingFuel();
+                fuelSim.start();
+        }
+
+        public void updateSim() {
+                if (fuelSim != null) {
+                        fuelSim.updateSim();
+                }
         }
 }

@@ -1,0 +1,31 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "newneutralangles1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "neutralintakes1angle"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "angletos1"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "Deprecated Autos",
+  "choreoAuto": true
+}

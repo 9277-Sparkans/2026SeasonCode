@@ -14,6 +14,10 @@ import edu.wpi.first.networktables.StructPublisher;
 import edu.wpi.first.util.struct.Struct;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.math.interpolation.Interpolatable;
+import edu.wpi.first.math.interpolation.InterpolatingDoubleTreeMap;
+import edu.wpi.first.math.interpolation.InterpolatingTreeMap;
+import edu.wpi.first.math.interpolation.InverseInterpolator;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 
@@ -45,7 +49,7 @@ public class Constants {
         public static final int kDriverTranslateStickPort = 2;
         public static final int kDriverRotateStickPort = 3;
         public static final int kBackupOperatorControllerPort = 4;
-        public static final double kDeadband = 0.02;
+        public static final double kDeadband = 0.065;
 
         // Joysticks
         public static final int kDriverYAxis = 1;
@@ -67,8 +71,9 @@ public class Constants {
         // 87777877ui00o831.00
         // NOTE: IDs here are 1-indexed as opposed to the keyboard firmware's 0-indexing
         // Add one to your ID or else you'll be binding to a completely different button
-        public static final int kKeyboard_modeToggle = 5;
-        public static final int kKeyboard_trackToggle = 3;
+        public static final int kKeyboard_modeToggle = 5; 
+        public static final int kKeyboard_trackToggle = 3; //3
+        public static final int kKeyboard_duck = 1; //1
 
         public static final int kKeyboard_lockModeToggle = 2;
         public static final int kKeyboard_lockModeLeft = 11;
@@ -80,9 +85,10 @@ public class Constants {
         public static final int kKeyboard_climbUp = 7;
         public static final int kKeyboard_climbDown = 10;
         public static final int kKeyboard_climbHang = 9;
-        
+
         public static final int kKeyboard_intakeDeploy = 16;
         public static final int kKeyboard_intakeRetract = 6;
+        public static final int kKeyboard_AutoTrackToggle = 14;
 
         // Triggers [CONTROLLER ONLY]
         public static final int kController_leftBumper = 5;
@@ -125,6 +131,11 @@ public class Constants {
         public static final int kRightSticks_rightGrid_bottomRight = 16;
     }
 
+    public static final class LedConstants {
+        public static final int kCandleId = 50; // 50
+
+    }
+
     public static final class TurretConstants {
 
         public static final double turret_maxVelocity = 40; // rotations per second
@@ -135,36 +146,95 @@ public class Constants {
         public static final int kTurretEncoderId = 40;
         public static final double kTurretEncoderOffset = 0.0; // Rotations
         public static final double turret_speed = 0.2;
+        public static final double turret_currentLimit = 40.0; //amps
+
+        // public static double turret_kV = 0.095;
+        // public static double turret_kA = 0.0;
+        // public static double turret_kS = 0.09; // 0.6 1.0
+        // public static double turret_kP = 9.0; // 13.5
+        // public static double turret_kI = 0.07;
+        // public static double turret_kD = 0.25;
+
+        // public static double turret_kV1 = 0.095;
+        // public static double turret_kA1 = 0.0;
+        // public static double turret_kS1 = 1.0; // 0.6 1.0
+        // public static double turret_kP1 = 9.0; // 13.5
+        // public static double turret_kI1 = 0.07;
+        // public static double turret_kD1 = 0.25;
+
+        // public static double turret_kV2 = 0.095;
+        // public static double turret_kA2 = 0.0;
+        // public static double turret_kS2 = 1.0; // 0.6 1.0
+        // public static double turret_kP2 = 12.0; // 13.5
+        // public static double turret_kI2 = 0.12; // 0.07
+        // public static double turret_kD2 = 0.25;
 
         public static double turret_kV = 0.095;
         public static double turret_kA = 0.0;
-        public static double turret_kS = 0.6;
-        public static double turret_kP = 13.5;
-        public static double turret_kI = 0.07;
-        public static double turret_kD = 0.25;
+        public static double turret_kS = 0.0; // 0.6 1.0 // handled by ffmap
+        public static double turret_kP = 1.5; // 13.5 //12.0 //1.5
+        public static double turret_kI = 0.0; // 0.07
+        public static double turret_kD = 0.35; // 0.25 //0.35
 
-        public static double kMaximumAngle = 70.0;
-        public static double kMinimumAngle = -70.0;
-        
+        public static double turret_kV1 = 0.095;
+        public static double turret_kA1 = 0.0;
+        public static double turret_kS1 = 0.50; // 0.6 1.0
+        public static double turret_kP1 = 12.0; // 13.5
+        public static double turret_kI1 = 0.07;
+        public static double turret_kD1 = 0.25;
+
+        public static double turret_kV2 = 0.095;
+        public static double turret_kA2 = 0.0;
+        public static double turret_kS2 = 0.9; // 0.6 1.0
+        public static double turret_kP2 = 12.0; // 13.5
+        public static double turret_kI2 = 0.07; // 0.07
+        public static double turret_kD2 = 0.25;
+
+        public static double kMaximumAngle = 90.0;
+        public static double kMinimumAngle = -90.0;
+
         public static double kGearRatio = 105.0 / 18.0;
 
+        public static double kTurretCurrentLimit = 50.0;
+
+        public static final InterpolatingDoubleTreeMap FF_MAP = new InterpolatingDoubleTreeMap();
+
+        static {
+            FF_MAP.put(-10.0, 0.45); //0.55
+            FF_MAP.put(-20.0, 0.55); //0.65
+            FF_MAP.put(-30.0, 0.7); //0.7
+            FF_MAP.put(-40.0, 0.95);
+            FF_MAP.put(-60.0, 0.4);
+            FF_MAP.put(-70.0, 0.52);
+
+            // turret angle, voltage required
+            FF_MAP.put(0.0, 0.35); //0.5
+            FF_MAP.put(10.0, 0.45); //0.55
+            FF_MAP.put(20.0, 0.65); //0.85
+            FF_MAP.put(30.0, 0.8); //1.15
+            FF_MAP.put(40.0, 0.7); //0.83
+            FF_MAP.put(50.0, 1.024);
+            FF_MAP.put(60.0, 1.26);
+            FF_MAP.put(80.0, 1.45);
+        }
+
         public static final edu.wpi.first.math.geometry.Transform3d ROBOT_TO_TURRET_TRANSFORM = new edu.wpi.first.math.geometry.Transform3d(
-                new edu.wpi.first.math.geometry.Translation3d(0.0, 0.0, 0.4572), // 18 inches
+                new edu.wpi.first.math.geometry.Translation3d(0.12543, 0.0, 0.2897), //updated
                 new edu.wpi.first.math.geometry.Rotation3d());
     }
 
     public static class ShooterConstants {
-        public static final int kShooterMotorId = 33; //33
+        public static final int kShooterMotorId = 33; // 33
 
         public static final int kShooterCurrentLimit = 80;
-        public static final double kShooterGearRatio = 36.0 / 30.0; //36/ 30
+        public static final double kShooterGearRatio = 36.0 / 30.0; // 36/ 30
 
         public static final double kShooterMaxVoltage = 5;// kraken x44 max voltage
         public static final double kShooterMaxAcceleration = 100; // rotations per second^2
         public static final double kShooterMaxJerk = 1000; // rotations per second^3
 
         // subject to change if we end up automating these
-        public static double kShooterSpeed = 30.0; //rpm
+        public static double kShooterSpeed = 30.0; // rpm
 
         public static double kMaxVelocity = 100.0;
 
@@ -172,13 +242,14 @@ public class Constants {
 
         public static final double kRpmIncrement = 50.0;
 
-        public static final int kMinRPM = 0;
-        public static final int kMaxRPM = 6000;
+        public static final int kMinRPM = 3500; // 0
+        public static final int kMaxRPM = 6000; // 6000
 
         public static double kMinOperationalRPM = 3000;
 
         public static final int kMinFlywheelRPM = 2400;
         public static final int kMaxFlywheelRPM = 7200;
+        public static final double kFlywheelRadius = edu.wpi.first.math.util.Units.inchesToMeters(1.75);
 
         public static final double shooter_kS = 0.17909;
         public static final double shooter_kP = 0.018595;
@@ -187,67 +258,195 @@ public class Constants {
         public static final double shooter_kV = 0.11753;
         public static final double shooter_kA = 0.0038935;
 
-        public static final String lookupTablePath = Filesystem.getDeployDirectory().getPath() + "/ShooterLookupTable/shooter-lookup.csv"; // Generated with github.com/DanielR723/shooter
-        public static final double autoshootDistanceRange = 0.1; // Range of distances to check to choose the best shot (Least hood rotation and flywheel RPM change)
-        public static final double maxShotError = 0.01; // The maximum allowed error for a shot to occur
+        public static final String lookupTablePath = Filesystem.getDeployDirectory().getPath()
+                + "/ShooterLookupTable/shooter-lookup.csv"; // Generated with github.com/DanielR723/shooter
+        public static final double autoshootDistanceRange = 0.1; // Range of distances to check to choose the best shot
+                                                                 // (Least hood rotation and flywheel RPM change)
+        public static final double maxShotError = 0.001; // The maximum allowed error for a shot to occur
 
         // Tuning constants for autofire
         public static final double rpmOffset = 50.0;
-        public static final double distancePower = 1.0;
+        public static final double distancePower = 1.4;
         public static final double speedPower = 1.0;
-        
-        // Weights of each value when calculating an optimal shot, higher value means higher priority to minimize
-        public static final double botVelocityWeight = 1.0;
-        public static final double shooterRPMWeight = 0.2;
-        public static final double hoodAngleWeight = 0.0;
+        public static final double autoFireDriveSpeed = 0.25;
+        public static final double hysteresisDeadband = 0.0;
+
+        // Weights of each value when calculating an optimal shot, higher value means
+        // higher priority to minimize
+        public static final double botVelocityWeight = 0.0;
+        public static final double shooterRPMWeight = 0.1;
+        public static final double hoodAngleWeight = 1.0;
+
+        // quadratic regression tests
+        public record ShotData(double rpm, double hoodAngle) {
+        }
+
+        // https://www.desmos.com/calculator/aitlewjs62
+        private static final double RPM_A = 84.3726;
+        private static final double RPM_B = -206.71965;
+        private static final double RPM_C = 4024.31321;
+
+        private static final double HOOD_A = 0.035756;
+        private static final double HOOD_B = -2.748184;
+        private static final double HOOD_C = 16.707595;
+
+        private static final double TOF_A = 0.040110;
+        private static final double TOF_B = -0.170120;
+        private static final double TOF_C = 1.155771;
+
+        public static ShotData getShotData(double distMeters) {
+            double rpm = RPM_A * distMeters * distMeters + RPM_B * distMeters + RPM_C;
+            double hood = HOOD_A * distMeters * distMeters + HOOD_B * distMeters + HOOD_C;
+            rpm = Math.max(3800.0, Math.min(5600.0, rpm));
+            hood = Math.max(2.0, Math.min(10.0, hood));
+            return new ShotData(rpm, hood);
+        }
+
+        public static double getTOF(double distMeters) {
+            double tof = TOF_A * distMeters * distMeters + TOF_B * distMeters + TOF_C;
+            return Math.max(0.98, Math.min(1.39, tof));
+        }
+
+        // autofire treemapping with interpolation (commented out)
+        // public record ShotData(double rpm, double hoodAngle) implements
+        // Interpolatable<ShotData> {
+        // @Override
+        // public ShotData interpolate(ShotData endValue, double t) {
+        // return new ShotData(
+        // edu.wpi.first.math.MathUtil.interpolate(this.rpm, endValue.rpm, t),
+        // edu.wpi.first.math.MathUtil.interpolate(this.hoodAngle, endValue.hoodAngle,
+        // t));
+        // }
+        // }
+
+        // public static final InterpolatingTreeMap<Double, ShotData> SHOT_MAP = new
+        // InterpolatingTreeMap<Double, ShotData>(
+        // InverseInterpolator.forDouble(), (start, end, t) -> start.interpolate(end,
+        // t));
+        // public static final InterpolatingDoubleTreeMap TOF_MAP = new
+        // InterpolatingDoubleTreeMap();
+
+        // static {
+
+        // // data points (distance from turret, rpm, hood angle)
+        // // time of flight (distance from turret, time of flight)
+        // SHOT_MAP.put(2.340, new ShotData(4000.0, 10));
+        // TOF_MAP.put(2.340, 0.98333);
+
+        // SHOT_MAP.put(2.964, new ShotData(4150.0, 10));
+        // TOF_MAP.put(2.964, 1.0);
+
+        // SHOT_MAP.put(3.516, new ShotData(4350.0, 7.0));
+        // TOF_MAP.put(3.516, 1.05);
+
+        // SHOT_MAP.put(4.007, new ShotData(4550.0, 6.0));
+        // TOF_MAP.put(4.007, 1.10); // 1.15
+
+        // SHOT_MAP.put(4.535, new ShotData(4850.0, 5.0));
+        // TOF_MAP.put(4.535, 1.22); // 1.98333 1.28375
+
+        // SHOT_MAP.put(4.929, new ShotData(5000.0, 4.0));
+        // TOF_MAP.put(4.929, 1.32); // 1.20 1.40
+
+        // SHOT_MAP.put(5.411, new ShotData(5300.0, 3.0));
+        // TOF_MAP.put(5.411, 1.39); // 1.98333 1.3525
+
+        // // SHOT_MAP.put(2.265, new ShotData(4000.0, 10.0));
+        // // SHOT_MAP.put(2.765, new ShotData(4050.0, 10.0));
+        // // SHOT_MAP.put(3.265, new ShotData(4200.0, 9.0));
+        // // SHOT_MAP.put(3.765, new ShotData(4400.0, 8.0));
+        // // SHOT_MAP.put(4.265, new ShotData(4500.0, 6.0));
+        // // SHOT_MAP.put(4.765, new ShotData(4700.0, 5.0));
+        // // SHOT_MAP.put(5.265, new ShotData(5150.0, 5.0));
+        // // SHOT_MAP.put(6.223, new ShotData(5900.0, 2.0));
+
+        // // distance, time of flight
+        // // TOF_MAP.put(2.265, 0.7940);
+        // // TOF_MAP.put(2.765, 0.8145);
+        // // TOF_MAP.put(3.265, 0.8444);
+        // // TOF_MAP.put(3.765, 0.8798);
+        // // TOF_MAP.put(4.265, 0.8543);
+        // // TOF_MAP.put(4.765, 0.8719);
+        // // TOF_MAP.put(5.265, 0.9375);
+
+        // // TOF_MAP.put(2.765, 0.956875);
+        // // TOF_MAP.put(3.265, 0.9975);
+        // // TOF_MAP.put(3.765, 1.165);
+        // // TOF_MAP.put(4.265, 1.1375);
+        // // TOF_MAP.put(4.765, 1.28375);
+        // // TOF_MAP.put(5.265, 1.22875);
+        // }
+
+        // dumping tree map
+        public static final InterpolatingTreeMap<Double, ShotData> DUMP_MAP = new InterpolatingTreeMap<Double, ShotData>(
+                InverseInterpolator.forDouble(), (start, end, t) -> new ShotData(
+                        edu.wpi.first.math.MathUtil.interpolate(start.rpm(), end.rpm(), t),
+                        edu.wpi.first.math.MathUtil.interpolate(start.hoodAngle(), end.hoodAngle(), t)));
+        public static final InterpolatingDoubleTreeMap DUMP_TOF_MAP = new InterpolatingDoubleTreeMap();
+
+        static {
+            // data points (distance from turret, rpm, hood angle)
+            //     time of flight (distance from turret, time of flight)
+            DUMP_MAP.put(4.21, new ShotData(4300.0, 6.0));
+                DUMP_TOF_MAP.put(2.0, 0.6);
+
+            DUMP_MAP.put(7.04, new ShotData(4700.0, 3.0));
+                DUMP_TOF_MAP.put(2.0, 0.6);
+
+            DUMP_MAP.put(8.43, new ShotData(5400.0, 0.0));
+                DUMP_TOF_MAP.put(2.0, 0.6);
+
+
+            // distance, time of flight
+            // DUMP_TOF_MAP.put(4.0, 0.6);
+        }
     }
 
-    public static class HoodConstants
-    {
-        public static final int kHoodMotorId = 34; //34
-        public static final int kHoodEncoderId = 41; //41
+    public static class HoodConstants {
+        public static final int kHoodMotorId = 34; // 34
+        public static final int kHoodEncoderId = 41; // 41
 
-        public static final double hood_maxVelocity = 20; // rotations per second; was 1.0, setting it to this to avoid grinding the gear again!
-        public static final double hood_maxAcceleration = 80; // rotations per second^2
+        public static final double hood_maxVelocity = 20; // rotations per second; was 1.0, setting it to this to avoid
+                                                          // grinding the gear again!
+        public static final double hood_maxAcceleration = 10; // rotations per second^2
         public static final double hood_maxVoltage = 15;// kraken x44 max voltage
 
         public static final double hood_kG = 0.00;
-        public static final double hood_kS = 0.39;
+        public static final double hood_kS = 0.09;
         public static final double hood_kV = 0.095;
         public static final double hood_kA = 0.01;
         public static final double hood_kP = 13.5; // 7.23, 11
         public static final double hood_kI = 0.07; // 0.01
-        public static final double hood_kD = 0.25; //0.38
+        public static final double hood_kD = 0.0; // 0.38 0.25
 
         public static final double kHoodSpeed = 0.1;
 
-        public static final double kMinimumAngle = 0;
-        public static final double kMaximumAngle = 12;
+        public static final double kMinimumAngle = 3; // 0
+        public static final double kMaximumAngle = 10; // 12
 
-        public static final double kMinimumEncoderPos = 0;
-        public static final double kMaximumEncoderPos = -0.67236328125;
+        public static final double kMinimumEncoderPos = -0.44849609375;
+        public static final double kMaximumEncoderPos = 0;
 
         public static final double maxEncoderValue = -1.258789; // test for this
 
-        public static final double kGearRatio = 210.0 / 15.0; //210.0 / 15.0;
+        public static final double kGearRatio = 18.f / 210.f; // 210.0 / 15.0;
 
         public static final double kHoodCurrentLimit = 45;
 
-        public static final double kHoodIncrement = 17.0/2.0;
+        public static final double kHoodIncrement = 17.0 / 2.0;
 
         public static final double kIdkManConstant = 1.209757239732467f;
 
         public static final double hoodOffset = 0.205; // Offset from center of the bot (m)
     }
 
-    public static class IntakeConstants
-    {
-        public static final int intakeMotorId = 38; //38
+    public static class IntakeConstants {
+        public static final int intakeMotorId = 38; // 38
         public static final double kIntakeGearRatio = 2.0 / 3.0;
 
         public static final double kIntakeCurrentLimit = 80.0;
 
-        public static final double intake_kS = 0.15572; //0.18572
+        public static final double intake_kS = 0.15572; // 0.18572
         public static final double intake_kV = 0.11754;
         public static final double intake_kA = 0.0048972;
         public static final double intake_kP = 0.030667;
@@ -257,38 +456,45 @@ public class Constants {
         public static final double intakeMaxVoltage = 5; // can change if not needed
         public static final double intakeMaxAcceleration = 100;
         public static final double intakeMaxVelocity = 500; // rps
-        public static final double intakeSpeed = 50.0; //rps max 66.6 rps 400.0 
+        public static final double intakeSpeed = 45.0; // rps max 66.6 rps 400.0
+        public static final double intakeAutoSpeed = 66.0; // rps max 66.6 rps 400.0
+        public static final double intakeAgitate = 20.0;
     }
 
     public static class HingeConstants {
 
-        public static final int kHingeMotorId = 39; //39
+        public static final int kHingeMotorId = 39; // 39
+        public static final int kHingeEncoderId = 42;
         public static final int deploymentMaxDeg = 115;
 
-        public static final double hinge_kS = 0.24;        
-        public static final double hinge_kP = 10.0;
+        public static final double hinge_kS = 0.24;
+        public static final double hinge_kP = 3.0;
         public static final double hinge_kI = 0.0;
-        public static final double hinge_kD = 0.1;
+        public static final double hinge_kD = 0.03;
         public static final double hinge_kV = 0.12;
-        public static final double hinge_kG = 2.5; //0.25
-        public static final double hingeMaxAcceleration = 20.0;
+        public static final double hinge_kG = 2.5; // 0.25
+        public static final double hingeMaxAcceleration = 10.0;
         public static final double hingeMaxVelocity = 100.0; // rps
-        public static final double kHingeCurrentLimit = 120;
+        public static final double kHingeCurrentLimit = 25;
 
         public static final int hingeCountsPerRevolution = 2048; // for kraken x60
-        public static final double hingeGearRatio = 112.5 / 1.0; //carter: 8:1 tyler: 45:1
+        public static final double hingeGearRatio = 112.5 / 1.0; // carter: 8:1 tyler: 45:1
 
-        public static final double hingeMaxDeg = 50.0; //-100.0;
+        public static final double hingeMaxDeg = 50.0; // -100.0;
+
+        public static final double kHingeDeploymentPosition = 0.0;
+        public static final double kHingeAgitatePosition = 0.28;
+        public static final double kHingeRetractedPosition = 0.33;
+        // public static final double kHingeDeadband = 0.025;
     }
 
-    public static class ClimbConstants
-    {
-        public static final int kClimbMotorID = 37; //37
+    public static class ClimbConstants {
+        public static final int kClimbMotorID = 37; // 37
 
         public static final double kClimbMaxVelocity = 90; // rps
         public static final double kClimbMaxAcceleration = 30; // rps^2
-        public static final int kClimbCurrent_Limit = 120;   
-        public static final double kClimb_Speed = 0.3; 
+        public static final int kClimbCurrent_Limit = 120;
+        public static final double kClimb_Speed = 0.3;
 
         public static final double kClimb_kS = 0.05;
         public static final double kClimb_kV = 0.12;
@@ -305,8 +511,7 @@ public class Constants {
         public static final double kClimbGearRatio = 10.0 / 1.0;
     }
 
-    public static class TransferConstants
-    {
+    public static class TransferConstants {
         public static final int transferID = 31; // change later 31
 
         public static final double transferMaxVoltage = 4; // can change if not needed
@@ -343,30 +548,56 @@ public class Constants {
         public static final double kIndexerMaxVoltage = 5;// kraken x44 max voltage
         public static final double kIndexerCurrentLimit = 100;
         public static final int kIndexerMotorId = 35; // 35
-        public static final double kIndexerSpeed = 30.0; //rps 60 before
+
+        public static final double kIndexerSpeed = 30.0; // rps 60 before
+        public static final double kIndexerAgitateSpeed = -10.0; // rps 60 before
         public static final double kIndexerGearRatio = 12.0 / 15.0;
         public static final double indexerSpeed = 30.0; // rps
 
-        // tomorrow - use the best tuning and then increase ka and kv cuz the recorrect is kinda messed up
-        public static final double kIndexer_kS = 0.18572; //0.01;
-        public static final double kIndexer_kV = 0.12; //0.11754;
-        public static final double kIndexer_kA = 0.01; //0.0048972;
-        public static final double kIndexer_kP = 0.030667; //1.0;
-        public static final double kIndexer_kI = 0.01; //0.005; 
-        public static final double kIndexer_kD = 0.0; //0.05;
+        // tomorrow - use the best tuning and then increase ka and kv cuz the recorrect
+        // is kinda messed up
+        public static final double kIndexer_kS = 0.18572; // 0.01;
+        public static final double kIndexer_kV = 0.12; // 0.11754;
+        public static final double kIndexer_kA = 0.01; // 0.0048972;
+        public static final double kIndexer_kP = 0.030667; // 1.0;
+        public static final double kIndexer_kI = 0.01; // 0.005;
+        public static final double kIndexer_kD = 0.0; // 0.05;
         public static final double kIndexerMaxAcceleration = 150;
         public static final double kIndexerMaxJerk = 500;
+
+        public static final double kIndexerStallCurrent = 0;
+        public static final double kIndexerStallVelocity = 0;
+
+    }
+
+    public static class RobotDimensions {
+        public static final double FULL_WIDTH = 0.838;
+        public static final double FULL_LENGTH = 0.838;
+        public static final double BUMPER_HEIGHT = 0.19;
     }
 
     public static class FieldConstants {
+        public static final double FIELD_LENGTH = Units.inchesToMeters(650.12);
+        public static final double FIELD_WIDTH = Units.inchesToMeters(316.64);
         public static final double BLUE_HUB_X = 4.625594; // meters
         public static final double BLUE_HUB_Y = 4.034536; // meters
-        public static final double RED_HUB_X = 11.915394; // meters 
+        public static final double RED_HUB_X = 11.915394; // meters
         public static final double RED_HUB_Y = 4.034536; // meters
+
         public static final edu.wpi.first.math.geometry.Translation3d HUB_BLUE = new edu.wpi.first.math.geometry.Translation3d(
-                BLUE_HUB_X, BLUE_HUB_Y, 1.4); // 1.4m height approx
+                BLUE_HUB_X, BLUE_HUB_Y, 1.4);
         public static final edu.wpi.first.math.geometry.Translation3d HUB_RED = new edu.wpi.first.math.geometry.Translation3d(
                 RED_HUB_X, RED_HUB_Y, 1.4);
+
+        public static final double BLUE_DUMP_RIGHT_X = 1.164;
+        public static final double BLUE_DUMP_RIGHT_Y = 1.253326;
+        public static final double BLUE_DUMP_LEFT_X = 1.7;
+        public static final double BLUE_DUMP_LEFT_Y = 6.816;
+
+        public static final double RED_DUMP_RIGHT_X = 15.376; // 16.540988 - 1.7
+        public static final double RED_DUMP_RIGHT_Y = 1.253326;
+        public static final double RED_DUMP_LEFT_X = 14.840988;
+        public static final double RED_DUMP_LEFT_Y = 6.816;
     }
 
     public static final class CanBusConstants {
@@ -374,36 +605,63 @@ public class Constants {
         public static final String kCANivore = "DriveTrain";
     }
 
-    public static final class LockModeConstants
-    {
-        //LEFT
-        public static final int kRPMLeft = 4450;
-        public static final double kHoodLeft = 5.0;
-        public static final double kTurretLeft = 44.0;
+    public static final class LockModeConstants {
+        // LEFT
+        public static final int kRPMLeft = 4900; // 4450
+        public static final double kHoodLeft = 4.0;
+        public static final double kTurretLeft = 45.0;
 
-        //CENTER
-        public static final int kRPMCenter = 4050;
-        public static final double kHoodCenter = 7.0;
+        // CENTER
+        public static final int kRPMCenter = 4600; // 4450
+        public static final double kHoodCenter = 5.5; // 7
         public static final double kTurretCenter = 10.0;
 
-        //RIGHT
-        public static final int kRPMRight = 4450;
-        public static final double kHoodRight = 5.0;
-        public static final double kTurretRight = -44.0;
+        // RIGHT
+        public static final int kRPMRight = 4900;
+        public static final double kHoodRight = 4.0;
+        public static final double kTurretRight = -45.0;
 
-        //TRENCH LEFT
-        public static final int kRPMTrenchLeft = 4350;
+        // TRENCH LEFT
+        public static final int kRPMTrenchLeft = 4650;
         public static final double kHoodTrenchLeft = 6.0;
         public static final double kTurretTrenchLeft = 62.0;
 
-        //TRENCH RIGHT
-        public static final int kRPMTrenchRight = 4350;
+        // TRENCH RIGHT
+        public static final int kRPMTrenchRight = 4650;
         public static final double kHoodTrenchRight = 6.0;
         public static final double kTurretTrenchRight = -62.0;
 
-        //LOCK
-        public static final int kRPMLock = 3700;
+        // LOCK
+        public static final int kRPMLock = 4550;
         public static final double kHoodLock = 6.0;
         public static final double kTurretLock = 0.0;
+    }
+
+    public static final class DriveAssistConstants {
+        public static final double TRENCH_BUMP_X = Units.inchesToMeters(181.56);
+        public static final double TRENCH_WIDTH = Units.inchesToMeters(49.86);
+        public static final double TRENCH_BUMP_LENGTH = Units.inchesToMeters(47.0);
+        public static final double TRENCH_BAR_WIDTH = Units.inchesToMeters(4.0);
+        public static final double TRENCH_BLOCK_WIDTH = Units.inchesToMeters(12.0);
+        public static final double BUMP_WIDTH = Units.inchesToMeters(73.0);
+        public static final double TRENCH_CENTER = TRENCH_WIDTH / 2.0;
+        public static final double TRENCH_ALIGN_TIME = 0.5;
+        public static final double BUMP_ALIGN_TIME = 0.3;
+        public static final double TRANSLATION_kP = 8.0;
+        public static final double TRANSLATION_kI = 0.0;
+        public static final double TRANSLATION_kD = 0.05;
+        public static final double TRANSLATION_TOLERANCE = 0.05;
+        public static final double ROTATION_kP = 5.0;
+        public static final double ROTATION_kI = 0.0;
+        public static final double ROTATION_kD = 0.0;
+        public static final double ROTATION_TOLERANCE = Units.degreesToRadians(5.0);
+
+        public static final double NORMAL_ACCEL_LIMIT = 15.0;
+        public static final double SHOOTING_ACCEL_LIMIT = 1.5;
+        public static final double BRAKING_ACCEL_LIMIT = 100.0;
+        public static final double SHOOTING_MAX_VELOCITY = 0.5;
+        public static final double DUMP_MAX_VELOCITY = 0.8;
+        public static final double NORMAL_ROT_ACCEL_LIMIT = 25.0;
+        public static final double SHOOTING_ROT_ACCEL_LIMIT = 4.0;
     }
 }

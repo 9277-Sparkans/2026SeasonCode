@@ -1,0 +1,43 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Start_to_Trench_Left"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Intake_Sweep_1_Left"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Trench_to_Shoot_Left"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Intake_Sweep_2_Left"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Trench_Shoot_Climb"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "Choreo Final Autos",
+  "choreoAuto": true
+}

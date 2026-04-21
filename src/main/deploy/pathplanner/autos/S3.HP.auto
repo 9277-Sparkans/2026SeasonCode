@@ -5,12 +5,6 @@
     "data": {
       "commands": [
         {
-          "type": "path",
-          "data": {
-            "pathName": null
-          }
-        },
-        {
           "type": "wait",
           "data": {
             "waitTime": 0.5
@@ -32,6 +26,6 @@
     }
   },
   "resetOdom": true,
-  "folder": null,
+  "folder": "Deprecated Autos",
   "choreoAuto": false
 }

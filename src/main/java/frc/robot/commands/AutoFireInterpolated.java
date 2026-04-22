@@ -95,10 +95,8 @@ public class AutoFireInterpolated extends Command {
 
         transfer.activateTransfer();
 
-        if (transfer.getTransferRps() == TransferConstants.kTargetTransferRps) {
         if (shot != null) {
             shooter.setTargetRPM(shot.shot().rpm());
-        }
         }
     }
 
@@ -162,7 +160,7 @@ public class AutoFireInterpolated extends Command {
         // indexer.activate();
 
         // shoot whenever shooter rpm is within range
-        if (Math.abs(optimalShooterRPM - (shooterRPM + 100.0)) < 300.0) {
+        if ((Math.abs(optimalShooterRPM - (shooterRPM + 100.0)) < 300.0) && (transfer.getTransferRps() >= TransferConstants.kTargetTransferRps - 50.0) && (transfer.getTransferRps() <= TransferConstants.kTargetTransferRps + 20.0)) {
             indexer.activate();
         } else {
             indexer.deactivate();

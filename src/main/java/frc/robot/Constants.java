@@ -146,7 +146,7 @@ public class Constants {
         public static final int kTurretEncoderId = 40;
         public static final double kTurretEncoderOffset = 0.0; // Rotations
         public static final double turret_speed = 0.2;
-        public static final double turret_currentLimit = 40.0; //amps
+        public static final double turret_currentLimit = 40.0; // amps
 
         // public static double turret_kV = 0.095;
         // public static double turret_kA = 0.0;
@@ -200,26 +200,26 @@ public class Constants {
         public static final InterpolatingDoubleTreeMap FF_MAP = new InterpolatingDoubleTreeMap();
 
         static {
-            FF_MAP.put(-10.0, 0.45); //0.55
-            FF_MAP.put(-20.0, 0.55); //0.65
-            FF_MAP.put(-30.0, 0.7); //0.7
+            FF_MAP.put(-10.0, 0.45); // 0.55
+            FF_MAP.put(-20.0, 0.55); // 0.65
+            FF_MAP.put(-30.0, 0.7); // 0.7
             FF_MAP.put(-40.0, 0.95);
             FF_MAP.put(-60.0, 0.4);
             FF_MAP.put(-70.0, 0.52);
 
             // turret angle, voltage required
-            FF_MAP.put(0.0, 0.35); //0.5
-            FF_MAP.put(10.0, 0.45); //0.55
-            FF_MAP.put(20.0, 0.65); //0.85
-            FF_MAP.put(30.0, 0.8); //1.15
-            FF_MAP.put(40.0, 0.7); //0.83
+            FF_MAP.put(0.0, 0.35); // 0.5
+            FF_MAP.put(10.0, 0.45); // 0.55
+            FF_MAP.put(20.0, 0.65); // 0.85
+            FF_MAP.put(30.0, 0.8); // 1.15
+            FF_MAP.put(40.0, 0.7); // 0.83
             FF_MAP.put(50.0, 1.024);
             FF_MAP.put(60.0, 1.26);
             FF_MAP.put(80.0, 1.45);
         }
 
         public static final edu.wpi.first.math.geometry.Transform3d ROBOT_TO_TURRET_TRANSFORM = new edu.wpi.first.math.geometry.Transform3d(
-                new edu.wpi.first.math.geometry.Translation3d(0.12543, 0.0, 0.2897), //updated
+                new edu.wpi.first.math.geometry.Translation3d(0.12543, 0.0, 0.2897), // updated
                 new edu.wpi.first.math.geometry.Rotation3d());
     }
 
@@ -388,16 +388,15 @@ public class Constants {
 
         static {
             // data points (distance from turret, rpm, hood angle)
-            //     time of flight (distance from turret, time of flight)
+            // time of flight (distance from turret, time of flight)
             DUMP_MAP.put(4.21, new ShotData(4300.0, 6.0));
-                DUMP_TOF_MAP.put(2.0, 0.6);
+            DUMP_TOF_MAP.put(2.0, 0.6);
 
             DUMP_MAP.put(7.04, new ShotData(4700.0, 3.0));
-                DUMP_TOF_MAP.put(2.0, 0.6);
+            DUMP_TOF_MAP.put(2.0, 0.6);
 
             DUMP_MAP.put(8.43, new ShotData(5400.0, 0.0));
-                DUMP_TOF_MAP.put(2.0, 0.6);
-
+            DUMP_TOF_MAP.put(2.0, 0.6);
 
             // distance, time of flight
             // DUMP_TOF_MAP.put(4.0, 0.6);
@@ -600,6 +599,38 @@ public class Constants {
         public static final double RED_DUMP_RIGHT_Y = 1.253326;
         public static final double RED_DUMP_LEFT_X = 14.840988;
         public static final double RED_DUMP_LEFT_Y = 6.816;
+
+        public static final double BLUE_PRE_ALIGN_LEFT_X = 1.587;
+        public static final double BLUE_PRE_ALIGN_LEFT_Y = 5.012;
+        public static final double BLUE_PRE_LEFT_CLIMB_X = 1.087;
+        public static final double BLUE_PRE_LEFT_CLIMB_Y = 4.812;
+        public static final double BLUE_LEFT_CLIMB_X = 1.087;
+        public static final double BLUE_LEFT_CLIMB_Y = 4.623;
+        public static final double BLUE_LEFT_CLIMB_HEADING = 180.0;
+
+        public static final double BLUE_PRE_ALIGN_RIGHT_X = 1.6900000000000004;
+        public static final double BLUE_PRE_ALIGN_RIGHT_Y = 2.508;
+        public static final double BLUE_PRE_RIGHT_CLIMB_X = 1.093;
+        public static final double BLUE_PRE_RIGHT_CLIMB_Y = 2.708;
+        public static final double BLUE_RIGHT_CLIMB_X = 1.19;
+        public static final double BLUE_RIGHT_CLIMB_Y = 2.871;
+        public static final double BLUE_RIGHT_CLIMB_HEADING = 0.0;
+
+        public static final double RED_PRE_ALIGN_LEFT_X = FIELD_LENGTH - BLUE_PRE_ALIGN_LEFT_X;
+        public static final double RED_PRE_ALIGN_LEFT_Y = FIELD_WIDTH - BLUE_PRE_ALIGN_LEFT_Y;
+        public static final double RED_PRE_LEFT_CLIMB_X = FIELD_LENGTH - BLUE_PRE_LEFT_CLIMB_X;
+        public static final double RED_PRE_LEFT_CLIMB_Y = FIELD_WIDTH - BLUE_PRE_LEFT_CLIMB_Y;
+        public static final double RED_LEFT_CLIMB_X = FIELD_LENGTH - BLUE_LEFT_CLIMB_X;
+        public static final double RED_LEFT_CLIMB_Y = FIELD_WIDTH - BLUE_LEFT_CLIMB_Y;
+        public static final double RED_LEFT_CLIMB_HEADING = 0.0;
+
+        public static final double RED_PRE_ALIGN_RIGHT_X = FIELD_LENGTH - BLUE_PRE_ALIGN_RIGHT_X;
+        public static final double RED_PRE_ALIGN_RIGHT_Y = FIELD_WIDTH - BLUE_PRE_ALIGN_RIGHT_Y;
+        public static final double RED_PRE_RIGHT_CLIMB_X = FIELD_LENGTH - BLUE_PRE_RIGHT_CLIMB_X;
+        public static final double RED_PRE_RIGHT_CLIMB_Y = FIELD_WIDTH - BLUE_PRE_RIGHT_CLIMB_Y;
+        public static final double RED_RIGHT_CLIMB_X = FIELD_LENGTH - BLUE_RIGHT_CLIMB_X;
+        public static final double RED_RIGHT_CLIMB_Y = FIELD_WIDTH - BLUE_RIGHT_CLIMB_Y;
+        public static final double RED_RIGHT_CLIMB_HEADING = 180.0;
     }
 
     public static final class CanBusConstants {
@@ -661,7 +692,7 @@ public class Constants {
         public static final double NORMAL_ACCEL_LIMIT = 15.0;
         public static final double SHOOTING_ACCEL_LIMIT = 1.5;
         public static final double BRAKING_ACCEL_LIMIT = 100.0;
-        public static final double SHOOTING_MAX_VELOCITY = 0.5;
+        public static final double SHOOTING_MAX_VELOCITY = 1.5;
         public static final double DUMP_MAX_VELOCITY = 0.8;
         public static final double NORMAL_ROT_ACCEL_LIMIT = 25.0;
         public static final double SHOOTING_ROT_ACCEL_LIMIT = 4.0;

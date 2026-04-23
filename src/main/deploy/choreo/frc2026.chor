@@ -230,6 +230,34 @@
      "val":3.141592653589793
     }
    },
+   "climbprealignleft":{
+    "x":{
+     "exp":"1.587 m",
+     "val":1.587
+    },
+    "y":{
+     "exp":"5.012 m",
+     "val":5.012
+    },
+    "heading":{
+     "exp":"180 deg",
+     "val":3.141592653589793
+    }
+   },
+   "climbprealignright":{
+    "x":{
+     "exp":"1.6900000000000004 m",
+     "val":1.6900000000000004
+    },
+    "y":{
+     "exp":"2.508 m",
+     "val":2.508
+    },
+    "heading":{
+     "exp":"climbrightstart.heading",
+     "val":0.0
+    }
+   },
    "climbright":{
     "x":{
      "exp":"1.19 m",
@@ -250,8 +278,8 @@
      "val":1.19
     },
     "y":{
-     "exp":"2.608 m",
-     "val":2.608
+     "exp":"2.708 m",
+     "val":2.708
     },
     "heading":{
      "exp":"0 deg",

@@ -19,7 +19,7 @@
  "params":{
   "waypoints":[
     {"x":{"exp":"trenchshootright.x", "val":2.6900000000000057}, "y":{"exp":"trenchshootright.y", "val":0.9553802297363276}, "heading":{"exp":"trenchshootright.heading", "val":1.0089544702297164}, "intervals":66, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
-    {"x":{"exp":"climbrightstart.x", "val":1.19}, "y":{"exp":"climbrightstart.y", "val":2.608}, "heading":{"exp":"climbrightstart.heading", "val":0.0}, "intervals":19, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
+    {"x":{"exp":"climbrightstart.x", "val":1.19}, "y":{"exp":"climbrightstart.y", "val":2.708}, "heading":{"exp":"climbrightstart.heading", "val":0.0}, "intervals":19, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false},
     {"x":{"exp":"climbright.x", "val":1.19}, "y":{"exp":"climbright.y", "val":2.871}, "heading":{"exp":"climbright.heading", "val":0.0}, "intervals":40, "split":false, "fixTranslation":true, "fixHeading":true, "overrideIntervals":false}],
   "constraints":[
     {"from":"first", "to":null, "data":{"type":"StopPoint", "props":{}}, "enabled":true},

@@ -22,10 +22,17 @@ public class ShotCalculator {
      * @param timeOfFlight time of flight for ball to reach target
      * @return predicted target position relative to the field
      */
-    public static Translation3d predictTargetPos(Translation3d target, ChassisSpeeds fieldSpeeds, double timeOfFlight) {
-        // subtract the robot's movement from the target's relative position
-        double predictedX = target.getX() - fieldSpeeds.vxMetersPerSecond * timeOfFlight;
-        double predictedY = target.getY() - fieldSpeeds.vyMetersPerSecond * timeOfFlight;
+    public static Translation3d predictTargetPos(Translation3d target, ChassisSpeeds fieldSpeeds, double timeOfFlight, Pose2d robotPose) {
+        Translation2d turretFieldOffset = getTurretTranslation(robotPose).minus(robotPose.getTranslation());
+        
+        double vxRot = -fieldSpeeds.omegaRadiansPerSecond * turretFieldOffset.getY();
+        double vyRot = fieldSpeeds.omegaRadiansPerSecond * turretFieldOffset.getX();
+        
+        double totalVx = fieldSpeeds.vxMetersPerSecond + vxRot;
+        double totalVy = fieldSpeeds.vyMetersPerSecond + vyRot;
+
+        double predictedX = target.getX() - totalVx * timeOfFlight;
+        double predictedY = target.getY() - totalVy * timeOfFlight;
         return new Translation3d(predictedX, predictedY, target.getZ());
     }
 
@@ -53,21 +60,23 @@ public class ShotCalculator {
             int iterations,
             boolean isDumping) {
 
+        /*----------------------------------
+         *  old fixed point iteration method
+         *----------------------------------
         double distance = getTurretTranslation(robotPose).getDistance(target.toTranslation2d());
 
         // initial estimate
         // ShotData shot = isDumping ? ShooterConstants.DUMP_MAP.get(distance) :
 
         // lets try dump data points
-        // ShotData shot = isDumping ? ShooterConstants.DUMP_MAP.get(distance) : ShooterConstants.getShotData(distance);
+        // ShotData shot = isDumping ? ShooterConstants.DUMP_MAP.get(distance) :
+        // ShooterConstants.getShotData(distance);
         // double timeOfFlight = isDumping ? ShooterConstants.DUMP_TOF_MAP.get(distance)
-        //         : ShooterConstants.getTOF(distance);
+        // : ShooterConstants.getTOF(distance);
 
         // if dump data points are bad then just treat it as a hub
-        ShotData shot = isDumping ? ShooterConstants.getShotData(distance) :
-        ShooterConstants.getShotData(distance);
-        double timeOfFlight = isDumping ? ShooterConstants.getTOF(distance) :
-        ShooterConstants.getTOF(distance);
+        ShotData shot = isDumping ? ShooterConstants.getShotData(distance) : ShooterConstants.getShotData(distance);
+        double timeOfFlight = isDumping ? ShooterConstants.getTOF(distance) : ShooterConstants.getTOF(distance);
 
         Translation3d predictedTarget = target;
 
@@ -77,15 +86,57 @@ public class ShotCalculator {
             distance = getTurretTranslation(robotPose).getDistance(predictedTarget.toTranslation2d());
 
             // lets try dump data points
-            // shot = isDumping ? ShooterConstants.DUMP_MAP.get(distance) : ShooterConstants.getShotData(distance);
-            // timeOfFlight = isDumping ? ShooterConstants.DUMP_TOF_MAP.get(distance) : ShooterConstants.getTOF(distance);
+            // shot = isDumping ? ShooterConstants.DUMP_MAP.get(distance) :
+            // ShooterConstants.getShotData(distance);
+            // timeOfFlight = isDumping ? ShooterConstants.DUMP_TOF_MAP.get(distance) :
+            // ShooterConstants.getTOF(distance);
 
             // if dump data points are bad then just treat it as a hub
-            shot = isDumping ? ShooterConstants.getShotData(distance) :
-            ShooterConstants.getShotData(distance);
-            timeOfFlight = isDumping ? ShooterConstants.getTOF(distance) :
-            ShooterConstants.getTOF(distance);
+            shot = isDumping ? ShooterConstants.getShotData(distance) : ShooterConstants.getShotData(distance);
+            timeOfFlight = isDumping ? ShooterConstants.getTOF(distance) : ShooterConstants.getTOF(distance);
         }
+        */
+
+        // secant method root finding inspired by red rock robotics
+        Translation2d turretPos = getTurretTranslation(robotPose);
+
+        double t0 = 0.0;
+        double ft0 = isDumping ? ShooterConstants.getTOF(turretPos.getDistance(target.toTranslation2d())) 
+                               : ShooterConstants.getTOF(turretPos.getDistance(target.toTranslation2d()));
+
+        double t1 = ft0;
+        Translation3d target1 = predictTargetPos(target, fieldSpeeds, t1, robotPose);
+        double ft1 = isDumping ? ShooterConstants.getTOF(turretPos.getDistance(target1.toTranslation2d()))
+                               : ShooterConstants.getTOF(turretPos.getDistance(target1.toTranslation2d()));
+
+        Translation3d predictedTarget = target1;
+
+        for (int i = 0; i < iterations; i++) {
+            if (Math.abs(t1 - t0) < 1e-5) {
+                break;
+            }
+
+            double f0 = ft0 - t0;
+            double f1 = ft1 - t1;
+
+            if (Math.abs(f1 - f0) < 1e-5) {
+                break;
+            }
+
+            double t2 = t1 - f1 * (t1 - t0) / (f1 - f0);
+
+            t0 = t1;
+            ft0 = ft1;
+            t1 = t2;
+
+            predictedTarget = predictTargetPos(target, fieldSpeeds, t1, robotPose);
+            ft1 = isDumping ? ShooterConstants.getTOF(turretPos.getDistance(predictedTarget.toTranslation2d()))
+                            : ShooterConstants.getTOF(turretPos.getDistance(predictedTarget.toTranslation2d()));
+        }
+
+        double finalDistance = turretPos.getDistance(predictedTarget.toTranslation2d());
+        ShotData shot = isDumping ? ShooterConstants.getShotData(finalDistance) 
+                                  : ShooterConstants.getShotData(finalDistance);
 
         return new CalculatedShot(shot, predictedTarget);
     }
@@ -140,14 +191,14 @@ public class ShotCalculator {
 
     public record CalculatedShot(ShotData shot, Translation3d predictedTarget) {
     }
-    
+
     /**
      * Gets the current field-relative translation of the turret.
      */
     public static Translation2d getTurretTranslation(Pose2d robotPose) {
         return robotPose.getTranslation().plus(
-            TurretConstants.ROBOT_TO_TURRET_TRANSFORM.getTranslation().toTranslation2d().rotateBy(robotPose.getRotation())
-        );
+                TurretConstants.ROBOT_TO_TURRET_TRANSFORM.getTranslation().toTranslation2d()
+                        .rotateBy(robotPose.getRotation()));
     }
 
     /**

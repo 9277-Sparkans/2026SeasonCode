@@ -68,7 +68,7 @@ import frc.robot.commands.LockMode.LockState;
 import frc.robot.subsystems.Transfer;
 import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Hinge;
-import frc.robot.subsystems.betterled;
+// import frc.robot.subsystems.betterled;
 import frc.robot.Vision.Vision;
 import frc.robot.Vision.VisionIOPhotonVision;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -89,6 +89,7 @@ import frc.robot.commands.Agitate;
 import frc.robot.commands.LockMode;
 import frc.robot.commands.AutoFireInterpolated;
 import frc.robot.subsystems.AutoTrack;
+import frc.robot.commands.ClimbAlignCommand;
 
 public class RobotContainer {
         private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
@@ -141,7 +142,7 @@ public class RobotContainer {
         public final Indexer indexer = new Indexer();
         public final Hinge hinge = new Hinge();
         public final Timer teleopTimer = new Timer();
-        public final betterled led = new betterled(teleopTimer);
+        // public final betterled led = new betterled(teleopTimer);
         // public final SillyHinge sillyHinge = new SillyHinge();
         public final AutoFire autoFireCommand;
         // public final LedImplement ledImplementCommand;
@@ -468,6 +469,7 @@ public class RobotContainer {
 
                 // climb autoalign
                 // rotateStick.button(OIConstants.kSticks_leftHandle).whileTrue(AutoAlignCommand.getAutoClimbCommand(drivetrain));
+                rotateStick.button(OIConstants.kSticks_leftHandle).whileTrue(new ClimbAlignCommand(drivetrain, climb));
 
                 //boost
                 rotateStick.button(OIConstants.kSticks_rightHandle).whileTrue(Commands.runOnce(() -> driveTrainVelocityPercent = 1.0));

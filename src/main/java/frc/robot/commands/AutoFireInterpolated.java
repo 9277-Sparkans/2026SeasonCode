@@ -178,7 +178,8 @@ public class AutoFireInterpolated extends Command {
     @Override
     public void end(boolean interrupted) {
         indexer.deactivate();
-        shooter.stop();
+        // shooter.stop();
+        // shooter.setidlerpm();
         hood.stopHoodCmd();
         transfer.stop();
     }

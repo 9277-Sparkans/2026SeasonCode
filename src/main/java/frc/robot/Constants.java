@@ -457,8 +457,8 @@ public class Constants {
         public static final double intakeMaxVoltage = 5; // can change if not needed
         public static final double intakeMaxAcceleration = 100;
         public static final double intakeMaxVelocity = 500; // rps
-        public static final double intakeSpeed = 33.0; // 45
-        public static final double intakeAutoSpeed = 33.0; // 66   rps max 66.6 rps 400.0
+        public static final double intakeSpeed = 50.0; // 45
+        public static final double intakeAutoSpeed = 66.0; // 66   rps max 66.6 rps 400.0
         public static final double intakeAgitate = 20.0;
     }
 
@@ -600,20 +600,20 @@ public class Constants {
         public static final double RED_DUMP_LEFT_X = 14.840988;
         public static final double RED_DUMP_LEFT_Y = 6.816;
 
+        public static final double BLUE_LEFT_CLIMB_X = 1.087;
+        public static final double BLUE_LEFT_CLIMB_Y = 4.584;
         public static final double BLUE_PRE_ALIGN_LEFT_X = 1.587;
         public static final double BLUE_PRE_ALIGN_LEFT_Y = 5.012;
-        public static final double BLUE_PRE_LEFT_CLIMB_X = 1.087;
-        public static final double BLUE_PRE_LEFT_CLIMB_Y = 4.812;
-        public static final double BLUE_LEFT_CLIMB_X = 1.087;
-        public static final double BLUE_LEFT_CLIMB_Y = 4.423;
+        public static final double BLUE_PRE_LEFT_CLIMB_X = BLUE_LEFT_CLIMB_X;
+        public static final double BLUE_PRE_LEFT_CLIMB_Y = BLUE_LEFT_CLIMB_Y + 0.2;
         public static final double BLUE_LEFT_CLIMB_HEADING = 180.0;
 
+        public static final double BLUE_RIGHT_CLIMB_X = 1.055;
+        public static final double BLUE_RIGHT_CLIMB_Y = 2.925;
         public static final double BLUE_PRE_ALIGN_RIGHT_X = 1.6900000000000004;
         public static final double BLUE_PRE_ALIGN_RIGHT_Y = 2.508;
-        public static final double BLUE_PRE_RIGHT_CLIMB_X = 1.093;
-        public static final double BLUE_PRE_RIGHT_CLIMB_Y = 2.708;
-        public static final double BLUE_RIGHT_CLIMB_X = 1.19;
-        public static final double BLUE_RIGHT_CLIMB_Y = 2.871;
+        public static final double BLUE_PRE_RIGHT_CLIMB_X = BLUE_RIGHT_CLIMB_X;
+        public static final double BLUE_PRE_RIGHT_CLIMB_Y = BLUE_RIGHT_CLIMB_Y - 0.2;
         public static final double BLUE_RIGHT_CLIMB_HEADING = 0.0;
 
         public static final double RED_PRE_ALIGN_LEFT_X = FIELD_LENGTH - BLUE_PRE_ALIGN_LEFT_X;

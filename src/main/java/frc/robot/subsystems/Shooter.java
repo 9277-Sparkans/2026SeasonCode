@@ -65,8 +65,6 @@ public class Shooter extends SubsystemBase {
 
     shooterMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
-
-
     shooterMotorConfig.MotionMagic.MotionMagicAcceleration = ShooterConstants.kShooterMaxAcceleration;
     shooterMotorConfig.MotionMagic.MotionMagicCruiseVelocity = 200.0;
 

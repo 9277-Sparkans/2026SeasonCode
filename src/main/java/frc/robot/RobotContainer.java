@@ -152,6 +152,9 @@ public class RobotContainer {
 
         public boolean manualControl = false;
         public boolean lockmode = false;
+        public boolean autoAlignActive = false;
+        public boolean autoAlignUp = false;
+        public boolean autoAlignDown = false;
         public boolean slowMode = false;
 
         public final Vision vision = new Vision(
@@ -287,6 +290,11 @@ public class RobotContainer {
                 SmartDashboard.putBoolean("Shifts/Shift Active", AllianceShifts.areWeActive(teleopTimer));
                 SmartDashboard.putString(
                                 "Shifts/Game State", AllianceShifts.getCurrentShift(teleopTimer).toString());
+
+                SmartDashboard.putBoolean("AutoAlign/autoAlignActivate", autoAlignActive);
+                SmartDashboard.putBoolean("AutoAlign/autoalignUp", autoAlignUp);
+                SmartDashboard.putBoolean("AutoAlign/autoaligndown", autoAlignDown);
+
                 // SmartDashboard.putNumber("Bot velocity magnitude", drivetrain.speeds.get);
         }
 
@@ -323,6 +331,9 @@ public class RobotContainer {
                                                 () -> translateStick.getHID()
                                                                 .getRawButton(OIConstants.kSticks_trigger),
                                                 () -> AutoTrack.isDumping(),
+                                                () -> autoAlignActive,
+                                                () -> autoAlignUp,
+                                                () -> autoAlignDown,
                                                 () -> AutoTrack.getDesiredTurretAngle(),
                                                 () -> MaxSpeed,
                                                 () -> MaxAngularRate));
@@ -450,10 +461,10 @@ public class RobotContainer {
                 rotateStick.button(OIConstants.kSticks_centerHandle).onTrue(intake.outtakeCommand());
                 rotateStick.button(OIConstants.kSticks_centerHandle).onFalse(intake.stopRollerCommand());
 
-                rotateStick.button(OIConstants.kSticks_leftHandle)
-                                .onTrue(Commands.runOnce(() -> shooter.increaseSpeed()));
-                rotateStick.button(OIConstants.kSticks_rightHandle)
-                                .onTrue(Commands.runOnce(() -> shooter.decreaseSpeed()));
+                // rotateStick.button(OIConstants.kSticks_leftHandle)
+                //                 .onTrue(Commands.runOnce(() -> shooter.increaseSpeed()));
+                // rotateStick.button(OIConstants.kSticks_rightHandle)
+                //                 .onTrue(Commands.runOnce(() -> shooter.decreaseSpeed()));
 
                 // climb autoalign
                 // rotateStick.button(OIConstants.kSticks_leftHandle).whileTrue(AutoAlignCommand.getAutoClimbCommand(drivetrain));
@@ -538,9 +549,20 @@ public class RobotContainer {
                 //                 .whileTrue(AutoAlignCommand.getTrenchCommand(drivetrain));
 
                 // spindexer
-                translateStick.button(OIConstants.kLeftSticks_leftGrid_bottomLeft)
-                                .whileTrue(Commands.runOnce(() -> indexer.activate()));
+                // translateStick.button(OIConstants.kLeftSticks_leftGrid_bottomLeft)
+                //                 .whileTrue(Commands.runOnce(() -> indexer.activate()));
 
+                // translateStick.button(OIConstants.kRightSticks_rightGrid_topRight).onTrue(Commands.runOnce(() -> autoAlignActive = true));
+
+                translateStick.button(OIConstants.kRightSticks_rightGrid_bottomMid)
+                .onTrue(Commands.runOnce(() -> autoAlignActive = true))
+                .onFalse(Commands.runOnce(() -> autoAlignActive = false));
+                
+                translateStick.button(OIConstants.kRightSticks_rightGrid_topRight)
+                .onTrue(Commands.runOnce(() -> drivetrain.IncreaseAutoAlign()));
+
+                translateStick.button(OIConstants.kRightSticks_rightGrid_bottomRight)
+                .onTrue(Commands.runOnce(() -> drivetrain.DecreaseAutoAlign()));
         }
 
         private void configureOperatorConsole() {

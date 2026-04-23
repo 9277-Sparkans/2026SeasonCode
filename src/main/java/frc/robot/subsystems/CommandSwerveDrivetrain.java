@@ -15,6 +15,7 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.PathConstraints;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
@@ -37,10 +38,17 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.Constants;
 import frc.robot.Constants.OIConstants;
 import frc.robot.generated.TunerConstants;
+import frc.robot.Constants.FieldConstants.*;
 import frc.robot.util.Zones;
+
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
+
+import javax.lang.model.util.ElementScanner14;
+
 import org.littletonrobotics.junction.AutoLogOutput;
+
+import frc.robot.Constants.ShooterConstants.ShotData;
 
 import frc.robot.generated.TunerConstants.TunerSwerveDrivetrain;
 
@@ -59,6 +67,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     private static final Rotation2d kRedAlliancePerspectiveRotation = Rotation2d.k180deg;
     /* Keep track if we've ever applied the operator perspective before or not */
     private boolean m_hasAppliedOperatorPerspective = false;
+
+    private int m_autoAlignIndex = 0;
 
     private final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
 
@@ -201,6 +211,7 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         NORMAL,
         TRENCH_LOCK,
         BUMP_LOCK,
+        AUTO_ALIGN,
         DISABLED
     }
 
@@ -454,6 +465,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             DoubleSupplier omegaSupplier,
             BooleanSupplier isShootingSupplier,
             BooleanSupplier isDumpingSupplier,
+            BooleanSupplier autoAlignSupplier,
+            BooleanSupplier autoAlignUpSupplier,
+            BooleanSupplier autoAlignDownSupplier,
             DoubleSupplier desiredTurretAngleSupplier,
             DoubleSupplier MaxSpeed,
             DoubleSupplier MaxAngularRate) {
@@ -484,6 +498,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 m_currentAssistMode = DriveAssistMode.TRENCH_LOCK;
             else if (assistEnabled && bumpLockEnabled && inBump)
                 m_currentAssistMode = DriveAssistMode.BUMP_LOCK;
+            else if (assistEnabled && autoAlignSupplier.getAsBoolean())
+                m_currentAssistMode = DriveAssistMode.AUTO_ALIGN;
             else
                 m_currentAssistMode = DriveAssistMode.NORMAL;
 
@@ -561,6 +577,8 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                 }
             }
 
+            boolean isRedAlliance = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red;
+
             // yeahhhh i kinda borrowed this from hammerheads
             switch (m_currentAssistMode) {
                 // for trench, it chooses the nearest 90 deg angle (-90, 0, 90, 180) in case we
@@ -611,7 +629,6 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
                     double rawPidOutput = m_translationController.calculate(pose.getY());
                     m_debugPidOutput = rawPidOutput;
 
-                    boolean isRedAlliance = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red;
                     double yOutput = isRedAlliance ? -rawPidOutput : rawPidOutput;
                     finalY = MathUtil.clamp(yOutput, -1.5, 1.5);
 
@@ -632,7 +649,26 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
 
                     m_targetPose = new Pose2d(pose.getX(), pose.getY(), Rotation2d.fromDegrees(closestBump));
                     break;
+                case AUTO_ALIGN:
+                    double xVal = 0.0;
+                    double yVal = 0.0;
+                    double theta = Math.atan(Constants.FieldConstants.BLUE_HUB_Y / Constants.FieldConstants.BLUE_HUB_X);
 
+                    double autoAlignDistance = Constants.ShooterConstants.shotAutoAlignPositions[m_autoAlignIndex];
+
+                    if (isRedAlliance) {
+                        xVal = Constants.FieldConstants.RED_HUB_X + autoAlignDistance * Math.cos(theta);
+                        yVal = Constants.FieldConstants.RED_HUB_Y + autoAlignDistance * Math.sin(theta);
+                        theta += Math.PI;
+                    } else {
+                        xVal = Constants.FieldConstants.BLUE_HUB_X - autoAlignDistance * Math.cos(theta);
+                        yVal = Constants.FieldConstants.BLUE_HUB_Y - autoAlignDistance * Math.sin(theta);
+                    }
+
+                    m_targetPose = new Pose2d(xVal, yVal, Rotation2d.fromRadians(theta));
+                    
+                    pathfindToPoint(m_targetPose).schedule();
+                    break;  
                 default:
                     m_targetPose = pose;
                     break;
@@ -652,4 +688,26 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
         });
     }
 
+    public Command pathfindToPoint(Pose2d targetPose) {
+        // Create the constraints to use while pathfinding
+        PathConstraints constraints = new PathConstraints(
+                1.5, 4.0,
+                Math.PI * 3, Math.PI * 4);
+
+        return AutoBuilder.pathfindToPose(
+                targetPose,
+                constraints,
+                0.0 // Goal end velocity in meters/sec
+        );
+    }
+
+    public void IncreaseAutoAlign()
+    {
+        m_autoAlignIndex = Math.max(m_autoAlignIndex - 1, 0);
+    }
+
+    public void DecreaseAutoAlign()
+    {
+        m_autoAlignIndex = Math.min(m_autoAlignIndex + 1, Constants.ShooterConstants.shotAutoAlignPositions.length - 1);
+    }
 }

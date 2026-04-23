@@ -307,6 +307,8 @@ public class Constants {
             return Math.max(0.98, Math.min(1.39, tof));
         }
 
+        public static final double[] shotAutoAlignPositions = new double[] { 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 5.5 };
+
         // autofire treemapping with interpolation (commented out)
         // public record ShotData(double rpm, double hoodAngle) implements
         // Interpolatable<ShotData> {

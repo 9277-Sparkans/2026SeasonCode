@@ -90,6 +90,54 @@ public class ShotCalculator {
         return new CalculatedShot(shot, predictedTarget);
     }
 
+    public static CalculatedShot calculateNewtonShot(
+            Pose2d robotPose,
+            ChassisSpeeds fieldSpeeds,
+            Translation3d target,
+            int iterations,
+            boolean isDumping) {
+
+        double distance = getTurretTranslation(robotPose).getDistance(target.toTranslation2d());
+
+        // initial estimate
+        // ShotData shot = isDumping ? ShooterConstants.DUMP_MAP.get(distance) :
+
+        // lets try dump data points
+        // ShotData shot = isDumping ? ShooterConstants.DUMP_MAP.get(distance) : ShooterConstants.getShotData(distance);
+        // double timeOfFlight = isDumping ? ShooterConstants.DUMP_TOF_MAP.get(distance)
+        //         : ShooterConstants.getTOF(distance);
+
+        // if dump data points are bad then just treat it as a hub
+        ShotData shot = isDumping ? ShooterConstants.getShotData(distance) :
+        ShooterConstants.getShotData(distance);
+        double timeOfFlight = isDumping ? ShooterConstants.getTOF(distance) :
+        ShooterConstants.getTOF(distance);
+
+        Translation3d predictedTarget = target;
+
+        double newDist = 0.0f;
+
+        // iterative lookahead
+        for (int i = 0; i < iterations; i++) {
+            predictedTarget = predictTargetPos(target, fieldSpeeds, timeOfFlight);
+
+            newDist = getTurretTranslation(robotPose).getDistance(predictedTarget.toTranslation2d());
+            
+            // h = 1 because discrete iteration
+            double deriv = newDist - distance;
+            timeOfFlight = timeOfFlight - (distance / deriv);
+
+            // // if dump data points are bad then just treat it as a hub
+            // shot = isDumping ? ShooterConstants.getShotData(distance) :
+            // ShooterConstants.getShotData(distance);
+
+            // newTOF = isDumping ? ShooterConstants.getTOF(distance) : ShooterConstants.getTOF(distance); 
+
+        }
+
+        return new CalculatedShot(shot, predictedTarget);
+    }
+
     public record CalculatedShot(ShotData shot, Translation3d predictedTarget) {
     }
     

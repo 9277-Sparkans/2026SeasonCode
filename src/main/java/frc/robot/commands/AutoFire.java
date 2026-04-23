@@ -318,7 +318,7 @@ public class AutoFire extends Command {
         double MAGNUS_K = 0.3;
         double FUEL_CROSS_AREA = Math.PI * FUEL_RADIUS * FUEL_RADIUS;
         double DRAG_FORCE_FACTOR = 0.5 * AIR_DENSITY * DRAG_COF * FUEL_CROSS_AREA;
-
+        // you know on the last bite when yo ulwok let go of whatever you are eating and just commit but sometimes you just misdjuge it and end up eating way too big of final bite but now your hands arent on it anymore so you are past the point of no return.....;
         for (int i = 0; i < maxSteps; i++) {
             trajectory.add(new Pose3d(pos, new Rotation3d()));
             pos = pos.plus(vel.times(dt));

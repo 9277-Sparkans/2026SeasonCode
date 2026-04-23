@@ -129,7 +129,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public void stop() {
-    shooterMotor.set(0);
+    targetVel = 0.0;
   }
 
   public void increaseSpeed () {

@@ -7,8 +7,10 @@ import frc.robot.util.ShotCalculator.CalculatedShot;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Indexer;
+import frc.robot.subsystems.Transfer;
 import frc.robot.Constants;
 import frc.robot.Constants.TurretConstants;
+import frc.robot.Constants.TransferConstants;
 import frc.robot.Constants.ShooterConstants.ShotData;
 
 import java.util.ArrayList;
@@ -44,6 +46,7 @@ public class AutoFireInterpolated extends Command {
     private final Shooter shooter;
     private final Hood hood;
     private final AutoTrack AutoTrack;
+    private final Transfer transfer;
 
     private FuelSim fuelSim;
     private final Timer launchCooldown = new Timer();
@@ -70,12 +73,13 @@ public class AutoFireInterpolated extends Command {
             .publish();
 
     public AutoFireInterpolated(Indexer indexer, Turret turret, Shooter shooter, Hood hood,
-            AutoTrack AutoTrack) {
+            AutoTrack AutoTrack, Transfer transfer) {
         this.indexer = indexer;
         this.turret = turret;
         this.shooter = shooter;
         this.hood = hood;
         this.AutoTrack = AutoTrack;
+        this.transfer = transfer;
     }
 
     public void setFuelSim(FuelSim fuelSim) {
@@ -88,6 +92,9 @@ public class AutoFireInterpolated extends Command {
         launchCooldown.restart();
 
         CalculatedShot shot = AutoTrack.getLatestShot();
+
+        transfer.activateTransfer();
+
         if (shot != null) {
             shooter.setTargetRPM(shot.shot().rpm());
         }
@@ -153,7 +160,7 @@ public class AutoFireInterpolated extends Command {
         // indexer.activate();
 
         // shoot whenever shooter rpm is within range
-        if (Math.abs(optimalShooterRPM - (shooterRPM + 100.0)) < 300.0) {
+        if ((Math.abs(optimalShooterRPM - (shooterRPM + 100.0)) < 300.0) && (transfer.getTransferRps() >= TransferConstants.kTargetTransferRps - 50.0) && (transfer.getTransferRps() <= TransferConstants.kTargetTransferRps + 20.0)) {
             indexer.activate();
         } else {
             indexer.deactivate();
@@ -165,6 +172,7 @@ public class AutoFireInterpolated extends Command {
         indexer.deactivate();
         shooter.stop();
         hood.stopHoodCmd();
+        transfer.stop();
     }
 
     @Override

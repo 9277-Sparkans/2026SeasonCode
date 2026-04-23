@@ -51,6 +51,10 @@ public class Transfer extends SubsystemBase {
         // activateTransfer();
     }
 
+    public double getTransferRps() {
+    return transferMotor.getVelocity().getValueAsDouble() * TransferConstants.kTransferGearRatio; // convert from rpm at motor to rps at transfer
+    }
+
     public Command toggleTransferCommand() {
         return Commands.runOnce(() -> toggleTransfer());
     }

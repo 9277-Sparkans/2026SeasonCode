@@ -114,10 +114,11 @@ public class AutoTrack extends SubsystemBase {
                 pose, fieldSpeeds, currentTarget, 5, isDumping);
 
         ShotData optimalShot = latestShot.shot();
-        Translation3d predictedTarget = latestShot.predictedTarget();
+        Translation3d shotTarget = latestShot.target();
+        Translation2d futureTurretPos = latestShot.futureTurretPos();
 
-        // Calculate turret angle to predicted target
-        Translation2d targetDirVector = predictedTarget.toTranslation2d().minus(pose.getTranslation());
+        // Calculate turret angle from future turret pos to hub
+        Translation2d targetDirVector = shotTarget.toTranslation2d().minus(futureTurretPos);
         double targetDirectionRad = Math.atan2(targetDirVector.getY(), targetDirVector.getX());
         double targetDirectionDeg = Math.toDegrees(targetDirectionRad);
 

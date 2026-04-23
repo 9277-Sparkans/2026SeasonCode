@@ -506,10 +506,9 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
             double maxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
             double maxRot = 2.0 * Math.PI;
 
-            // capping velocity while autofiring
-            double velCap = (assistEnabled && velocityCapEnabled && isShooting)
-                    ? (isDumping ? Constants.DriveAssistConstants.DUMP_MAX_VELOCITY
-                                : Constants.DriveAssistConstants.SHOOTING_MAX_VELOCITY)
+            // capping velocity while autofiring, but not for dumping
+            double velCap = (assistEnabled && velocityCapEnabled && isShooting && !isDumping)
+                    ? Constants.DriveAssistConstants.SHOOTING_MAX_VELOCITY
                     : maxSpeed;
             double targetX = MathUtil.clamp(x * maxSpeed, -velCap, velCap);
             double targetY = MathUtil.clamp(y * maxSpeed, -velCap, velCap);

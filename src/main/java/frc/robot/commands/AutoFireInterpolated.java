@@ -157,13 +157,21 @@ public class AutoFireInterpolated extends Command {
             }
         }
 
-        // indexer.activate();
-
-        // shoot whenever shooter rpm is within range
-        if ((Math.abs(optimalShooterRPM - (shooterRPM + 100.0)) < 300.0) && (transfer.getTransferRps() >= TransferConstants.kTargetTransferRps - 50.0) && (transfer.getTransferRps() <= TransferConstants.kTargetTransferRps + 20.0)) {
-            indexer.activate();
+        // spindexer gate
+        if (AutoTrack.isDumping()) {
+            // when dumping, shoot whenever turret is on the target but dont limit by rpm
+            if (AutoTrack.isTurretOnTarget()) {
+                indexer.activate();
+            } else {
+                indexer.deactivate();
+            }
         } else {
-            indexer.deactivate();
+            // shoot whenever shooter and kicker rpm is within range only for hub
+            if ((Math.abs(optimalShooterRPM - (shooterRPM + 100.0)) < 300.0) && (transfer.getTransferRps() >= TransferConstants.kTargetTransferRps - 50.0) && (transfer.getTransferRps() <= TransferConstants.kTargetTransferRps + 20.0)) {
+                indexer.activate();
+            } else {
+                indexer.deactivate();
+            }
         }
     }
 

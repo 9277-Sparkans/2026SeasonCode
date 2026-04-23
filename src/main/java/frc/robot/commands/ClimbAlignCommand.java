@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
 import frc.robot.Constants.DriveAssistConstants;
 import frc.robot.Constants.FieldConstants;
 import frc.robot.subsystems.Climb;
@@ -62,6 +63,8 @@ public class ClimbAlignCommand extends Command {
 
     @Override
     public void initialize() {
+        climb.climbUp();
+
         boolean isRed = DriverStation.getAlliance().orElse(Alliance.Blue) == Alliance.Red;
         Pose2d currentPose = drivetrain.getStateCopy().Pose;
 
@@ -160,9 +163,7 @@ public class ClimbAlignCommand extends Command {
             } else if (currentState == AlignState.PRE_CLIMB) {
                 currentState = AlignState.FINAL_CLIMB;
             } else if (currentState == AlignState.FINAL_CLIMB) {
-                if (climb.getState() == ClimbState.UP) {
-                    climb.states(ClimbState.HANG);
-                }
+                climb.climbHang();
             }
         }
 

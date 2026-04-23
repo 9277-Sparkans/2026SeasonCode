@@ -282,22 +282,22 @@ public class Constants {
         }
 
         // https://www.desmos.com/calculator/aitlewjs62
-        private static final double RPM_A = 84.3726;
-        private static final double RPM_B = -206.71965;
-        private static final double RPM_C = 4024.31321;
+        public static final double RPM_A = 84.3726;
+        public static final double RPM_B = -206.71965;
+        public static final double RPM_C = 4024.31321;
 
-        private static final double HOOD_A = 0.035756;
-        private static final double HOOD_B = -2.748184;
-        private static final double HOOD_C = 16.707595;
+        public static final double HOOD_A = 0.035756;
+        public static final double HOOD_B = -2.748184;
+        public static final double HOOD_C = 16.707595;
 
-        private static final double TOF_A = 0.040110;
-        private static final double TOF_B = -0.170120;
-        private static final double TOF_C = 1.155771;
+        public static final double TOF_A = 0.040110;
+        public static final double TOF_B = -0.170120;
+        public static final double TOF_C = 1.155771;
 
         public static ShotData getShotData(double distMeters) {
             double rpm = RPM_A * distMeters * distMeters + RPM_B * distMeters + RPM_C;
             double hood = HOOD_A * distMeters * distMeters + HOOD_B * distMeters + HOOD_C;
-            rpm = Math.max(3800.0, Math.min(5600.0, rpm));
+            rpm = Math.max(3800.0, Math.min(6000.0, rpm));
             hood = Math.max(2.0, Math.min(10.0, hood));
             return new ShotData(rpm, hood);
         }
@@ -457,8 +457,8 @@ public class Constants {
         public static final double intakeMaxVoltage = 5; // can change if not needed
         public static final double intakeMaxAcceleration = 100;
         public static final double intakeMaxVelocity = 500; // rps
-        public static final double intakeSpeed = 45.0; // rps max 66.6 rps 400.0
-        public static final double intakeAutoSpeed = 66.0; // rps max 66.6 rps 400.0
+        public static final double intakeSpeed = 33.0; // 45
+        public static final double intakeAutoSpeed = 33.0; // 66   rps max 66.6 rps 400.0
         public static final double intakeAgitate = 20.0;
     }
 
@@ -605,7 +605,7 @@ public class Constants {
         public static final double BLUE_PRE_LEFT_CLIMB_X = 1.087;
         public static final double BLUE_PRE_LEFT_CLIMB_Y = 4.812;
         public static final double BLUE_LEFT_CLIMB_X = 1.087;
-        public static final double BLUE_LEFT_CLIMB_Y = 4.623;
+        public static final double BLUE_LEFT_CLIMB_Y = 4.423;
         public static final double BLUE_LEFT_CLIMB_HEADING = 180.0;
 
         public static final double BLUE_PRE_ALIGN_RIGHT_X = 1.6900000000000004;
@@ -631,6 +631,7 @@ public class Constants {
         public static final double RED_RIGHT_CLIMB_X = FIELD_LENGTH - BLUE_RIGHT_CLIMB_X;
         public static final double RED_RIGHT_CLIMB_Y = FIELD_WIDTH - BLUE_RIGHT_CLIMB_Y;
         public static final double RED_RIGHT_CLIMB_HEADING = 180.0;
+
     }
 
     public static final class CanBusConstants {

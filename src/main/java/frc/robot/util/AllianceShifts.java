@@ -35,6 +35,24 @@ public class AllianceShifts {
         }
     }
 
+    public static String getAutoWinnerAsString() {
+        if (getAutoWinner() == null) {
+            return "No FMS Data";
+        }
+        return (switch (getAutoWinner()) {
+            case Red -> "Red";
+            case Blue -> "Blue";
+        });
+    }
+
+    public static boolean receivedFMSData() {
+        String message = DriverStation.getGameSpecificMessage();
+        if (message.length() == 0) return false;
+        
+        char gameData = message.toUpperCase().charAt(0);
+        return gameData == 'B' || gameData == 'R'; 
+    }
+
     public static boolean didWeWinAuto() {
         return getAutoWinner() == DriverStation.getAlliance().orElse(Alliance.Blue);
     }

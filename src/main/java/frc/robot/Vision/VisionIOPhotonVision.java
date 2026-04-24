@@ -49,18 +49,20 @@ public class VisionIOPhotonVision implements VisionIO {
 		for (var result : allResults) {
 			// Update latest target observation
 			if (result.hasTargets()) {
+				var bestResult = result.getBestTarget();
 				inputs.setLatestTargetObservation(
 						new TargetObservation(
-								Rotation2d.fromDegrees(result.getBestTarget().getYaw()),
-								Rotation2d.fromDegrees(result.getBestTarget().getPitch())));
+								Rotation2d.fromDegrees(bestResult.getYaw()),
+								Rotation2d.fromDegrees(bestResult.getPitch())));
 			} else {
 				inputs.setLatestTargetObservation(
 						new TargetObservation(new Rotation2d(), new Rotation2d()));
 			}
 
 			// Add pose observation
-			if (result.getMultiTagResult().isPresent()) { // Multitag result
-				var multitagResult = result.getMultiTagResult().get();
+			var multitag = result.getMultiTagResult();
+			if (multitag.isPresent()) { // Multitag result
+				var multitagResult = multitag.get();
 
 				// Calculate robot pose
 				// Multi-tag result estimated pose is the camera's pose in the field

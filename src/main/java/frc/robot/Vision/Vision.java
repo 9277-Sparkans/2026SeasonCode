@@ -42,6 +42,12 @@ public class Vision extends SubsystemBase {
 
         public boolean enableVision = true;
 
+        // logs out poses from all cameras
+        // incredibly expensive so only enable if needed for debugging
+        private final boolean DEBUG_MODE = true;
+
+        private Thread visionThread;
+
         /**
          * Get all robot poses from the latest cycle (same as Vision/Summary/RobotPoses
          * in NT).
@@ -82,6 +88,15 @@ public class Vision extends SubsystemBase {
                                         "Vision camera " + Integer.toString(i) + " is disconnected.",
                                         AlertType.kWarning);
                 }
+
+                visionThread = new Thread() {
+                        public void run() {
+                                while (true) {
+                                        updateVision();
+                                }
+                        }
+                };
+                visionThread.start();
         }
 
         /**
@@ -94,13 +109,13 @@ public class Vision extends SubsystemBase {
                 return inputs[cameraIndex].getLatestTargetObservation().tx();
         }
 
-        @Override
-        public void periodic() {
+        public void updateVision() {
+                if (!enableVision) return;
+
                 for (int i = 0; i < io.length; i++) {
                         io[i].updateInputs(inputs[i], poseSupplier.get());
-                        Logger.processInputs("Vision/Camera" + Integer.toString(i), inputs[i]);
+                        // Logger.processInputs("Vision/Camera" + Integer.toString(i), inputs[i]);
                 }
-                if (!enableVision) return;
 
                 // Initialize logging values
                 List<Pose3d> allTagPoses = new LinkedList<>();
@@ -254,6 +269,12 @@ public class Vision extends SubsystemBase {
                 Logger.recordOutput("Vision/Debug/AcceptedCount", totalAccepted);
                 Logger.recordOutput("Vision/Debug/RejectedCount", totalRejected);
                 Logger.recordOutput("Vision/Debug/RejectionReasons", rejectionLog.toString());
+
+                try {
+                        Thread.sleep(750);
+                } catch (InterruptedException e) {
+                        e.printStackTrace();
+                }
         }
 
         @FunctionalInterface

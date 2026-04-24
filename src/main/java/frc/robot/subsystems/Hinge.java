@@ -58,7 +58,7 @@ public class Hinge extends SubsystemBase {
         hingeEncoder = new CANcoder(Constants.HingeConstants.kHingeEncoderId);
         hingeEncoderConfig = new CANcoderConfiguration();
         
-        hingeEncoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 1;
+        hingeEncoderConfig.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.75;
         hingeEncoderConfig.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
         hingeEncoderConfig.MagnetSensor.MagnetOffset = -0.690185546875;
         hingeEncoder.getConfigurator().apply(hingeEncoderConfig);

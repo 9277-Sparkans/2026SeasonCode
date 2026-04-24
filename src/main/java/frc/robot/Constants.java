@@ -90,6 +90,12 @@ public class Constants {
         public static final int kKeyboard_intakeRetract = 6;
         public static final int kKeyboard_AutoTrackToggle = 14;
 
+        public static final int kKeyboard_fudgeFactorShooterIncrease = 17;
+        public static final int kKeyboard_fudgeFactorShooterDecrease = 18;
+        public static final int kKeyboard_fudgeFactorTurretIncrease = 19;
+        public static final int kKeyboard_fudgeFactorTurretDecrease = 20;
+
+
         // Triggers [CONTROLLER ONLY]
         public static final int kController_leftBumper = 5;
         public static final int kController_rightBumper = 6;
@@ -282,9 +288,9 @@ public class Constants {
         }
 
         // https://www.desmos.com/calculator/aitlewjs62
-        public static final double RPM_A = 84.3726;
-        public static final double RPM_B = -206.71965;
-        public static final double RPM_C = 4024.31321;
+        public static final double RPM_A = 69.726;
+        public static final double RPM_B = -106.83563;
+        public static final double RPM_C = 3855.60174;
 
         public static final double HOOD_A = 0.035756;
         public static final double HOOD_B = -2.748184;
@@ -693,7 +699,7 @@ public class Constants {
         public static final double NORMAL_ACCEL_LIMIT = 15.0;
         public static final double SHOOTING_ACCEL_LIMIT = 1.5;
         public static final double BRAKING_ACCEL_LIMIT = 100.0;
-        public static final double SHOOTING_MAX_VELOCITY = 1.5;
+        public static final double SHOOTING_MAX_VELOCITY = 0.5;
         public static final double DUMP_MAX_VELOCITY = 0.8;
         public static final double NORMAL_ROT_ACCEL_LIMIT = 25.0;
         public static final double SHOOTING_ROT_ACCEL_LIMIT = 4.0;

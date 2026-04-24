@@ -60,6 +60,8 @@ public class AutoFireInterpolated extends Command {
 
     public boolean finished = false;
 
+    public int shooterRpmFudge = 0;
+
     private final StructPublisher<Pose3d> targetPosePublisher = NetworkTableInstance.getDefault()
             .getStructTopic("AutoFire/TargetPose", Pose3d.struct)
             .publish();
@@ -108,7 +110,7 @@ public class AutoFireInterpolated extends Command {
 
         ShotData optimalShot = calculated.shot();
 
-        double optimalShooterRPM = optimalShot.rpm();
+        double optimalShooterRPM = optimalShot.rpm() + shooterRpmFudge;
         shooter.setTargetRPM(optimalShooterRPM);
         hood.targetHoodAngle = optimalShot.hoodAngle();
 

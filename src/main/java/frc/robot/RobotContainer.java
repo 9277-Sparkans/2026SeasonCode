@@ -655,6 +655,18 @@ public class RobotContainer {
                 //                                 AutoTrack.enableTracking();
                 //                         }
                 //                 }));
+
+                operator(OIConstants.kKeyboard_fudgeFactorTurretIncrease)
+                                .onTrue(Commands.runOnce(() -> AutoTrack.turretFudge += 5));
+                
+                operator(OIConstants.kKeyboard_fudgeFactorTurretDecrease)
+                                .onTrue(Commands.runOnce(() -> AutoTrack.turretFudge -= 5));
+
+                operator(OIConstants.kKeyboard_fudgeFactorShooterIncrease)
+                                .onTrue(Commands.runOnce(() -> autoFireInterpolated.shooterRpmFudge += 50));
+                
+                operator(OIConstants.kKeyboard_fudgeFactorShooterDecrease)
+                                .onTrue(Commands.runOnce(() -> autoFireInterpolated.shooterRpmFudge -= 50));
         }
 
         public JoystickButton operator(int keyCode) {

@@ -115,7 +115,7 @@ public class Hood extends SubsystemBase {
     
     hoodMotor.getConfigurator().apply(hoodMotorConfiguration);
 
-    hoodEncoderConfiguration.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0;
+    hoodEncoderConfiguration.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.3;
     hoodEncoderConfiguration.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
     hoodEncoderConfiguration.MagnetSensor.MagnetOffset = 0.56982421875;
     hoodEncoder.getConfigurator().apply(hoodEncoderConfiguration);

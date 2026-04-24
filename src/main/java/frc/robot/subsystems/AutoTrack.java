@@ -43,6 +43,8 @@ public class AutoTrack extends SubsystemBase {
     private double currentHubY = Constants.FieldConstants.BLUE_HUB_Y;
     private double currentTargetZ = Constants.FieldConstants.HUB_BLUE.getZ();
 
+    // offset (degrees)
+    public int turretFudge = 0;
 
     public AutoTrack(
             Turret turret,
@@ -131,7 +133,7 @@ public class AutoTrack extends SubsystemBase {
                         Constants.TurretConstants.kMaximumAngle);
 
         // Set turret target — it tracks continuously
-        turret.target = latestTurretAngle;
+        turret.target = latestTurretAngle + turretFudge;
         // hood.targetHoodAngle = optimalShot.hoodAngle();
 
         Translation2d turretPos2d = ShotCalculator.getTurretTranslation(pose);

@@ -536,6 +536,11 @@ public class RobotContainer {
                                 () -> !lockmode));
                 translateStick.button(OIConstants.kSticks_trigger).onFalse(indexer.indexerStop());
 
+                translateStick.button(OIConstants.kSticks_centerHandle).whileTrue(
+                                Commands.runOnce(() -> indexer.invert()));
+                translateStick.button(OIConstants.kSticks_centerHandle).onFalse(indexer.indexerStop());
+                
+
                 // translateStick.button(OIConstants.kSticks_trigger)
                 //                 .onFalse(Commands.runOnce(() -> transfer.stop()));
 
@@ -657,10 +662,10 @@ public class RobotContainer {
                 //                 }));
 
                 operator(OIConstants.kKeyboard_fudgeFactorTurretIncrease)
-                                .onTrue(Commands.runOnce(() -> AutoTrack.turretFudge += 5));
+                                .onTrue(Commands.runOnce(() -> AutoTrack.turretFudge += 1));
                 
                 operator(OIConstants.kKeyboard_fudgeFactorTurretDecrease)
-                                .onTrue(Commands.runOnce(() -> AutoTrack.turretFudge -= 5));
+                                .onTrue(Commands.runOnce(() -> AutoTrack.turretFudge -= 1));
 
                 operator(OIConstants.kKeyboard_fudgeFactorShooterIncrease)
                                 .onTrue(Commands.runOnce(() -> autoFireInterpolated.shooterRpmFudge += 50));

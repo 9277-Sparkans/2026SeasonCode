@@ -236,7 +236,7 @@ public class Constants {
         public static final double kShooterGearRatio = 36.0 / 30.0; // 36/ 30
 
         public static final double kShooterMaxVoltage = 5;// kraken x44 max voltage
-        public static final double kShooterMaxAcceleration = 100; // rotations per second^2
+        public static final double kShooterMaxAcceleration = 200; // rotations per second^2
         public static final double kShooterMaxJerk = 1000; // rotations per second^3
 
         // subject to change if we end up automating these
@@ -462,8 +462,9 @@ public class Constants {
 
         public static final double intakeMaxVoltage = 5; // can change if not needed
         public static final double intakeMaxAcceleration = 100;
+        // public static final double intakeMaxJerk = 600;
         public static final double intakeMaxVelocity = 500; // rps
-        public static final double intakeSpeed = 50.0; // 45
+        public static final double intakeSpeed = 35.0; // 45
         public static final double intakeAutoSpeed = 66.0; // 66   rps max 66.6 rps 400.0
         public static final double intakeAgitate = 20.0;
     }
@@ -522,7 +523,8 @@ public class Constants {
         public static final int transferID = 31; // change later 31
 
         public static final double transferMaxVoltage = 4; // can change if not needed
-        public static final double transferMaxAcceleration = 40.0;
+        public static final double transferMaxAcceleration = 200.0;
+        public static final double transferMaxJerk = 400.0;
         public static final double transferMaxVelocity = 100.0; // rps
         public static final int kTransferCurrent_Limit = 80;
         public static final double kTransferGearRatio = 30.0 / 24.0;
@@ -556,10 +558,12 @@ public class Constants {
         public static final double kIndexerCurrentLimit = 100;
         public static final int kIndexerMotorId = 35; // 35
 
-        public static final double kIndexerSpeed = 30.0; // rps 60 before
-        public static final double kIndexerAgitateSpeed = -10.0; // rps 60 before
-        public static final double kIndexerGearRatio = 12.0 / 15.0;
+        // currently 30
+        public static final double kIndexerSpeed = 40.0; // rps 60 before
+        public static final double kIndexerAgitateSpeed = -40.0; // rps 60 before
         public static final double indexerSpeed = 30.0; // rps
+
+        public static final double kIndexerGearRatio = 12.0 / 15.0;
 
         // tomorrow - use the best tuning and then increase ka and kv cuz the recorrect
         // is kinda messed up
@@ -699,7 +703,7 @@ public class Constants {
         public static final double NORMAL_ACCEL_LIMIT = 15.0;
         public static final double SHOOTING_ACCEL_LIMIT = 1.5;
         public static final double BRAKING_ACCEL_LIMIT = 100.0;
-        public static final double SHOOTING_MAX_VELOCITY = 0.5;
+        public static final double SHOOTING_MAX_VELOCITY = 0.8;
         public static final double DUMP_MAX_VELOCITY = 0.8;
         public static final double NORMAL_ROT_ACCEL_LIMIT = 25.0;
         public static final double SHOOTING_ROT_ACCEL_LIMIT = 4.0;

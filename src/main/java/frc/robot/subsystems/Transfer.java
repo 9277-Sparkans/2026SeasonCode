@@ -33,6 +33,7 @@ public class Transfer extends SubsystemBase {
         transferMotorConfig.CurrentLimits.StatorCurrentLimit = TransferConstants.kTransferCurrent_Limit;
         transferMotorConfig.CurrentLimits.StatorCurrentLimitEnable = true;
 
+        transferMotorConfig.MotionMagic.MotionMagicJerk = TransferConstants.transferMaxJerk;
         transferMotorConfig.MotionMagic.MotionMagicAcceleration = TransferConstants.transferMaxAcceleration;
         transferMotorConfig.MotionMagic.MotionMagicCruiseVelocity = TransferConstants.transferMaxVelocity;
 

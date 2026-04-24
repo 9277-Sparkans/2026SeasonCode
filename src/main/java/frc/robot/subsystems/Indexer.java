@@ -166,6 +166,11 @@ public class Indexer extends SubsystemBase {
     setVelocity(IndexerConstants.kIndexerSpeed);
   }
 
+  public void invert()
+  {
+    spinReverse();
+  }
+
   private void spinReverse() {
     setVelocity(IndexerConstants.kIndexerAgitateSpeed);
   }

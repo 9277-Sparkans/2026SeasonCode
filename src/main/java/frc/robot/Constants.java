@@ -154,27 +154,6 @@ public class Constants {
         public static final double turret_speed = 0.2;
         public static final double turret_currentLimit = 40.0; // amps
 
-        // public static double turret_kV = 0.095;
-        // public static double turret_kA = 0.0;
-        // public static double turret_kS = 0.09; // 0.6 1.0
-        // public static double turret_kP = 9.0; // 13.5
-        // public static double turret_kI = 0.07;
-        // public static double turret_kD = 0.25;
-
-        // public static double turret_kV1 = 0.095;
-        // public static double turret_kA1 = 0.0;
-        // public static double turret_kS1 = 1.0; // 0.6 1.0
-        // public static double turret_kP1 = 9.0; // 13.5
-        // public static double turret_kI1 = 0.07;
-        // public static double turret_kD1 = 0.25;
-
-        // public static double turret_kV2 = 0.095;
-        // public static double turret_kA2 = 0.0;
-        // public static double turret_kS2 = 1.0; // 0.6 1.0
-        // public static double turret_kP2 = 12.0; // 13.5
-        // public static double turret_kI2 = 0.12; // 0.07
-        // public static double turret_kD2 = 0.25;
-
         public static double turret_kV = 0.095;
         public static double turret_kA = 0.0;
         public static double turret_kS = 0.0; // 0.6 1.0 // handled by ffmap
@@ -206,22 +185,24 @@ public class Constants {
         public static final InterpolatingDoubleTreeMap FF_MAP = new InterpolatingDoubleTreeMap();
 
         static {
-            FF_MAP.put(-10.0, 0.45); // 0.55
-            FF_MAP.put(-20.0, 0.55); // 0.65
-            FF_MAP.put(-30.0, 0.7); // 0.7
-            FF_MAP.put(-40.0, 0.95);
+            FF_MAP.put(-10.0, 0.4); // 0.55
+            FF_MAP.put(-20.0, 0.7); // 0.65
+            FF_MAP.put(-35.0, 0.5); // 0.7
+            FF_MAP.put(-40.0, 0.8);
             FF_MAP.put(-60.0, 0.4);
-            FF_MAP.put(-70.0, 0.52);
+            FF_MAP.put(-70.0, 0.7);
 
             // turret angle, voltage required
-            FF_MAP.put(0.0, 0.35); // 0.5
-            FF_MAP.put(10.0, 0.45); // 0.55
-            FF_MAP.put(20.0, 0.65); // 0.85
-            FF_MAP.put(30.0, 0.8); // 1.15
-            FF_MAP.put(40.0, 0.7); // 0.83
-            FF_MAP.put(50.0, 1.024);
-            FF_MAP.put(60.0, 1.26);
-            FF_MAP.put(80.0, 1.45);
+            FF_MAP.put(0.0, 0.3); // 0.5
+            FF_MAP.put(10.0, 0.3); // 0.55
+            FF_MAP.put(20.0, 0.35); // 0.85
+            FF_MAP.put(30.0, 0.55); // 1.15
+            FF_MAP.put(35.0, 0.7); // 0.83
+            FF_MAP.put(44.0, 1.0);
+            FF_MAP.put(55.0, 1.35);
+            FF_MAP.put(65.0, 1.4);
+            FF_MAP.put(70.0, 2.1);
+            FF_MAP.put(80.0, 2.1);
         }
 
         public static final edu.wpi.first.math.geometry.Transform3d ROBOT_TO_TURRET_TRANSFORM = new edu.wpi.first.math.geometry.Transform3d(
@@ -232,12 +213,12 @@ public class Constants {
     public static class ShooterConstants {
         public static final int kShooterMotorId = 33; // 33
 
-        public static final int kShooterCurrentLimit = 80;
+        public static final int kShooterCurrentLimit = 100;
         public static final double kShooterGearRatio = 36.0 / 30.0; // 36/ 30
 
         public static final double kShooterMaxVoltage = 5;// kraken x44 max voltage
-        public static final double kShooterMaxAcceleration = 200; // rotations per second^2
-        public static final double kShooterMaxJerk = 1000; // rotations per second^3
+        public static final double kShooterMaxAcceleration = 600; // rotations per second^2
+        public static final double kShooterMaxJerk = 1200; // rotations per second^3
 
         // subject to change if we end up automating these
         public static double kShooterSpeed = 30.0; // rpm
@@ -288,17 +269,17 @@ public class Constants {
         }
 
         // https://www.desmos.com/calculator/aitlewjs62
-        public static final double RPM_A = 69.726;
-        public static final double RPM_B = -106.83563;
-        public static final double RPM_C = 3855.60174;
+        public static final double RPM_A = 4.8105;
+        public static final double RPM_B = 394.1445;
+        public static final double RPM_C = 2732.58665;
 
         public static final double HOOD_A = 0.035756;
         public static final double HOOD_B = -2.748184;
         public static final double HOOD_C = 16.707595;
 
-        public static final double TOF_A = 0.040110;
-        public static final double TOF_B = -0.170120;
-        public static final double TOF_C = 1.155771;
+        public static final double TOF_A = -0.0742554;
+        public static final double TOF_B = 0.800318;
+        public static final double TOF_C = -0.956608;
 
         public static ShotData getShotData(double distMeters) {
             double rpm = RPM_A * distMeters * distMeters + RPM_B * distMeters + RPM_C;
@@ -313,7 +294,7 @@ public class Constants {
             return Math.max(0.98, Math.min(1.39, tof));
         }
 
-        public static final double[] shotAutoAlignPositions = new double[] { 2.0, 2.5, 3.0, 3.5, 4.0, 4.5, 5.0, 5.5 };
+        public static final double[] shotAutoAlignPositions = new double[] { 2.46543, 3.08943, 3.64143, 4.13243, 4.66043, 5.05443, 5.53643 };
 
         // autofire treemapping with interpolation (commented out)
         // public record ShotData(double rpm, double hoodAngle) implements
@@ -559,8 +540,8 @@ public class Constants {
         public static final int kIndexerMotorId = 35; // 35
 
         // currently 30
-        public static final double kIndexerSpeed = 40.0; // rps 60 before
-        public static final double kIndexerAgitateSpeed = -40.0; // rps 60 before
+        public static final double kIndexerSpeed = 30.0; // rps 60 before
+        public static final double kIndexerAgitateSpeed = -30.0; // rps 60 before
         public static final double indexerSpeed = 30.0; // rps
 
         public static final double kIndexerGearRatio = 12.0 / 15.0;
@@ -703,7 +684,7 @@ public class Constants {
         public static final double NORMAL_ACCEL_LIMIT = 15.0;
         public static final double SHOOTING_ACCEL_LIMIT = 1.5;
         public static final double BRAKING_ACCEL_LIMIT = 100.0;
-        public static final double SHOOTING_MAX_VELOCITY = 0.8;
+        public static final double SHOOTING_MAX_VELOCITY = 0.5;
         public static final double DUMP_MAX_VELOCITY = 0.8;
         public static final double NORMAL_ROT_ACCEL_LIMIT = 25.0;
         public static final double SHOOTING_ROT_ACCEL_LIMIT = 4.0;

@@ -536,6 +536,21 @@ public class RobotContainer {
                                 () -> !lockmode));
                 translateStick.button(OIConstants.kSticks_trigger).onFalse(indexer.indexerStop());
 
+                // if (lockmode)
+                // {
+                // translateStick.button(OIConstants.kSticks_trigger)
+                // .onTrue(Commands.runOnce(()->transfer.activateTransfer()))
+                // .onFalse(Commands.runOnce(()->transfer.stop()));
+                // }
+
+                translateStick.button(OIConstants.kSticks_trigger).whileTrue(Commands.either(
+                                Commands.runOnce (() -> transfer.empty()),
+                                Commands.runOnce(() -> transfer.activateTransfer()),
+                                () -> !lockmode));
+                translateStick.button(OIConstants.kSticks_trigger).onFalse(Commands.runOnce(() -> transfer.stop()));
+
+
+
                 translateStick.button(OIConstants.kSticks_centerHandle).whileTrue(
                                 Commands.runOnce(() -> indexer.invert()));
                 translateStick.button(OIConstants.kSticks_centerHandle).onFalse(indexer.indexerStop());

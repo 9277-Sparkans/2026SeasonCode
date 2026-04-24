@@ -60,6 +60,11 @@ public class Transfer extends SubsystemBase {
         return Commands.runOnce(() -> toggleTransfer());
     }
 
+    public void empty()
+    {
+        
+    }
+
     public void toggleTransfer() {
         transferOn = !transferOn;
         if (transferOn) {

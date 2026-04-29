@@ -193,6 +193,7 @@ public class RobotContainer {
                                 System.out.println("SHOOTING POINT LOGGED:");
                                 System.out.println("RPM:        " + shooter.targetVel);
                                 System.out.println("HOOD ANGLE: " + hood.targetHoodAngle);
+                                System.out.println("DISTANCE:   " + AutoTrack.targetDistance);
                         }
                 );
                 

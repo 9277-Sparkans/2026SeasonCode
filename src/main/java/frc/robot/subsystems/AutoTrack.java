@@ -37,6 +37,7 @@ public class AutoTrack extends SubsystemBase {
     private boolean isDumping = false;
     private boolean isLeftDump = false;
     public boolean tracking = true;
+    public double targetDistance = 0.0;
 
     // target coords
     private double currentHubX = Constants.FieldConstants.BLUE_HUB_X;
@@ -137,7 +138,7 @@ public class AutoTrack extends SubsystemBase {
         // hood.targetHoodAngle = optimalShot.hoodAngle();
 
         Translation2d turretPos2d = ShotCalculator.getTurretTranslation(pose);
-        double targetDistance = turretPos2d.getDistance(
+        targetDistance = turretPos2d.getDistance(
                 new Translation2d(currentHubX, currentHubY));
         double optimalRPM = optimalShot.rpm();
 

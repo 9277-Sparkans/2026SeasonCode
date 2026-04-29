@@ -1,6 +1,6 @@
 {
   "version": 1.0,
-  "grid_size": 128,
+  "grid_size": 64,
   "tabs": [
     {
       "name": "Tab 1",
@@ -66,9 +66,9 @@
           {
             "title": "Match Time",
             "x": 0.0,
-            "y": 384.0,
-            "width": 256.0,
-            "height": 256.0,
+            "y": 320.0,
+            "width": 384.0,
+            "height": 192.0,
             "type": "Match Time",
             "properties": {
               "topic": "/SmartDashboard/Shifts/Match Time",
@@ -84,7 +84,7 @@
             "x": 0.0,
             "y": 0.0,
             "width": 384.0,
-            "height": 384.0,
+            "height": 320.0,
             "type": "Match Time",
             "properties": {
               "topic": "/SmartDashboard/Shifts/Remaining Shift Time",
@@ -97,9 +97,9 @@
           },
           {
             "title": "Shift Active",
-            "x": 256.0,
+            "x": 384.0,
             "y": 384.0,
-            "width": 512.0,
+            "width": 384.0,
             "height": 128.0,
             "type": "Boolean Box",
             "properties": {
@@ -117,7 +117,7 @@
             "x": 768.0,
             "y": 0.0,
             "width": 1152.0,
-            "height": 640.0,
+            "height": 576.0,
             "type": "Field",
             "properties": {
               "topic": "/Pose",
@@ -135,9 +135,9 @@
           },
           {
             "title": "Turret Fudge Factor",
-            "x": 256.0,
+            "x": 384.0,
             "y": 512.0,
-            "width": 256.0,
+            "width": 192.0,
             "height": 128.0,
             "type": "Large Text Display",
             "properties": {
@@ -148,15 +148,41 @@
           },
           {
             "title": "Shooter Fudge Factor",
-            "x": 512.0,
+            "x": 576.0,
             "y": 512.0,
-            "width": 256.0,
+            "width": 192.0,
             "height": 128.0,
             "type": "Large Text Display",
             "properties": {
               "topic": "/SmartDashboard/Shifts/Shooter Fudge Factor",
               "period": 0.06,
               "data_type": "double"
+            }
+          },
+          {
+            "title": "Log Point",
+            "x": 768.0,
+            "y": 576.0,
+            "width": 1152.0,
+            "height": 128.0,
+            "type": "Command",
+            "properties": {
+              "topic": "/SmartDashboard/Shifts/Log Point",
+              "period": 0.06,
+              "show_type": true,
+              "maximize_button_space": true
+            }
+          },
+          {
+            "title": "FMSInfo",
+            "x": 0.0,
+            "y": 512.0,
+            "width": 384.0,
+            "height": 128.0,
+            "type": "FMSInfo",
+            "properties": {
+              "topic": "/FMSInfo",
+              "period": 0.06
             }
           }
         ]

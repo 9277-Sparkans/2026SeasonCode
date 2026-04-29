@@ -4,6 +4,7 @@ import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.util.AllianceShifts;
 
@@ -12,11 +13,15 @@ public class DriverDashboard extends SubsystemBase {
 
     private DoubleSupplier shooterFudgeSupplier;
     private DoubleSupplier turretFudgeSupplier;
+    private Runnable pointCallback;
 
-    public DriverDashboard(DoubleSupplier shooterFudgeSupplier, DoubleSupplier turretFudgeSupplier) {
+    public DriverDashboard(DoubleSupplier shooterFudgeSupplier, DoubleSupplier turretFudgeSupplier, Runnable pointCallback) {
         teleopTimer = new Timer();
         this.shooterFudgeSupplier = shooterFudgeSupplier;
         this.turretFudgeSupplier = turretFudgeSupplier;
+        this.pointCallback = pointCallback;
+
+        SmartDashboard.putData("Shifts/Log Point", Commands.runOnce(this.pointCallback));
     }
 
     public void beginTeleop() {

@@ -188,7 +188,12 @@ public class RobotContainer {
 
                 dashboard = new DriverDashboard(
                         () -> autoFireInterpolated.shooterRpmFudge,
-                        () -> AutoTrack.turretFudge
+                        () -> AutoTrack.turretFudge,
+                        () -> {
+                                System.out.println("SHOOTING POINT LOGGED:");
+                                System.out.println("RPM:        " + shooter.targetVel);
+                                System.out.println("HOOD ANGLE: " + hood.targetHoodAngle);
+                        }
                 );
                 
                 // ledImplementCommand = new LedImplement(led);

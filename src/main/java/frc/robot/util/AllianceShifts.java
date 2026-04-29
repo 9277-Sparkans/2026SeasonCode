@@ -81,6 +81,23 @@ public class AllianceShifts {
         return AllianceShift.Endgame;
     }
 
+    public static boolean receivedFMSData() {
+        String gameData = DriverStation.getGameSpecificMessage();
+        return gameData.length() != 0;
+    }
+
+    public static String getAutoWinnerAsString() {
+        var winner = getAutoWinner();
+        if (winner == null) {
+            return "None";
+        }
+
+        return (switch (winner) {
+            case Blue -> "Blue";
+            case Red -> "Red";
+        });
+    }
+
     public static boolean areWeActive(Timer teleopTimer) {
         Alliance alliance = DriverStation.getAlliance().orElse(Alliance.Blue);
 

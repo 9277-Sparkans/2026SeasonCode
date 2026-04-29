@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.Timer;
 
 public class AllianceShifts {
     public enum AllianceShift {
+        Auto,
         TransitionShift,
         Shift1,
         Shift2,
@@ -42,6 +43,7 @@ public class AllianceShifts {
     public static double getRemainingShiftTime(Timer teleopTimer) {
         double matchTime = teleopTimer.get();
         return (switch (getCurrentShift(teleopTimer)) {
+            case Auto -> 0;
             case TransitionShift -> 10 - matchTime;
             case Shift1 -> SHIFT1_END - matchTime;
             case Shift2 -> SHIFT2_END - matchTime;
@@ -52,6 +54,10 @@ public class AllianceShifts {
     }
 
     public static AllianceShift getCurrentShift(Timer teleopTimer) {
+        if (DriverStation.isAutonomous()) {
+            return AllianceShift.Auto;
+        }
+
         double matchTime = teleopTimer.get();
 
         if (matchTime < 10) {
@@ -94,6 +100,7 @@ public class AllianceShifts {
         };
 
         return (switch (getCurrentShift(teleopTimer)) {
+            case Auto -> true;
             case TransitionShift -> true;
             case Shift1 -> shift1Active;
             case Shift2 -> !shift1Active;

@@ -38,6 +38,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.CommandSwerveDrivetrain;
+import frc.robot.subsystems.DriverDashboard;
 import frc.robot.Vision.Vision;
 import frc.robot.Vision.VisionConstants;
 import frc.robot.Vision.VisionIOPhotonVision;
@@ -141,7 +142,8 @@ public class RobotContainer {
         public final Transfer transfer = new Transfer();
         public final Indexer indexer = new Indexer();
         public final Hinge hinge = new Hinge();
-        public final Timer teleopTimer = new Timer();
+        public final DriverDashboard dashboard;
+
         // public final betterled led = new betterled(teleopTimer);
         // public final SillyHinge sillyHinge = new SillyHinge();
         public final AutoFire autoFireCommand;
@@ -183,6 +185,11 @@ public class RobotContainer {
 
                 autoFireInterpolated = new AutoFireInterpolated(indexer, turret, shooter, hood,
                                 AutoTrack, transfer);
+
+                dashboard = new DriverDashboard(
+                        () -> autoFireInterpolated.shooterRpmFudge,
+                        () -> AutoTrack.turretFudge
+                );
                 
                 // ledImplementCommand = new LedImplement(led);
 
@@ -276,28 +283,10 @@ public class RobotContainer {
         }
 
         public void startTeleop() {
-                teleopTimer.start();
+                dashboard.beginTeleop();
         }
 
-        public void teleopPeriodic() {
-                if (teleopTimer.get() >= 140)
-                        teleopTimer.stop();
-
-                SmartDashboard.putNumber("Shifts/Match Time", teleopTimer.get());
-                SmartDashboard.putString(
-                                "Shifts/Remaining Shift Time",
-                                String.format("%.1f",
-                                                Math.max(AllianceShifts.getRemainingShiftTime(teleopTimer), 0.0)));
-                SmartDashboard.putBoolean("Shifts/Shift Active", AllianceShifts.areWeActive(teleopTimer));
-                SmartDashboard.putString(
-                                "Shifts/Game State", AllianceShifts.getCurrentShift(teleopTimer).toString());
-
-                SmartDashboard.putBoolean("AutoAlign/autoAlignActivate", autoAlignActive);
-                SmartDashboard.putBoolean("AutoAlign/autoalignUp", autoAlignUp);
-                SmartDashboard.putBoolean("AutoAlign/autoaligndown", autoAlignDown);
-
-                // SmartDashboard.putNumber("Bot velocity magnitude", drivetrain.speeds.get);
-        }
+        public void teleopPeriodic() {}
 
         private void configureBindings() {
                 // Note that X is defined as forward according to WPILib convention,

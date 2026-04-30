@@ -23,9 +23,27 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "climbup"
+          }
+        },
+        {
           "type": "path",
           "data": {
-            "pathName": null
+            "pathName": "rockR_SOTM_climb"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "climbalign"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "climbhang"
           }
         }
       ]

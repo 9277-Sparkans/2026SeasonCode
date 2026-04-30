@@ -264,7 +264,7 @@ public class RobotContainer {
                 // autoChooser.addOption("intakeshootclimb", new PathPlannerAuto("intakeshootclimb"));
                 autoChooser.addOption("Fast Trench Left 2 Sweeps", new PathPlannerAuto("Fast Trench Left 2 Sweeps"));
                 autoChooser.addOption("Fast Trench Right 2 Sweeps", new PathPlannerAuto("Fast Trench Right 2 Sweeps"));
-                // autoChooser.addOption("rock", new PathPlannerAuto("rock"));
+                autoChooser.addOption("rock", new PathPlannerAuto("rock"));
                 // autoChooser.addOption("Trench to Bump Left 2 Sweeps", new PathPlannerAuto("Trench to Bump Left 2 Sweeps"));
                 autoChooser.addOption("right_trench_bump_outpost_sotm", new PathPlannerAuto("right_trench_bump_outpost_sotm"));
                 autoChooser.addOption("Trench Right 1 Sweep Climb", new PathPlannerAuto("Trench Right 1 Sweep Climb"));

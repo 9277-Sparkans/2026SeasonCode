@@ -269,13 +269,13 @@ public class Constants {
         }
 
         // https://www.desmos.com/calculator/aitlewjs62
-        public static final double RPM_A = 4.8105;
-        public static final double RPM_B = 394.1445;
-        public static final double RPM_C = 2732.58665;
+        public static final double RPM_A = 29.29341;
+        public static final double RPM_B = 161.21136;
+        public static final double RPM_C = 3221.91989;
 
-        public static final double HOOD_A = 0.035756;
-        public static final double HOOD_B = -2.748184;
-        public static final double HOOD_C = 16.707595;
+        public static final double HOOD_A = -0.0538813;
+        public static final double HOOD_B = -1.96426;
+        public static final double HOOD_C = 15.05734;
 
         public static final double TOF_A = -0.0742554;
         public static final double TOF_B = 0.800318;
@@ -294,7 +294,7 @@ public class Constants {
             return Math.max(0.98, Math.min(1.39, tof));
         }
 
-        public static final double[] shotAutoAlignPositions = new double[] { 2.46543, 3.08943, 3.64143, 4.13243, 4.66043, 5.05443, 5.53643 };
+        public static final double[] shotAutoAlignPositions = new double[] { 2.5, 3.0, 3.5, 4.0, 4.5, 4.75, 5.0, 5.25, 5.5 };
 
         // autofire treemapping with interpolation (commented out)
         // public record ShotData(double rpm, double hoodAngle) implements
@@ -591,16 +591,16 @@ public class Constants {
         public static final double RED_DUMP_LEFT_X = 14.840988;
         public static final double RED_DUMP_LEFT_Y = 6.816;
 
-        public static final double BLUE_LEFT_CLIMB_X = 1.087;
-        public static final double BLUE_LEFT_CLIMB_Y = 4.584;
+        public static final double BLUE_LEFT_CLIMB_X = 1.07;
+        public static final double BLUE_LEFT_CLIMB_Y = 4.613;
         public static final double BLUE_PRE_ALIGN_LEFT_X = 1.587;
         public static final double BLUE_PRE_ALIGN_LEFT_Y = 5.012;
         public static final double BLUE_PRE_LEFT_CLIMB_X = BLUE_LEFT_CLIMB_X;
         public static final double BLUE_PRE_LEFT_CLIMB_Y = BLUE_LEFT_CLIMB_Y + 0.2;
         public static final double BLUE_LEFT_CLIMB_HEADING = 180.0;
 
-        public static final double BLUE_RIGHT_CLIMB_X = 1.055;
-        public static final double BLUE_RIGHT_CLIMB_Y = 2.925;
+        public static final double BLUE_RIGHT_CLIMB_X = 1.108;
+        public static final double BLUE_RIGHT_CLIMB_Y = 2.872;
         public static final double BLUE_PRE_ALIGN_RIGHT_X = 1.6900000000000004;
         public static final double BLUE_PRE_ALIGN_RIGHT_Y = 2.508;
         public static final double BLUE_PRE_RIGHT_CLIMB_X = BLUE_RIGHT_CLIMB_X;

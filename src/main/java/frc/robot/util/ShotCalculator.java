@@ -187,18 +187,22 @@ public class ShotCalculator {
         // seed in the parameters for a static shot so we can guess tof
         Translation2d turretPos = getTurretTranslation(robotPose);
         double staticDist = turretPos.getDistance(target.toTranslation2d());
-        double t = ShooterConstants.getTOF(staticDist);
+        double t = isDumping ? ShooterConstants.DUMP_TOF_MAP.get(staticDist) : ShooterConstants.getTOF(staticDist);
 
         for (int i = 0; i < iterations; i++) {
             Translation2d futureTurret = futureTurretPosition(robotPose, fieldSpeeds, t);
             double dist = futureTurret.getDistance(target.toTranslation2d());
 
-            double tofAtDist = ShooterConstants.getTOF(dist);
+            double tofAtDist = isDumping ? ShooterConstants.DUMP_TOF_MAP.get(dist) : ShooterConstants.getTOF(dist);
             double fVal = tofAtDist - t;
 
+            double eps = 1e-3;
+            double tofPlus = isDumping ? ShooterConstants.DUMP_TOF_MAP.get(dist + eps) : ShooterConstants.getTOF(dist + eps);
+            double dTOF_dDist = (tofPlus - tofAtDist) / eps;
 
-            double dTOF_dDist = 2.0 * ShooterConstants.TOF_A * dist
-                    + ShooterConstants.TOF_B;
+            // double dTOF_dDist = isDumping
+            //         ? (2.0 * ShooterConstants.DUMP_TOF_A * dist + ShooterConstants.DUMP_TOF_B)
+            //         : (2.0 * ShooterConstants.TOF_A * dist + ShooterConstants.TOF_B);
 
             double futureAngle = robotPose.getRotation().getRadians()
                     + fieldSpeeds.omegaRadiansPerSecond * t;
@@ -224,7 +228,7 @@ public class ShotCalculator {
 
             double step = fVal / fPrime;
             t = t - step;
-            
+
             // if its good enough then just stop bro
             if (Math.abs(step) < 1e-4)
                 break;
@@ -233,8 +237,9 @@ public class ShotCalculator {
         // compute final shot data from the converged future turret position
         Translation2d futureTurret = futureTurretPosition(robotPose, fieldSpeeds, t);
         double finalDist = futureTurret.getDistance(target.toTranslation2d());
-        ShotData shot = ShooterConstants.getShotData(finalDist);
-        return new CalculatedShot(shot, target, futureTurret);
+        ShotData shot = isDumping ? ShooterConstants.DUMP_MAP.get(finalDist)
+                : ShooterConstants.getShotData(finalDist);
+        return new CalculatedShot(shot, target, futureTurret, t);
     }
 
     // sorry jacob i commented yo thing out
@@ -293,7 +298,7 @@ public class ShotCalculator {
     // }
 
 
-    public record CalculatedShot(ShotData shot, Translation3d target, Translation2d futureTurretPos) {
+    public record CalculatedShot(ShotData shot, Translation3d target, Translation2d futureTurretPos, double tof) {
     }
 
 

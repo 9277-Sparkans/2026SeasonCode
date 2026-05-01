@@ -5,45 +5,33 @@
     "data": {
       "commands": [
         {
-          "type": "path",
-          "data": {
-            "pathName": "rockR_FarSweepBump"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "rockR_SOTM"
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "rockR_CloseSweepBump"
-          }
-        },
-        {
           "type": "named",
           "data": {
-            "name": "climbup"
+            "name": "spinupshooter"
           }
         },
         {
           "type": "path",
           "data": {
-            "pathName": "rockR_SOTM_climb"
+            "pathName": "rockL_FarSweepBump"
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "climbalign"
+            "pathName": "rockL_SOTM"
           }
         },
         {
-          "type": "named",
+          "type": "path",
           "data": {
-            "name": "climbhang"
+            "pathName": "rockL_CloseSweepBump_copy1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "rockL_SOTM"
           }
         }
       ]

@@ -23,11 +23,15 @@ public class Intake extends SubsystemBase {
 	}
 
 	public boolean canIntake() {
-		return fuelCount < 5;
+		return fuelCount < 37;
 	}
 
 	public void addFuel() {
 		fuelCount++;
+	}
+
+	public void removeFuel() {
+		if (fuelCount > 0) fuelCount--;
 	}
 
 	public int getFuelCount() {

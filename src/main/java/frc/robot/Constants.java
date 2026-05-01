@@ -269,13 +269,21 @@ public class Constants {
         }
 
         // https://www.desmos.com/calculator/aitlewjs62
-        public static final double RPM_A = 29.29341;
-        public static final double RPM_B = 161.21136;
-        public static final double RPM_C = 3221.91989;
+        // public static final double RPM_A = 29.29341;
+        // public static final double RPM_B = 161.21136;
+        // public static final double RPM_C = 3221.91989;
 
-        public static final double HOOD_A = -0.0538813;
-        public static final double HOOD_B = -1.96426;
-        public static final double HOOD_C = 15.05734;
+        // public static final double HOOD_A = -0.0538813;
+        // public static final double HOOD_B = -1.96426;
+        // public static final double HOOD_C = 15.05734;
+
+        public static final double RPM_A = 4.8105;
+        public static final double RPM_B = 394.1445;
+        public static final double RPM_C = 2732.58665;
+
+        public static final double HOOD_A = 0.035756;
+        public static final double HOOD_B = -2.748184;
+        public static final double HOOD_C = 16.707595;
 
         public static final double TOF_A = -0.0742554;
         public static final double TOF_B = 0.800318;
@@ -376,14 +384,22 @@ public class Constants {
         static {
             // data points (distance from turret, rpm, hood angle)
             // time of flight (distance from turret, time of flight)
-            DUMP_MAP.put(4.21, new ShotData(4300.0, 6.0));
-            DUMP_TOF_MAP.put(2.0, 0.6);
+            // 3400
+            DUMP_MAP.put(4.21, new ShotData(3900.0, 3.0)); // 4.21 4300 6.0
+            // DUMP_TOF_MAP.put(2.0, 0.6);
 
-            DUMP_MAP.put(7.04, new ShotData(4700.0, 3.0));
-            DUMP_TOF_MAP.put(2.0, 0.6);
+            // 4303
+            DUMP_MAP.put(5.5, new ShotData(4303.0, 4.9)); // 4.21
 
-            DUMP_MAP.put(8.43, new ShotData(5400.0, 0.0));
-            DUMP_TOF_MAP.put(2.0, 0.6);
+            DUMP_MAP.put(7.0, new ShotData(6000.0, 2.0)); // 7.04
+            // DUMP_TOF_MAP.put(7.0, 1.68);
+
+            DUMP_MAP.put(7.5, new ShotData(6000.0, 2.0)); // 8.43
+            DUMP_MAP.put(8.0, new ShotData(6000.0, 2.0)); // 8.43
+            // DUMP_TOF_MAP.put(8.5, 1.806);
+
+            DUMP_MAP.put(8.50, new ShotData(6000.0, 2.0)); // 8.43
+            // DUMP_TOF_MAP.put(8.5, 1.780);
 
             // distance, time of flight
             // DUMP_TOF_MAP.put(4.0, 0.6);
@@ -445,7 +461,7 @@ public class Constants {
         public static final double intakeMaxAcceleration = 100;
         // public static final double intakeMaxJerk = 600;
         public static final double intakeMaxVelocity = 500; // rps
-        public static final double intakeSpeed = 35.0; // 45
+        public static final double intakeSpeed = 40.0; // 45 35
         public static final double intakeAutoSpeed = 66.0; // 66   rps max 66.6 rps 400.0
         public static final double intakeAgitate = 20.0;
     }
@@ -657,9 +673,9 @@ public class Constants {
         public static final double kTurretTrenchRight = -62.0;
 
         // LOCK
-        public static final int kRPMLock = 4550;
-        public static final double kHoodLock = 6.0;
-        public static final double kTurretLock = 0.0;
+        public static final int kRPMLock = 4550; // 4550
+        public static final double kHoodLock = 6.0; // 6
+        public static final double kTurretLock = 0.0; //0
     }
 
     public static final class DriveAssistConstants {

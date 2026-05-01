@@ -234,6 +234,18 @@ public class ShotCalculator {
         Translation2d futureTurret = futureTurretPosition(robotPose, fieldSpeeds, t);
         double finalDist = futureTurret.getDistance(target.toTranslation2d());
         ShotData shot = ShooterConstants.getShotData(finalDist);
+        
+        if (isDumping)
+        {
+            
+            if (finalDist > 7.50)
+            {
+                shot = ShooterConstants.DUMP_MAP.get(finalDist);
+            }
+        }
+
+        // shot = ShooterConstants.DUMP_MAP.get(8.0); // add for like funsies
+
         return new CalculatedShot(shot, target, futureTurret);
     }
 

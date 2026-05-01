@@ -471,7 +471,7 @@ public class RobotContainer {
                 rotateStick.button(OIConstants.kSticks_rightHandle).onFalse(Commands.runOnce(() -> driveTrainVelocityPercent = 0.55));
 
                 // shooter up down
-                // translateStick.button(OIConstants.kRightSticks_rightGrid_topLeft).onTrue(Commands.either(
+                // translateStick.button(OIConstants.kRightSt`icks_rightGrid_topLeft).onTrue(Commands.either(
                 // Commands.runOnce(() -> shooter.increaseSpeed()),
                 // Commands.runOnce(() -> {}),
                 // () -> manualControl));

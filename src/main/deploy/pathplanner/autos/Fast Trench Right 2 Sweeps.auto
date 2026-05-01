@@ -5,6 +5,12 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "spinupshooter"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Start_to_Trench_Right"
@@ -14,12 +20,6 @@
           "type": "path",
           "data": {
             "pathName": "Intake_Sweep_1_Right"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "kicker"
           }
         },
         {
@@ -48,6 +48,12 @@
                 "type": "named",
                 "data": {
                   "name": "agitate"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "holdpose"
                 }
               }
             ]
@@ -97,6 +103,12 @@
                 "type": "named",
                 "data": {
                   "name": "agitate"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "holdpose"
                 }
               }
             ]

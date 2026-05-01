@@ -26,7 +26,7 @@ public class FuelSim {
     protected static final double PERIOD = 0.02; // sec
     protected static final Translation3d GRAVITY = new Translation3d(0, 0, -9.81); // m/s^2
     // Room temperature dry air density from shooter.py
-    protected static final double AIR_DENSITY = 1.14; // kg/m^3
+    protected static final double AIR_DENSITY = 1.185; // kg/m^3 (Houston)
     protected static final double FIELD_COR = Math.sqrt(22 / 51.5); // coefficient of restitution with the field
     protected static final double FUEL_COR = 0.5; // coefficient of restitution with another fuel
     protected static final double NET_COR = 0.2; // coefficient of restitution with the net
@@ -40,14 +40,16 @@ public class FuelSim {
     protected static final double TRENCH_BAR_HEIGHT = 0.102;
     protected static final double TRENCH_BAR_WIDTH = 0.152;
     protected static final double FRICTION = 0.1; // proportion of horizontal vel to lose per sec while on ground
-    protected static final double FUEL_MASS = 0.448 * 0.45392; // kgs
+    protected static final double FUEL_MASS = 0.215; // kgs
     protected static final double FUEL_CROSS_AREA = Math.PI * FUEL_RADIUS * FUEL_RADIUS;
     // Drag coefficient of smooth sphere from shooter.py
-    protected static final double DRAG_COF = 0.5; // dimensionless
+    protected static final double DRAG_COF = 1.5000; // from calibration
     protected static final double DRAG_FORCE_FACTOR = 0.5 * AIR_DENSITY * DRAG_COF * FUEL_CROSS_AREA;
-    protected static final double MAGNUS_K = 0.3; // S -> Cl ratio from shooter.py
+    protected static final double MAGNUS_K = 1.5000; // from calibration
+    protected static final double SPEED_SCALE = 1.1577; // added
+    protected static final double SPIN_SCALE = 2.0000; // these in
 
-    protected static final Translation3d[] FIELD_XZ_LINE_STARTS = {
+    protected static final Translation3d[] FIELD_XZ_LINE_STARTS = { 
         new Translation3d(0, 0, 0),
         new Translation3d(3.96, 1.57, 0),
         new Translation3d(3.96, FIELD_WIDTH / 2 + 0.60, 0),

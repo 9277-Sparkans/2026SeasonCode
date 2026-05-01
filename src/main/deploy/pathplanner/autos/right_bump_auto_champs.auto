@@ -1,0 +1,43 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "named",
+          "data": {
+            "name": "spinupshooter"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "rockR_FarSweepBump"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "rockR_SOTM"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "rockR_CloseSweepBump"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "rockR_SOTM"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": "Choreo Final Autos",
+  "choreoAuto": true
+}

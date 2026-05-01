@@ -184,19 +184,20 @@ public class RobotContainer {
                                 () -> drivetrain.getStateCopy().Speeds);
 
                 autoFireInterpolated = new AutoFireInterpolated(indexer, turret, shooter, hood,
-                                AutoTrack, transfer);
+                                AutoTrack, transfer, intake,
+                                () -> drivetrain.getStateCopy().Pose,
+                                () -> drivetrain.getStateCopy().Speeds);
 
                 dashboard = new DriverDashboard(
-                        () -> autoFireInterpolated.shooterRpmFudge,
-                        () -> AutoTrack.turretFudge,
-                        () -> {
-                                System.out.println("SHOOTING POINT LOGGED:");
-                                System.out.println("RPM:        " + shooter.targetVel);
-                                System.out.println("HOOD ANGLE: " + hood.targetHoodAngle);
-                                System.out.println("DISTANCE:   " + AutoTrack.targetDistance);
-                        }
-                );
-                
+                                () -> autoFireInterpolated.shooterRpmFudge,
+                                () -> AutoTrack.turretFudge,
+                                () -> {
+                                        System.out.println("SHOOTING POINT LOGGED:");
+                                        System.out.println("RPM:        " + shooter.targetVel);
+                                        System.out.println("HOOD ANGLE: " + hood.targetHoodAngle);
+                                        System.out.println("DISTANCE:   " + AutoTrack.targetDistance);
+                                });
+
                 // ledImplementCommand = new LedImplement(led);
 
                 agitateCommand = new Agitate(hinge);
@@ -216,11 +217,17 @@ public class RobotContainer {
                                 climb.climbUp());
                 NamedCommands.registerCommand("climbhang",
                                 climb.climbHang());
+                NamedCommands.registerCommand("climbalign", new ClimbAlignCommand(drivetrain, climb));
 
                 NamedCommands.registerCommand("autofire",
                                 autoFireInterpolated);
                 NamedCommands.registerCommand("stopautofire",
                                 Commands.runOnce(() -> autoFireInterpolated.cancel()));
+
+                NamedCommands.registerCommand("spinupshooter",
+                                Commands.runOnce(() -> shooter.setTargetRPM(3000.0)));
+                NamedCommands.registerCommand("holdpose",
+                                drivetrain.holdCurrentPoseCommand());
 
                 NamedCommands.registerCommand("hingedown",
                                 hinge.hingeDown());
@@ -252,24 +259,40 @@ public class RobotContainer {
 
                 autoChooser = new SendableChooser<>();
                 autoChooser.setDefaultOption("No auto", Commands.none());
-                // autoChooser.addOption("doubleswipestart1", new PathPlannerAuto("doubleswipestart1"));
-                // autoChooser.addOption("autofiremovetest", new PathPlannerAuto("autofiremovetest"));
-                // autoChooser.addOption("deadlinedumptest", new PathPlannerAuto("deadlinedumptest"));
-                // autoChooser.addOption("Trench Left 2 Sweeps Cool", new PathPlannerAuto("Trench Left 2 Sweeps Cool"));
+                // autoChooser.addOption("doubleswipestart1", new
+                // PathPlannerAuto("doubleswipestart1"));
+                // autoChooser.addOption("autofiremovetest", new
+                // PathPlannerAuto("autofiremovetest"));
+                // autoChooser.addOption("deadlinedumptest", new
+                // PathPlannerAuto("deadlinedumptest"));
+                // autoChooser.addOption("Trench Left 2 Sweeps Cool", new
+                // PathPlannerAuto("Trench Left 2 Sweeps Cool"));
                 // autoChooser.addOption("shoottest", new PathPlannerAuto("shoottest"));
-                // autoChooser.addOption("trenchshootclimbtest", new PathPlannerAuto("trenchshootclimbtest"));
+                // autoChooser.addOption("trenchshootclimbtest", new
+                // PathPlannerAuto("trenchshootclimbtest"));
                 // autoChooser.addOption("intaketest", new PathPlannerAuto("intaketest"));
                 // autoChooser.addOption("intake2test", new PathPlannerAuto("intake2test"));
                 // autoChooser.addOption("bumpshoot", new PathPlannerAuto("bumpshoot"));
-                // autoChooser.addOption("intakeshootclimb", new PathPlannerAuto("intakeshootclimb"));
+                // autoChooser.addOption("intakeshootclimb", new
+                // PathPlannerAuto("intakeshootclimb"));
                 autoChooser.addOption("Fast Trench Left 2 Sweeps", new PathPlannerAuto("Fast Trench Left 2 Sweeps"));
                 autoChooser.addOption("Fast Trench Right 2 Sweeps", new PathPlannerAuto("Fast Trench Right 2 Sweeps"));
-                autoChooser.addOption("rock", new PathPlannerAuto("rock"));
-                // autoChooser.addOption("Trench to Bump Left 2 Sweeps", new PathPlannerAuto("Trench to Bump Left 2 Sweeps"));
-                autoChooser.addOption("right_trench_bump_outpost_sotm", new PathPlannerAuto("right_trench_bump_outpost_sotm"));
+                // autoChooser.addOption("rock", new PathPlannerAuto("rock"));
+                // autoChooser.addOption("Trench to Bump Left 2 Sweeps", new
+                // PathPlannerAuto("Trench to Bump Left 2 Sweeps"));
+                autoChooser.addOption("right_trench_bump_outpost_sotm",
+                                new PathPlannerAuto("right_trench_bump_outpost_sotm"));
                 autoChooser.addOption("Trench Right 1 Sweep Climb", new PathPlannerAuto("Trench Right 1 Sweep Climb"));
-                autoChooser.addOption("supportleft", new PathPlannerAuto("supportleft"));
-                autoChooser.addOption("COMMAND TEST - DO NOT SELECT DURING COMPETITION", new PathPlannerAuto("commandtest"));
+
+                autoChooser.addOption("right_bump_auto_champs", new PathPlannerAuto("right_bump_auto_champs"));
+                autoChooser.addOption("left_bump_auto_champs", new PathPlannerAuto("left_bump_auto_champs"));
+                autoChooser.addOption("right_bump_climb", new PathPlannerAuto("right_bump_climb"));
+                autoChooser.addOption("left_bump_climb", new PathPlannerAuto("left_bump_climb"));
+                autoChooser.addOption("middle_depot_outpost_climb", new PathPlannerAuto("middle_depot_outpost_climb"));
+
+
+                autoChooser.addOption("COMMAND TEST - DO NOT SELECT DURING COMPETITION",
+                                new PathPlannerAuto("commandtest"));
 
                 SmartDashboard.putData("Auto Chooser", autoChooser);
 
@@ -292,7 +315,8 @@ public class RobotContainer {
                 dashboard.beginTeleop();
         }
 
-        public void teleopPeriodic() {}
+        public void teleopPeriodic() {
+        }
 
         private void configureBindings() {
                 // Note that X is defined as forward according to WPILib convention,
@@ -458,17 +482,19 @@ public class RobotContainer {
                 rotateStick.button(OIConstants.kSticks_centerHandle).onFalse(intake.stopRollerCommand());
 
                 // rotateStick.button(OIConstants.kSticks_leftHandle)
-                //                 .onTrue(Commands.runOnce(() -> shooter.increaseSpeed()));
+                // .onTrue(Commands.runOnce(() -> shooter.increaseSpeed()));
                 // rotateStick.button(OIConstants.kSticks_rightHandle)
-                //                 .onTrue(Commands.runOnce(() -> shooter.decreaseSpeed()));
+                // .onTrue(Commands.runOnce(() -> shooter.decreaseSpeed()));
 
                 // climb autoalign
                 // rotateStick.button(OIConstants.kSticks_leftHandle).whileTrue(AutoAlignCommand.getAutoClimbCommand(drivetrain));
                 rotateStick.button(OIConstants.kSticks_leftHandle).whileTrue(new ClimbAlignCommand(drivetrain, climb));
 
-                //boost
-                rotateStick.button(OIConstants.kSticks_rightHandle).whileTrue(Commands.runOnce(() -> driveTrainVelocityPercent = 1.0));
-                rotateStick.button(OIConstants.kSticks_rightHandle).onFalse(Commands.runOnce(() -> driveTrainVelocityPercent = 0.55));
+                // boost
+                rotateStick.button(OIConstants.kSticks_rightHandle)
+                                .whileTrue(Commands.runOnce(() -> driveTrainVelocityPercent = 1.0));
+                rotateStick.button(OIConstants.kSticks_rightHandle)
+                                .onFalse(Commands.runOnce(() -> driveTrainVelocityPercent = 0.55));
 
                 // shooter up down
                 // translateStick.button(OIConstants.kRightSt`icks_rightGrid_topLeft).onTrue(Commands.either(
@@ -483,7 +509,8 @@ public class RobotContainer {
                 // translateStick.button(OIConstants.kRightSticks_rightGrid_topLeft).onTrue(Commands.runOnce(()
                 // -> shooter.increaseSpeed()));
 
-                // translateStick.button(OIConstants.kRightSticks_rightGrid_topLeft).onTrue(Commands.runOnce(() -> led.newFunsies()));
+                // translateStick.button(OIConstants.kRightSticks_rightGrid_topLeft).onTrue(Commands.runOnce(()
+                // -> led.newFunsies()));
 
                 // translateStick.button(OIConstants.kRightSticks_rightGrid_bottomLeft).onTrue(Commands.runOnce(()
                 // -> shooter.decreaseSpeed()));
@@ -539,50 +566,47 @@ public class RobotContainer {
                 // }
 
                 translateStick.button(OIConstants.kSticks_trigger).whileTrue(Commands.either(
-                                Commands.runOnce (() -> transfer.empty()),
+                                Commands.runOnce(() -> transfer.empty()),
                                 Commands.runOnce(() -> transfer.activateTransfer()),
                                 () -> !lockmode));
                 translateStick.button(OIConstants.kSticks_trigger).onFalse(Commands.runOnce(() -> transfer.stop()));
 
-
-
                 translateStick.button(OIConstants.kSticks_centerHandle).whileTrue(
                                 Commands.runOnce(() -> indexer.invert()));
                 translateStick.button(OIConstants.kSticks_centerHandle).onFalse(indexer.indexerStop());
-                
 
                 // translateStick.button(OIConstants.kSticks_trigger)
-                //                 .onFalse(Commands.runOnce(() -> transfer.stop()));
+                // .onFalse(Commands.runOnce(() -> transfer.stop()));
 
                 // kicker
                 // translateStick.button(OIConstants.kSticks_centerHandle)
-                //                 .whileTrue(Commands.runOnce(() -> transfer.activateTransfer()));
+                // .whileTrue(Commands.runOnce(() -> transfer.activateTransfer()));
                 // translateStick.button(OIConstants.kSticks_centerHandle)
-                //                 .onFalse(Commands.runOnce(() -> transfer.stop()));
-
+                // .onFalse(Commands.runOnce(() -> transfer.stop()));
 
                 // outpost autoalign
                 // translateStick.button(OIConstants.kSticks_leftHandle).whileTrue(AutoAlignCommand.getOutpostCommand(drivetrain));
 
                 // // trench autoalign
                 // translateStick.button(OIConstants.kSticks_rightHandle)
-                //                 .whileTrue(AutoAlignCommand.getTrenchCommand(drivetrain));
+                // .whileTrue(AutoAlignCommand.getTrenchCommand(drivetrain));
 
                 // spindexer
                 // translateStick.button(OIConstants.kLeftSticks_leftGrid_bottomLeft)
-                //                 .whileTrue(Commands.runOnce(() -> indexer.activate()));
+                // .whileTrue(Commands.runOnce(() -> indexer.activate()));
 
-                // translateStick.button(OIConstants.kRightSticks_rightGrid_topRight).onTrue(Commands.runOnce(() -> autoAlignActive = true));
+                // translateStick.button(OIConstants.kRightSticks_rightGrid_topRight).onTrue(Commands.runOnce(()
+                // -> autoAlignActive = true));
 
                 translateStick.button(OIConstants.kRightSticks_rightGrid_bottomMid)
-                .onTrue(Commands.runOnce(() -> autoAlignActive = true))
-                .onFalse(Commands.runOnce(() -> autoAlignActive = false));
-                
+                                .onTrue(Commands.runOnce(() -> autoAlignActive = true))
+                                .onFalse(Commands.runOnce(() -> autoAlignActive = false));
+
                 translateStick.button(OIConstants.kRightSticks_rightGrid_topRight)
-                .onTrue(Commands.runOnce(() -> drivetrain.IncreaseAutoAlign()));
+                                .onTrue(Commands.runOnce(() -> drivetrain.IncreaseAutoAlign()));
 
                 translateStick.button(OIConstants.kRightSticks_rightGrid_bottomRight)
-                .onTrue(Commands.runOnce(() -> drivetrain.DecreaseAutoAlign()));
+                                .onTrue(Commands.runOnce(() -> drivetrain.DecreaseAutoAlign()));
         }
 
         private void configureOperatorConsole() {
@@ -590,8 +614,8 @@ public class RobotContainer {
                 // operator(1)
                 // .onTrue(Commands.runOnce(() -> hood.moveHoodToAngle(hood.targetHoodAngle)));
                 // operator(OIConstants.kKeyboard_duck)
-                //                 .onTrue(Commands.runOnce(() -> movingConstantSpeed = true))
-                //                 .onFalse(Commands.runOnce(() -> movingConstantSpeed = false));
+                // .onTrue(Commands.runOnce(() -> movingConstantSpeed = true))
+                // .onFalse(Commands.runOnce(() -> movingConstantSpeed = false));
                 // operator(OIConstants.kKeyboard_modeToggle)
                 // .onTrue(Commands.runOnce(() -> manualControl = !manualControl));
 
@@ -656,30 +680,30 @@ public class RobotContainer {
                                 .onFalse(intake.stopRollerCommand());
 
                 // operator(OIConstants.kKeyboard_modeToggle)
-                //                 .whileTrue(Agitate.agitate(hinge, indexer))
-                //                 .onFalse(hinge.hingeStopCommand());
+                // .whileTrue(Agitate.agitate(hinge, indexer))
+                // .onFalse(hinge.hingeStopCommand());
 
                 operator(OIConstants.kKeyboard_modeToggle)
                                 .onTrue(Commands.runOnce(() -> drivetrain.assistEnabled = !drivetrain.assistEnabled));
 
                 // operator(OIConstants.kKeyboard_duck)
-                //                 .onTrue(Commands.runOnce(() -> {
-                //                         if (AutoTrack.isTracking()) {
-                //                                 AutoTrack.disableTracking();
-                //                         } else {
-                //                                 AutoTrack.enableTracking();
-                //                         }
-                //                 }));
+                // .onTrue(Commands.runOnce(() -> {
+                // if (AutoTrack.isTracking()) {
+                // AutoTrack.disableTracking();
+                // } else {
+                // AutoTrack.enableTracking();
+                // }
+                // }));
 
                 operator(OIConstants.kKeyboard_fudgeFactorTurretIncrease)
                                 .onTrue(Commands.runOnce(() -> AutoTrack.turretFudge += 1));
-                
+
                 operator(OIConstants.kKeyboard_fudgeFactorTurretDecrease)
                                 .onTrue(Commands.runOnce(() -> AutoTrack.turretFudge -= 1));
 
                 operator(OIConstants.kKeyboard_fudgeFactorShooterIncrease)
                                 .onTrue(Commands.runOnce(() -> autoFireInterpolated.shooterRpmFudge += 50));
-                
+
                 operator(OIConstants.kKeyboard_fudgeFactorShooterDecrease)
                                 .onTrue(Commands.runOnce(() -> autoFireInterpolated.shooterRpmFudge -= 50));
         }
@@ -708,11 +732,10 @@ public class RobotContainer {
                                 () -> drivetrain.getStateCopy().Speeds // Field-relative speeds
                 );
 
-                // Register intake region - DISABLED FOR UNLIMITED FUEL TESTING
                 fuelSim.registerIntake(
-                                0.3, 0.7, -0.4, 0.4, // bounding box relative to robot center
-                                () -> intake.isIntaking() && intake.canIntake(), // active when intaking and NOT full
-                                () -> intake.addFuel()); // increment fuel count when a ball is picked up
+                                -0.6477, -0.3429, -0.3429, 0.3429,
+                                () -> intake.canIntake(),
+                                () -> intake.addFuel());
 
                 fuelSim.setLoggingFrequency(100.0);
                 fuelSim.spawnStartingFuel();

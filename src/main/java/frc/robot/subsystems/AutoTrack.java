@@ -47,6 +47,9 @@ public class AutoTrack extends SubsystemBase {
     // offset (degrees)
     public int turretFudge = 0;
 
+    public static double TURRET_LAG = 0.4;
+
+
     public AutoTrack(
             Turret turret,
             Hood hood,
@@ -119,9 +122,18 @@ public class AutoTrack extends SubsystemBase {
         ShotData optimalShot = latestShot.shot();
         Translation3d shotTarget = latestShot.target();
         Translation2d futureTurretPos = latestShot.futureTurretPos();
+        Translation2d currentTurretPos = ShotCalculator.getTurretTranslation(pose);
 
-        // Calculate turret angle from future turret pos to hub
-        Translation2d targetDirVector = shotTarget.toTranslation2d().minus(futureTurretPos);
+        Translation2d effectiveTarget = shotTarget.toTranslation2d().minus(futureTurretPos.minus(currentTurretPos));
+
+        // make sure turret doesnt shoot outside field when dumping
+        if (isDumping) {
+            effectiveTarget = new Translation2d(
+                    Math.max(1.0, Math.min(Constants.FieldConstants.FIELD_LENGTH - 1.0, effectiveTarget.getX())),
+                    Math.max(1.0, Math.min(Constants.FieldConstants.FIELD_WIDTH - 1.0, effectiveTarget.getY())));
+        }
+
+        Translation2d targetDirVector = effectiveTarget.minus(currentTurretPos);
         double targetDirectionRad = Math.atan2(targetDirVector.getY(), targetDirVector.getX());
         double targetDirectionDeg = Math.toDegrees(targetDirectionRad);
 
@@ -133,8 +145,10 @@ public class AutoTrack extends SubsystemBase {
                         Constants.TurretConstants.kMinimumAngle,
                         Constants.TurretConstants.kMaximumAngle);
 
+        double leadAngleDeg = Math.toDegrees(fieldSpeeds.omegaRadiansPerSecond * TURRET_LAG);
+
         // Set turret target — it tracks continuously
-        turret.target = latestTurretAngle + turretFudge;
+        turret.target = latestTurretAngle + leadAngleDeg + turretFudge;
         // hood.targetHoodAngle = optimalShot.hoodAngle();
 
         Translation2d turretPos2d = ShotCalculator.getTurretTranslation(pose);
@@ -146,6 +160,7 @@ public class AutoTrack extends SubsystemBase {
         SmartDashboard.putNumber("AutoTrack/OptimalTurretAngle", latestTurretAngle);
         SmartDashboard.putNumber("AutoTrack/ActualTurretAngle", turret.getTurretAngle());
         SmartDashboard.putNumber("AutoTrack/DesiredTurretAngle", desiredTurretAngle);
+        SmartDashboard.putNumber("AutoTrack/LeadAngleDeg", leadAngleDeg);
         SmartDashboard.putNumber("AutoTrack/OptimalRPM", optimalRPM);
         SmartDashboard.putNumber("AutoTrack/OptimalHoodAngle", optimalShot.hoodAngle());
         SmartDashboard.putBoolean("AutoTrack/IsDumping", isDumping);

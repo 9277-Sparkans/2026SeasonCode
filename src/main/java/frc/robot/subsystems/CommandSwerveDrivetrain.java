@@ -709,4 +709,29 @@ public class CommandSwerveDrivetrain extends TunerSwerveDrivetrain implements Su
     {
         m_autoAlignIndex = Math.min(m_autoAlignIndex + 1, Constants.ShooterConstants.shotAutoAlignPositions.length - 1);
     }
+
+    public Command holdCurrentPoseCommand() {
+        Pose2d[] targetPose = new Pose2d[1];
+        PIDController xController = new PIDController(5.0, 0, 0);
+        PIDController yController = new PIDController(5.0, 0, 0);
+        PIDController thetaController = new PIDController(5.0, 0, 0);
+        thetaController.enableContinuousInput(-Math.PI, Math.PI);
+        SwerveRequest.FieldCentric fieldCentric = new SwerveRequest.FieldCentric();
+
+        return run(() -> {
+            Pose2d currentPose = getStateCopy().Pose;
+            double vx = xController.calculate(currentPose.getX(), targetPose[0].getX());
+            double vy = yController.calculate(currentPose.getY(), targetPose[0].getY());
+            double vtheta = thetaController.calculate(currentPose.getRotation().getRadians(), targetPose[0].getRotation().getRadians());
+            
+            setControl(fieldCentric.withVelocityX(vx).withVelocityY(vy).withRotationalRate(vtheta));
+        })
+        .beforeStarting(() -> {
+            targetPose[0] = getStateCopy().Pose;
+            xController.reset();
+            yController.reset();
+            thetaController.reset();
+        })
+        .withName("HoldCurrentPose");
+    }
 }

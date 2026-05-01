@@ -461,7 +461,7 @@ public class Constants {
         public static final double intakeMaxAcceleration = 100;
         // public static final double intakeMaxJerk = 600;
         public static final double intakeMaxVelocity = 500; // rps
-        public static final double intakeSpeed = 40.0; // 45 35
+        public static final double intakeSpeed = 50.0; // 45 35
         public static final double intakeAutoSpeed = 66.0; // 66   rps max 66.6 rps 400.0
         public static final double intakeAgitate = 20.0;
     }

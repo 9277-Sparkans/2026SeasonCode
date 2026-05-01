@@ -268,7 +268,7 @@ public class RobotContainer {
                 // autoChooser.addOption("Trench to Bump Left 2 Sweeps", new PathPlannerAuto("Trench to Bump Left 2 Sweeps"));
                 autoChooser.addOption("right_trench_bump_outpost_sotm", new PathPlannerAuto("right_trench_bump_outpost_sotm"));
                 autoChooser.addOption("Trench Right 1 Sweep Climb", new PathPlannerAuto("Trench Right 1 Sweep Climb"));
-
+                autoChooser.addOption("supportleft", new PathPlannerAuto("supportleft"));
                 autoChooser.addOption("COMMAND TEST - DO NOT SELECT DURING COMPETITION", new PathPlannerAuto("commandtest"));
 
                 SmartDashboard.putData("Auto Chooser", autoChooser);

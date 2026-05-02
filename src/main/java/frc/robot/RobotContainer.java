@@ -67,7 +67,7 @@ import frc.robot.util.Zones;
 import frc.robot.commands.AutoFire.TargetHub;
 import frc.robot.commands.LockMode.LockState;
 import frc.robot.subsystems.Transfer;
-import frc.robot.subsystems.Climb;
+// import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Hinge;
 // import frc.robot.subsystems.betterled;
 import frc.robot.Vision.Vision;
@@ -78,7 +78,7 @@ import frc.robot.Vision.VisionConstants;
 
 import frc.robot.commands.TurretTracking;
 import frc.robot.subsystems.Turret;
-import frc.robot.subsystems.Climb;
+// import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Shooter;
 import frc.robot.subsystems.Hood;
 import frc.robot.subsystems.Indexer;
@@ -90,7 +90,7 @@ import frc.robot.commands.Agitate;
 import frc.robot.commands.LockMode;
 import frc.robot.commands.AutoFireInterpolated;
 import frc.robot.subsystems.AutoTrack;
-import frc.robot.commands.ClimbAlignCommand;
+// import frc.robot.commands.ClimbAlignCommand;
 
 public class RobotContainer {
         private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond);
@@ -135,7 +135,7 @@ public class RobotContainer {
                                         VisionConstants.robotToCamera2);
 
         public final Turret turret = new Turret();
-        public final Climb climb = new Climb();
+        // public final Climb climb = new Climb();
         public final Shooter shooter = new Shooter();
         public final Hood hood = new Hood();
         public final Intake intake = new Intake();
@@ -213,11 +213,11 @@ public class RobotContainer {
                 NamedCommands.registerCommand("stopintake",
                                 intake.stopRollerCommand());
 
-                NamedCommands.registerCommand("climbup",
-                                climb.climbUp());
-                NamedCommands.registerCommand("climbhang",
-                                climb.climbHang());
-                NamedCommands.registerCommand("climbalign", new ClimbAlignCommand(drivetrain, climb));
+                // NamedCommands.registerCommand("climbup",
+                //                 climb.climbUp());
+                // NamedCommands.registerCommand("climbhang",
+                //                 climb.climbHang());
+                // NamedCommands.registerCommand("climbalign", new ClimbAlignCommand(drivetrain, climb));
 
                 NamedCommands.registerCommand("autofire",
                                 autoFireInterpolated);
@@ -225,7 +225,7 @@ public class RobotContainer {
                                 Commands.runOnce(() -> autoFireInterpolated.cancel()));
 
                 NamedCommands.registerCommand("spinupshooter",
-                                Commands.runOnce(() -> shooter.setTargetRPM(3000.0)));
+                                Commands.runOnce(() -> shooter.targetVel = 3000.0));
                 NamedCommands.registerCommand("holdpose",
                                 drivetrain.holdCurrentPoseCommand());
 
@@ -282,13 +282,13 @@ public class RobotContainer {
                 // PathPlannerAuto("Trench to Bump Left 2 Sweeps"));
                 autoChooser.addOption("right_trench_bump_outpost_sotm",
                                 new PathPlannerAuto("right_trench_bump_outpost_sotm"));
-                autoChooser.addOption("Trench Right 1 Sweep Climb", new PathPlannerAuto("Trench Right 1 Sweep Climb"));
+                // autoChooser.addOption("Trench Right 1 Sweep Climb", new PathPlannerAuto("Trench Right 1 Sweep Climb"));
 
                 autoChooser.addOption("right_bump_auto_champs", new PathPlannerAuto("right_bump_auto_champs"));
                 autoChooser.addOption("left_bump_auto_champs", new PathPlannerAuto("left_bump_auto_champs"));
-                autoChooser.addOption("right_bump_climb", new PathPlannerAuto("right_bump_climb"));
-                autoChooser.addOption("left_bump_climb", new PathPlannerAuto("left_bump_climb"));
-                autoChooser.addOption("middle_depot_outpost_climb", new PathPlannerAuto("middle_depot_outpost_climb"));
+                // autoChooser.addOption("right_bump_climb", new PathPlannerAuto("right_bump_climb"));
+                // autoChooser.addOption("left_bump_climb", new PathPlannerAuto("left_bump_climb"));
+                // autoChooser.addOption("middle_depot_outpost_climb", new PathPlannerAuto("middle_depot_outpost_climb"));
 
 
                 autoChooser.addOption("COMMAND TEST - DO NOT SELECT DURING COMPETITION",
@@ -488,7 +488,7 @@ public class RobotContainer {
 
                 // climb autoalign
                 // rotateStick.button(OIConstants.kSticks_leftHandle).whileTrue(AutoAlignCommand.getAutoClimbCommand(drivetrain));
-                rotateStick.button(OIConstants.kSticks_leftHandle).whileTrue(new ClimbAlignCommand(drivetrain, climb));
+                // rotateStick.button(OIConstants.kSticks_leftHandle).whileTrue(new ClimbAlignCommand(drivetrain, climb));
 
                 // boost
                 rotateStick.button(OIConstants.kSticks_rightHandle)
@@ -650,14 +650,14 @@ public class RobotContainer {
                 operator(OIConstants.kKeyboard_lockModeTrenchRight)
                                 .whileTrue(new LockMode(turret, shooter, hood, LockState.TRENCHRIGHT));
 
-                operator(OIConstants.kKeyboard_climbUp)
-                                .onTrue(climb.climbUp());
+                // operator(OIConstants.kKeyboard_climbUp)
+                //                 .onTrue(climb.climbUp());
 
-                operator(OIConstants.kKeyboard_climbHang)
-                                .onTrue(climb.climbHang());
+                // operator(OIConstants.kKeyboard_climbHang)
+                //                 .onTrue(climb.climbHang());
 
-                operator(OIConstants.kKeyboard_climbDown)
-                                .onTrue(climb.climbDown());
+                // operator(OIConstants.kKeyboard_climbDown)
+                //                 .onTrue(climb.climbDown());
 
                 // operator(OIConstants.kKeyboard_intakeDeploy)
                 // .onTrue(Commands.runOnce(() -> sillyHinge.moveHoodToAngle(0)));

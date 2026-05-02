@@ -668,8 +668,8 @@ public class Constants {
         public static final double RED_PRE_ALIGN_RIGHT_Y = FIELD_WIDTH - BLUE_PRE_ALIGN_RIGHT_Y;
         public static final double RED_PRE_RIGHT_CLIMB_X = FIELD_LENGTH - BLUE_PRE_RIGHT_CLIMB_X;
         public static final double RED_PRE_RIGHT_CLIMB_Y = FIELD_WIDTH - BLUE_PRE_RIGHT_CLIMB_Y;
-        public static final double RED_RIGHT_CLIMB_X = FIELD_LENGTH - BLUE_RIGHT_CLIMB_X;
-        public static final double RED_RIGHT_CLIMB_Y = FIELD_WIDTH - BLUE_RIGHT_CLIMB_Y;
+        public static final double RED_RIGHT_CLIMB_X = 15.245;
+        public static final double RED_RIGHT_CLIMB_Y = 5.025;
         public static final double RED_RIGHT_CLIMB_HEADING = 180.0;
 
     }

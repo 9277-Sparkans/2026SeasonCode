@@ -70,12 +70,6 @@
           "data": {
             "name": "stopagitate"
           }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "climbalign"
-          }
         }
       ]
     }

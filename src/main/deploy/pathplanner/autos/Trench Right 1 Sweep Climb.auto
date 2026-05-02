@@ -29,12 +29,6 @@
           }
         },
         {
-          "type": "named",
-          "data": {
-            "name": "climbUp"
-          }
-        },
-        {
           "type": "deadline",
           "data": {
             "commands": [
@@ -75,12 +69,6 @@
           "type": "path",
           "data": {
             "pathName": "shootright_climb"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "climbHang"
           }
         }
       ]

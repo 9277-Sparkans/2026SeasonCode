@@ -314,6 +314,20 @@
      "val":0.0
     }
    },
+   "closetrenchright":{
+    "x":{
+     "exp":"3.52 m",
+     "val":3.52
+    },
+    "y":{
+     "exp":"0.66 m",
+     "val":0.66
+    },
+    "heading":{
+     "exp":"0 deg",
+     "val":0.0
+    }
+   },
    "depot":{
     "x":{
      "exp":"0.6872 m",

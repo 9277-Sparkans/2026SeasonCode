@@ -58,12 +58,6 @@
           "data": {
             "pathName": "outpost_climb_right"
           }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "climbhang"
-          }
         }
       ]
     }

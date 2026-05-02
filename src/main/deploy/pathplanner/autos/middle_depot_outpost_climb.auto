@@ -5,6 +5,12 @@
     "data": {
       "commands": [
         {
+          "type": "named",
+          "data": {
+            "name": "spinupshooter"
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "bumpleft_to_depot"
@@ -58,6 +64,18 @@
           "type": "named",
           "data": {
             "name": "stopagitate"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "outpost_climb_right"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 3.0
           }
         }
       ]

@@ -33,6 +33,12 @@
           "data": {
             "pathName": "rockR_SOTM"
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "closerightleave"
+          }
         }
       ]
     }

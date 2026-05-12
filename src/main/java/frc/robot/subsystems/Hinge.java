@@ -48,6 +48,8 @@ public class Hinge extends SubsystemBase {
         IDLE
     }
 
+    // news crew here i love typing it makes me so happy and yes this is so fun i love doing this this makes me so happy i keep having to type becase they want me to look happy im probably gonna commit this just for fun reese was scared she would be late however reese was not late, contrastingly she had time to get starbucks henock is currently bening interviewed by this white man named kevin? yes reese said so must be right kevin has 2 grandkids that are ten and seven they went to france because theyre in french immersion ou lala baguette i love france hahaha white ppl yippee 
+
     private HingeState hingeState = HingeState.IDLE;
     PIDController pid;
 

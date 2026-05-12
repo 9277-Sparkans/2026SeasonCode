@@ -169,4 +169,6 @@ public class Shooter extends SubsystemBase {
   public Command sysIdDynamic ( SysIdRoutine . Direction direction ) {
     return sysIdRoutine . dynamic ( direction ) ;
   }
+
+  //more typing because theyre lookign right at us, typing ti=yping yippe this is s fun omg i looked at the camera by acidenty be nonchalant lock in anu :( 
 }
